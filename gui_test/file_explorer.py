@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import os.path
+import csv
 
 def setup_layout():
     #file explorer column
@@ -18,7 +19,8 @@ def setup_layout():
     #column to view selected file
     file_viewer_column = [
         [sg.Text('Choose a file from the list on the left', key='-INSTRUCTIONS-')],
-        [sg.Text(size=(40,1), key ='-TOUT-')],
+        [sg.Text(size=(100,1), key ='-TOUT-')],
+        [sg.Table(values=[[]], visible_column_map=[True,True,True,True], key ='-TABLE-')]
 
     ]
     layout = [
@@ -44,6 +46,13 @@ def get_fnames(folder):
     ]
     return fnames
 
+def csv_to_list(filepath):
+    with open(filepath, newline = '') as csvfile:
+        csvreader = csv.reader(csvfile)
+        csv_list = list(csvreader)
+
+    return csv_list
+
 
 
 
@@ -63,9 +72,11 @@ def run_window(window):
                 filename = os.path.join(
                     values['-FOLDER-'],values['-FILE LIST-'][0]
                 )
+                csv_list = csv_to_list(filename)
+                print(csv_list)
                 window['-TOUT-'].update(filename)
                 window['-INSTRUCTIONS-'].update('Is this file correct?')
-
+                window['-TABLE-'].update(csv_list)
             except:
                 pass
 
