@@ -53,9 +53,6 @@ def csv_to_list(filepath):
 
     return csv_list
 
-
-
-
 def run_window(window):
     while True:
         event, values = window.read()
@@ -73,7 +70,6 @@ def run_window(window):
                     values['-FOLDER-'],values['-FILE LIST-'][0]
                 )
                 csv_list = csv_to_list(filename)
-                print(csv_list)
                 window['-TOUT-'].update(filename)
                 window['-INSTRUCTIONS-'].update('Is this file correct?')
                 window['-TABLE-'].update(csv_list)
