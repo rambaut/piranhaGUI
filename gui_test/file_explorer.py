@@ -2,26 +2,26 @@ import PySimpleGUI as sg
 import os.path
 import csv
 
-def setup_layout():
+def setup_layout(font):
     #file explorer column
+    sg.theme('Dark')
     file_list_column = [
         [
             sg.Text('file folder'),
-            sg.In(size=(25,1), enable_events=True, key='-FOLDER-'),
-            sg.FolderBrowse(),
+            sg.In(size=(25,1), enable_events=True, key='-FOLDER-', font=font),
+            sg.FolderBrowse(font=font),
         ],
         [
             sg.Listbox(
-                values=[], enable_events = True, size=(50,50), key ='-FILE LIST-'
+                values=[], enable_events = True, size=(50,50), key ='-FILE LIST-', font=font
             )
         ],
     ]
     #column to view selected file
     file_viewer_column = [
-        [sg.Text('Choose a file from the list on the left', key='-INSTRUCTIONS-')],
-        [sg.Text(size=(100,1), key ='-TOUT-')],
-        [sg.Table(values=[[]], visible_column_map=[True,True,True,True], key ='-TABLE-')]
-
+        [sg.Text('Choose a file from the list on the left', key='-INSTRUCTIONS-', font=font)],
+        [sg.Text(size=(70,1), key ='-TOUT-', font=font)],
+        [sg.Table(values=[[]], visible_column_map=[True,True], key ='-TABLE-', font=font, expand_x=True,expand_y=True,num_rows=50)],    
     ]
     layout = [
         [
@@ -54,6 +54,7 @@ def csv_to_list(filepath):
     return csv_list
 
 def run_window(window):
+
     while True:
         event, values = window.read()
         if event == 'Exit' or event == sg.WIN_CLOSED:
@@ -76,9 +77,11 @@ def run_window(window):
             except:
                 pass
 
-layout = setup_layout()
-window = sg.Window('File Selector', layout)
+if __name__ == '__main__':
+    font = ('FreeSans', 11)
+    layout = setup_layout(font)
+    window = sg.Window('File Selector', layout)
 
-run_window(window)
+    run_window(window)
 
-window.close()
+    window.close()
