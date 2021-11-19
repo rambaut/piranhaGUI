@@ -3,15 +3,19 @@ import os.path
 import csv
 
 #defines the layout of the window
-def setup_layout(font, theme='Dark'):
+def setup_layout(visible_column_map = [True, True], theme='Dark'):
     sg.theme(theme)
+
+    menu_def = [
+    ['&Settings',['&Change number of columns::columnkey']],
+    ]
 
     #file explorer column
     file_list_column = [
         [
             sg.Text('file folder'),
-            sg.In(size=(25,1), enable_events=True, key='-FOLDER-', font=font),
-            sg.FolderBrowse(font=font),
+            sg.In(size=(25,1), enable_events=True,expand_y=True, key='-FOLDER-',),
+            sg.FolderBrowse(),
         ],
         [
             sg.Listbox(
@@ -21,9 +25,10 @@ def setup_layout(font, theme='Dark'):
     ]
     #column to view selected files
     file_viewer_column = [
-        [sg.Text('Choose a file from the list on the left', key='-INSTRUCTIONS-', font=font)],
-        [sg.Text(size=(70,1), key ='-TOUT-', font=font)],
-        [sg.Table(values=[[]], visible_column_map=[True,True], key ='-TABLE-', font=font, expand_x=True,expand_y=True,num_rows=50)],
+        [sg.Text('Choose a file from the list on the left', key='-INSTRUCTIONS-')],
+        [sg.Text(size=(70,1), key ='-TOUT-')],
+        [sg.Table(values=[[]], visible_column_map=visible_column_map, key ='-TABLE-', expand_x=True,expand_y=True,num_rows=50)],
+
         [sg.Button(button_text='<',key='-LEFT BUTTON-'),
         sg.Button(button_text='>',key='-RIGHT BUTTON-'),
         sg.Text(' No files to display yet  ',visible=True, key ='-DISPLAY INDICATOR-'),
@@ -32,6 +37,7 @@ def setup_layout(font, theme='Dark'):
 
     layout = [
         [
+            sg.Menu(menu_def),
             sg.Column(file_list_column),
             sg.VSeperator(),
             sg.Column(file_viewer_column),
@@ -62,6 +68,9 @@ def csv_to_list(filepath):
 
     return csv_list
 
+    #window['-TABLE-'].update(visible_column_map=column_map)
+
+    window['-TABLE-'].update(csv_list)
 def display_indicator_text(window, values, pos):
     if len(values['-FILE LIST-']) > 0:
         display_text = 'Displaying file '+str(pos+1)+' out of '+str(len(values['-FILE LIST-']))
@@ -88,7 +97,9 @@ def display_file(window, values, pos):
     except:
         pass
 
-def run_window(window):
+def run_window(layout, font):
+    window = sg.Window('File Selector', layout, font=font, resizable=True)
+
     display_file_pos = 0
 
     while True:
@@ -115,11 +126,16 @@ def run_window(window):
                 display_file_pos -= 1
                 display_file(window,values,display_file_pos)
 
+        elif event == 'columnkey':
+            print('event')
+            columns = sg.popup_get_text('Enter how many columns needed')
+
+    window.close()
+
 if __name__ == '__main__':
     font = ('FreeSans', 11)
-    layout = setup_layout(font)
-    window = sg.Window('File Selector', layout, font=font)
+    layout = setup_layout()
 
-    run_window(window)
+    run_window(layout, font)
 
     window.close()
