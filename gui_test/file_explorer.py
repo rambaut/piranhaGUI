@@ -3,11 +3,15 @@ import os.path
 import csv
 
 #defines the layout of the window
-def setup_layout(visible_column_map = [True, True], theme='Dark'):
+def setup_layout(columns = 2, theme='Dark'):
+    visible_column_map = []
+    for i in range(columns):
+        visible_column_map.append(True)
+
     sg.theme(theme)
 
     menu_def = [
-    ['&Settings',['&Change number of columns::columnkey']],
+    ['&Settings',['&Change number of columns::columnskey']],
     ]
 
     #file explorer column
@@ -37,7 +41,7 @@ def setup_layout(visible_column_map = [True, True], theme='Dark'):
 
     layout = [
         [
-            sg.Menu(menu_def),
+            sg.Menu(menu_def, key = '-MENU-'),
             sg.Column(file_list_column),
             sg.VSeperator(),
             sg.Column(file_viewer_column),
@@ -68,9 +72,6 @@ def csv_to_list(filepath):
 
     return csv_list
 
-    #window['-TABLE-'].update(visible_column_map=column_map)
-
-    window['-TABLE-'].update(csv_list)
 def display_indicator_text(window, values, pos):
     if len(values['-FILE LIST-']) > 0:
         display_text = 'Displaying file '+str(pos+1)+' out of '+str(len(values['-FILE LIST-']))
@@ -97,8 +98,32 @@ def display_file(window, values, pos):
     except:
         pass
 
-def run_window(layout, font):
-    window = sg.Window('File Selector', layout, font=font, resizable=True)
+#prompts the user to enter number of columns via popup, verifies input is valid and relaunches window if so
+def adjust_columns(window):
+    columns = sg.popup_get_text('Enter how many columns needed')
+
+    if columns == None:
+        pass
+    elif columns.isnumeric():
+        if int(columns) > 0:
+            window = create_window(columns = int(columns), window=window)
+    else:
+        sg.popup_ok('Please enter a postive integer')
+        window = adjust_columns(window)
+
+    return window
+
+#helper function to create/reset window
+def create_window(columns = 2, theme = 'Dark', font = ('FreeSans', 11), window = None):
+
+    layout = setup_layout(columns = columns, theme = theme)
+    new_window = sg.Window('File Selector', layout, font=font, resizable=True)
+    if window != None:
+        window.close()
+
+    return new_window
+
+def run_window(window):
 
     display_file_pos = 0
 
@@ -121,21 +146,22 @@ def run_window(layout, font):
             if (len(values['-FILE LIST-'])-1) > display_file_pos:
                 display_file_pos += 1
                 display_file(window,values,display_file_pos)
+                #columns = sg.popup_get_text('Enter how many columns needed')
+
         elif event == '-LEFT BUTTON-':
             if  display_file_pos > 0:
                 display_file_pos -= 1
                 display_file(window,values,display_file_pos)
 
-        elif event == 'columnkey':
+        elif event == 'Change number of columns::columnskey':
             print('event')
-            columns = sg.popup_get_text('Enter how many columns needed')
+            window = adjust_columns(window)
 
     window.close()
 
 if __name__ == '__main__':
-    font = ('FreeSans', 11)
-    layout = setup_layout()
 
-    run_window(layout, font)
+    window = create_window()
+    run_window(window)
 
     window.close()
