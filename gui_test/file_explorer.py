@@ -36,7 +36,7 @@ def setup_layout(columns = 2, theme='Dark'):
         [sg.Button(button_text='<',key='-LEFT BUTTON-'),
         sg.Button(button_text='>',key='-RIGHT BUTTON-'),
         sg.Text(' No files to display yet  ',visible=True, key ='-DISPLAY INDICATOR-'),
-        sg.Button(button_text='Upload files',key='-UPLOAD BUTTON-'),],
+        sg.Button(button_text='Use selected file(s)',key='-USE BUTTON-'),],
     ]
 
     layout = [
@@ -83,9 +83,7 @@ def display_indicator_text(window, values, pos):
 #display the selected file
 def display_file(window, values, pos):
     try:
-        filename = os.path.join(
-            values['-FOLDER-'],values['-FILE LIST-'][pos]
-        )
+        filename = os.path.join(values['-FOLDER-'],values['-FILE LIST-'][pos])
 
         window['-TOUT-'].update(filename)
         window['-INSTRUCTIONS-'].update('Is this file correct?')
@@ -106,7 +104,7 @@ def adjust_columns(window):
         pass
     elif columns.isnumeric():
         if int(columns) > 0:
-            window = create_window(columns = int(columns), window=window)
+            window = create_explorer_window(columns = int(columns), window=window)
     else:
         sg.popup_ok('Please enter a postive integer')
         window = adjust_columns(window)
@@ -114,7 +112,7 @@ def adjust_columns(window):
     return window
 
 #helper function to create/reset window
-def create_window(columns = 2, theme = 'Dark', font = ('FreeSans', 11), window = None):
+def create_explorer_window(columns = 2, theme = 'Dark', font = ('FreeSans', 11), window = None):
 
     layout = setup_layout(columns = columns, theme = theme)
     new_window = sg.Window('File Selector', layout, font=font, resizable=True)
@@ -123,7 +121,15 @@ def create_window(columns = 2, theme = 'Dark', font = ('FreeSans', 11), window =
 
     return new_window
 
-def run_window(window):
+def return_filenames(values):
+    filenames = []
+    for i in range(len(values['-FILE LIST-'])):
+        filenames.append(os.path.join(values['-FOLDER-'],values['-FILE LIST-'][i]))
+
+    return filenames
+
+
+def run_explorer_window(window):
 
     display_file_pos = 0
 
@@ -146,22 +152,27 @@ def run_window(window):
             if (len(values['-FILE LIST-'])-1) > display_file_pos:
                 display_file_pos += 1
                 display_file(window,values,display_file_pos)
-                #columns = sg.popup_get_text('Enter how many columns needed')
 
         elif event == '-LEFT BUTTON-':
             if  display_file_pos > 0:
                 display_file_pos -= 1
                 display_file(window,values,display_file_pos)
 
+        elif event == '-USE BUTTON-':
+            filenames = return_filenames(values)
+            window.close()
+            return filenames
+
         elif event == 'Change number of columns::columnskey':
-            print('event')
             window = adjust_columns(window)
 
     window.close()
 
+    return None
+
 if __name__ == '__main__':
 
-    window = create_window()
-    run_window(window)
+    window = create_explorer_window()
+    run_explorer_window(window)
 
     window.close()
