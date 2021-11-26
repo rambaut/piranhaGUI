@@ -51,7 +51,11 @@ def prepare_analysis(values, barcodes_file):
         os.makedirs('resources/template_config')
     except:
         pass
-
+    try:
+        os.mkdir('rampart')
+    except:
+        pass
+    
     json_dict['basecalledPath'] = values['-BASECALLED PATH INPUT-']
     json_dict['title'] = str(values['-TITLE INPUT-'])
     json_dict['referencesLabel'] = str(values['-REFERENCES INPUT-'])
