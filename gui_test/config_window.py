@@ -4,26 +4,34 @@ import os
 import json
 import csv
 from file_explorer import csv_to_list
+import webbrowser
+
+RAMPART_ADDRESS = 'localhost:1100/'
 
 def setup_layout(filenames, theme='Dark'):
     sg.theme(theme)
     layout = [
         [sg.Text('Title:                 '), sg.Input(key='-TITLE INPUT-')],
         [sg.Text('Barcode File:          '), sg.Text(str(filenames[0]), key='-BARCODE-')],
-        [sg.Text('Basecalled Path:       '), sg.In(size=(25,1), enable_events=True,expand_y=True, key='-BASECALLED PATH INPUT-',), sg.FolderBrowse(),],
+        [sg.Text('Basecalled Path:       '), sg.In(size=(25,1), enable_events=True,expand_y=False, key='-BASECALLED PATH INPUT-',), sg.FolderBrowse(),],
         [sg.Text('References Label:      '), sg.Input(key='-REFERENCES INPUT-')],
-        [sg.Button('Run Analysis', key='-RUN BUTTON-')],
+        [
+        sg.Button('Run Analysis', key='-RUN BUTTON-'),
+        sg.Button('View Rampart', key='-RAMPART BUTTON-'),
+        sg.Button('Previous File', key='-PREV BUTTON-'),
+        sg.Button('Next File', key='-NEXT BUTTON-'),
+        ],
     ]
 
     return layout
 
 def create_config_window(filenames):
     layout = setup_layout(filenames)
-    window = sg.Window(title='Config', layout = layout, margins = (150,300))
+    window = sg.Window(title='Config', layout = layout, margins = (80,100))
 
     return window
 
-#check the user's inputs are valid then sets the configuration files for analhysis run
+#check the user's inputs are valid then sets the configuration files for analysis run
 def prepare_analysis(values, barcodes_file):
     json_dict = {}
 
@@ -56,10 +64,17 @@ def prepare_analysis(values, barcodes_file):
         for row in barcodes_list:
             csvwriter.writerow(row)
 
+def run_analysis():
+    cwd = os.getcwd()
+    run_command = 'rampart --protocol ' + str(cwd) + '/rampart'
 
+    os.system(run_command)
+
+def open_rampart(address):
+    address
 
 def run_config_window(window, filenames):
-
+    files_index = 0
     while True:
         event, values = window.read()
 
@@ -67,9 +82,20 @@ def run_config_window(window, filenames):
             break
         elif event == '-RUN BUTTON-':
             try:
-                prepare_analysis(values, filenames[0])
+                prepare_analysis(values, filenames[files_index])
+                run_analysis()
             except Exception as err:
                 sg.popup_error(err)
+        elif event == '-RAMPART BUTTON-':
+            webbrowser.open(RAMPART_ADDRESS)
+        elif event == '-PREV BUTTON-':
+            if files_index > 0:
+                files_index -= 1
+                window['-BARCODE-'].update(filenames[files_index])
+        elif event == '-NEXT BUTTON-':
+            if files_index + 1 < len(filenames):
+                files_index += 1
+                window['-BARCODE-'].update(filenames[files_index])
 
 
 if __name__ == '__main__':
