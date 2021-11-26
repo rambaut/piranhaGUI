@@ -145,6 +145,8 @@ def run_explorer_window(window):
         elif event == '-FILE LIST-':
             while (len(values['-FILE LIST-'])-1) < display_file_pos:
                 display_file_pos -= 1
+            if display_file_pos < 0:
+                display_file_pos == 0
             display_file(window,values,display_file_pos)
 
         elif event == '-RIGHT BUTTON-':
