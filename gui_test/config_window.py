@@ -10,7 +10,7 @@ def setup_layout(filenames, theme='Dark'):
     layout = [
         [sg.Text('Title:                 '), sg.Input(key='-TITLE INPUT-')],
         [sg.Text('Barcode File:          '), sg.Text(str(filenames[0]), key='-BARCODE-')],
-        [sg.Text('Basecalled Path:       '), sg.In(size=(25,1), enable_events=True,expand_y=True, key='-BASECALLED PATH INPUT-',), sg.FileBrowse(),],
+        [sg.Text('Basecalled Path:       '), sg.In(size=(25,1), enable_events=True,expand_y=True, key='-BASECALLED PATH INPUT-',), sg.FolderBrowse(),],
         [sg.Text('References Label:      '), sg.Input(key='-REFERENCES INPUT-')],
         [sg.Button('Run Analysis', key='-RUN BUTTON-')],
     ]
@@ -23,22 +23,34 @@ def create_config_window(filenames):
 
     return window
 
+#check the user's inputs are valid then sets the configuration files for analhysis run
 def prepare_analysis(values, barcodes_file):
     json_dict = {}
-    json_dict['title'] = values['-TITLE INPUT-']
-    json_dict['basecalledPath'] = values['-BASECALLED PATH INPUT-']
-    json_dict['referencesLabel'] = values['-REFERENCES INPUT-']
+
+    if not len(str(values['-TITLE INPUT-'])) > 0:
+        raise Exception('Invalid title')
+
+    if os.path.isfile(barcode_file) == False:
+        raise Exception('Invalid barcode file')
+
+    if os.path.isdir(values['-BASECALLED PATH INPUT-']) == False:
+        raise Exception('Invalid basecalled path')
+
+    if not len(str(values['-REFERENCES INPUT-'])) > 0:
+        raise Exception('Invalid reference label')
 
     try:
         os.makedirs('resources/template_config')
     except:
         pass
 
+    json_dict['basecalledPath'] = values['-BASECALLED PATH INPUT-']
+    json_dict['title'] = str(values['-TITLE INPUT-'])
+    json_dict['referencesLabel'] = str(values['-REFERENCES INPUT-'])
     with open('resources/template_config/run_configuration.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(json_dict))
 
     barcodes_list = csv_to_list(barcodes_file)
-
     with open('resources/template_config/barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
@@ -54,7 +66,11 @@ def run_config_window(window, filenames):
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-RUN BUTTON-':
-            prepare_analysis(values, filenames[0])
+            try:
+                prepare_analysis(values, filenames[0])
+            except Exception as err:
+                sg.popup_error(err)
+
 
 if __name__ == '__main__':
     filenames = ['test_files/test2.csv', 'test_files/barcodes.csv']
