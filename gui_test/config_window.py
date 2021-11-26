@@ -6,7 +6,7 @@ import csv
 from file_explorer import csv_to_list
 import webbrowser
 
-RAMPART_ADDRESS = 'localhost:1100/'
+RAMPART_ADDRESS = 'http://localhost:1100'
 
 def setup_layout(filenames, theme='Dark'):
     sg.theme(theme)
@@ -55,7 +55,7 @@ def prepare_analysis(values, barcodes_file):
         os.mkdir('rampart')
     except:
         pass
-    
+
     json_dict['basecalledPath'] = values['-BASECALLED PATH INPUT-']
     json_dict['title'] = str(values['-TITLE INPUT-'])
     json_dict['referencesLabel'] = str(values['-REFERENCES INPUT-'])
@@ -91,7 +91,7 @@ def run_config_window(window, filenames):
             except Exception as err:
                 sg.popup_error(err)
         elif event == '-RAMPART BUTTON-':
-            webbrowser.open(RAMPART_ADDRESS)
+            webbrowser.open_new_tab(RAMPART_ADDRESS)
         elif event == '-PREV BUTTON-':
             if files_index > 0:
                 files_index -= 1
