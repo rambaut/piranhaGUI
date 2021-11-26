@@ -132,7 +132,8 @@ def return_filenames(values):
 def run_explorer_window(window):
 
     display_file_pos = 0
-
+    #event, values = window.read()
+    #window['-DISPLAY INDICATOR-'].update(visible=False)
     while True:
         event, values = window.read()
         if event == 'Exit' or event == sg.WIN_CLOSED:

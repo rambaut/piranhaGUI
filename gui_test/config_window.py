@@ -30,7 +30,7 @@ def prepare_analysis(values, barcodes_file):
     if not len(str(values['-TITLE INPUT-'])) > 0:
         raise Exception('Invalid title')
 
-    if os.path.isfile(barcode_file) == False:
+    if os.path.isfile(barcodes_file) == False:
         raise Exception('Invalid barcode file')
 
     if os.path.isdir(values['-BASECALLED PATH INPUT-']) == False:
