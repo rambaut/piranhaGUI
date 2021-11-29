@@ -3,8 +3,9 @@ import sys
 import os
 from datetime import datetime
 
-def start_rampart(path, firstPort = str(1100), secondPort = str(1200)):
-
+def start_rampart(path, firstPort = 1100, secondPort = 1200):
+    firstPort = str(firstPort)
+    secondPort = str(secondPort)
     containerName = "rampart"
 
     command = "sudo docker stop rampart && sudo docker rm rampart"

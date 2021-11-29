@@ -1,5 +1,6 @@
 import file_explorer
 import config_window
+#runs the file explorer, once the user selects their files opens the config window and passes on the files
 
 if __name__ == '__main__':
 

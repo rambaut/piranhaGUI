@@ -7,8 +7,10 @@ from file_explorer import csv_to_list
 import start_rampart
 import webbrowser
 
-RAMPART_ADDRESS = 'http://localhost:1100'
+RAMPART_PORT_1 = 1100
+RAMPART_PORT_2 = 1200
 
+#defines layout for the window
 def setup_layout(filenames, theme='Dark'):
     sg.theme(theme)
     layout = [
@@ -69,12 +71,12 @@ def prepare_analysis(values, barcodes_file):
         for row in barcodes_list:
             csvwriter.writerow(row)
 
-def run_analysis():
+#runs rampart using docker container
+def run_analysis(firstPort = 1100, secondPort = 1200):
     cwd = os.getcwd()
     #run_command = 'rampart --protocol ' + str(cwd) + '/rampart'
     #os.system(run_command)
-    start_rampart.start_rampart(cwd)
-
+    start_rampart.start_rampart(cwd, firstPort = firstPort, secondPort = secondPort)
 
 
 def run_config_window(window, filenames):
@@ -88,11 +90,12 @@ def run_config_window(window, filenames):
         elif event == '-RUN BUTTON-':
             try:
                 prepare_analysis(values, filenames[files_index])
-                run_analysis()
+                run_analysis(firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
         elif event == '-RAMPART BUTTON-':
-            webbrowser.open_new_tab(RAMPART_ADDRESS)
+            address =  'http://localhost:'+str(RAMPART_PORT_1)
+            webbrowser.open_new_tab(address)
         elif event == '-PREV BUTTON-':
             if files_index > 0:
                 files_index -= 1
