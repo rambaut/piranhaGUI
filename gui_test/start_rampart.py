@@ -8,16 +8,16 @@ def start_rampart(path, firstPort = 1100, secondPort = 1200):
     secondPort = str(secondPort)
     containerName = "rampart"
 
-    command = "sudo docker stop rampart && sudo docker rm rampart"
+    command = "docker stop rampart && docker rm rampart"
     os.system(command)
 
-    command = "sudo docker run -d --name "+containerName+" -p "+secondPort+":"+secondPort+" -p "+firstPort+":"+firstPort+" -e PORT_ONE="+firstPort+" -e PORT_TWO="+secondPort+" -e RUN_PATH=/data/run_data/ --volume "+path+":/data/run_data/ emilyscher/polio_rampart"
+    command = "docker run -d --name "+containerName+" -p "+secondPort+":"+secondPort+" -p "+firstPort+":"+firstPort+" -e PORT_ONE="+firstPort+" -e PORT_TWO="+secondPort+" -e RUN_PATH=/data/run_data/ --volume "+path+":/data/run_data/ emilyscher/polio_rampart"
     os.system(command)
 
 def stop_rampart():
-    command = "sudo docker stop rampart && sudo docker rm rampart"
+    command = "docker stop rampart && docker rm rampart"
     os.system(command)
-    
+
 if __name__ == '__main__':
     path = sys.argv[-1]
 
