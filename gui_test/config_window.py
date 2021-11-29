@@ -4,6 +4,7 @@ import os
 import json
 import csv
 from file_explorer import csv_to_list
+import start_rampart
 import webbrowser
 
 RAMPART_ADDRESS = 'http://localhost:1100'
@@ -70,12 +71,11 @@ def prepare_analysis(values, barcodes_file):
 
 def run_analysis():
     cwd = os.getcwd()
-    run_command = 'rampart --protocol ' + str(cwd) + '/rampart'
+    #run_command = 'rampart --protocol ' + str(cwd) + '/rampart'
+    #os.system(run_command)
+    start_rampart.start_rampart(cwd)
 
-    os.system(run_command)
 
-def open_rampart(address):
-    address
 
 def run_config_window(window, filenames):
     files_index = 0
@@ -83,6 +83,7 @@ def run_config_window(window, filenames):
         event, values = window.read()
 
         if event == 'Exit' or event == sg.WIN_CLOSED:
+            start_rampart.stop_rampart()
             break
         elif event == '-RUN BUTTON-':
             try:
