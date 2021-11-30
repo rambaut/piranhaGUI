@@ -73,10 +73,8 @@ def prepare_analysis(values, barcodes_file):
 
 #runs rampart using docker container
 def run_analysis(firstPort = 1100, secondPort = 1200):
-    cwd = os.getcwd()
-    #run_command = 'rampart --protocol ' + str(cwd) + '/rampart'
-    #os.system(run_command)
-    start_rampart.start_rampart(cwd, firstPort = firstPort, secondPort = secondPort)
+    rampart_dir = os.getcwd()+ '/rampart'
+    start_rampart.start_rampart(rampart_dir, firstPort = firstPort, secondPort = secondPort)
 
 
 def run_config_window(window, filenames):
