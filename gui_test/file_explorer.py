@@ -42,9 +42,10 @@ def setup_layout(columns = 2, theme='Dark'):
     layout = [
         [
             sg.Menu(menu_def, key = '-MENU-'),
-            sg.Column(file_list_column),
-            sg.VSeperator(),
-            sg.Column(file_viewer_column),
+            sg.Pane([sg.Column(file_list_column),sg.Column(file_viewer_column),],show_handle=True, orientation='horizontal'),
+            #sg.Column(file_list_column),
+            #sg.VSeperator(),
+            #sg.Column(file_viewer_column),
         ]
     ]
     return layout
