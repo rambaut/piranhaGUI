@@ -36,13 +36,13 @@ def setup_layout(theme='Dark'):
         [
         sg.Text('Samples',size=(12,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
-        sg.Button(button_text='select',key='-SELECT SAMPLES-'),
+        sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
         sg.Button(button_text='view',key='-VIEW SAMPLES-'),
         ],
         [
         sg.Text('MinKnow run',size=(12,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
-        sg.Button(button_text='select',key='-SELECT MINKNOW-'),
+        sg.FileBrowse(),
         ],
     ]
 
@@ -113,9 +113,15 @@ def load_run(window, values):
         except:
             pass
         try:
+            header_list = run_info['header_list']
+        except:
+            pass
+        try:
             window['-MINKNOW-'].update(run_info['MinKnow'])
         except:
             pass
+
+        print(header_list)
 
 def run_main_window(window):
     while True:

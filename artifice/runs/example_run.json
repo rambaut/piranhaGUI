@@ -3,5 +3,6 @@
     "name": "example_run",
     "description": "This is an example.",
     "samples": "test",
+    "header_list": ["samples","barcodes"],
     "MinKnow": "placeholder"
   }

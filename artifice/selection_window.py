@@ -14,7 +14,7 @@ def setup_selection_layout():
         [
         sg.Text('MinKnow run (optional)',size=(25,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
-        sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
+        sg.FileBrowse(),
         ],
         [
         sg.Button(button_text='Next',key='-NEXT-'),
