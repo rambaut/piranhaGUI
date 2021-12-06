@@ -1,8 +1,1 @@
-{
-    "date": "2021-12-01",
-    "name": "example_run",
-    "description": "This is an example.",
-    "samples": "test",
-    "samples_headers": ["samples","barcodes"],
-    "MinKnow": "placeholder"
-  }
+{"date": "2021-12-01", "name": "example_run", "description": "This is an example.", "samples": "/home/corey/Desktop/P_GUI_test/piranha/artifice/test_files/barcodes.csv", "MinKnow": "placeholder"}

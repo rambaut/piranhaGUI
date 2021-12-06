@@ -72,8 +72,6 @@ def run_parse_window(window, samples, samples_headers):
             window.close()
             return samples_headers
 
-
-
     window.close()
     return None
 

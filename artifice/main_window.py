@@ -45,6 +45,9 @@ def setup_layout(theme='Dark'):
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
         sg.FileBrowse(),
         ],
+        [
+        sg.Button(button_text='Save',key='-SAVE RUN-'),
+        ],
     ]
 
     rampart_tab = [
@@ -84,12 +87,14 @@ def get_runs(dir = './runs'):
 
     return runs
 
-def save_run(run_info, overwrite = False, iter = 0):
-    samples = run_info['samples']
-    if iter == 0:
+def save_run(run_info, name = None, overwrite = False, iter = 0):
+
+    if name == None:
+        samples = run_info['samples']
         name = samples.split('/')[-1].split('.')[0]
-    else:
-        name = samples.split('/')[-1].split('.')[0]+str(iter)
+
+    if iter > 0:
+        name = name+str(iter)
 
     filepath = './runs/'+name+'.json'
 
@@ -161,8 +166,17 @@ def load_run(window, name):
         except:
             window['-MINKNOW-'].update('')
 
+    return run_info
 
+def get_run_info(values, run_info):
+    run_info = {}
+    run_info['date'] = values['-DATE-']
+    run_info['name'] = values['-RUN NAME-']
+    run_info['description'] = values['-RUN DESCRIPTION-']
+    run_info['samples'] = values['-SAMPLES-']
+    run_info['MinKnow'] = values['-MINKNOW-']
 
+    return run_info
 
 def run_main_window(window):
     run_info = {}
@@ -173,7 +187,7 @@ def run_main_window(window):
 
         elif event == '-RUN LIST-':
             name = values['-RUN LIST-'][0]
-            load_run(window, name)
+            run_info = load_run(window, name)
 
         elif event == '-NEW RUN-':
             name = create_run()
@@ -189,7 +203,19 @@ def run_main_window(window):
                     index = i
 
             window['-RUN LIST-'].update(set_to_index=index)
-            load_run(window, name)
+            run_info = load_run(window, name)
+
+        elif event == '-VIEW SAMPLES-':
+            samples_headers = run_info['samples_headers']
+            samples = values['-SAMPLES-']
+            parse_window, samples_headers = parse_columns_window.create_parse_window(samples, samples_headers=samples_headers)
+            run_info['samples_headers'] = parse_columns_window.run_parse_window(parse_window, samples, samples_headers)
+
+        elif event == '-SAVE RUN-':
+            run_info = get_run_info(values, run_info)
+            name = run_info['name']
+            save_run(run_info, name=name, overwrite=True)
+
 
     window.close()
 
