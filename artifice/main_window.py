@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 from os import listdir
+import os.path
 import json
 import selection_window
 import parse_columns_window
@@ -15,7 +16,7 @@ def setup_layout(theme='Dark'):
         ],
         [
             sg.Listbox(
-                values=[runs], enable_events = True, size=(40,50), select_mode = sg.LISTBOX_SELECT_MODE_EXTENDED, key ='-RUN LIST-',
+                values=runs, enable_events = True, size=(40,50), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
             )
         ]
     ]
@@ -51,20 +52,19 @@ def setup_layout(theme='Dark'):
     ]
 
     tabs_column = [
-    [
-    sg.TabGroup([[sg.Tab('Info',run_info_tab),sg.Tab('Rampart',rampart_tab)]])
-    ]
+        [
+        sg.TabGroup([[sg.Tab('Info',run_info_tab),sg.Tab('Rampart',rampart_tab)]])
+        ]
     ]
 
     layout = [
         [
-            sg.Pane(
-            [sg.Column(select_run_column),sg.Column(tabs_column)],
-            show_handle=True, orientation='horizontal'
-            ),
+        sg.Pane(
+        [sg.Column(select_run_column),sg.Column(tabs_column)],
+        show_handle=True, orientation='horizontal'
+        ),
         ]
     ]
-
 
     return layout
 
@@ -84,56 +84,112 @@ def get_runs(dir = './runs'):
 
     return runs
 
+def save_run(run_info, overwrite = False, iter = 0):
+    samples = run_info['samples']
+    if iter == 0:
+        name = samples.split('/')[-1].split('.')[0]
+    else:
+        name = samples.split('/')[-1].split('.')[0]+str(iter)
+
+    filepath = './runs/'+name+'.json'
+
+    run_info['name'] = name
+
+    if overwrite == False:
+        if os.path.isfile(filepath):
+            return save_run(run_info,overwrite=overwrite,iter=iter+1)
+
+    with open(filepath, 'w') as file:
+        run_json = json.dumps(run_info)
+        file.write(run_json)
+
+    return name
+
+
 def create_run():
     window = selection_window.create_select_window()
-    samples, MinKnow = selection_window.run_select_window(window)
+    selections = selection_window.run_select_window(window)
 
-    return samples, MinKnow
+    if selections == None:
+        return None
+
+    samples, MinKnow = selections
+
+    window, samples_headers = parse_columns_window.create_parse_window(samples)
+    samples_headers = parse_columns_window.run_parse_window(window, samples, samples_headers)
+
+    if samples_headers == None:
+        return None
+
+    run_info = {}
+
+    run_info['samples'] = samples
+    run_info['samples_headers'] = samples_headers
+    run_info['MinKnow'] = MinKnow
+
+    name = save_run(run_info)
+
+    return name
 
 
-def load_run(window, values):
-    print(values['-RUN LIST-'][0])
-    filepath = './runs/'+values['-RUN LIST-'][0][0]+'.json'
+def load_run(window, name):
+    filepath = './runs/'+name+'.json'
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
         try:
             window['-DATE-'].update(run_info['date'])
         except:
-            pass
+            window['-DATE-'].update('')
+
         try:
             window['-RUN NAME-'].update(run_info['name'])
         except:
-            pass
+            window['-RUN NAME-'].update('')
+
         try:
             window['-RUN DESCRIPTION-'].update(run_info['description'])
         except:
-            pass
+            window['-RUN DESCRIPTION-'].update('')
+
         try:
             window['-SAMPLES-'].update(run_info['samples'])
         except:
-            pass
-        try:
-            header_list = run_info['header_list']
-        except:
-            pass
+            window['-SAMPLES-'].update('')
+
         try:
             window['-MINKNOW-'].update(run_info['MinKnow'])
         except:
-            pass
+            window['-MINKNOW-'].update('')
 
-        print(header_list)
+
+
 
 def run_main_window(window):
+    run_info = {}
     while True:
         event, values = window.read()
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
+
         elif event == '-RUN LIST-':
-            load_run(window, values)
+            name = values['-RUN LIST-'][0]
+            load_run(window, name)
+
         elif event == '-NEW RUN-':
-            print(create_run())
+            name = create_run()
+            if name == None:
+                continue
 
+            runs = get_runs()
+            window['-RUN LIST-'].update(values=runs)
 
+            index = 0
+            for i in range(len(runs)):
+                if runs[i] == name:
+                    index = i
+
+            window['-RUN LIST-'].update(set_to_index=index)
+            load_run(window, name)
 
     window.close()
 

@@ -9,7 +9,7 @@ def csv_to_list(filepath):
 
     return csv_list
 
-def setup_parse_layout(samples,theme='Dark', header_list = None):
+def setup_parse_layout(samples,theme='Dark', samples_headers = None):
     sg.theme(theme)
 
     samples_list = csv_to_list(samples)
@@ -18,15 +18,15 @@ def setup_parse_layout(samples,theme='Dark', header_list = None):
     for i in range(len(samples_list[0])):
         visible_column_map.append(True)
 
-    if header_list == None:
-        header_list = []
+    if samples_headers == None:
+        samples_headers = []
         for i in range(len(samples_list[0])):
-            header_list.append('unassigned')
-        header_list[0:2] = ['sample','barcode']
+            samples_headers.append('unassigned')
+        samples_headers[0:2] = ['sample','barcode']
 
     header_inputs = []
-    for i in range(len(header_list)):
-        header_inputs.append(sg.In(default_text=header_list[i],size=(15,1),enable_events=True,expand_y=False, key='-HEADER'+str(i+1)+'-',),)
+    for i in range(len(samples_headers)):
+        header_inputs.append(sg.In(default_text=samples_headers[i],size=(15,1),enable_events=True,expand_y=False, key='-HEADER'+str(i+1)+'-',),)
 
 
 
@@ -39,38 +39,38 @@ def setup_parse_layout(samples,theme='Dark', header_list = None):
         sg.Button(button_text='apply changes to headers',key='-CHANGE HEADERS-'),
         ],
         [
-        sg.Table(values=samples_list, headings=header_list, visible_column_map=visible_column_map, key='-TABLE-', expand_x=True,expand_y=True,num_rows=30,), #select_mode='extended'),
+        sg.Table(values=samples_list, headings=samples_headers, visible_column_map=visible_column_map, key='-TABLE-', expand_x=True,expand_y=True,num_rows=30,), #select_mode='extended'),
         ],
         [
         sg.Button(button_text='Next',key='-NEXT-'),
         ],
     ]
 
-    return layout, header_list
+    return layout, samples_headers
 
-def create_parse_window(samples, theme = 'Dark', font = ('FreeSans', 18), window = None, header_list = None):
+def create_parse_window(samples, theme = 'Dark', font = ('FreeSans', 18), window = None, samples_headers = None):
 
-    layout, header_list = setup_parse_layout(samples, header_list=header_list)
+    layout, samples_headers = setup_parse_layout(samples, samples_headers=samples_headers)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
 
     if window != None:
         window.close()
 
-    return new_window, header_list
+    return new_window, samples_headers
 
 
-def run_parse_window(window, samples, header_list, MinKnow = ''):
+def run_parse_window(window, samples, samples_headers):
     while True:
         event, values = window.read()
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-CHANGE HEADERS-':
-            for i in range(len(header_list)):
-                header_list[i] = values['-HEADER'+str(i+1)+'-']
-            window, header_list = create_parse_window(samples, window=window, header_list=header_list)
+            for i in range(len(samples_headers)):
+                samples_headers[i] = values['-HEADER'+str(i+1)+'-']
+            window, samples_headers = create_parse_window(samples, window=window, samples_headers=samples_headers)
         elif event == '-NEXT-':
             window.close()
-            return samples, MinKnow, header_list
+            return samples_headers
 
 
 
@@ -79,7 +79,7 @@ def run_parse_window(window, samples, header_list, MinKnow = ''):
 
 if __name__ == '__main__':
     samples = '/home/corey/Desktop/P_GUI_test/piranha/artifice/test_files/test.csv'
-    window, header_list = create_parse_window(samples)
-    run_parse_window(window, samples, header_list)
+    window, samples_headers = create_parse_window(samples)
+    run_parse_window(window, samples, samples_headers)
 
     window.close()
