@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 import os.path
 
-#Window for user to select samples csv and possibling MinKnow 
+#Window for user to select samples csv and possibling MinKnow
 
 def setup_selection_layout():
 
@@ -19,7 +19,7 @@ def setup_selection_layout():
         [
         sg.Button(button_text='Next',key='-NEXT-'),
         ],
-        ]
+    ]
 
     return layout
 
@@ -39,10 +39,13 @@ def run_select_window(window):
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-NEXT-':
-            if os.path.isfile(values['-SAMPLES-']) == False:
-                raise Exception('Invalid samples file')
-            window.close()
-            return values['-SAMPLES-'], values['MINKNOW']
+            try:
+                if os.path.isfile(values['-SAMPLES-']) == False:
+                    raise Exception('Invalid samples file')
+                window.close()
+                return values['-SAMPLES-'], values['-MINKNOW-']
+            except Exception as err:
+                sg.popup_error(err)
 
     window.close()
     return None

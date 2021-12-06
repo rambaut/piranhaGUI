@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 from os import listdir
 import json
+import selection_window
+import parse_columns_window
 
 #defines the layout of the window
 def setup_layout(theme='Dark'):
@@ -76,11 +78,18 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
     return new_window
 
 def get_runs(dir = './runs'):
-    runs = os.listdir(dir)
+    runs = listdir(dir)
     for i in range(len(runs)):
         runs[i] = runs[i][:-5]
 
     return runs
+
+def create_run():
+    window = selection_window.create_select_window()
+    samples, MinKnow = selection_window.run_select_window(window)
+
+    return samples, MinKnow
+
 
 def load_run(window, values):
     print(values['-RUN LIST-'][0])
@@ -115,6 +124,9 @@ def run_main_window(window):
             break
         elif event == '-RUN LIST-':
             load_run(window, values)
+        elif event == '-NEW RUN-':
+            print(create_run())
+
 
 
     window.close()
