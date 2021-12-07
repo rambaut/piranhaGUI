@@ -32,7 +32,6 @@ def create_select_window(theme = 'Dark', font = ('FreeSans', 18), window = None)
 
     return new_window
 
-
 def run_select_window(window):
     while True:
         event, values = window.read()

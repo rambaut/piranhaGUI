@@ -80,21 +80,25 @@ def get_runs(dir = './runs'):
     return runs
 
 def save_run(run_info, name = None, overwrite = False, iter = 0):
-
-    if name == None:
-        samples = run_info['samples']
+    samples = run_info['samples']
+    if name == None or name == '':
         name = samples.split('/')[-1].split('.')[0]
 
-    if iter > 0:
-        filepath = './runs/'+name+'('+str(iter)+').json'
-    else:
-        filepath = './runs/'+name+'.json'
+    original_name = name
 
-    run_info['name'] = name
+    if iter > 0:
+        name = name+'('+str(iter)+')'
+
+    filepath = './runs/'+name+'.json'
 
     if overwrite == False:
         if os.path.isfile(filepath):
-            return save_run(run_info,name=name,overwrite=overwrite,iter=iter+1)
+            return save_run(run_info,name=original_name,overwrite=overwrite,iter=iter+1)
+
+    if os.path.isfile(samples) == False or samples[-4:] != '.csv':
+        raise Exception('No valid samples file provided')
+
+    run_info['name'] = name
 
     with open(filepath, 'w') as file:
         run_json = json.dumps(run_info)
@@ -161,7 +165,7 @@ def load_run(window, name):
     return run_info
 
 def get_run_info(values, run_info):
-    run_info = {}
+
     run_info['date'] = values['-DATE-']
     run_info['name'] = values['-RUN NAME-']
     run_info['description'] = values['-RUN DESCRIPTION-']
@@ -220,23 +224,46 @@ def run_main_window(window, font = ('FreeSans', 18)):
             run_info = load_run(window, name)
 
         elif event == '-NEW RUN-':
-            name = create_run()
-            if name == None:
-                continue
+            try:
+                name = create_run()
+                if name == None:
+                    continue
 
-            run_info = update_run_list(window, run_info, run_to_select=name)
+                run_info = update_run_list(window, run_info, run_to_select=name)
+            except Exception as err:
+                sg.popup_error(err)
 
         elif event == '-VIEW SAMPLES-':
-            samples_headers = run_info['samples_headers']
-            samples = values['-SAMPLES-']
-            parse_window, samples_headers = parse_columns_window.create_parse_window(samples, samples_headers=samples_headers)
-            run_info['samples_headers'] = parse_columns_window.run_parse_window(parse_window, samples, samples_headers)
+            if 'samples_headers' in run_info:
+                samples_headers = run_info['samples_headers']
+            else:
+                samples_headers = None
+
+            try:
+                samples = values['-SAMPLES-']
+                parse_window, samples_headers = parse_columns_window.create_parse_window(samples, samples_headers=samples_headers)
+                samples_headers = parse_columns_window.run_parse_window(parse_window, samples, samples_headers)
+                if samples_headers != None:
+                    run_info['samples_headers'] = samples_headers
+                name = save_run(run_info, name=name, overwrite=True)
+            except Exception as err:
+                sg.popup_error(err)
+
 
         elif event == '-SAVE RUN-':
             run_info = get_run_info(values, run_info)
-            name = run_info['name']
-            save_run(run_info, name=name, overwrite=True)
-            run_info = update_run_list(window, run_info, run_to_select=name)
+            try:
+                if 'samples_headers' in run_info:
+                    samples_headers = run_info['samples_headers']
+                else:
+                    samples_headers = None
+
+                name = run_info['name']
+                run_info['samples_headers'] = parse_columns_window.fit_sample_headers(run_info['samples'], samples_headers)
+                name = save_run(run_info, name=name, overwrite=True)
+                run_info = update_run_list(window, run_info, run_to_select=name)
+            except Exception as err:
+                sg.popup_error(err)
 
         elif event == '-DELETE RUN-':
             user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)

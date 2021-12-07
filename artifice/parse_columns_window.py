@@ -9,6 +9,24 @@ def csv_to_list(filepath):
 
     return csv_list
 
+#makes sure given samples_headers fit given samples
+def fit_sample_headers(samples, samples_headers):
+    samples_list = csv_to_list(samples)
+
+    if samples_headers == None or samples_headers == []:
+        samples_headers = []
+        for i in range(len(samples_list[0])):
+            samples_headers.append('unassigned')
+        samples_headers[0:2] = ['sample','barcode']
+
+    else:
+        while len(samples_headers) < len(samples_list[0]):
+            samples_headers.append('unassigned')
+
+    del samples_headers[len(samples_list):]
+
+    return samples_headers
+
 def setup_parse_layout(samples,theme='Dark', samples_headers = None):
     sg.theme(theme)
 
@@ -18,17 +36,11 @@ def setup_parse_layout(samples,theme='Dark', samples_headers = None):
     for i in range(len(samples_list[0])):
         visible_column_map.append(True)
 
-    if samples_headers == None:
-        samples_headers = []
-        for i in range(len(samples_list[0])):
-            samples_headers.append('unassigned')
-        samples_headers[0:2] = ['sample','barcode']
+    samples_headers = fit_sample_headers(samples, samples_headers)
 
     header_inputs = []
     for i in range(len(samples_headers)):
         header_inputs.append(sg.In(default_text=samples_headers[i],size=(15,1),enable_events=True,expand_y=False, key='-HEADER'+str(i+1)+'-',),)
-
-
 
     layout = [
         [
@@ -42,7 +54,7 @@ def setup_parse_layout(samples,theme='Dark', samples_headers = None):
         sg.Table(values=samples_list, headings=samples_headers, visible_column_map=visible_column_map, key='-TABLE-', expand_x=True,expand_y=True,num_rows=30,), #select_mode='extended'),
         ],
         [
-        sg.Button(button_text='Next',key='-NEXT-'),
+        sg.Button(button_text='Save',key='-SAVE-'),
         ],
     ]
 
@@ -68,7 +80,7 @@ def run_parse_window(window, samples, samples_headers):
             for i in range(len(samples_headers)):
                 samples_headers[i] = values['-HEADER'+str(i+1)+'-']
             window, samples_headers = create_parse_window(samples, window=window, samples_headers=samples_headers)
-        elif event == '-NEXT-':
+        elif event == '-SAVE-':
             window.close()
             return samples_headers
 
@@ -76,8 +88,9 @@ def run_parse_window(window, samples, samples_headers):
     return None
 
 if __name__ == '__main__':
-    samples = '/home/corey/Desktop/P_GUI_test/piranha/artifice/test_files/test.csv'
-    window, samples_headers = create_parse_window(samples)
+    samples = '/home/corey/Desktop/P_GUI_test/piranha/artifice/test_files/barcodes.csv'
+    samples_headers = ["sample", "barcode"]
+    window, samples_headers = create_parse_window(samples,samples_headers=samples_headers)
     run_parse_window(window, samples, samples_headers)
 
     window.close()
