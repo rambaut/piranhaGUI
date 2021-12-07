@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from os import listdir
+from os import listdir, remove
 import os.path
 import json
 import selection_window
@@ -47,6 +47,7 @@ def setup_layout(theme='Dark'):
         ],
         [
         sg.Button(button_text='Save',key='-SAVE RUN-'),
+        sg.Button(button_text='Delete',key='-DELETE RUN-'),
         ],
     ]
 
@@ -71,15 +72,6 @@ def setup_layout(theme='Dark'):
 
     return layout
 
-def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
-    layout = setup_layout()
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
-
-    if window != None:
-        window.close()
-
-    return new_window
-
 def get_runs(dir = './runs'):
     runs = listdir(dir)
     for i in range(len(runs)):
@@ -94,15 +86,15 @@ def save_run(run_info, name = None, overwrite = False, iter = 0):
         name = samples.split('/')[-1].split('.')[0]
 
     if iter > 0:
-        name = name+str(iter)
-
-    filepath = './runs/'+name+'.json'
+        filepath = './runs/'+name+'('+str(iter)+').json'
+    else:
+        filepath = './runs/'+name+'.json'
 
     run_info['name'] = name
 
     if overwrite == False:
         if os.path.isfile(filepath):
-            return save_run(run_info,overwrite=overwrite,iter=iter+1)
+            return save_run(run_info,name=name,overwrite=overwrite,iter=iter+1)
 
     with open(filepath, 'w') as file:
         run_json = json.dumps(run_info)
@@ -178,7 +170,45 @@ def get_run_info(values, run_info):
 
     return run_info
 
-def run_main_window(window):
+def delete_run(name, window, clear_selected = True):
+    filepath = './runs/'+name+'.json'
+
+    if os.path.isfile(filepath):
+        remove(filepath)
+
+    if clear_selected:
+        window['-DATE-'].update('')
+        window['-RUN NAME-'].update('')
+        window['-RUN DESCRIPTION-'].update('')
+        window['-SAMPLES-'].update('')
+        window['-MINKNOW-'].update('')
+
+def update_run_list(window, run_info, run_to_select= ''):
+    runs = get_runs()
+    window['-RUN LIST-'].update(values=runs)
+
+    if run_to_select == '':
+        return run_info
+
+    index = 0
+    for i in range(len(runs)):
+        if runs[i] == run_to_select:
+            index = i
+
+    window['-RUN LIST-'].update(set_to_index=index)
+    run_info = load_run(window, run_to_select)
+    return run_info
+
+def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
+    layout = setup_layout()
+    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
+
+    if window != None:
+        window.close()
+
+    return new_window
+
+def run_main_window(window, font = ('FreeSans', 18)):
     run_info = {}
     while True:
         event, values = window.read()
@@ -194,16 +224,7 @@ def run_main_window(window):
             if name == None:
                 continue
 
-            runs = get_runs()
-            window['-RUN LIST-'].update(values=runs)
-
-            index = 0
-            for i in range(len(runs)):
-                if runs[i] == name:
-                    index = i
-
-            window['-RUN LIST-'].update(set_to_index=index)
-            run_info = load_run(window, name)
+            run_info = update_run_list(window, run_info, run_to_select=name)
 
         elif event == '-VIEW SAMPLES-':
             samples_headers = run_info['samples_headers']
@@ -215,6 +236,15 @@ def run_main_window(window):
             run_info = get_run_info(values, run_info)
             name = run_info['name']
             save_run(run_info, name=name, overwrite=True)
+            run_info = update_run_list(window, run_info, run_to_select=name)
+
+        elif event == '-DELETE RUN-':
+            user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
+            if user_confirm != 'OK':
+                continue
+            delete_run(run_info['name'], window)
+            run_info = {}
+            run_info = update_run_list(window, run_info)
 
 
     window.close()
