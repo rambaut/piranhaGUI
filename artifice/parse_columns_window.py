@@ -51,7 +51,10 @@ def setup_parse_layout(samples,theme='Dark', samples_headers = None):
         sg.Button(button_text='apply changes to headers',key='-CHANGE HEADERS-'),
         ],
         [
-        sg.Table(values=samples_list, headings=samples_headers, visible_column_map=visible_column_map, key='-TABLE-', expand_x=True,expand_y=True,num_rows=30,), #select_mode='extended'),
+        sg.Table(
+        values=samples_list, headings=samples_headers, visible_column_map=visible_column_map, key='-TABLE-',
+        expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,
+        ),
         ],
         [
         sg.Button(button_text='Save',key='-SAVE-'),

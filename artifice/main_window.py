@@ -6,6 +6,7 @@ import selection_window
 import parse_columns_window
 import csv
 from webbrowser import open_new_tab
+import start_rampart
 
 
 RAMPART_PORT_1 = 1100
@@ -22,7 +23,7 @@ def setup_layout(theme='Dark'):
         ],
         [
             sg.Listbox(
-                values=runs, enable_events = True, size=(40,50), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
+                values=runs, enable_events = True, size=(40,20), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
             )
         ]
     ]
@@ -49,12 +50,13 @@ def setup_layout(theme='Dark'):
         [
         sg.Text('MinKnow run',size=(12,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
-        sg.FileBrowse(),
+        sg.FolderBrowse(),
         ],
         [
         sg.Button(button_text='Save',key='-SAVE RUN-'),
         sg.Button(button_text='Delete',key='-DELETE RUN-'),
         ],
+
     ]
 
     rampart_tab = [
@@ -68,16 +70,21 @@ def setup_layout(theme='Dark'):
     tabs_column = [
         [
         sg.TabGroup([[sg.Tab('Info',run_info_tab),sg.Tab('Rampart',rampart_tab)]])
-        ]
+        ],
+        [
+        sg.Button(button_text='Hide Runs',key='-SHOW/HIDE RUNLIST-'),
+        ],
     ]
 
     layout = [
-        [
-        sg.Pane(
-        [sg.Column(select_run_column),sg.Column(tabs_column)],
-        show_handle=True, orientation='horizontal'
-        ),
-        ]
+        #[
+        #sg.Pane(
+        #[sg.pin(sg.Column(select_run_column, key='-SELECT RUN COLUMN-')),sg.Column(tabs_column, expand_x=True,key='-TAB COLUMN-')],
+        #show_handle=True, orientation='horizontal'
+        #),
+        #]
+        [sg.pin(sg.Column(select_run_column, key='-SELECT RUN COLUMN-')),sg.Column(tabs_column, expand_y=True, expand_x=True,key='-TAB COLUMN-')],
+
     ]
 
     return layout
@@ -216,13 +223,13 @@ def update_run_list(window, run_info, run_to_select= ''):
 def prepare_analysis(run_info):
     json_dict = {}
 
-    if not len(run_info['name']) > 0:
-        raise Exception('Invalid Name')
-
-    if os.path.isfile(run_info['samples']) == False:
+    if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception('Invalid samples file')
 
-    if os.path.isdir(run_info['MinKnow']) == False:
+    if 'name' not in run_info or not len(run_info['name']) > 0:
+        raise Exception('Invalid Name')
+
+    if 'MinKnow' not in run_info or os.path.isdir(run_info['MinKnow']) == False:
         raise Exception('Invalid MinKnow')
 
     try:
@@ -234,7 +241,7 @@ def prepare_analysis(run_info):
     except:
         pass
 
-    json_dict['basecalledPath'] = run_info['MinKnow']
+    json_dict['basecalledPath'] = str(run_info['MinKnow'])+'/basecalled'
     json_dict['title'] = str(run_info['name'])
     with open('resources/template_config/run_configuration.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(json_dict))
@@ -245,9 +252,9 @@ def prepare_analysis(run_info):
         for row in barcodes_list:
             csvwriter.writerow(row)
 
-def run_analysis(firstPort = 1100, secondPort = 1200):
-    rampart_dir = os.getcwd()+ '/rampart'
-    start_rampart.start_rampart(rampart_dir, firstPort = firstPort, secondPort = secondPort)
+def run_analysis(path, firstPort = 1100, secondPort = 1200):
+    basecalled_dir = path + '/basecalling'
+    start_rampart.start_rampart(basecalled_dir, firstPort = firstPort, secondPort = secondPort)
 
 
 def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
@@ -260,23 +267,27 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
     return new_window
 
 def run_main_window(window, font = ('FreeSans', 18)):
+    runlist_visible = True
     run_info = {}
+    filename = ''
+
     while True:
         event, values = window.read()
         if event == 'Exit' or event == sg.WIN_CLOSED:
+            start_rampart.stop_rampart()
             break
 
         elif event == '-RUN LIST-':
-            name = values['-RUN LIST-'][0]
-            run_info = load_run(window, name)
+            filename = values['-RUN LIST-'][0]
+            run_info = load_run(window, filename)
 
         elif event == '-NEW RUN-':
             try:
-                name = create_run()
-                if name == None:
+                filename = create_run()
+                if filename == None:
                     continue
 
-                run_info = update_run_list(window, run_info, run_to_select=name)
+                run_info = update_run_list(window, run_info, run_to_select=filename)
             except Exception as err:
                 sg.popup_error(err)
 
@@ -292,10 +303,9 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 samples_headers = parse_columns_window.run_parse_window(parse_window, samples, samples_headers)
                 if samples_headers != None:
                     run_info['samples_headers'] = samples_headers
-                name = save_run(run_info, name=name, overwrite=True)
+                filename = save_run(run_info, name=filename, overwrite=True)
             except Exception as err:
                 sg.popup_error(err)
-
 
         elif event == '-SAVE RUN-':
             run_info = get_run_info(values, run_info)
@@ -317,30 +327,34 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
                 if user_confirm != 'OK':
                     continue
-                delete_run(run_info['name'], window)
+                filename = values['-RUN LIST-'][0]
+                delete_run(filename, window)
                 run_info = {}
                 run_info = update_run_list(window, run_info)
             except Exception as err:
                 sg.popup_error(err)
 
-        elif event == '-SAVE RUN-':
-            try:
-                prepare_analysis(run_info)
-                run_analysis(firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
-            except Exception as err:
-                sg.popup_error(err)
+        elif event == '-SHOW/HIDE RUNLIST-':
+            if runlist_visible:
+                window['-SELECT RUN COLUMN-'].update(visible=False)
+                window['-SHOW/HIDE RUNLIST-'].update(text='Show Runs')
+                #window['-TAB COLUMN-'].expand(expand_x=True)
+                runlist_visible = False
+            else:
+                window['-SELECT RUN COLUMN-'].update(visible=True)
+                window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
+                runlist_visible = True
 
         elif event == '-START RAMPART-':
             try:
-                prepare_analysis(run_info)
-                run_analysis(firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
+                #prepare_analysis(run_info)
+                run_analysis(path = run_info['MinKnow'],firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
 
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(RAMPART_PORT_1)
             open_new_tab(address)
-
 
     window.close()
 
