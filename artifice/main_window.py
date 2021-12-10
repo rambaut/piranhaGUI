@@ -1,11 +1,12 @@
 import PySimpleGUI as sg
-from os import listdir, remove
+from os import listdir, mkdir, remove
 import os.path
 import json
 import selection_window
 import parse_columns_window
 import csv
 from webbrowser import open_new_tab
+from shutil import rmtree
 import start_rampart
 
 
@@ -90,38 +91,43 @@ def setup_layout(theme='Dark'):
     return layout
 
 def get_runs(dir = './runs'):
-    runs = listdir(dir)
-    for i in range(len(runs)):
-        runs[i] = runs[i][:-5]
+    paths = listdir(dir)
+    runs = []
+    for path in paths:
+        if os.path.isdir('runs/'+path):
+            runs.append(path)
 
     return runs
 
-def save_run(run_info, name = None, overwrite = False, iter = 0):
+def save_run(run_info, title = None, overwrite = False, iter = 0):
     samples = run_info['samples']
-    if name == None or name == '':
-        name = samples.split('/')[-1].split('.')[0]
+    if title == None or title == '':
+        title = samples.split('/')[-1].split('.')[0]
 
-    original_name = name
+    original_title = title
 
     if iter > 0:
-        name = name+'('+str(iter)+')'
+        title = title+'('+str(iter)+')'
 
-    filepath = './runs/'+name+'.json'
+    filepath = './runs/'+title+'/run_configuration.json'
 
     if overwrite == False:
         if os.path.isfile(filepath):
-            return save_run(run_info,name=original_name,overwrite=overwrite,iter=iter+1)
+            return save_run(run_info,title=original_title,overwrite=overwrite,iter=iter+1)
 
     if os.path.isfile(samples) == False or samples[-4:] != '.csv':
         raise Exception('No valid samples file provided')
 
-    run_info['name'] = name
+    if not os.path.isdir('./runs/'+title):
+        mkdir('./runs/'+title)
 
+    run_info['title'] = title
+    print(title)
     with open(filepath, 'w') as file:
         run_json = json.dumps(run_info)
         file.write(run_json)
 
-    return name
+    return title
 
 
 def create_run():
@@ -131,10 +137,10 @@ def create_run():
     if selections == None:
         return None
 
-    samples, MinKnow = selections
+    samples, bascalledPath = selections
 
-    window, samples_headers = parse_columns_window.create_parse_window(samples)
-    samples_headers = parse_columns_window.run_parse_window(window, samples, samples_headers)
+    window,= parse_columns_window.create_parse_window(samples)
+    samples_column, barcodes_column = parse_columns_window.run_parse_window(window, samples)
 
     if samples_headers == None:
         return None
@@ -143,15 +149,17 @@ def create_run():
 
     run_info['samples'] = samples
     run_info['samples_headers'] = samples_headers
-    run_info['MinKnow'] = MinKnow
+    run_info['bascalledPath'] = bascalledPath
+    run_info['barcodes_column'] = barcodes_column
+    run_info['samples_column'] = samples_column
 
-    name = save_run(run_info)
+    title = save_run(run_info)
 
-    return name
+    return title
 
+def load_run(window, title):
+    filepath = './runs/'+title+'/run_configuration.json'
 
-def load_run(window, name):
-    filepath = './runs/'+name+'.json'
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
         try:
@@ -160,7 +168,7 @@ def load_run(window, name):
             window['-DATE-'].update('')
 
         try:
-            window['-RUN NAME-'].update(run_info['name'])
+            window['-RUN NAME-'].update(run_info['title'])
         except:
             window['-RUN NAME-'].update('')
 
@@ -175,7 +183,7 @@ def load_run(window, name):
             window['-SAMPLES-'].update('')
 
         try:
-            window['-MINKNOW-'].update(run_info['MinKnow'])
+            window['-MINKNOW-'].update(run_info['basecalledPath'])
         except:
             window['-MINKNOW-'].update('')
 
@@ -184,18 +192,18 @@ def load_run(window, name):
 def get_run_info(values, run_info):
 
     run_info['date'] = values['-DATE-']
-    run_info['name'] = values['-RUN NAME-']
+    run_info['title'] = values['-RUN NAME-']
     run_info['description'] = values['-RUN DESCRIPTION-']
     run_info['samples'] = values['-SAMPLES-']
-    run_info['MinKnow'] = values['-MINKNOW-']
+    run_info['bascalledPath'] = values['-MINKNOW-']
 
     return run_info
 
-def delete_run(name, window, clear_selected = True):
-    filepath = './runs/'+name+'.json'
+def delete_run(title, window, clear_selected = True):
+    filepath = './runs/'+title
 
-    if os.path.isfile(filepath):
-        remove(filepath)
+    if os.path.isdir(filepath):
+        rmtree(filepath)
 
     if clear_selected:
         window['-DATE-'].update('')
@@ -226,10 +234,10 @@ def prepare_analysis(run_info):
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception('Invalid samples file')
 
-    if 'name' not in run_info or not len(run_info['name']) > 0:
+    if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name')
 
-    if 'MinKnow' not in run_info or os.path.isdir(run_info['MinKnow']) == False:
+    if 'bascalledPath' not in run_info or os.path.isdir(run_info['bascalledPath']) == False:
         raise Exception('Invalid MinKnow')
 
     try:
@@ -241,8 +249,8 @@ def prepare_analysis(run_info):
     except:
         pass
 
-    json_dict['basecalledPath'] = str(run_info['MinKnow'])+'/basecalled'
-    json_dict['title'] = str(run_info['name'])
+    json_dict['basecalledPath'] = str(run_info['bascalledPath'])+'/basecalled'
+    json_dict['title'] = str(run_info['title'])
     with open('resources/template_config/run_configuration.json', 'w') as jsonfile:
         jsonfile.write(json.dumps(json_dict))
 
@@ -299,11 +307,11 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
             try:
                 samples = values['-SAMPLES-']
-                parse_window, samples_headers = parse_columns_window.create_parse_window(samples, samples_headers=samples_headers)
+                parse_window, samples_headers = parse_columns_window.create_parse_window(samples, samples_headers=samples_header)
                 samples_headers = parse_columns_window.run_parse_window(parse_window, samples, samples_headers)
                 if samples_headers != None:
                     run_info['samples_headers'] = samples_headers
-                filename = save_run(run_info, name=filename, overwrite=True)
+                filename = save_run(run_info, title=filename, overwrite=True)
             except Exception as err:
                 sg.popup_error(err)
 
@@ -315,10 +323,10 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 else:
                     samples_headers = None
 
-                name = run_info['name']
+                title = run_info['title']
                 run_info['samples_headers'] = parse_columns_window.fit_sample_headers(run_info['samples'], samples_headers)
-                name = save_run(run_info, name=name, overwrite=True)
-                run_info = update_run_list(window, run_info, run_to_select=name)
+                title = save_run(run_info, title=title, overwrite=True)
+                run_info = update_run_list(window, run_info, run_to_select=title)
             except Exception as err:
                 sg.popup_error(err)
 
@@ -348,7 +356,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
         elif event == '-START RAMPART-':
             try:
                 #prepare_analysis(run_info)
-                run_analysis(path = run_info['MinKnow'],firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
+                run_analysis(path = run_info['bascalledPath'],firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
 
