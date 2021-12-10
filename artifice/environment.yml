@@ -1,0 +1,8 @@
+name: artifice
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pip=21.2.4
+  - pip:
+    - PySimpleGUI==4.55.1
