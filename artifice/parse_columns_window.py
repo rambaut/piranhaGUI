@@ -9,25 +9,7 @@ def csv_to_list(filepath):
 
     return csv_list
 
-#makes sure given samples_headers fit given samples
-def fit_sample_headers(samples, samples_headers):
-    samples_list = csv_to_list(samples)
-
-    if samples_headers == None or samples_headers == []:
-        samples_headers = []
-        for i in range(len(samples_list[0])):
-            samples_headers.append('unassigned')
-        samples_headers[0:2] = ['sample','barcode']
-
-    else:
-        while len(samples_headers) < len(samples_list[0]):
-            samples_headers.append('unassigned')
-
-    del samples_headers[len(samples_list):]
-
-    return samples_headers
-
-def setup_parse_layout(samples,theme='Dark'):
+def setup_parse_layout(samples,theme='Dark', samples_column = 1, barcodes_column = 2 ):
     sg.theme(theme)
 
     samples_list = csv_to_list(samples)
@@ -36,26 +18,22 @@ def setup_parse_layout(samples,theme='Dark'):
     for i in range(len(samples_list[0])):
         visible_column_map.append(True)
 
-    samples_headers = []
+    column_headers = []
     for i in range(1,len(samples_list[0])+1):
-        samples_headers.append(str(i))
-
-    samples_headers = []
-    for i in range(1,len(samples_list[0])+1):
-        samples_headers.append(str(i))
+        column_headers.append(str(i))
 
     layout = [
         [
         sg.Text('Choose Samples column:',size=(25,1)),
-        sg.OptionMenu(samples_headers,default_value='1',key='-SAMPLES COLUMN-'),
+        sg.OptionMenu(column_headers,default_value=samples_column,key='-SAMPLES COLUMN-'),
         ],
         [
         sg.Text('Choose Barcodes column:',size=(25,1)),
-        sg.OptionMenu(samples_headers,default_value='2',key='-BARCODES COLUMN-'),
+        sg.OptionMenu(column_headers,default_value=barcodes_column,key='-BARCODES COLUMN-'),
         ],
         [
         sg.Table(
-        values=samples_list, headings=samples_headers, visible_column_map=visible_column_map, key='-TABLE-',
+        values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
         expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,
         ),
         ],
@@ -66,9 +44,9 @@ def setup_parse_layout(samples,theme='Dark'):
 
     return layout
 
-def create_parse_window(samples, theme = 'Dark', font = ('FreeSans', 18), window = None, samples_headers = None):
+def create_parse_window(samples, theme = 'Dark', font = ('FreeSans', 18), window = None, samples_column = 1, barcodes_column = 2):
 
-    layout = setup_parse_layout(samples)
+    layout = setup_parse_layout(samples, samples_column=samples_column, barcodes_column=barcodes_column)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
 
     if window != None:
@@ -86,11 +64,12 @@ def run_parse_window(window, samples):
             try:
                 if values['-BARCODES COLUMN-'] == values['-SAMPLES COLUMN-']:
                     raise Exception('barcodes and samples must be 2 seperate columns')
-                print(values['-BARCODES COLUMN-'])
+
                 window.close()
+                return values['-SAMPLES COLUMN-'], values['-BARCODES COLUMN-']
             except Exception as err:
                 sg.popup_error(err)
-            return values['-SAMPLES COLUMN-'], values['-BARCODES COLUMN-']
+
 
     window.close()
     return None

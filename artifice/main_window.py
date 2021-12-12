@@ -46,7 +46,7 @@ def setup_layout(theme='Dark'):
         sg.Text('Samples',size=(12,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
         sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
-        sg.Button(button_text='view',key='-VIEW SAMPLES-'),
+        sg.Button(button_text='View',key='-VIEW SAMPLES-'),
         ],
         [
         sg.Text('MinKnow run',size=(12,1)),
@@ -122,7 +122,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
         mkdir('./runs/'+title)
 
     run_info['title'] = title
-    print(title)
+
     with open(filepath, 'w') as file:
         run_json = json.dumps(run_info)
         file.write(run_json)
@@ -139,19 +139,20 @@ def create_run():
 
     samples, bascalledPath = selections
 
-    window,= parse_columns_window.create_parse_window(samples)
-    samples_column, barcodes_column = parse_columns_window.run_parse_window(window, samples)
+    window = parse_columns_window.create_parse_window(samples)
+    samples_barcodes_indices = parse_columns_window.run_parse_window(window, samples)
 
-    if samples_headers == None:
+    if samples_barcodes_indices == None:
         return None
+
+    samples_column, barcodes_column = samples_barcodes_indices
 
     run_info = {}
 
     run_info['samples'] = samples
-    run_info['samples_headers'] = samples_headers
     run_info['bascalledPath'] = bascalledPath
     run_info['barcodes_column'] = barcodes_column
-    run_info['samples_column'] = samples_column
+    run_info['samples_column']  = samples_column
 
     title = save_run(run_info)
 
@@ -277,7 +278,7 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
 def run_main_window(window, font = ('FreeSans', 18)):
     runlist_visible = True
     run_info = {}
-    filename = ''
+    selected_run_title = ''
 
     while True:
         event, values = window.read()
@@ -286,45 +287,49 @@ def run_main_window(window, font = ('FreeSans', 18)):
             break
 
         elif event == '-RUN LIST-':
-            filename = values['-RUN LIST-'][0]
-            run_info = load_run(window, filename)
+            selected_run_title = values['-RUN LIST-'][0]
+            run_info = load_run(window, selected_run_title)
 
         elif event == '-NEW RUN-':
             try:
-                filename = create_run()
-                if filename == None:
+                selected_run_title = create_run()
+                if selected_run_title == None:
                     continue
 
-                run_info = update_run_list(window, run_info, run_to_select=filename)
+                run_info = update_run_list(window, run_info, run_to_select=selected_run_title)
             except Exception as err:
                 sg.popup_error(err)
 
         elif event == '-VIEW SAMPLES-':
-            if 'samples_headers' in run_info:
-                samples_headers = run_info['samples_headers']
+            if 'samples_column' in run_info:
+                samples_column = run_info['samples_column']
             else:
-                samples_headers = None
+                samples_column = None
+
+            if 'barcodes_column' in run_info:
+                barcodes_column = run_info['barcodes_column']
+            else:
+                barcodes_column = None
 
             try:
                 samples = values['-SAMPLES-']
-                parse_window, samples_headers = parse_columns_window.create_parse_window(samples, samples_headers=samples_header)
-                samples_headers = parse_columns_window.run_parse_window(parse_window, samples, samples_headers)
-                if samples_headers != None:
-                    run_info['samples_headers'] = samples_headers
-                filename = save_run(run_info, title=filename, overwrite=True)
+                parse_window = parse_columns_window.create_parse_window(samples, samples_column=samples_column,barcodes_column=barcodes_column)
+                samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window, samples)
+
+                if samples_barcodes_indices != None:
+                    samples_column, barcodes_column = samples_barcodes_indices
+                    run_info['samples'] = samples
+                    run_info['barcodes_column'] = barcodes_column
+                    run_info['samples_column']  = samples_column
+
+                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
                 sg.popup_error(err)
 
         elif event == '-SAVE RUN-':
             run_info = get_run_info(values, run_info)
             try:
-                if 'samples_headers' in run_info:
-                    samples_headers = run_info['samples_headers']
-                else:
-                    samples_headers = None
-
                 title = run_info['title']
-                run_info['samples_headers'] = parse_columns_window.fit_sample_headers(run_info['samples'], samples_headers)
                 title = save_run(run_info, title=title, overwrite=True)
                 run_info = update_run_list(window, run_info, run_to_select=title)
             except Exception as err:
@@ -335,8 +340,8 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
                 if user_confirm != 'OK':
                     continue
-                filename = values['-RUN LIST-'][0]
-                delete_run(filename, window)
+                selected_run_title = values['-RUN LIST-'][0]
+                delete_run(selected_run_title, window)
                 run_info = {}
                 run_info = update_run_list(window, run_info)
             except Exception as err:
