@@ -137,7 +137,7 @@ def create_run():
     if selections == None:
         return None
 
-    samples, bascalledPath = selections
+    samples, basecalledPath = selections
 
     window = parse_columns_window.create_parse_window(samples)
     samples_barcodes_indices = parse_columns_window.run_parse_window(window, samples)
@@ -150,7 +150,7 @@ def create_run():
     run_info = {}
 
     run_info['samples'] = samples
-    run_info['bascalledPath'] = bascalledPath
+    run_info['basecalledPath'] = basecalledPath
     run_info['barcodes_column'] = barcodes_column
     run_info['samples_column']  = samples_column
 
@@ -196,7 +196,7 @@ def get_run_info(values, run_info):
     run_info['title'] = values['-RUN NAME-']
     run_info['description'] = values['-RUN DESCRIPTION-']
     run_info['samples'] = values['-SAMPLES-']
-    run_info['bascalledPath'] = values['-MINKNOW-']
+    run_info['basecalledPath'] = values['-MINKNOW-']
 
     return run_info
 
@@ -238,25 +238,27 @@ def prepare_analysis(run_info):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name')
 
-    if 'bascalledPath' not in run_info or os.path.isdir(run_info['bascalledPath']) == False:
+    if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
         raise Exception('Invalid MinKnow')
 
-    try:
-        os.makedirs('resources/template_config')
-    except:
-        pass
-    try:
-        os.mkdir('rampart')
-    except:
-        pass
 
-    json_dict['basecalledPath'] = str(run_info['bascalledPath'])+'/basecalled'
-    json_dict['title'] = str(run_info['title'])
-    with open('resources/template_config/run_configuration.json', 'w') as jsonfile:
-        jsonfile.write(json.dumps(json_dict))
+    if 'samples_column' in run_info:
+        samples_column = run_info['samples_column']
+    else:
+        samples_column = 1
 
-    barcodes_list = parse_columns_window.csv_to_list(run_info['barcodes'])
-    with open('resources/template_config/barcodes.csv', 'w', newline='') as csvfile:
+    if 'barcodes_column' in run_info:
+        barcodes_column = run_info['barcodes_column']
+    else:
+        barcodes_column = 2
+
+    samples_list = parse_columns_window.csv_to_list(run_info['samples'])
+    barcodes_list = []
+
+    for row in samples_list:
+        barcodes_list.append([row[int(samples_column)-1], row[int(barcodes_column)-1]])
+
+    with open('runs/'+run_info['title']+'/barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
@@ -264,6 +266,7 @@ def prepare_analysis(run_info):
 def run_analysis(path, firstPort = 1100, secondPort = 1200):
     basecalled_dir = path + '/basecalling'
     start_rampart.start_rampart(basecalled_dir, firstPort = firstPort, secondPort = secondPort)
+
 
 
 def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
@@ -351,7 +354,6 @@ def run_main_window(window, font = ('FreeSans', 18)):
             if runlist_visible:
                 window['-SELECT RUN COLUMN-'].update(visible=False)
                 window['-SHOW/HIDE RUNLIST-'].update(text='Show Runs')
-                #window['-TAB COLUMN-'].expand(expand_x=True)
                 runlist_visible = False
             else:
                 window['-SELECT RUN COLUMN-'].update(visible=True)
@@ -360,8 +362,8 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
         elif event == '-START RAMPART-':
             try:
-                #prepare_analysis(run_info)
-                run_analysis(path = run_info['bascalledPath'],firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
+                prepare_analysis(run_info)
+                run_analysis(path = run_info['basecalledPath'],firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
 

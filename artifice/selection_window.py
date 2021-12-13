@@ -41,6 +41,9 @@ def run_select_window(window):
             try:
                 if os.path.isfile(values['-SAMPLES-']) == False:
                     raise Exception('Invalid samples file')
+
+                if os.path.isdir(values['-MINKNOW-']) == False and values['-MINKNOW-'] != '':
+                    raise Exception('Invalid MinKnowS')
                 window.close()
                 return values['-SAMPLES-'], values['-MINKNOW-']
             except Exception as err:
