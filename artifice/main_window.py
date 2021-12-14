@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from os import listdir, mkdir, remove
+from os import listdir, mkdir, remove, getcwd
 import os.path
 import json
 import selection_window
@@ -78,14 +78,10 @@ def setup_layout(theme='Dark'):
     ]
 
     layout = [
-        #[
-        #sg.Pane(
-        #[sg.pin(sg.Column(select_run_column, key='-SELECT RUN COLUMN-')),sg.Column(tabs_column, expand_x=True,key='-TAB COLUMN-')],
-        #show_handle=True, orientation='horizontal'
-        #),
-        #]
-        [sg.pin(sg.Column(select_run_column, key='-SELECT RUN COLUMN-')),sg.Column(tabs_column, expand_y=True, expand_x=True,key='-TAB COLUMN-')],
-
+        [
+        sg.pin(sg.Column(select_run_column, key='-SELECT RUN COLUMN-')),
+        sg.Column(tabs_column, expand_y=True, expand_x=True,key='-TAB COLUMN-')
+        ],
     ]
 
     return layout
@@ -264,7 +260,8 @@ def prepare_analysis(run_info):
             csvwriter.writerow(row)
 
 def run_analysis(path, firstPort = 1100, secondPort = 1200):
-    basecalled_dir = path + '/basecalling'
+    print(path)
+    basecalled_dir = path #+ '/basecalling'
     start_rampart.start_rampart(basecalled_dir, firstPort = firstPort, secondPort = secondPort)
 
 
@@ -363,7 +360,10 @@ def run_main_window(window, font = ('FreeSans', 18)):
         elif event == '-START RAMPART-':
             try:
                 prepare_analysis(run_info)
-                run_analysis(path = run_info['basecalledPath'],firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
+                #path = getcwd()+'/runs/'+run_info['title']
+                #print(path)
+                path = run_info['basecalledPath']
+                run_analysis(path=path,firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
 

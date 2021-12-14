@@ -44,6 +44,20 @@ def setup_parse_layout(samples,theme='Dark', samples_column = 1, barcodes_column
 
     return layout
 
+def check_for_duplicate_barcodes(samples, barcodes_column):
+    samples_list = csv_to_list(samples)
+    barcodes = []
+    for row in samples_list:
+        barcodes.append(row[int(barcodes_column)-1])
+
+    seen_barcodes = set()
+    for barcode in barcodes:
+        if barcode in seen_barcodes:
+            return True
+        seen_barcodes.add(barcode)
+
+    return False
+
 def create_parse_window(samples, theme = 'Dark', font = ('FreeSans', 18), window = None, samples_column = 1, barcodes_column = 2):
 
     layout = setup_parse_layout(samples, samples_column=samples_column, barcodes_column=barcodes_column)
@@ -64,6 +78,9 @@ def run_parse_window(window, samples):
             try:
                 if values['-BARCODES COLUMN-'] == values['-SAMPLES COLUMN-']:
                     raise Exception('barcodes and samples must be 2 seperate columns')
+
+                if check_for_duplicate_barcodes(samples, values['-BARCODES COLUMN-']):
+                    raise Exception('specified barcodes column contains duplicates')
 
                 window.close()
                 return values['-SAMPLES COLUMN-'], values['-BARCODES COLUMN-']
