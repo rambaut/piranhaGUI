@@ -3,7 +3,8 @@ import os.path
 
 #Window for user to select samples csv and possibling MinKnow
 
-def setup_selection_layout():
+def setup_selection_layout(theme = 'Dark'):
+    sg.theme(theme)
 
     layout = [
         [
@@ -17,6 +18,9 @@ def setup_selection_layout():
         sg.FolderBrowse(),
         ],
         [
+        sg.Checkbox('Samples file contains headers', default=True, key='-HEADERS CHECKBOX-')
+        ],
+        [
         sg.Button(button_text='Next',key='-NEXT-'),
         ],
     ]
@@ -24,7 +28,7 @@ def setup_selection_layout():
     return layout
 
 def create_select_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
-    layout = setup_selection_layout()
+    layout = setup_selection_layout(theme=theme)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
 
     if window != None:
@@ -39,13 +43,17 @@ def run_select_window(window):
             break
         elif event == '-NEXT-':
             try:
-                if os.path.isfile(values['-SAMPLES-']) == False:
+                samples = values['-SAMPLES-'].strip()
+                MinKnow = values['-MINKNOW-'].strip()
+
+                if os.path.isfile(samples) == False:
                     raise Exception('Invalid samples file')
 
-                if os.path.isdir(values['-MINKNOW-']) == False and values['-MINKNOW-'] != '':
-                    raise Exception('Invalid MinKnowS')
+                if os.path.isdir(MinKnow) == False and MinKnow != '':
+                    raise Exception('Invalid MinKnows')
+
                 window.close()
-                return values['-SAMPLES-'], values['-MINKNOW-']
+                return samples, MinKnow, values['-HEADERS CHECKBOX-']
             except Exception as err:
                 sg.popup_error(err)
 

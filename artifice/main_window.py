@@ -2,11 +2,12 @@ import PySimpleGUI as sg
 from os import listdir, mkdir, remove, getcwd
 import os.path
 import json
-import selection_window
-import parse_columns_window
 import csv
 from webbrowser import open_new_tab
 from shutil import rmtree
+
+import selection_window
+import parse_columns_window
 import start_rampart
 
 
@@ -117,6 +118,9 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
     if not os.path.isdir('./runs/'+title):
         mkdir('./runs/'+title)
 
+    for key, value in run_info.items():
+        run_info[key] = str(value).strip()
+
     run_info['title'] = title
 
     with open(filepath, 'w') as file:
@@ -133,10 +137,10 @@ def create_run():
     if selections == None:
         return None
 
-    samples, basecalledPath = selections
+    samples, basecalledPath, has_headers = selections
 
-    window = parse_columns_window.create_parse_window(samples)
-    samples_barcodes_indices = parse_columns_window.run_parse_window(window, samples)
+    window, column_headers = parse_columns_window.create_parse_window(samples, has_headers=has_headers)
+    samples_barcodes_indices = parse_columns_window.run_parse_window(window, samples, column_headers)
 
     if samples_barcodes_indices == None:
         return None
@@ -145,10 +149,10 @@ def create_run():
 
     run_info = {}
 
-    run_info['samples'] = samples
-    run_info['basecalledPath'] = basecalledPath
-    run_info['barcodes_column'] = barcodes_column
-    run_info['samples_column']  = samples_column
+    run_info['samples'] = samples.strip()
+    run_info['basecalledPath'] = basecalledPath.strip()
+    run_info['barcodes_column'] = str(barcodes_column).strip()
+    run_info['samples_column']  = str(samples_column).strip()
 
     title = save_run(run_info)
 
@@ -188,11 +192,11 @@ def load_run(window, title):
 
 def get_run_info(values, run_info):
 
-    run_info['date'] = values['-DATE-']
-    run_info['title'] = values['-RUN NAME-']
-    run_info['description'] = values['-RUN DESCRIPTION-']
-    run_info['samples'] = values['-SAMPLES-']
-    run_info['basecalledPath'] = values['-MINKNOW-']
+    run_info['date'] = values['-DATE-'].strip()
+    run_info['title'] = values['-RUN NAME-'].strip()
+    run_info['description'] = values['-RUN DESCRIPTION-'].strip()
+    run_info['samples'] = values['-SAMPLES-'].strip()
+    run_info['basecalledPath'] = values['-MINKNOW-'].strip()
 
     return run_info
 
@@ -260,7 +264,7 @@ def prepare_analysis(run_info):
             csvwriter.writerow(row)
 
 def run_analysis(path, firstPort = 1100, secondPort = 1200):
-    print(path)
+    #print(path)
     basecalled_dir = path #+ '/basecalling'
     start_rampart.start_rampart(basecalled_dir, firstPort = firstPort, secondPort = secondPort)
 
@@ -313,7 +317,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
             try:
                 samples = values['-SAMPLES-']
-                parse_window = parse_columns_window.create_parse_window(samples, samples_column=samples_column,barcodes_column=barcodes_column)
+                parse_window = parse_columns_window.create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
                 samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window, samples)
 
                 if samples_barcodes_indices != None:
@@ -363,7 +367,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 #path = getcwd()+'/runs/'+run_info['title']
                 #print(path)
                 path = run_info['basecalledPath']
-                run_analysis(path=path,firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
+                run_analysis(path=path, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
 
