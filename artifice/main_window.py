@@ -87,6 +87,7 @@ def setup_layout(theme='Dark'):
 
     return layout
 
+#retrieve the paths of directories in the run folder
 def get_runs(dir = './runs'):
     paths = listdir(dir)
     runs = []
@@ -96,6 +97,7 @@ def get_runs(dir = './runs'):
 
     return runs
 
+#creates a directory with
 def save_run(run_info, title = None, overwrite = False, iter = 0):
     samples = run_info['samples']
     if title == None or title == '':
@@ -129,7 +131,6 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
 
     return title
 
-
 def create_run():
     window = selection_window.create_select_window()
     selections = selection_window.run_select_window(window)
@@ -153,8 +154,10 @@ def create_run():
     run_info['basecalledPath'] = basecalledPath.strip()
     run_info['barcodes_column'] = str(barcodes_column).strip()
     run_info['samples_column']  = str(samples_column).strip()
+    run_info['has_headers'] = has_headers
 
     title = save_run(run_info)
+    save_barcodes(run_info)
 
     return title
 
@@ -190,7 +193,7 @@ def load_run(window, title):
 
     return run_info
 
-def get_run_info(values, run_info):
+def get_run_info(values):
 
     run_info['date'] = values['-DATE-'].strip()
     run_info['title'] = values['-RUN NAME-'].strip()
@@ -229,46 +232,39 @@ def update_run_list(window, run_info, run_to_select= ''):
     run_info = load_run(window, run_to_select)
     return run_info
 
-def prepare_analysis(run_info):
-    json_dict = {}
-
-    if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
-        raise Exception('Invalid samples file')
-
-    if 'title' not in run_info or not len(run_info['title']) > 0:
-        raise Exception('Invalid Name')
-
-    if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
-        raise Exception('Invalid MinKnow')
-
-
+def save_barcodes(run_info):
     if 'samples_column' in run_info:
         samples_column = run_info['samples_column']
     else:
-        samples_column = 1
+        samples_column = 0
 
     if 'barcodes_column' in run_info:
         barcodes_column = run_info['barcodes_column']
     else:
-        barcodes_column = 2
+        barcodes_column = 1
 
-    samples_list = parse_columns_window.csv_to_list(run_info['samples'])
+    samples_list = parse_columns_window.samples_to_list(run_info['samples'], has_headers=run_info['has_headers'])
     barcodes_list = []
 
     for row in samples_list:
-        barcodes_list.append([row[int(samples_column)-1], row[int(barcodes_column)-1]])
+        barcodes_list.append([row[int(samples_column)], row[int(barcodes_column)]])
 
     with open('runs/'+run_info['title']+'/barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
 
-def run_analysis(path, firstPort = 1100, secondPort = 1200):
-    #print(path)
+def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
+    if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
+        raise Exception('Invalid samples file')
+    if 'title' not in run_info or not len(run_info['title']) > 0:
+        raise Exception('Invalid Name')
+    if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
+        raise Exception('Invalid MinKnow')
+
+    path = run_info['basecalledPath']
     basecalled_dir = path #+ '/basecalling'
     start_rampart.start_rampart(basecalled_dir, firstPort = firstPort, secondPort = secondPort)
-
-
 
 def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
     layout = setup_layout()
@@ -278,6 +274,14 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
         window.close()
 
     return new_window
+
+def save_changes(values):
+    run_info = get_run_info(values, run_info)
+    title = run_info['title']
+    title = save_run(run_info, title=title, overwrite=True)
+    run_info = update_run_list(window, run_info, run_to_select=title)
+
+    return run_info
 
 def run_main_window(window, font = ('FreeSans', 18)):
     runlist_visible = True
@@ -331,11 +335,8 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 sg.popup_error(err)
 
         elif event == '-SAVE RUN-':
-            run_info = get_run_info(values, run_info)
             try:
-                title = run_info['title']
-                title = save_run(run_info, title=title, overwrite=True)
-                run_info = update_run_list(window, run_info, run_to_select=title)
+                run_info = save_changes(values)
             except Exception as err:
                 sg.popup_error(err)
 
@@ -363,11 +364,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
         elif event == '-START RAMPART-':
             try:
-                prepare_analysis(run_info)
-                #path = getcwd()+'/runs/'+run_info['title']
-                #print(path)
-                path = run_info['basecalledPath']
-                run_analysis(path=path, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
+                launch_rampart(run_info, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
 
