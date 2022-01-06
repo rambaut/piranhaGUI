@@ -21,7 +21,7 @@ def setup_layout(theme='Dark'):
 
     select_run_column = [
         [
-            sg.Button(button_text='New Run',size=(39,5),key='-NEW RUN-'),
+            sg.Button(button_text='New Run',size=(20,3),key='-NEW RUN-'),
         ],
         [
             sg.Listbox(
@@ -58,7 +58,10 @@ def setup_layout(theme='Dark'):
         sg.Button(button_text='Save',key='-SAVE RUN-'),
         sg.Button(button_text='Delete',key='-DELETE RUN-'),
         ],
-
+        [
+        sg.Push(),
+        sg.Button(button_text='Rampart >', key='-TO RAMPART-'),
+        ],
     ]
 
     rampart_tab = [
@@ -67,11 +70,18 @@ def setup_layout(theme='Dark'):
     sg.Button(button_text='Start Rampart',key='-START RAMPART-'),
     sg.Button(button_text='View Rampart',key='-VIEW RAMPART-'),
     ],
+    [
+    sg.VPush()
+    ],
+    [
+    sg.Button(button_text='< Info', key='-TO INFO-'),
+    sg.Push(),
+    ],
     ]
 
     tabs_column = [
         [
-        sg.TabGroup([[sg.Tab('Info',run_info_tab),sg.Tab('Rampart',rampart_tab)]])
+        sg.TabGroup([[sg.Tab('Info',run_info_tab,key='-RUN INFO TAB-'),sg.Tab('Rampart',rampart_tab,key='-RAMPART TAB-')]])
         ],
         [
         sg.Button(button_text='Hide Runs',key='-SHOW/HIDE RUNLIST-'),
@@ -80,8 +90,8 @@ def setup_layout(theme='Dark'):
 
     layout = [
         [
-        sg.pin(sg.Column(select_run_column, key='-SELECT RUN COLUMN-')),
-        sg.Column(tabs_column, expand_y=True, expand_x=True,key='-TAB COLUMN-')
+        sg.pin(sg.Column(select_run_column, element_justification = 'center', key='-SELECT RUN COLUMN-')),
+        sg.Column(tabs_column, expand_y=True, expand_x=True, key='-TAB COLUMN-'),
         ],
     ]
 
@@ -92,7 +102,7 @@ def get_runs(dir = './runs'):
     paths = listdir(dir)
     runs = []
     for path in paths:
-        if os.path.isdir('runs/'+path):
+        if os.path.isdir(dir+'/'+path):
             runs.append(path)
 
     return runs
@@ -367,6 +377,12 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 launch_rampart(run_info, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2)
             except Exception as err:
                 sg.popup_error(err)
+
+        elif event == '-TO RAMPART-':
+            window['-RAMPART TAB-'].select()
+
+        elif event == '-TO INFO-':
+            window['-RUN INFO TAB-'].select()
 
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(RAMPART_PORT_1)
