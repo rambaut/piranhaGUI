@@ -204,7 +204,7 @@ def load_run(window, title):
 
     return run_info
 
-def get_run_info(values):
+def get_run_info(values, run_info):
 
     run_info['date'] = values['-DATE-'].strip()
     run_info['title'] = values['-RUN NAME-'].strip()
@@ -286,7 +286,7 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
 
     return new_window
 
-def save_changes(values):
+def save_changes(values, run_info):
     run_info = get_run_info(values, run_info)
     title = run_info['title']
     title = save_run(run_info, title=title, overwrite=True)
@@ -359,7 +359,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
         elif event == '-SAVE RUN-':
             try:
-                run_info = save_changes(values)
+                run_info = save_changes(values, run_info)
             except Exception as err:
                 sg.popup_error(err)
 
