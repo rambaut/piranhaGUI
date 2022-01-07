@@ -34,6 +34,7 @@ def setup_layout(theme='Dark'):
         [
         sg.Text('Date',size=(12,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-DATE-',),
+        sg.CalendarButton('Select Date')
         ],
         [
         sg.Text('Name',size=(12,1)),
@@ -318,6 +319,18 @@ def run_main_window(window, font = ('FreeSans', 18)):
             except Exception as err:
                 sg.popup_error(err)
 
+        elif event == '-DATE-':
+            updated_date = values['-DATE-']
+
+            #if len(values['-DATE-']) == 4:
+            #    updated_date += '-'
+            #elif len(values['-DATE-']) == 7:
+            #    updated_date += '-'
+
+            updated_date = updated_date[:10]
+
+            window['-DATE-'].update(value=updated_date)
+
         elif event == '-VIEW SAMPLES-':
             if 'samples_column' in run_info:
                 samples_column = run_info['samples_column']
@@ -331,8 +344,8 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
             try:
                 samples = values['-SAMPLES-']
-                parse_window = parse_columns_window.create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
-                samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window, samples)
+                parse_window, column_headers = parse_columns_window.create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
+                samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
 
                 if samples_barcodes_indices != None:
                     samples_column, barcodes_column = samples_barcodes_indices

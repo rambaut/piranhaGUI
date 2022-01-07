@@ -35,11 +35,11 @@ def setup_parse_layout(samples, theme = 'Dark', samples_column = 0, barcodes_col
     layout = [
         [
         sg.Text('Choose Samples column:',size=(25,1)),
-        sg.OptionMenu(column_headers, default_value=column_headers[samples_column], key='-SAMPLES COLUMN-'),
+        sg.OptionMenu(column_headers, default_value=column_headers[int(samples_column)], key='-SAMPLES COLUMN-'),
         ],
         [
         sg.Text('Choose Barcodes column:',size=(25,1)),
-        sg.OptionMenu(column_headers, default_value=column_headers[barcodes_column], key='-BARCODES COLUMN-'),
+        sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], key='-BARCODES COLUMN-'),
         ],
         [
         sg.Table(
@@ -58,8 +58,9 @@ def check_for_duplicate_entries(samples, column):
     samples_list = samples_to_list(samples)[0]
     entries = []
     for row in samples_list:
-        entries.append(row[int(column)-1])
+        entries.append(row[int(column)])
 
+    print(entries)
     seen_entries = set()
     for entry in entries:
         if entry in seen_entries:
@@ -88,7 +89,7 @@ def run_parse_window(window, samples, column_headers):
             try:
                 samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
                 barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
-                print(samples_column)
+                print('columns: '+str(samples_column)+' '+str(barcodes_column))
 
                 if barcodes_column == samples_column:
                     raise Exception('barcodes and samples must be 2 separate columns')
