@@ -10,11 +10,12 @@ This will create a conda environment with the required dependencies. Activate it
 
 $ conda activate artifice
 
+Now build a docker image for rampart using the provided Dockerfile:
+
+$ docker build -t artifice_polio_rampart ./docker
+
 To run artifice from the terminal:
 
 $ python main_window.py
-
-Note: Rampart will take some time to start for the first time as it needs to download the docker image,
-on subsequent runs it should only take a few seconds to start
 
 [TODO: ADD INSTRUCTIONS TO CREATE EXECUTABLE WITH PYINSTALLER]
