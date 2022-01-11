@@ -119,7 +119,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
     if iter > 0:
         title = title+'('+str(iter)+')'
 
-    filepath = './runs/'+title+'/run_configuration.json'
+    filepath = './runs/'+title+'/run_info.json'
 
     if overwrite == False:
         if os.path.isfile(filepath):
@@ -173,7 +173,7 @@ def create_run():
     return title
 
 def load_run(window, title):
-    filepath = './runs/'+title+'/run_configuration.json'
+    filepath = './runs/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
@@ -273,9 +273,24 @@ def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
         raise Exception('Invalid MinKnow')
 
-    path = run_info['basecalledPath']
-    basecalled_dir = path #+ '/basecalling'
-    start_rampart.start_rampart(basecalled_dir, firstPort = firstPort, secondPort = secondPort)
+    basecalled_path = run_info['basecalledPath']
+
+    config_path = './runs/'+run_info['title']+'/run_configuration.json'
+
+    try:
+        with open(config_path,'r') as file:
+            run_configuration = json.loads(file.read())
+    except:
+        run_configuration = {}
+
+    run_configuration['title'], run_configuration['basecalledPath'] = run_info['title'], run_info['basecalledPath']
+
+    with open(config_path, 'w') as file:
+        config_json = json.dumps(run_configuration)
+        file.write(config_json)
+
+    run_path = getcwd()+'/runs/'+run_info['title']
+    start_rampart.start_rampart(run_path, basecalled_path, firstPort = firstPort, secondPort = secondPort)
 
 def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
     layout = setup_layout()
@@ -321,12 +336,6 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
         elif event == '-DATE-':
             updated_date = values['-DATE-']
-
-            #if len(values['-DATE-']) == 4:
-            #    updated_date += '-'
-            #elif len(values['-DATE-']) == 7:
-            #    updated_date += '-'
-
             updated_date = updated_date[:10]
 
             window['-DATE-'].update(value=updated_date)
