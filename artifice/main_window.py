@@ -4,7 +4,7 @@ import os.path
 import json
 import csv
 from webbrowser import open_new_tab
-from shutil import rmtree
+from shutil import rmtree, move
 from datetime import datetime
 
 import selection_window
@@ -14,6 +14,8 @@ import start_rampart
 
 RAMPART_PORT_1 = 1100
 RAMPART_PORT_2 = 1200
+ARCHIVED_RUNS = 'archived_runs'
+RUNS_DIR = './runs'
 
 #defines the layout of the window
 def setup_layout(theme='Dark'):
@@ -24,6 +26,7 @@ def setup_layout(theme='Dark'):
         [
             sg.Button(button_text='Create New Run',size=(20,3),key='-NEW RUN-'),
         ],
+        [sg.Text('Previous Runs:')],
         [
             sg.Listbox(
                 values=runs, enable_events = True, size=(40,20), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
@@ -58,6 +61,7 @@ def setup_layout(theme='Dark'):
         ],
         [
         sg.Button(button_text='Delete',key='-DELETE RUN-'),
+        sg.Button(button_text='Archive',key='-ARCHIVE RUN-'),
         ],
         [
         sg.Push(),
@@ -99,12 +103,27 @@ def setup_layout(theme='Dark'):
     return layout
 
 #retrieve the paths of directories in the run folder
-def get_runs(dir = './runs'):
+def get_runs(dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived = True):
     paths = listdir(dir)
-    runs = []
+    runs_set = set()
     for path in paths:
         if os.path.isdir(dir+'/'+path):
-            runs.append(path)
+            runs_set.add(path)
+
+    if hide_archived:
+        archived_filepath = './'+dir+'/'+archived_json+'.json'
+
+        with open(archived_filepath,'r') as file:
+            archived_runs_dict = json.loads(file.read())
+
+        archived_runs = archived_runs_dict['archived_runs']
+        for run in archived_runs:
+            try:
+                runs_set.remove(run)
+            except:
+                continue
+
+    runs = list(runs_set)
 
     return runs
 
@@ -220,13 +239,17 @@ def delete_run(title, window, clear_selected = True):
         rmtree(filepath)
 
     if clear_selected:
-        window['-DATE-'].update('')
-        window['-RUN NAME-'].update('')
-        window['-RUN DESCRIPTION-'].update('')
-        window['-SAMPLES-'].update('')
-        window['-MINKNOW-'].update('')
+        clear_selected_run(window)
 
-def update_run_list(window, run_info, run_to_select= ''):
+
+def clear_selected_run(window):
+    window['-DATE-'].update('')
+    window['-RUN NAME-'].update('')
+    window['-RUN DESCRIPTION-'].update('')
+    window['-SAMPLES-'].update('')
+    window['-MINKNOW-'].update('')
+
+def update_run_list(window, run_info, run_to_select = ''):
     runs = get_runs()
     window['-RUN LIST-'].update(values=runs)
 
@@ -314,6 +337,21 @@ def save_changes(values, run_info, rename = False, overwrite = True):
 
     return run_info
 
+def archive_run(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clear_selected = True):
+    archived_filepath = './'+runs_dir+'/'+archived_runs+'.json'
+
+    with open(archived_filepath,'r') as file:
+        archived_runs_dict = json.loads(file.read())
+
+    archived_runs_dict['archived_runs'].append(title)
+
+    with open(archived_filepath,'w') as file:
+        archived_json = json.dumps(archived_runs_dict)
+        file.write(archived_json)
+
+    if clear_selected:
+        clear_selected_run(window)
+
 def run_main_window(window, font = ('FreeSans', 18)):
     runlist_visible = True
     run_info = {}
@@ -388,6 +426,14 @@ def run_main_window(window, font = ('FreeSans', 18)):
             except Exception as err:
                 sg.popup_error(err)
 
+        elif event == '-ARCHIVE RUN-':
+            try:
+                archive_run(run_info['title'])
+                run_info = {}
+                run_info = update_run_list(window, run_info)
+            except Exception as err:
+                sg.popup_error(err)
+
         elif event == '-SHOW/HIDE RUNLIST-':
             if runlist_visible:
                 window['-SELECT RUN COLUMN-'].update(visible=False)
@@ -399,7 +445,6 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 runlist_visible = True
 
         elif event in {'-RUN DESCRIPTION-','-SAMPLES-','-MINKNOW-'}:
-            print('event')
             try:
                 run_info = save_changes(values, run_info)
             except Exception as err:
