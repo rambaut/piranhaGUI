@@ -33,12 +33,13 @@ def setup_layout(theme='Dark'):
 
     run_info_tab = [
         [
-        sg.Text('Date Created:',size=(13,1)),
-        sg.Text('', size=(25,1), enable_events=True,expand_y=False, key='-DATE-',),
-        ],
-        [
         sg.Text('Name:',size=(13,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-RUN NAME-',),
+        sg.Button(button_text='Rename',key='-RENAME RUN-'),
+        ],
+        [
+        sg.Text('Date Created:',size=(13,1)),
+        sg.Text('', size=(25,1), enable_events=True,expand_y=False, key='-DATE-',),
         ],
         [
         sg.Text('Description:',size=(13,1)),
@@ -56,7 +57,6 @@ def setup_layout(theme='Dark'):
         sg.FolderBrowse(),
         ],
         [
-        sg.Button(button_text='Save',key='-SAVE RUN-'),
         sg.Button(button_text='Delete',key='-DELETE RUN-'),
         ],
         [
@@ -108,7 +108,7 @@ def get_runs(dir = './runs'):
 
     return runs
 
-#creates a directory with
+#creates a directory containing run info json
 def save_run(run_info, title = None, overwrite = False, iter = 0):
     samples = run_info['samples']
     if title == None or title == '':
@@ -206,8 +206,6 @@ def load_run(window, title):
     return run_info
 
 def get_run_info(values, run_info):
-
-    #run_info['date'] = values['-DATE-'].strip()
     run_info['title'] = values['-RUN NAME-'].strip()
     run_info['description'] = values['-RUN DESCRIPTION-'].strip()
     run_info['samples'] = values['-SAMPLES-'].strip()
@@ -302,10 +300,16 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
 
     return new_window
 
-def save_changes(values, run_info):
-    run_info = get_run_info(values, run_info)
+def save_changes(values, run_info, rename = False, overwrite = True):
     title = run_info['title']
-    title = save_run(run_info, title=title, overwrite=True)
+    run_info = get_run_info(values, run_info)
+
+    if rename:
+        title = run_info['title']
+    else:
+        run_info['title'] = title
+
+    title = save_run(run_info, title=title, overwrite=overwrite)
     run_info = update_run_list(window, run_info, run_to_select=title)
 
     return run_info
@@ -361,9 +365,14 @@ def run_main_window(window, font = ('FreeSans', 18)):
             except Exception as err:
                 sg.popup_error(err)
 
-        elif event == '-SAVE RUN-':
+        elif event == '-RENAME RUN-':
             try:
-                run_info = save_changes(values, run_info)
+                previous_run_title = values['-RUN LIST-'][0]
+                run_info = get_run_info(values, run_info)
+                if run_info['title'] != previous_run_title:
+                    run_info = save_changes(values, run_info, rename=True, overwrite=False)
+                    delete_run(previous_run_title, window, clear_selected=False)
+                    run_info = update_run_list(window, run_info, run_to_select=run_info['title'])
             except Exception as err:
                 sg.popup_error(err)
 
@@ -388,6 +397,13 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 window['-SELECT RUN COLUMN-'].update(visible=True)
                 window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
                 runlist_visible = True
+
+        elif event in {'-RUN DESCRIPTION-','-SAMPLES-','-MINKNOW-'}:
+            print('event')
+            try:
+                run_info = save_changes(values, run_info)
+            except Exception as err:
+                sg.popup_error(err)
 
         elif event == '-START RAMPART-':
             try:
