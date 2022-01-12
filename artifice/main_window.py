@@ -5,6 +5,7 @@ import json
 import csv
 from webbrowser import open_new_tab
 from shutil import rmtree
+from datetime import datetime
 
 import selection_window
 import parse_columns_window
@@ -21,7 +22,7 @@ def setup_layout(theme='Dark'):
 
     select_run_column = [
         [
-            sg.Button(button_text='New Run',size=(20,3),key='-NEW RUN-'),
+            sg.Button(button_text='Create New Run',size=(20,3),key='-NEW RUN-'),
         ],
         [
             sg.Listbox(
@@ -32,26 +33,25 @@ def setup_layout(theme='Dark'):
 
     run_info_tab = [
         [
-        sg.Text('Date',size=(12,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-DATE-',),
-        sg.CalendarButton('Select Date')
+        sg.Text('Date Created:',size=(13,1)),
+        sg.Text('', size=(25,1), enable_events=True,expand_y=False, key='-DATE-',),
         ],
         [
-        sg.Text('Name',size=(12,1)),
+        sg.Text('Name:',size=(13,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-RUN NAME-',),
         ],
         [
-        sg.Text('Description',size=(12,1)),
+        sg.Text('Description:',size=(13,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-RUN DESCRIPTION-',),
         ],
         [
-        sg.Text('Samples',size=(12,1)),
+        sg.Text('Samples:',size=(13,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
         sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
         sg.Button(button_text='View',key='-VIEW SAMPLES-'),
         ],
         [
-        sg.Text('MinKnow run',size=(12,1)),
+        sg.Text('MinKnow run:',size=(13,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
         sg.FolderBrowse(),
         ],
@@ -161,6 +161,7 @@ def create_run():
 
     run_info = {}
 
+    run_info['date'] = datetime.today().strftime('%Y-%m-%d')
     run_info['samples'] = samples.strip()
     run_info['basecalledPath'] = basecalledPath.strip()
     run_info['barcodes_column'] = str(barcodes_column).strip()
@@ -206,7 +207,7 @@ def load_run(window, title):
 
 def get_run_info(values, run_info):
 
-    run_info['date'] = values['-DATE-'].strip()
+    #run_info['date'] = values['-DATE-'].strip()
     run_info['title'] = values['-RUN NAME-'].strip()
     run_info['description'] = values['-RUN DESCRIPTION-'].strip()
     run_info['samples'] = values['-SAMPLES-'].strip()
@@ -333,12 +334,6 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 run_info = update_run_list(window, run_info, run_to_select=selected_run_title)
             except Exception as err:
                 sg.popup_error(err)
-
-        elif event == '-DATE-':
-            updated_date = values['-DATE-']
-            updated_date = updated_date[:10]
-
-            window['-DATE-'].update(value=updated_date)
 
         elif event == '-VIEW SAMPLES-':
             if 'samples_column' in run_info:
