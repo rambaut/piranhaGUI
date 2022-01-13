@@ -307,10 +307,10 @@ def save_barcodes(run_info):
             csvwriter.writerow(row)
 
 def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
+    if 'title' not in run_info or not len(run_info['title']) > 0:
+        raise Exception('Invalid Name/No Run Selected')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception('Invalid samples file')
-    if 'title' not in run_info or not len(run_info['title']) > 0:
-        raise Exception('Invalid Name')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
         raise Exception('Invalid MinKnow')
 
@@ -372,10 +372,29 @@ def edit_archive(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clea
 
     with open(archived_filepath,'w') as file:
         archived_json = json.dump(archived_runs_dict, file)
-        #file.write(archived_json)
 
     if clear_selected:
         clear_selected_run(window)
+
+def archive_button(run_info, window, values, hide_archived):
+    if 'archived' not in run_info:
+        run_info['archived'] = False
+
+    if run_info['archived'] == True:
+        run_info['archived'] = False
+        run_info = save_changes(values, run_info, hide_archived=hide_archived)
+        edit_archive(run_info['title'], archive=False, clear_selected=False)
+        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
+
+    else:
+        run_info['archived'] = True
+        run_info = save_changes(values, run_info, hide_archived=hide_archived)
+        edit_archive(run_info['title'], archive=True, clear_selected=True)
+        if hide_archived:
+            run_info = {}
+            run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+        else:
+            run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
 def run_main_window(window, font = ('FreeSans', 18)):
     runlist_visible = True
@@ -417,77 +436,63 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 sg.popup_error(err)
 
         elif event == '-VIEW SAMPLES-':
-            if 'samples_column' in run_info:
-                samples_column = run_info['samples_column']
-            else:
-                samples_column = None
+            if 'title' in run_info:
+                if 'samples_column' in run_info:
+                    samples_column = run_info['samples_column']
+                else:
+                    samples_column = None
 
-            if 'barcodes_column' in run_info:
-                barcodes_column = run_info['barcodes_column']
-            else:
-                barcodes_column = None
+                if 'barcodes_column' in run_info:
+                    barcodes_column = run_info['barcodes_column']
+                else:
+                    barcodes_column = None
 
-            try:
-                samples = values['-SAMPLES-']
-                parse_window, column_headers = parse_columns_window.create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
-                samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
+                try:
+                    samples = values['-SAMPLES-']
+                    parse_window, column_headers = parse_columns_window.create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
+                    samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
 
-                if samples_barcodes_indices != None:
-                    samples_column, barcodes_column = samples_barcodes_indices
-                    run_info['samples'] = samples
-                    run_info['barcodes_column'] = barcodes_column
-                    run_info['samples_column']  = samples_column
+                    if samples_barcodes_indices != None:
+                        samples_column, barcodes_column = samples_barcodes_indices
+                        run_info['samples'] = samples
+                        run_info['barcodes_column'] = barcodes_column
+                        run_info['samples_column']  = samples_column
 
-                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
-            except Exception as err:
-                sg.popup_error(err)
+                    selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
+                except Exception as err:
+                    sg.popup_error(err)
 
         elif event == '-RENAME RUN-':
-            try:
-                previous_run_title = values['-RUN LIST-'][0]
-                run_info = get_run_info(values, run_info)
-                if run_info['title'] != previous_run_title:
-                    run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
-                    delete_run(previous_run_title, window, clear_selected=False)
-                    run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-            except Exception as err:
-                sg.popup_error(err)
+            if 'title' in run_info:
+                try:
+                    previous_run_title = values['-RUN LIST-'][0]
+                    run_info = get_run_info(values, run_info)
+                    if run_info['title'] != previous_run_title:
+                        run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
+                        delete_run(previous_run_title, window, clear_selected=False)
+                        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
+                except Exception as err:
+                    sg.popup_error(err)
 
         elif event == '-DELETE RUN-':
-            try:
-                user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
-                if user_confirm != 'OK':
-                    continue
-                selected_run_title = values['-RUN LIST-'][0]
-                delete_run(selected_run_title, window)
-                run_info = {}
-                run_info = update_run_list(window, run_info, hide_archived=hide_archived)
-            except Exception as err:
-                sg.popup_error(err)
+            if 'title' in run_info:
+                try:
+                    user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
+                    if user_confirm != 'OK':
+                        continue
+                    selected_run_title = values['-RUN LIST-'][0]
+                    delete_run(selected_run_title, window)
+                    run_info = {}
+                    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+                except Exception as err:
+                    sg.popup_error(err)
 
         elif event == '-ARCHIVE/UNARCHIVE-':
-            try:
-                if 'archived' not in run_info:
-                    run_info['archived'] = False
-
-                if run_info['archived'] == True:
-                    run_info['archived'] = False
-                    run_info = save_changes(values, run_info, hide_archived=hide_archived)
-                    edit_archive(run_info['title'], archive=False, clear_selected=False)
-                    run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-
-                else:
-                    run_info['archived'] = True
-                    run_info = save_changes(values, run_info, hide_archived=hide_archived)
-                    edit_archive(run_info['title'], archive=True, clear_selected=True)
-                    if hide_archived:
-                        run_info = {}
-                        run_info = update_run_list(window, run_info, hide_archived=hide_archived)
-                    else:
-                        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-
-            except Exception as err:
-                sg.popup_error(err)
+            if 'title' in run_info:
+                try:
+                    archive_button(run_info, window, values, hide_archived)
+                except Exception as err:
+                    sg.popup_error(err)
 
         elif event == '-SHOW/HIDE RUNLIST-':
             if runlist_visible:
@@ -499,11 +504,18 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
                 runlist_visible = True
 
+        elif event == '-RUN NAME-':
+            if 'title' not in run_info:
+                clear_selected_run(window)
+
         elif event in {'-RUN DESCRIPTION-','-SAMPLES-','-MINKNOW-'}:
-            try:
-                run_info = save_changes(values, run_info, hide_archived=hide_archived)
-            except Exception as err:
-                sg.popup_error(err)
+            if 'title' in run_info:
+                try:
+                    run_info = save_changes(values, run_info, hide_archived=hide_archived)
+                except Exception as err:
+                    sg.popup_error(err)
+            else:
+                clear_selected_run(window)
 
         elif event == '-START RAMPART-':
             try:
