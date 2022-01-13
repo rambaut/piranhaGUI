@@ -263,6 +263,8 @@ def clear_selected_run(window):
     window['-SAMPLES-'].update('')
     window['-MINKNOW-'].update('')
 
+    return {}
+
 def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
     runs = get_runs(hide_archived=hide_archived)
     window['-RUN LIST-'].update(values=runs)
@@ -280,7 +282,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
             run_info = load_run(window, run_to_select)
 
     if run_info == {}:
-        clear_selected_run(window)
+        run_info = clear_selected_run(window)
 
     return run_info
 
@@ -396,6 +398,8 @@ def archive_button(run_info, window, values, hide_archived):
         else:
             run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
+    return run_info
+
 def run_main_window(window, font = ('FreeSans', 18)):
     runlist_visible = True
     hide_archived = True
@@ -469,6 +473,8 @@ def run_main_window(window, font = ('FreeSans', 18)):
                     run_info = get_run_info(values, run_info)
                     if run_info['title'] != previous_run_title:
                         run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
+                        edit_archive(run_info['title'], archive=run_info['archived'])
+                        edit_archive(previous_run_title, archive=False)
                         delete_run(previous_run_title, window, clear_selected=False)
                         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
                 except Exception as err:
@@ -490,7 +496,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
         elif event == '-ARCHIVE/UNARCHIVE-':
             if 'title' in run_info:
                 try:
-                    archive_button(run_info, window, values, hide_archived)
+                    run_info = archive_button(run_info, window, values, hide_archived)
                 except Exception as err:
                     sg.popup_error(err)
 
