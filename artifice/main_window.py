@@ -26,12 +26,17 @@ def setup_layout(theme='Dark'):
         [
             sg.Button(button_text='Create New Run',size=(20,3),key='-NEW RUN-'),
         ],
-        [sg.Text('Previous Runs:')],
+        [
+            sg.Text('Previous Runs:')
+        ],
         [
             sg.Listbox(
                 values=runs, enable_events = True, size=(40,20), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
             )
-        ]
+        ],
+        [
+            sg.Button(button_text='Show All Runs',key='-SHOW/HIDE ARCHIVED-'),
+        ],
     ]
 
     run_info_tab = [
@@ -61,7 +66,7 @@ def setup_layout(theme='Dark'):
         ],
         [
         sg.Button(button_text='Delete',key='-DELETE RUN-'),
-        sg.Button(button_text='Archive',key='-ARCHIVE RUN-'),
+        sg.Button(button_text='Archive',key='-ARCHIVE/UNARCHIVE-'),
         ],
         [
         sg.Push(),
@@ -151,13 +156,13 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
         mkdir('./runs/'+title)
 
     for key, value in run_info.items():
-        run_info[key] = str(value).strip()
+        if type(run_info[key]) == str:
+            run_info[key] = value.strip()
 
     run_info['title'] = title
 
     with open(filepath, 'w') as file:
-        run_json = json.dumps(run_info)
-        file.write(run_json)
+        json.dump(run_info, file)
 
     return title
 
@@ -222,6 +227,15 @@ def load_run(window, title):
         except:
             window['-MINKNOW-'].update('')
 
+    if 'archived' not in run_info:
+        run_info['archived'] = False
+
+    if run_info['archived'] == True:
+        window['-ARCHIVE/UNARCHIVE-'].update(text='Unarchive')
+    else:
+        window['-ARCHIVE/UNARCHIVE-'].update(text='Archive')
+
+
     return run_info
 
 def get_run_info(values, run_info):
@@ -249,20 +263,25 @@ def clear_selected_run(window):
     window['-SAMPLES-'].update('')
     window['-MINKNOW-'].update('')
 
-def update_run_list(window, run_info, run_to_select = ''):
-    runs = get_runs()
+def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
+    runs = get_runs(hide_archived=hide_archived)
     window['-RUN LIST-'].update(values=runs)
 
     if run_to_select == '':
-        return run_info
+        if 'title' in run_info:
+            run_to_select = run_info['title']
+        else:
+            return run_info
 
-    index = 0
+    run_info = {}
     for i in range(len(runs)):
         if runs[i] == run_to_select:
-            index = i
+            window['-RUN LIST-'].update(set_to_index=i)
+            run_info = load_run(window, run_to_select)
 
-    window['-RUN LIST-'].update(set_to_index=index)
-    run_info = load_run(window, run_to_select)
+    if run_info == {}:
+        clear_selected_run(window)
+
     return run_info
 
 def save_barcodes(run_info):
@@ -308,8 +327,8 @@ def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
     run_configuration['title'], run_configuration['basecalledPath'] = run_info['title'], run_info['basecalledPath']
 
     with open(config_path, 'w') as file:
-        config_json = json.dumps(run_configuration)
-        file.write(config_json)
+        config_json = json.dump(run_configuration, file)
+        #file.write(config_json)
 
     run_path = getcwd()+'/runs/'+run_info['title']
     start_rampart.start_rampart(run_path, basecalled_path, firstPort = firstPort, secondPort = secondPort)
@@ -323,7 +342,7 @@ def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
 
     return new_window
 
-def save_changes(values, run_info, rename = False, overwrite = True):
+def save_changes(values, run_info, rename = False, overwrite = True, hide_archived = True):
     title = run_info['title']
     run_info = get_run_info(values, run_info)
 
@@ -333,27 +352,34 @@ def save_changes(values, run_info, rename = False, overwrite = True):
         run_info['title'] = title
 
     title = save_run(run_info, title=title, overwrite=overwrite)
-    run_info = update_run_list(window, run_info, run_to_select=title)
+    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
 
     return run_info
 
-def archive_run(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clear_selected = True):
+def edit_archive(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clear_selected = True, archive = True):
     archived_filepath = './'+runs_dir+'/'+archived_runs+'.json'
 
     with open(archived_filepath,'r') as file:
         archived_runs_dict = json.loads(file.read())
 
-    archived_runs_dict['archived_runs'].append(title)
+    if archive:
+        archived_runs_dict['archived_runs'].append(title)
+    else:
+        try:
+            archived_runs_dict['archived_runs'].remove(title)
+        except:
+            pass
 
     with open(archived_filepath,'w') as file:
-        archived_json = json.dumps(archived_runs_dict)
-        file.write(archived_json)
+        archived_json = json.dump(archived_runs_dict, file)
+        #file.write(archived_json)
 
     if clear_selected:
         clear_selected_run(window)
 
 def run_main_window(window, font = ('FreeSans', 18)):
     runlist_visible = True
+    hide_archived = True
     run_info = {}
     selected_run_title = ''
 
@@ -373,7 +399,20 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 if selected_run_title == None:
                     continue
 
-                run_info = update_run_list(window, run_info, run_to_select=selected_run_title)
+                run_info = update_run_list(window, run_info, run_to_select=selected_run_title, hide_archived=hide_archived)
+            except Exception as err:
+                sg.popup_error(err)
+
+        elif event == '-SHOW/HIDE ARCHIVED-':
+            try:
+                if hide_archived:
+                    hide_archived = False
+                    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+                    window['-SHOW/HIDE ARCHIVED-'].update(text='Hide Archived Runs')
+                else:
+                    hide_archived = True
+                    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+                    window['-SHOW/HIDE ARCHIVED-'].update(text='Show All Runs')
             except Exception as err:
                 sg.popup_error(err)
 
@@ -408,9 +447,9 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 previous_run_title = values['-RUN LIST-'][0]
                 run_info = get_run_info(values, run_info)
                 if run_info['title'] != previous_run_title:
-                    run_info = save_changes(values, run_info, rename=True, overwrite=False)
+                    run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
                     delete_run(previous_run_title, window, clear_selected=False)
-                    run_info = update_run_list(window, run_info, run_to_select=run_info['title'])
+                    run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
             except Exception as err:
                 sg.popup_error(err)
 
@@ -422,15 +461,31 @@ def run_main_window(window, font = ('FreeSans', 18)):
                 selected_run_title = values['-RUN LIST-'][0]
                 delete_run(selected_run_title, window)
                 run_info = {}
-                run_info = update_run_list(window, run_info)
+                run_info = update_run_list(window, run_info, hide_archived=hide_archived)
             except Exception as err:
                 sg.popup_error(err)
 
-        elif event == '-ARCHIVE RUN-':
+        elif event == '-ARCHIVE/UNARCHIVE-':
             try:
-                archive_run(run_info['title'])
-                run_info = {}
-                run_info = update_run_list(window, run_info)
+                if 'archived' not in run_info:
+                    run_info['archived'] = False
+
+                if run_info['archived'] == True:
+                    run_info['archived'] = False
+                    run_info = save_changes(values, run_info, hide_archived=hide_archived)
+                    edit_archive(run_info['title'], archive=False, clear_selected=False)
+                    run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
+
+                else:
+                    run_info['archived'] = True
+                    run_info = save_changes(values, run_info, hide_archived=hide_archived)
+                    edit_archive(run_info['title'], archive=True, clear_selected=True)
+                    if hide_archived:
+                        run_info = {}
+                        run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+                    else:
+                        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
+
             except Exception as err:
                 sg.popup_error(err)
 
@@ -446,7 +501,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
         elif event in {'-RUN DESCRIPTION-','-SAMPLES-','-MINKNOW-'}:
             try:
-                run_info = save_changes(values, run_info)
+                run_info = save_changes(values, run_info, hide_archived=hide_archived)
             except Exception as err:
                 sg.popup_error(err)
 
