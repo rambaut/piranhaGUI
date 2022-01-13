@@ -2,7 +2,6 @@ import PySimpleGUI as sg
 from os import listdir, mkdir, remove, getcwd
 import os.path
 import json
-import csv
 from webbrowser import open_new_tab
 from shutil import rmtree, move
 from datetime import datetime
@@ -10,12 +9,12 @@ from datetime import datetime
 import selection_window
 import parse_columns_window
 import start_rampart
-
+import view_barcodes_window
 
 RAMPART_PORT_1 = 1100
 RAMPART_PORT_2 = 1200
 ARCHIVED_RUNS = 'archived_runs'
-RUNS_DIR = './runs'
+RUNS_DIR = '/runs'
 
 #defines the layout of the window
 def setup_layout(theme='Dark'):
@@ -75,7 +74,7 @@ def setup_layout(theme='Dark'):
     ]
 
     rampart_tab = [
-    [sg.Text('Rampart',size=(12,1)),],
+    [sg.Button(button_text='View Barcodes',key='-VIEW BARCODES-'),],
     [
     sg.Button(button_text='Start Rampart',key='-START RAMPART-'),
     sg.Button(button_text='View Rampart',key='-VIEW RAMPART-'),
@@ -108,15 +107,15 @@ def setup_layout(theme='Dark'):
     return layout
 
 #retrieve the paths of directories in the run folder
-def get_runs(dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived = True):
-    paths = listdir(dir)
+def get_runs(runs_dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived = True):
+    paths = listdir('.'+runs_dir)
     runs_set = set()
     for path in paths:
-        if os.path.isdir(dir+'/'+path):
+        if os.path.isdir('.'+runs_dir+'/'+path):
             runs_set.add(path)
 
     if hide_archived:
-        archived_filepath = './'+dir+'/'+archived_json+'.json'
+        archived_filepath = '.'+runs_dir+'/'+archived_json+'.json'
 
         with open(archived_filepath,'r') as file:
             archived_runs_dict = json.loads(file.read())
@@ -133,7 +132,7 @@ def get_runs(dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived = True
     return runs
 
 #creates a directory containing run info json
-def save_run(run_info, title = None, overwrite = False, iter = 0):
+def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = RUNS_DIR):
     samples = run_info['samples']
     if title == None or title == '':
         title = samples.split('/')[-1].split('.')[0]
@@ -143,7 +142,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
     if iter > 0:
         title = title+'('+str(iter)+')'
 
-    filepath = './runs/'+title+'/run_info.json'
+    filepath = '.'+runs_dir+'/'+title+'/run_info.json'
 
     if overwrite == False:
         if os.path.isfile(filepath):
@@ -152,8 +151,8 @@ def save_run(run_info, title = None, overwrite = False, iter = 0):
     if os.path.isfile(samples) == False or samples[-4:] != '.csv':
         raise Exception('No valid samples file provided')
 
-    if not os.path.isdir('./runs/'+title):
-        mkdir('./runs/'+title)
+    if not os.path.isdir('.'+runs_dir+'/'+title):
+        mkdir('.'+runs_dir+'/'+title)
 
     for key, value in run_info.items():
         if type(run_info[key]) == str:
@@ -193,12 +192,12 @@ def create_run():
     run_info['has_headers'] = has_headers
 
     title = save_run(run_info)
-    save_barcodes(run_info)
+    view_barcodes_window.save_barcodes(run_info)
 
     return title
 
-def load_run(window, title):
-    filepath = './runs/'+title+'/run_info.json'
+def load_run(window, title, runs_dir = RUNS_DIR):
+    filepath = '.'+runs_dir+'/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
@@ -246,8 +245,8 @@ def get_run_info(values, run_info):
 
     return run_info
 
-def delete_run(title, window, clear_selected = True):
-    filepath = './runs/'+title
+def delete_run(title, window, clear_selected = True, runs_dir = RUNS_DIR):
+    filepath = '.'+runs_dir+'/'+title
 
     if os.path.isdir(filepath):
         rmtree(filepath)
@@ -286,29 +285,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
 
     return run_info
 
-def save_barcodes(run_info):
-    if 'samples_column' in run_info:
-        samples_column = run_info['samples_column']
-    else:
-        samples_column = 0
-
-    if 'barcodes_column' in run_info:
-        barcodes_column = run_info['barcodes_column']
-    else:
-        barcodes_column = 1
-
-    samples_list = parse_columns_window.samples_to_list(run_info['samples'], has_headers=run_info['has_headers'])
-    barcodes_list = []
-
-    for row in samples_list:
-        barcodes_list.append([row[int(samples_column)], row[int(barcodes_column)]])
-
-    with open('runs/'+run_info['title']+'/barcodes.csv', 'w', newline='') as csvfile:
-        csvwriter = csv.writer(csvfile)
-        for row in barcodes_list:
-            csvwriter.writerow(row)
-
-def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
+def launch_rampart(run_info, firstPort = 1100, secondPort = 1200, runs_dir = RUNS_DIR):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
@@ -318,7 +295,7 @@ def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
 
     basecalled_path = run_info['basecalledPath']
 
-    config_path = './runs/'+run_info['title']+'/run_configuration.json'
+    config_path = '.'+runs_dir+'/'+run_info['title']+'/run_configuration.json'
 
     try:
         with open(config_path,'r') as file:
@@ -332,7 +309,7 @@ def launch_rampart(run_info, firstPort = 1100, secondPort = 1200):
         config_json = json.dump(run_configuration, file)
         #file.write(config_json)
 
-    run_path = getcwd()+'/runs/'+run_info['title']
+    run_path = getcwd()+runs_dir+'/'+run_info['title']
     start_rampart.start_rampart(run_path, basecalled_path, firstPort = firstPort, secondPort = secondPort)
 
 def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
@@ -359,7 +336,7 @@ def save_changes(values, run_info, rename = False, overwrite = True, hide_archiv
     return run_info
 
 def edit_archive(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clear_selected = True, archive = True):
-    archived_filepath = './'+runs_dir+'/'+archived_runs+'.json'
+    archived_filepath = '.'+runs_dir+'/'+archived_runs+'.json'
 
     with open(archived_filepath,'r') as file:
         archived_runs_dict = json.loads(file.read())
@@ -522,6 +499,14 @@ def run_main_window(window, font = ('FreeSans', 18)):
                     sg.popup_error(err)
             else:
                 clear_selected_run(window)
+        elif event == '-VIEW BARCODES-':
+            #try:
+            barcodes = '.'+RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
+            view_barcodes_window.check_barcodes(run_info)
+            barcodes_window, column_headers = view_barcodes_window.create_barcodes_window(barcodes)
+            view_barcodes_window.run_barcodes_window(barcodes_window,barcodes,column_headers)
+            #except Exception as err:
+            #    sg.popup_error(err)
 
         elif event == '-START RAMPART-':
             try:
