@@ -5,6 +5,7 @@ import json
 from webbrowser import open_new_tab
 from shutil import rmtree, move
 from datetime import datetime
+from PIL import Image
 
 import selection_window
 import parse_columns_window
@@ -17,6 +18,20 @@ ARCHIVED_RUNS = 'archived_runs'
 RUNS_DIR = 'runs'
 #BACKGROUND_COLOR = "#072429"
 
+def make_theme():
+    Artifice_Theme = {'BACKGROUND': "#072429",
+               'TEXT': '#f7eacd',
+               'INPUT': '#1e5b67',
+               'TEXT_INPUT': '#f7eacd',
+               'SCROLL': '#707070',
+               'BUTTON': ('#f7eacd', '#d97168'),
+               'PROGRESS': ('#000000', '#000000'),
+               'BORDER': 1,
+               'SLIDER_DEPTH': 0,
+               'PROGRESS_DEPTH': 0}
+
+    sg.theme_add_new('Artifice', Artifice_Theme)
+
 #defines the layout of the window
 def setup_layout(theme='Dark'):
     sg.theme(theme)
@@ -24,7 +39,8 @@ def setup_layout(theme='Dark'):
 
     select_run_column = [
         [
-            sg.Button(button_text='Create New Run',size=(20,3),key='-NEW RUN-'),
+            sg.Button(button_text='Create New Run',size=(15,2),key='-NEW RUN-'),
+            sg.Push()
         ],
         [
             sg.Text('Previous Runs:')
@@ -98,7 +114,21 @@ def setup_layout(theme='Dark'):
         ],
     ]
 
+    # Resize PNG file to size (300, 300)
+    #image_file = './resources/logo.png'
+    processed_image = './resources/a_logo.png'
+    #size = (100, 120)
+    #im = Image.open(image_file)
+    #im = im.resize(size, resample=Image.BICUBIC)
+    #im.save(processed_image)
+    #im_bytes = im.tobytes()
+
+    frame_bg = sg.LOOK_AND_FEEL_TABLE['Artifice']['INPUT']
+
     layout = [
+        [
+        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = ('FreeSans', 50), background_color = frame_bg)]], background_color = frame_bg)
+        ],
         [
         sg.pin(sg.Column(select_run_column, element_justification = 'center', key='-SELECT RUN COLUMN-')),
         sg.Column(tabs_column, expand_y=True, expand_x=True,key='-TAB COLUMN-'),
@@ -315,9 +345,10 @@ def launch_rampart(run_info, firstPort = 1100, secondPort = 1200, runs_dir = RUN
     run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
     start_rampart.start_rampart(run_path, basecalled_path, firstPort = firstPort, secondPort = secondPort)
 
-def create_main_window(theme = 'Dark', font = ('FreeSans', 18), window = None):
-    layout = setup_layout()
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
+def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
+    make_theme()
+    layout = setup_layout(theme=theme)
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=True)
 
     if window != None:
         window.close()
@@ -533,6 +564,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
 
 if __name__ == '__main__':
+    #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
 
     window = create_main_window()
     run_main_window(window)
