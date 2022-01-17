@@ -5,8 +5,6 @@ import json
 from webbrowser import open_new_tab
 from shutil import rmtree, move
 from datetime import datetime
-from PIL import Image
-
 import selection_window
 import parse_columns_window
 import start_rampart
@@ -114,9 +112,11 @@ def setup_layout(theme='Dark'):
         ],
     ]
 
+    processed_image = './resources/a_logo.png'
+
+    
     # Resize PNG file to size (300, 300)
     #image_file = './resources/logo.png'
-    processed_image = './resources/a_logo.png'
     #size = (100, 120)
     #im = Image.open(image_file)
     #im = im.resize(size, resample=Image.BICUBIC)
