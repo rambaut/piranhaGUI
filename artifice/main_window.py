@@ -114,7 +114,7 @@ def setup_layout(theme='Dark'):
 
     processed_image = './resources/a_logo.png'
 
-    
+
     # Resize PNG file to size (300, 300)
     #image_file = './resources/logo.png'
     #size = (100, 120)
@@ -424,8 +424,11 @@ def run_main_window(window, font = ('FreeSans', 18)):
             break
 
         elif event == '-RUN LIST-':
-            selected_run_title = values['-RUN LIST-'][0]
-            run_info = load_run(window, selected_run_title)
+            try:
+                selected_run_title = values['-RUN LIST-'][0]
+                run_info = load_run(window, selected_run_title)
+            except Exception as err:
+                sg.popup_error(err)
 
         elif event == '-NEW RUN-':
             try:
