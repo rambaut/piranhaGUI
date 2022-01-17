@@ -285,7 +285,6 @@ def delete_run(title, window, clear_selected = True, runs_dir = RUNS_DIR):
     if clear_selected:
         clear_selected_run(window)
 
-
 def clear_selected_run(window):
     window['-DATE-'].update('')
     window['-RUN NAME-'].update('')
@@ -316,7 +315,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
 
     return run_info
 
-def launch_rampart(run_info, firstPort = 1100, secondPort = 1200, runs_dir = RUNS_DIR, font = None):
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = RUNS_DIR, font = None, container = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
@@ -343,7 +342,7 @@ def launch_rampart(run_info, firstPort = 1100, secondPort = 1200, runs_dir = RUN
     view_barcodes_window.check_barcodes(run_info,font=font)
 
     run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
-    start_rampart.start_rampart(run_path, basecalled_path, firstPort = firstPort, secondPort = secondPort)
+    start_rampart.start_rampart(run_path, basecalled_path, client, firstPort = firstPort, secondPort = secondPort, container=container)
 
 def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
     make_theme()
@@ -416,11 +415,13 @@ def run_main_window(window, font = ('FreeSans', 18)):
     hide_archived = True
     run_info = {}
     selected_run_title = ''
+    docker_client = None
+    rampart_container = None
 
     while True:
         event, values = window.read()
         if event == 'Exit' or event == sg.WIN_CLOSED:
-            start_rampart.stop_rampart()
+            start_rampart.stop_rampart(container=rampart_container)
             break
 
         elif event == '-RUN LIST-':
@@ -549,7 +550,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 
         elif event == '-START RAMPART-':
             try:
-                launch_rampart(run_info, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font)
+                launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
             except Exception as err:
                 sg.popup_error(err)
 
