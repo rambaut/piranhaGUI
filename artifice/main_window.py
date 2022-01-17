@@ -1,10 +1,13 @@
 import PySimpleGUI as sg
 from os import listdir, mkdir, remove, getcwd
 import os.path
+import requests
 import json
 from webbrowser import open_new_tab
 from shutil import rmtree, move
 from datetime import datetime
+from time import sleep
+
 import selection_window
 import parse_columns_window
 import start_rampart
@@ -84,15 +87,15 @@ def setup_layout(theme='Dark'):
         ],
         [
         sg.Push(),
-        sg.Button(button_text='Rampart >', key='-TO RAMPART-'),
+        sg.Button(button_text='RAMPART >', key='-TO RAMPART-'),
         ],
     ]
 
     rampart_tab = [
     [sg.Button(button_text='View Barcodes',key='-VIEW BARCODES-'),],
     [
-    sg.Button(button_text='Start Rampart',key='-START RAMPART-'),
-    sg.Button(button_text='View Rampart',key='-VIEW RAMPART-'),
+    sg.Button(button_text='Start RAMPART',key='-START/STOP RAMPART-'),
+    sg.Button(button_text='View RAMPART', visible=False,key='-VIEW RAMPART-'),
     ],
     [
     sg.VPush()
@@ -105,7 +108,7 @@ def setup_layout(theme='Dark'):
 
     tabs_column = [
         [
-        sg.TabGroup([[sg.Tab('Info',run_info_tab,key='-RUN INFO TAB-'),sg.Tab('Rampart',rampart_tab,key='-RAMPART TAB-')]])
+        sg.TabGroup([[sg.Tab('Info',run_info_tab,key='-RUN INFO TAB-'),sg.Tab('RAMPART',rampart_tab,key='-RAMPART TAB-')]])
         ],
         [
         sg.Button(button_text='Hide Runs',key='-SHOW/HIDE RUNLIST-'),
@@ -344,6 +347,19 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
     start_rampart.start_rampart(run_path, basecalled_path, client, firstPort = firstPort, secondPort = secondPort, container=container)
 
+    iter = 0
+    while True:
+        sleep(0.1)
+        iter += 1
+        if iter > 100:
+            raise Exception('Something went wrong launching RAMPART')
+        try:
+            r = requests.get(f'http://localhost:{RAMPART_PORT_1}')
+            if r.status_code == 200:
+                return True
+        except:
+            pass
+
 def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
     make_theme()
     layout = setup_layout(theme=theme)
@@ -417,6 +433,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
     selected_run_title = ''
     docker_client = None
     rampart_container = None
+    rampart_running = False
 
     while True:
         event, values = window.read()
@@ -548,9 +565,20 @@ def run_main_window(window, font = ('FreeSans', 18)):
             except Exception as err:
                 sg.popup_error(err)
 
-        elif event == '-START RAMPART-':
+        elif event == '-START/STOP RAMPART-':
             try:
-                launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
+                if rampart_running:
+                    rampart_running = False
+                    start_rampart.stop_rampart(container=rampart_container)
+                    window['-VIEW RAMPART-'].update(visible=False)
+                    window['-START/STOP RAMPART-'].update(text='Start RAMPART')
+                else:
+                    rampart_running = launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
+                    if rampart_running:
+                        window['-VIEW RAMPART-'].update(visible=True)
+                        window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
+
+
             except Exception as err:
                 sg.popup_error(err)
 
