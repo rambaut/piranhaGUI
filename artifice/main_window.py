@@ -481,9 +481,9 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
         event, values = window.read()
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             if rampart_running:
-
                 chk_stop = sg.popup_yes_no('Do you wish to stop RAMPART before closing', font=font)
-                if chk_stop == 'YES':
+                
+                if chk_stop == 'Yes':
                     window.close()
                     start_rampart.stop_rampart(container=rampart_container)
             window.close()
@@ -651,6 +651,6 @@ if __name__ == '__main__':
 
     window, rampart_running = create_main_window()
     print(rampart_running)
-    run_main_window(window, rampart_running)
+    run_main_window(window, rampart_running=rampart_running)
 
     window.close()
