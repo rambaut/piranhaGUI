@@ -19,7 +19,6 @@ def start_rampart(run_path, basecalled_path, client, firstPort = 1100, secondPor
     environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}']
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
     container = client.containers.run(image='artifice_polio_rampart', detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
-    print('s')
 
     #command = f"docker run -d --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
 

@@ -90,12 +90,30 @@ def setup_layout(theme='Dark'):
         sg.Button(button_text='RAMPART >', key='-TO RAMPART-'),
         ],
     ]
+    try:
+        r = requests.get(f'http://localhost:{RAMPART_PORT_1}')
+        if r.status_code == 200:
+            rampart_running = True
+            rampart_button_text = 'Stop RAMPART'
+        else:
+            rampart_running = False
+    except:
+        rampart_running = False
+
+    rampart_running = check_rampart_running()
+    if rampart_running:
+        rampart_button_text = 'Stop RAMPART'
+    else:
+        rampart_button_text = 'Start RAMPART'
+
+
+
 
     rampart_tab = [
     [sg.Button(button_text='View Barcodes',key='-VIEW BARCODES-'),],
     [
-    sg.Button(button_text='Start RAMPART',key='-START/STOP RAMPART-'),
-    sg.Button(button_text='View RAMPART', visible=False,key='-VIEW RAMPART-'),
+    sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
+    sg.Button(button_text='View RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [
     sg.VPush()
@@ -138,7 +156,7 @@ def setup_layout(theme='Dark'):
         ],
     ]
 
-    return layout
+    return layout, rampart_running
 
 #retrieve the paths of directories in the run folder
 def get_runs(runs_dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived = True):
@@ -164,6 +182,16 @@ def get_runs(runs_dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived =
     runs = list(runs_set)
 
     return runs
+
+def check_rampart_running():
+    try:
+        r = requests.get(f'http://localhost:{RAMPART_PORT_1}')
+        if r.status_code == 200:
+            return True
+        else:
+            return False
+    except:
+        return False
 
 #creates a directory containing run info json
 def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = RUNS_DIR):
@@ -354,21 +382,25 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
         if iter > 100:
             raise Exception('Something went wrong launching RAMPART')
         try:
-            r = requests.get(f'http://localhost:{RAMPART_PORT_1}')
-            if r.status_code == 200:
+            rampart_running = check_rampart_running()
+            if rampart_running:
                 return True
         except:
             pass
 
 def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
     make_theme()
-    layout = setup_layout(theme=theme)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=True)
+    layout, rampart_running = setup_layout(theme=theme)
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
 
     if window != None:
         window.close()
 
-    return new_window
+    new_window['-SAMPLES-'].bind("<FocusOut>", "FocusOut")
+    new_window['-RUN DESCRIPTION-'].bind("<FocusOut>", "FocusOut")
+    new_window['-MINKNOW-'].bind("<FocusOut>", "FocusOut")
+
+    return new_window, rampart_running
 
 def save_changes(values, run_info, rename = False, overwrite = True, hide_archived = True):
     title = run_info['title']
@@ -426,19 +458,25 @@ def archive_button(run_info, window, values, hide_archived):
 
     return run_info
 
-def run_main_window(window, font = ('FreeSans', 18)):
+def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
     runlist_visible = True
     hide_archived = True
     run_info = {}
     selected_run_title = ''
     docker_client = None
     rampart_container = None
-    rampart_running = False
+
 
     while True:
         event, values = window.read()
-        if event == 'Exit' or event == sg.WIN_CLOSED:
-            start_rampart.stop_rampart(container=rampart_container)
+        if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
+            if rampart_running:
+
+                chk_stop = sg.popup_yes_no('Do you wish to stop RAMPART before closing', font=font)
+                if chk_stop == 'YES':
+                    window.close()
+                    start_rampart.stop_rampart(container=rampart_container)
+            window.close()
             break
 
         elif event == '-RUN LIST-':
@@ -547,7 +585,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
             if 'title' not in run_info:
                 clear_selected_run(window)
 
-        elif event in {'-RUN DESCRIPTION-','-SAMPLES-','-MINKNOW-'}:
+        elif event in {'-RUN DESCRIPTION-FocusOut','-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:
             if 'title' in run_info:
                 try:
                     run_info = save_changes(values, run_info, hide_archived=hide_archived)
@@ -555,6 +593,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
                     sg.popup_error(err)
             else:
                 clear_selected_run(window)
+
         elif event == '-VIEW BARCODES-':
             try:
                 view_barcodes_window.check_barcodes(run_info, font=font)
@@ -598,7 +637,7 @@ def run_main_window(window, font = ('FreeSans', 18)):
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
 
-    window = create_main_window()
-    run_main_window(window)
+    window, rampart_running = create_main_window()
+    run_main_window(window, rampart_running)
 
     window.close()
