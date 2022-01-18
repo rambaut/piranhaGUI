@@ -3,8 +3,9 @@ import sys
 import os
 import docker
 from datetime import datetime
+import PySimpleGUI as sg
 
-def start_rampart(run_path, basecalled_path, client, firstPort = 1100, secondPort = 1200, container = None):
+def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None):
     if client == None:
         client = docker.from_env()
 
@@ -18,7 +19,7 @@ def start_rampart(run_path, basecalled_path, client, firstPort = 1100, secondPor
     ports = {firstPort:firstPort, secondPort:secondPort}
     environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}']
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
-    container = client.containers.run(image='artifice_polio_rampart', detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
+    container = client.containers.run(image=image, detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
 
     #command = f"docker run -d --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
 
@@ -36,8 +37,22 @@ def stop_rampart(containerName='rampart', container = None):
             command = f"docker stop {containerName} && docker rm {containerName}"
             os.system(command)
 
-    #command = "docker stop rampart && docker rm rampart"
-    #os.system(command)
+def check_for_image(client, image_name, font = None):
+    if client == None:
+        client = docker.from_env()
+
+    try:
+        image = client.images.get(image_name)
+        print(image.id)
+        return True, client
+    except:
+        build_ok = sg.popup_ok_cancel('RAMPART docker image not installed yet. Install it? (This may take some time)', font=font)
+
+        if build_ok == 'OK':
+            client.images.build(path='./docker', tag=image_name, rm=True)
+            return True, client
+        else:
+            return False, client
 
 
 if __name__ == '__main__':

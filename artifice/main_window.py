@@ -17,7 +17,9 @@ RAMPART_PORT_1 = 1100
 RAMPART_PORT_2 = 1200
 ARCHIVED_RUNS = 'archived_runs'
 RUNS_DIR = 'runs'
+DOCKER_IMAGE = 'artifice_polio_rampart'
 #BACKGROUND_COLOR = "#072429"
+
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -103,14 +105,17 @@ def setup_layout(theme='Dark'):
     rampart_running = check_rampart_running()
     if rampart_running:
         rampart_button_text = 'Stop RAMPART'
+        rampart_status = 'RAMPART is running'
     else:
         rampart_button_text = 'Start RAMPART'
+        rampart_status = 'RAMPART is not running'
 
 
 
 
     rampart_tab = [
     [sg.Button(button_text='View Barcodes',key='-VIEW BARCODES-'),],
+    [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
     sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
     sg.Button(button_text='View RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
@@ -373,7 +378,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     view_barcodes_window.check_barcodes(run_info,font=font)
 
     run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
-    start_rampart.start_rampart(run_path, basecalled_path, client, firstPort = firstPort, secondPort = secondPort, container=container)
+    start_rampart.start_rampart(run_path, basecalled_path, client, DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
 
     iter = 0
     while True:
@@ -466,6 +471,11 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
     docker_client = None
     rampart_container = None
 
+    got_image, docker_client = start_rampart.check_for_image(docker_client, DOCKER_IMAGE, font=font)
+
+    if not got_image:
+        window.close()
+        return None
 
     while True:
         event, values = window.read()
@@ -611,11 +621,13 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
                     start_rampart.stop_rampart(container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
+                    window['-RAMPART STATUS-'].update('RAMPART is not running')
                 else:
                     rampart_running = launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
                     if rampart_running:
                         window['-VIEW RAMPART-'].update(visible=True)
                         window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
+                        window['-RAMPART STATUS-'].update('RAMPART is running')
 
 
             except Exception as err:
@@ -638,6 +650,7 @@ if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
 
     window, rampart_running = create_main_window()
+    print(rampart_running)
     run_main_window(window, rampart_running)
 
     window.close()
