@@ -62,7 +62,6 @@ def setup_layout(theme='Dark'):
         [
         sg.Text('Name:',size=(13,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-RUN NAME-',),
-        sg.Button(button_text='Rename',key='-RENAME RUN-'),
         ],
         [
         sg.Text('Date Created:',size=(13,1)),
@@ -401,6 +400,7 @@ def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = Non
     if window != None:
         window.close()
 
+    new_window['-RUN NAME-'].bind("<FocusOut>", "FocusOut")
     new_window['-SAMPLES-'].bind("<FocusOut>", "FocusOut")
     new_window['-RUN DESCRIPTION-'].bind("<FocusOut>", "FocusOut")
     new_window['-MINKNOW-'].bind("<FocusOut>", "FocusOut")
@@ -420,6 +420,16 @@ def save_changes(values, run_info, rename = False, overwrite = True, hide_archiv
     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
 
     return run_info
+
+def rename_run(values, run_info, window, hide_archived = True):
+    previous_run_title = values['-RUN LIST-'][0]
+    run_info = get_run_info(values, run_info)
+    if run_info['title'] != previous_run_title:
+        run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
+        edit_archive(run_info['title'], archive=run_info['archived'])
+        edit_archive(previous_run_title, archive=False)
+        delete_run(previous_run_title, window, clear_selected=False)
+        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
 def edit_archive(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clear_selected = True, archive = True):
     archived_filepath = './'+runs_dir+'/'+archived_runs+'.json'
@@ -482,7 +492,7 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             if rampart_running:
                 chk_stop = sg.popup_yes_no('Do you wish to stop RAMPART before closing', font=font)
-                
+
                 if chk_stop == 'Yes':
                     window.close()
                     start_rampart.stop_rampart(container=rampart_container)
@@ -547,20 +557,6 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
                 except Exception as err:
                     sg.popup_error(err)
 
-        elif event == '-RENAME RUN-':
-            if 'title' in run_info:
-                try:
-                    previous_run_title = values['-RUN LIST-'][0]
-                    run_info = get_run_info(values, run_info)
-                    if run_info['title'] != previous_run_title:
-                        run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
-                        edit_archive(run_info['title'], archive=run_info['archived'])
-                        edit_archive(previous_run_title, archive=False)
-                        delete_run(previous_run_title, window, clear_selected=False)
-                        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-                except Exception as err:
-                    sg.popup_error(err)
-
         elif event == '-DELETE RUN-':
             if 'title' in run_info:
                 try:
@@ -591,18 +587,24 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
                 window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
                 runlist_visible = True
 
-        elif event == '-RUN NAME-':
-            if 'title' not in run_info:
-                clear_selected_run(window)
+        elif event == '-RUN NAME-FocusOut':
+            try:
+                if 'title' in run_info:
+                    rename_run(values, run_info, window, hide_archived=hide_archived)
+                else:
+                    clear_selected_run(window)
+            except Exception as err:
+                sg.popup_error(err)
+
 
         elif event in {'-RUN DESCRIPTION-FocusOut','-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:
-            if 'title' in run_info:
-                try:
+            try:
+                if 'title' in run_info:
                     run_info = save_changes(values, run_info, hide_archived=hide_archived)
-                except Exception as err:
-                    sg.popup_error(err)
-            else:
-                clear_selected_run(window)
+                else:
+                    clear_selected_run(window)
+            except Exception as err:
+                sg.popup_error(err)
 
         elif event == '-VIEW BARCODES-':
             try:
@@ -628,8 +630,6 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
                         window['-VIEW RAMPART-'].update(visible=True)
                         window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
                         window['-RAMPART STATUS-'].update('RAMPART is running')
-
-
             except Exception as err:
                 sg.popup_error(err)
 
