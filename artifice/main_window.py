@@ -36,7 +36,7 @@ def make_theme():
     sg.theme_add_new('Artifice', Artifice_Theme)
 
 #defines the layout of the window
-def setup_layout(theme='Dark'):
+def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
     runs = get_runs()
 
@@ -152,7 +152,7 @@ def setup_layout(theme='Dark'):
 
     layout = [
         [
-        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = ('FreeSans', 50), background_color = frame_bg)]], background_color = frame_bg)
+        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = ('Lato',30), background_color = frame_bg)]], background_color = frame_bg)
         ],
         [
         sg.pin(sg.Column(select_run_column, element_justification = 'center', key='-SELECT RUN COLUMN-')),
@@ -394,7 +394,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
 
 def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
     make_theme()
-    layout, rampart_running = setup_layout(theme=theme)
+    layout, rampart_running = setup_layout(theme=theme, font=font)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
 
     if window != None:
@@ -473,7 +473,7 @@ def archive_button(run_info, window, values, hide_archived):
 
     return run_info
 
-def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
+def run_main_window(window, font = None, rampart_running = False):
     runlist_visible = True
     hide_archived = True
     run_info = {}
@@ -648,9 +648,9 @@ def run_main_window(window, font = ('FreeSans', 18), rampart_running = False):
 
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
+    font = ('Lato', 18)
 
-    window, rampart_running = create_main_window()
-    print(rampart_running)
-    run_main_window(window, rampart_running=rampart_running)
+    window, rampart_running = create_main_window(font=font)
+    run_main_window(window, rampart_running=rampart_running, font=font)
 
     window.close()
