@@ -595,6 +595,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 else:
                     clear_selected_run(window)
             except Exception as err:
+                run_info = load_run(window, run_info['title'])
                 sg.popup_error(err)
 
 
@@ -605,6 +606,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 else:
                     clear_selected_run(window)
             except Exception as err:
+                run_info = load_run(window, run_info['title'])
                 sg.popup_error(err)
 
         elif event == '-VIEW BARCODES-':
