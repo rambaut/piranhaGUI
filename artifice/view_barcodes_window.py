@@ -90,7 +90,7 @@ def check_barcodes(run_info, font = None):
 
 
 
-def create_barcodes_window(samples, theme = 'Artifice', font = ('FreeSans', 18), window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def create_barcodes_window(samples, theme = 'Artifice', font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     layout, column_headers = setup_barcodes_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
     if window != None:

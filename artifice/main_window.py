@@ -18,6 +18,7 @@ RAMPART_PORT_2 = 1200
 ARCHIVED_RUNS = 'archived_runs'
 RUNS_DIR = 'runs'
 DOCKER_IMAGE = 'artifice_polio_rampart'
+FONT = 'Arial'
 #BACKGROUND_COLOR = "#072429"
 
 
@@ -152,7 +153,7 @@ def setup_layout(theme='Dark', font = None):
 
     layout = [
         [
-        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = ('Lato',30), background_color = frame_bg)]], background_color = frame_bg)
+        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = (FONT,30), background_color = frame_bg)]], background_color = frame_bg)
         ],
         [
         sg.pin(sg.Column(select_run_column, element_justification = 'center', key='-SELECT RUN COLUMN-')),
@@ -232,7 +233,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = RUN
     return title
 
 def create_run():
-    window = selection_window.create_select_window()
+    window = selection_window.create_select_window(font=font)
     selections = selection_window.run_select_window(window)
 
     if selections == None:
@@ -240,7 +241,7 @@ def create_run():
 
     samples, basecalledPath, has_headers = selections
 
-    window, column_headers = parse_columns_window.create_parse_window(samples, has_headers=has_headers)
+    window, column_headers = parse_columns_window.create_parse_window(samples, font=font,has_headers=has_headers)
     samples_barcodes_indices = parse_columns_window.run_parse_window(window, samples, column_headers)
 
     if samples_barcodes_indices == None:
@@ -392,7 +393,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
         except:
             pass
 
-def create_main_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
+def create_main_window(theme = 'Artifice', font = None, window = None):
     make_theme()
     layout, rampart_running = setup_layout(theme=theme, font=font)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
@@ -543,7 +544,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 try:
                     samples = values['-SAMPLES-']
-                    parse_window, column_headers = parse_columns_window.create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
+                    parse_window, column_headers = parse_columns_window.create_parse_window(samples, font=font, theme=TH samples_column=samples_column, barcodes_column=barcodes_column)
                     samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
 
                     if samples_barcodes_indices != None:
@@ -611,7 +612,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 view_barcodes_window.check_barcodes(run_info, font=font)
 
                 barcodes = './'+RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
-                barcodes_window, column_headers = view_barcodes_window.create_barcodes_window(barcodes)
+                barcodes_window, column_headers = view_barcodes_window.create_barcodes_window(barcodes,font=font)
                 view_barcodes_window.run_barcodes_window(barcodes_window,barcodes,column_headers)
             except Exception as err:
                 sg.popup_error(err)
@@ -648,7 +649,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
-    font = ('Lato', 18)
+    font = (FONT, 18)
 
     window, rampart_running = create_main_window(font=font)
     run_main_window(window, rampart_running=rampart_running, font=font)

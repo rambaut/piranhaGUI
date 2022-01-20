@@ -27,7 +27,7 @@ def setup_selection_layout(theme = 'Dark'):
 
     return layout
 
-def create_select_window(theme = 'Artifice', font = ('FreeSans', 18), window = None):
+def create_select_window(theme = 'Artifice', font = None, window = None):
     layout = setup_selection_layout(theme=theme)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
 

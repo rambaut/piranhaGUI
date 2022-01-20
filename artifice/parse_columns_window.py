@@ -23,7 +23,7 @@ def samples_to_list(filepath, has_headers = True, trim = True):
 
     return samples_list, column_headers
 
-def setup_parse_layout(samples, theme = 'Dark', samples_column = 0, barcodes_column = 1, has_headers = True):
+def setup_parse_layout(samples, theme = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
 
     samples_list, column_headers = samples_to_list(samples, has_headers=has_headers)
@@ -44,7 +44,7 @@ def setup_parse_layout(samples, theme = 'Dark', samples_column = 0, barcodes_col
         [
         sg.Table(
         values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
-        expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,
+        expand_x=True,expand_y=True,num_rows=25,vertical_scroll_only=False,
         ),
         ],
         [
@@ -69,7 +69,7 @@ def check_for_duplicate_entries(samples, column):
 
     return False
 
-def create_parse_window(samples, theme = 'Artifice', font = ('FreeSans', 18), window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
 
     layout, column_headers = setup_parse_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
