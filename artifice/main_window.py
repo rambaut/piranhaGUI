@@ -495,7 +495,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 if chk_stop == 'Yes':
                     window.close()
-                    start_rampart.stop_rampart(container=rampart_container)
+                    start_rampart.stop_rampart(client=docker_client, container=rampart_container)
             window.close()
             break
 
@@ -620,7 +620,7 @@ def run_main_window(window, font = None, rampart_running = False):
             try:
                 if rampart_running:
                     rampart_running = False
-                    start_rampart.stop_rampart(container=rampart_container)
+                    start_rampart.stop_rampart(client=docker_client, container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
                     window['-RAMPART STATUS-'].update('RAMPART is not running')

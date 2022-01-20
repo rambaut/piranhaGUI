@@ -14,7 +14,7 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     config_file = 'run_configuration.json'
     containerName = "rampart"
 
-    stop_rampart(containerName=containerName, container=container)
+    stop_rampart(client=client,containerName=containerName, container=container)
 
     ports = {firstPort:firstPort, secondPort:secondPort}
     environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}']
@@ -29,13 +29,19 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     #os.system(command)
     return client, container
 
-def stop_rampart(containerName='rampart', container = None):
-        try:
-            container.stop(containerName)
-            container.remove(containerName)
-        except:
-            command = f"docker stop {containerName} && docker rm {containerName}"
-            os.system(command)
+def stop_rampart(client = None, containerName='rampart', container = None):
+        if container == None:
+            if client == None:
+                client = docker.from_env()
+            try:
+                container = client.containers.get(containerName)
+            except:
+                return None
+
+        container.stop()
+        container.remove()
+        #command = f"docker stop {containerName} && docker rm {containerName}"
+        #os.system(command)
 
 def check_for_image(client, image_name, font = None):
     if client == None:
