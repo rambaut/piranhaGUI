@@ -502,8 +502,21 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-RUN LIST-':
             try:
+                old_run_info = None
+                if 'title' in run_info:
+                    old_run_info = dict(run_info)
+
+                try:
+                    if not old_run_info == None:
+                        save_changes(values, old_run_info, hide_archived=hide_archived)
+                except Exception as err:
+                    sg.popup_error(err)
+
+
                 selected_run_title = values['-RUN LIST-'][0]
                 run_info = load_run(window, selected_run_title)
+
+                run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
             except Exception as err:
                 sg.popup_error(err)
 
