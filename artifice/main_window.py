@@ -544,7 +544,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 try:
                     samples = values['-SAMPLES-']
-                    parse_window, column_headers = parse_columns_window.create_parse_window(samples, font=font, theme=TH samples_column=samples_column, barcodes_column=barcodes_column)
+                    parse_window, column_headers = parse_columns_window.create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)
                     samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
 
                     if samples_barcodes_indices != None:
