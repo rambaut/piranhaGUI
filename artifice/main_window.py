@@ -378,7 +378,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     view_barcodes_window.check_barcodes(run_info,font=font)
 
     run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
-    start_rampart.start_rampart(run_path, basecalled_path, client, DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
+    container = start_rampart.start_rampart(run_path, basecalled_path, client, DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
 
     iter = 0
     while True:
@@ -389,7 +389,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
         try:
             rampart_running = check_rampart_running()
             if rampart_running:
-                return True
+                return container
         except:
             pass
 
@@ -635,17 +635,23 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-START/STOP RAMPART-':
             try:
                 if rampart_running:
+                    try:
+                        print(rampart_container.top())
+                    except:
+                        pass
                     rampart_running = False
                     start_rampart.stop_rampart(client=docker_client, container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
                     window['-RAMPART STATUS-'].update('RAMPART is not running')
                 else:
-                    rampart_running = launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
-                    if rampart_running:
-                        window['-VIEW RAMPART-'].update(visible=True)
-                        window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
-                        window['-RAMPART STATUS-'].update('RAMPART is running')
+                    rampart_container = launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
+                    rampart_running = True
+                    window['-VIEW RAMPART-'].update(visible=True)
+                    window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
+                    window['-RAMPART STATUS-'].update('RAMPART is running')
+
+                    #print(rampart_container.logs())
             except Exception as err:
                 sg.popup_error(err)
 
