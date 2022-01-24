@@ -12,14 +12,7 @@ import selection_window
 import parse_columns_window
 import start_rampart
 import view_barcodes_window
-
-RAMPART_PORT_1 = 1100
-RAMPART_PORT_2 = 1200
-ARCHIVED_RUNS = 'archived_runs'
-RUNS_DIR = 'runs'
-DOCKER_IMAGE = 'artifice_polio_rampart'
-FONT = 'Arial'
-#BACKGROUND_COLOR = "#072429"
+import consts
 
 
 def make_theme():
@@ -93,7 +86,7 @@ def setup_layout(theme='Dark', font = None):
         ],
     ]
     try:
-        r = requests.get(f'http://localhost:{RAMPART_PORT_1}')
+        r = requests.get(f'http://localhost:{consts.RAMPART_PORT_1}')
         if r.status_code == 200:
             rampart_running = True
             rampart_button_text = 'Stop RAMPART'
@@ -153,7 +146,7 @@ def setup_layout(theme='Dark', font = None):
 
     layout = [
         [
-        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = (FONT,30), background_color = frame_bg)]], background_color = frame_bg)
+        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = (consts.FONT,30), background_color = frame_bg)]], background_color = frame_bg)
         ],
         [
         sg.pin(sg.Column(select_run_column, element_justification = 'center', key='-SELECT RUN COLUMN-')),
@@ -164,7 +157,7 @@ def setup_layout(theme='Dark', font = None):
     return layout, rampart_running
 
 #retrieve the paths of directories in the run folder
-def get_runs(runs_dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived = True):
+def get_runs(runs_dir = consts.RUNS_DIR, archived_json = consts.ARCHIVED_RUNS, hide_archived = True):
     paths = listdir('./'+runs_dir)
     runs_set = set()
     for path in paths:
@@ -190,7 +183,7 @@ def get_runs(runs_dir = RUNS_DIR, archived_json = ARCHIVED_RUNS, hide_archived =
 
 def check_rampart_running():
     try:
-        r = requests.get(f'http://localhost:{RAMPART_PORT_1}')
+        r = requests.get(f'http://localhost:{consts.RAMPART_PORT_1}')
         if r.status_code == 200:
             return True
         else:
@@ -199,7 +192,7 @@ def check_rampart_running():
         return False
 
 #creates a directory containing run info json
-def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = RUNS_DIR):
+def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = consts.RUNS_DIR):
     samples = run_info['samples']
     if title == None or title == '':
         title = samples.split('/')[-1].split('.')[0]
@@ -263,7 +256,7 @@ def create_run():
 
     return title
 
-def load_run(window, title, runs_dir = RUNS_DIR):
+def load_run(window, title, runs_dir = consts.RUNS_DIR):
     filepath = './'+runs_dir+'/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
@@ -312,7 +305,7 @@ def get_run_info(values, run_info):
 
     return run_info
 
-def delete_run(title, window, clear_selected = True, runs_dir = RUNS_DIR):
+def delete_run(title, window, clear_selected = True, runs_dir = consts.RUNS_DIR):
     filepath = './'+runs_dir+'/'+title
 
     if os.path.isdir(filepath):
@@ -351,7 +344,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
 
     return run_info
 
-def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = RUNS_DIR, font = None, container = None):
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = consts.RUNS_DIR, font = None, container = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
@@ -378,7 +371,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     view_barcodes_window.check_barcodes(run_info,font=font)
 
     run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
-    container = start_rampart.start_rampart(run_path, basecalled_path, client, DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
+    container = start_rampart.start_rampart(run_path, basecalled_path, client, consts.DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
 
     iter = 0
     while True:
@@ -432,7 +425,7 @@ def rename_run(values, run_info, window, hide_archived = True):
         delete_run(previous_run_title, window, clear_selected=False)
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
-def edit_archive(title, runs_dir = RUNS_DIR, archived_runs = ARCHIVED_RUNS, clear_selected = True, archive = True):
+def edit_archive(title, runs_dir = consts.RUNS_DIR, archived_runs = consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
     archived_filepath = './'+runs_dir+'/'+archived_runs+'.json'
 
     with open(archived_filepath,'r') as file:
@@ -482,7 +475,7 @@ def run_main_window(window, font = None, rampart_running = False):
     docker_client = None
     rampart_container = None
 
-    got_image, docker_client = start_rampart.check_for_image(docker_client, DOCKER_IMAGE, font=font)
+    got_image, docker_client = start_rampart.check_for_image(docker_client, consts.DOCKER_IMAGE, font=font)
 
     if not got_image:
         window.close()
@@ -626,7 +619,7 @@ def run_main_window(window, font = None, rampart_running = False):
             try:
                 view_barcodes_window.check_barcodes(run_info, font=font)
 
-                barcodes = './'+RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
+                barcodes = './'+consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
                 barcodes_window, column_headers = view_barcodes_window.create_barcodes_window(barcodes,font=font)
                 view_barcodes_window.run_barcodes_window(barcodes_window,barcodes,column_headers)
             except Exception as err:
@@ -645,7 +638,7 @@ def run_main_window(window, font = None, rampart_running = False):
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
                     window['-RAMPART STATUS-'].update('RAMPART is not running')
                 else:
-                    rampart_container = launch_rampart(run_info, docker_client, firstPort=RAMPART_PORT_1, secondPort=RAMPART_PORT_2, font=font, container=rampart_container)
+                    rampart_container = launch_rampart(run_info, docker_client, firstPort=consts.RAMPART_PORT_1, secondPort=consts.RAMPART_PORT_2, font=font, container=rampart_container)
                     rampart_running = True
                     window['-VIEW RAMPART-'].update(visible=True)
                     window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
@@ -662,7 +655,7 @@ def run_main_window(window, font = None, rampart_running = False):
             window['-RUN INFO TAB-'].select()
 
         elif event == '-VIEW RAMPART-':
-            address = 'http://localhost:'+str(RAMPART_PORT_1)
+            address = 'http://localhost:'+str(consts.RAMPART_PORT_1)
             open_new_tab(address)
 
     window.close()
@@ -670,7 +663,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
-    font = (FONT, 18)
+    font = (consts.FONT, 18)
 
     window, rampart_running = create_main_window(font=font)
     run_main_window(window, rampart_running=rampart_running, font=font)
