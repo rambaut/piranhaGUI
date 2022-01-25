@@ -60,7 +60,7 @@ def check_for_duplicate_entries(samples, column):
     for row in samples_list:
         entries.append(row[int(column)])
 
-    print(entries)
+    #print(entries)
     seen_entries = set()
     for entry in entries:
         if entry in seen_entries:
@@ -89,7 +89,7 @@ def run_parse_window(window, samples, column_headers):
             try:
                 samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
                 barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
-                print('columns: '+str(samples_column)+' '+str(barcodes_column))
+                #print('columns: '+str(samples_column)+' '+str(barcodes_column))
 
                 if barcodes_column == samples_column:
                     raise Exception('barcodes and samples must be 2 separate columns')

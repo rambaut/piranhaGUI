@@ -22,7 +22,7 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     container = client.containers.run(image=image, detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
 
     command = f"docker run -it --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
-    print(command)
+    #print(command)
     #command = f"docker run -d --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} -e RUN_PATH=/data/run_data/ --volume {path}:/data/run_data/ rampart_test"
     #command = f"docker run -d --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} -e RUN_PATH=/data/run_data/ --volume {path}:/data/run_data/ emilyscher/polio_rampart"
 
@@ -30,16 +30,19 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     return container
 
 def stop_rampart(client = None, containerName='rampart', container = None):
+    try:
+        container.stop()
+        container.remove()
+    except:
         if container == None:
             if client == None:
                 client = docker.from_env()
             try:
                 container = client.containers.get(containerName)
+                container.stop()
+                container.remove()
             except:
                 return None
-
-        container.stop()
-        container.remove()
         #command = f"docker stop {containerName} && docker rm {containerName}"
         #os.system(command)
 
@@ -49,7 +52,7 @@ def check_for_image(client, image_name, font = None):
 
     try:
         image = client.images.get(image_name)
-        print(image.id)
+        #print(image.id)
         return True, client
     except:
         build_ok = sg.popup_ok_cancel('RAMPART docker image not installed yet. Install it? (This may take some time)', font=font)

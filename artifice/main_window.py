@@ -628,10 +628,10 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-START/STOP RAMPART-':
             try:
                 if rampart_running:
-                    try:
-                        print(rampart_container.top())
-                    except:
-                        pass
+                    #try:
+                        #print(rampart_container.top())
+                    #except:
+                    #    pass
                     rampart_running = False
                     start_rampart.stop_rampart(client=docker_client, container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
