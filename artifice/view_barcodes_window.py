@@ -68,7 +68,7 @@ def check_barcodes(run_info, font = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
 
-    barcodes_file = './'+consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
+    barcodes_file = consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
         old_barcodes = parse_columns_window.samples_to_list(barcodes_file, has_headers=False)[0]

@@ -8,12 +8,11 @@ from shutil import rmtree, move
 from datetime import datetime
 from time import sleep
 
+import consts
 import selection_window
 import parse_columns_window
 import start_rampart
 import view_barcodes_window
-import consts
-
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -158,14 +157,14 @@ def setup_layout(theme='Dark', font = None):
 
 #retrieve the paths of directories in the run folder
 def get_runs(runs_dir = consts.RUNS_DIR, archived_json = consts.ARCHIVED_RUNS, hide_archived = True):
-    paths = listdir('./'+runs_dir)
+    paths = listdir(runs_dir)
     runs_set = set()
     for path in paths:
-        if os.path.isdir('./'+runs_dir+'/'+path):
+        if os.path.isdir(runs_dir+'/'+path):
             runs_set.add(path)
 
     if hide_archived:
-        archived_filepath = './'+runs_dir+'/'+archived_json+'.json'
+        archived_filepath = runs_dir+'/'+archived_json+'.json'
 
         with open(archived_filepath,'r') as file:
             archived_runs_dict = json.loads(file.read())
@@ -202,7 +201,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
     if iter > 0:
         title = title+'('+str(iter)+')'
 
-    filepath = './'+runs_dir+'/'+title+'/run_info.json'
+    filepath = runs_dir+'/'+title+'/run_info.json'
 
     if overwrite == False:
         if os.path.isfile(filepath):
@@ -211,8 +210,8 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
     if os.path.isfile(samples) == False or samples[-4:] != '.csv':
         raise Exception('No valid samples file provided')
 
-    if not os.path.isdir('./'+runs_dir+'/'+title):
-        mkdir('./'+runs_dir+'/'+title)
+    if not os.path.isdir(runs_dir+'/'+title):
+        mkdir(runs_dir+'/'+title)
 
     for key, value in run_info.items():
         if type(run_info[key]) == str:
@@ -257,7 +256,7 @@ def create_run():
     return title
 
 def load_run(window, title, runs_dir = consts.RUNS_DIR):
-    filepath = './'+runs_dir+'/'+title+'/run_info.json'
+    filepath = runs_dir+'/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
@@ -306,7 +305,7 @@ def get_run_info(values, run_info):
     return run_info
 
 def delete_run(title, window, clear_selected = True, runs_dir = consts.RUNS_DIR):
-    filepath = './'+runs_dir+'/'+title
+    filepath = runs_dir+'/'+title
 
     if os.path.isdir(filepath):
         rmtree(filepath)
@@ -354,7 +353,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
 
     basecalled_path = run_info['basecalledPath']
 
-    config_path = './'+runs_dir+'/'+run_info['title']+'/run_configuration.json'
+    config_path = runs_dir+'/'+run_info['title']+'/run_configuration.json'
 
     try:
         with open(config_path,'r') as file:
@@ -370,7 +369,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
 
     view_barcodes_window.check_barcodes(run_info,font=font)
 
-    run_path = getcwd()+'/'+runs_dir+'/'+run_info['title']
+    run_path = runs_dir+'/'+run_info['title']
     container = start_rampart.start_rampart(run_path, basecalled_path, client, consts.DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
 
     iter = 0
@@ -426,7 +425,7 @@ def rename_run(values, run_info, window, hide_archived = True):
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
 def edit_archive(title, runs_dir = consts.RUNS_DIR, archived_runs = consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
-    archived_filepath = './'+runs_dir+'/'+archived_runs+'.json'
+    archived_filepath = runs_dir+'/'+archived_runs+'.json'
 
     with open(archived_filepath,'r') as file:
         archived_runs_dict = json.loads(file.read())
@@ -619,7 +618,7 @@ def run_main_window(window, font = None, rampart_running = False):
             try:
                 view_barcodes_window.check_barcodes(run_info, font=font)
 
-                barcodes = './'+consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
+                barcodes = consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
                 barcodes_window, column_headers = view_barcodes_window.create_barcodes_window(barcodes,font=font)
                 view_barcodes_window.run_barcodes_window(barcodes_window,barcodes,column_headers)
             except Exception as err:
