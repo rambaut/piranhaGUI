@@ -12,6 +12,6 @@ $ conda activate artifice
 
 To run artifice from the terminal:
 
-$ python main_window.py
+$ python artifice.py
 
 [TODO: ADD INSTRUCTIONS TO CREATE EXECUTABLE WITH PYINSTALLER]
