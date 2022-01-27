@@ -1,5 +1,5 @@
 import os.path
-from os import mkdir
+from os import makedirs
 import json
 
 import consts
@@ -16,8 +16,8 @@ def check_runs_dir(runs_dir):
     else:
         archived_dict = {"archived_runs": []}
 
-        #if not os.path.isdir(runs_dir):
-        #    mkdir(runs_dir)
+        if not os.path.isdir(runs_dir):
+            makedirs(runs_dir)
 
         with open(filepath, 'w') as file:
             json.dump(archived_dict, file)

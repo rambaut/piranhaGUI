@@ -7,6 +7,7 @@ from webbrowser import open_new_tab
 from shutil import rmtree, move
 from datetime import datetime
 from time import sleep
+import traceback
 
 import consts
 import selection_window
@@ -224,7 +225,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
 
     return title
 
-def create_run():
+def create_run(font=None):
     window = selection_window.create_select_window(font=font)
     selections = selection_window.run_select_window(window)
 
@@ -400,7 +401,7 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
 
     return new_window, rampart_running
 
-def save_changes(values, run_info, rename = False, overwrite = True, hide_archived = True):
+def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True):
     title = run_info['title']
     run_info = get_run_info(values, run_info)
 
@@ -418,13 +419,13 @@ def rename_run(values, run_info, window, hide_archived = True):
     previous_run_title = values['-RUN LIST-'][0]
     run_info = get_run_info(values, run_info)
     if run_info['title'] != previous_run_title:
-        run_info = save_changes(values, run_info, rename=True, overwrite=False, hide_archived=hide_archived)
-        edit_archive(run_info['title'], archive=run_info['archived'])
-        edit_archive(previous_run_title, archive=False)
+        run_info = save_changes(values, run_info, window, rename=True, overwrite=False, hide_archived=hide_archived)
+        edit_archive(run_info['title'], window, archive=run_info['archived'])
+        edit_archive(previous_run_title, window, archive=False)
         delete_run(previous_run_title, window, clear_selected=False)
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
-def edit_archive(title, runs_dir = consts.RUNS_DIR, archived_runs = consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
+def edit_archive(title, window, runs_dir = consts.RUNS_DIR, archived_runs = consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
     archived_filepath = runs_dir+'/'+archived_runs+'.json'
 
     with open(archived_filepath,'r') as file:
@@ -450,14 +451,14 @@ def archive_button(run_info, window, values, hide_archived):
 
     if run_info['archived'] == True:
         run_info['archived'] = False
-        run_info = save_changes(values, run_info, hide_archived=hide_archived)
-        edit_archive(run_info['title'], archive=False, clear_selected=False)
+        run_info = save_changes(values, run_info, window, hide_archived=hide_archived)
+        edit_archive(run_info['title'], window, archive=False, clear_selected=False)
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
 
     else:
         run_info['archived'] = True
-        run_info = save_changes(values, run_info, hide_archived=hide_archived)
-        edit_archive(run_info['title'], archive=True, clear_selected=True)
+        run_info = save_changes(values, run_info, window, hide_archived=hide_archived)
+        edit_archive(run_info['title'], window, archive=True, clear_selected=True)
         if hide_archived:
             run_info = {}
             run_info = update_run_list(window, run_info, hide_archived=hide_archived)
@@ -500,8 +501,9 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 try:
                     if not old_run_info == None:
-                        save_changes(values, old_run_info, hide_archived=hide_archived)
+                        save_changes(values, old_run_info, window, hide_archived=hide_archived)
                 except Exception as err:
+                    print(traceback.format_exc())
                     sg.popup_error(err)
 
 
@@ -510,16 +512,18 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
             except Exception as err:
+                print(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-NEW RUN-':
             try:
-                selected_run_title = create_run()
+                selected_run_title = create_run(font)
                 if selected_run_title == None:
                     continue
 
                 run_info = update_run_list(window, run_info, run_to_select=selected_run_title, hide_archived=hide_archived)
             except Exception as err:
+                print(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-SHOW/HIDE ARCHIVED-':
@@ -533,6 +537,7 @@ def run_main_window(window, font = None, rampart_running = False):
                     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
                     window['-SHOW/HIDE ARCHIVED-'].update(text='Show All Runs')
             except Exception as err:
+                print(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-VIEW SAMPLES-':
@@ -561,6 +566,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                     selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
                 except Exception as err:
+                    print(traceback.format_exc())
                     sg.popup_error(err)
 
         elif event == '-DELETE RUN-':
@@ -574,6 +580,7 @@ def run_main_window(window, font = None, rampart_running = False):
                     run_info = {}
                     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
                 except Exception as err:
+                    print(traceback.format_exc())
                     sg.popup_error(err)
 
         elif event == '-ARCHIVE/UNARCHIVE-':
@@ -581,6 +588,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 try:
                     run_info = archive_button(run_info, window, values, hide_archived)
                 except Exception as err:
+                    print(traceback.format_exc())
                     sg.popup_error(err)
 
         elif event == '-SHOW/HIDE RUNLIST-':
@@ -600,6 +608,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 else:
                     clear_selected_run(window)
             except Exception as err:
+                print(traceback.format_exc())
                 run_info = load_run(window, run_info['title'])
                 sg.popup_error(err)
 
@@ -607,12 +616,17 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event in {'-RUN DESCRIPTION-FocusOut','-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:
             try:
                 if 'title' in run_info:
-                    run_info = save_changes(values, run_info, hide_archived=hide_archived)
+                    run_info = save_changes(values, run_info, window, hide_archived=hide_archived)
                 else:
                     clear_selected_run(window)
             except Exception as err:
-                run_info = load_run(window, run_info['title'])
+                print(traceback.format_exc())
                 sg.popup_error(err)
+                try:
+                    run_info = load_run(window, run_info['title'])
+                except Exception as err:
+                    print(traceback.format_exc())
+                    sg.popup_error(err)
 
         elif event == '-VIEW BARCODES-':
             try:
@@ -622,6 +636,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 barcodes_window, column_headers = view_barcodes_window.create_barcodes_window(barcodes,font=font)
                 view_barcodes_window.run_barcodes_window(barcodes_window,barcodes,column_headers)
             except Exception as err:
+                print(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-START/STOP RAMPART-':
@@ -645,6 +660,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                     #print(rampart_container.logs())
             except Exception as err:
+                print(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-TO RAMPART-':
