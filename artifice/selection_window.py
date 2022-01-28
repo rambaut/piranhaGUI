@@ -1,6 +1,8 @@
 import PySimpleGUI as sg
 import os.path
 
+from update_log import log_event, update_log
+
 #Window for user to select samples csv and possibling MinKnow
 
 def setup_selection_layout(theme = 'Dark'):
@@ -39,6 +41,9 @@ def create_select_window(theme = 'Artifice', font = None, window = None):
 def run_select_window(window):
     while True:
         event, values = window.read()
+        if event != None:
+            log_event(f'{event} [selection window]')
+
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-NEXT-':
@@ -55,6 +60,7 @@ def run_select_window(window):
                 window.close()
                 return samples, MinKnow, values['-HEADERS CHECKBOX-']
             except Exception as err:
+                update_log(traceback.format_exc())
                 sg.popup_error(err)
 
     window.close()

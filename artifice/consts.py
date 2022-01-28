@@ -37,6 +37,7 @@ ARCHIVED_RUNS = config['ARCHIVED_RUNS']
 RUNS_DIR = str(get_datadir() / 'runs')
 DOCKER_IMAGE = config['DOCKER_IMAGE']
 FONT = config['FONT']
+LOGFILE = config['LOGFILE']
 #BACKGROUND_COLOR = "#072429"
 
 if __name__ == '__main__':

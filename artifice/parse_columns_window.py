@@ -2,6 +2,8 @@ import PySimpleGUI as sg
 import os.path
 import csv
 
+from update_log import log_event, update_log
+
 def samples_to_list(filepath, has_headers = True, trim = True):
     with open(filepath, newline = '') as csvfile:
         csvreader = csv.reader(csvfile)
@@ -83,6 +85,9 @@ def create_parse_window(samples, theme = None, font = None, window = None, sampl
 def run_parse_window(window, samples, column_headers):
     while True:
         event, values = window.read()
+        if event != None:
+            log_event(f'{event} [parse columns window]')
+
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-SAVE-':
@@ -104,6 +109,7 @@ def run_parse_window(window, samples, column_headers):
                 window.close()
                 return samples_column, barcodes_column
             except Exception as err:
+                update_log(traceback.format_exc())
                 sg.popup_error(err)
 
 

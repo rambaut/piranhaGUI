@@ -5,6 +5,7 @@ import csv
 import parse_columns_window
 import main_window
 import consts
+from update_log import log_event, update_log
 
 def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
@@ -103,6 +104,9 @@ def create_barcodes_window(samples, theme = 'Artifice', font = None, window = No
 def run_barcodes_window(window, samples, column_headers):
     while True:
         event, values = window.read()
+        if event != None:
+            log_event(f'{event} [view barcodes window]')
+
         if event in {'Exit', '-BARCODES OK-'} or event == sg.WIN_CLOSED:
             window.close()
             break
