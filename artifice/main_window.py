@@ -545,10 +545,12 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-SHOW/HIDE ARCHIVED-':
             try:
                 if hide_archived:
+                    update_log('showing archived runs')
                     hide_archived = False
                     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
                     window['-SHOW/HIDE ARCHIVED-'].update(text='Hide Archived Runs')
                 else:
+                    update_log('hiding archived runs')
                     hide_archived = True
                     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
                     window['-SHOW/HIDE ARCHIVED-'].update(text='Show All Runs')

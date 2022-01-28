@@ -67,6 +67,7 @@ def save_barcodes(run_info):
             csvwriter.writerow(row)
 
 def check_barcodes(run_info, font = None):
+    update_log(f'checking barcodes for run: "{run_info['title']}" still match chosen samples...')
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
 
@@ -83,10 +84,20 @@ def check_barcodes(run_info, font = None):
             sample_modified = False
 
         if sample_modified:
-            overwrite_barcode = sg.popup_yes_no('Samples file appears to have been edited since it was selected. Do you want to remake the barcodes file with the modified samples?', font=font)
+            update_log('barcodes and samples do not match')
+            overwrite_barcode = sg.popup_yes_no(
+                'Samples file appears to have been edited since it was selected. Do you want to remake the barcodes file with the modified samples?',
+                font=font
+            )
             if overwrite_barcode == "Yes":
+                update_log('user chose to remake barcodes')
                 save_barcodes(run_info)
+            else:
+                update_log('user chose to keep barcodes as they are')
+        else:
+            update_log('barcodes and samples match')
     else:
+        update_log(f'missing barcodes file, creating it now')
         save_barcodes(run_info)
 
     return False
