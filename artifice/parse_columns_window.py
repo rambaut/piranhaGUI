@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import os.path
 import csv
+import traceback
 
 from update_log import log_event, update_log
 

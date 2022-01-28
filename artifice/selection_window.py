@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import os.path
+import traceback
 
 from update_log import log_event, update_log
 
@@ -30,6 +31,7 @@ def setup_selection_layout(theme = 'Dark'):
     return layout
 
 def create_select_window(theme = 'Artifice', font = None, window = None):
+    update_log(f'opening selection window')
     layout = setup_selection_layout(theme=theme)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
 
@@ -50,12 +52,17 @@ def run_select_window(window):
             try:
                 samples = values['-SAMPLES-'].strip()
                 MinKnow = values['-MINKNOW-'].strip()
+                update_log(f'selected "{samples}" as samples file')
 
                 if os.path.isfile(samples) == False:
                     raise Exception('Invalid samples file')
 
-                if os.path.isdir(MinKnow) == False and MinKnow != '':
-                    raise Exception('Invalid MinKnows')
+                if MinKnow != '':
+                    update_log(f'selected "{MinKnow}" as MinKnow run')
+                    if os.path.isdir(MinKnow) == False:
+                        raise Exception('Invalid MinKnows')
+                else:
+                    update_log(f'No MinKnow run selected')
 
                 window.close()
                 return samples, MinKnow, values['-HEADERS CHECKBOX-']

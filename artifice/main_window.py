@@ -203,10 +203,14 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
     if iter > 0:
         title = title+'('+str(iter)+')'
 
+    update_log(f'attempting to save run: "{title}"...')
+
     filepath = runs_dir+'/'+title+'/run_info.json'
+
 
     if overwrite == False:
         if os.path.isfile(filepath):
+            update_log(f'run: "{title}" already exists, adding iterator')
             return save_run(run_info,title=original_title,overwrite=overwrite,iter=iter+1)
 
     if os.path.isfile(samples) == False or samples[-4:] != '.csv':
@@ -224,9 +228,11 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
     with open(filepath, 'w') as file:
         json.dump(run_info, file)
 
+    update_log(f'saved run: "{title}" successfully')
     return title
 
 def create_run(font=None):
+    update_log(f'creating new run')
     window = selection_window.create_select_window(font=font)
     selections = selection_window.run_select_window(window)
 
@@ -254,10 +260,12 @@ def create_run(font=None):
 
     title = save_run(run_info)
     view_barcodes_window.save_barcodes(run_info)
+    update_log(f'created run: "{title}" successfully')
 
     return title
 
 def load_run(window, title, runs_dir = consts.RUNS_DIR):
+    update_log(f'attempting to load run: "{title}"...')
     filepath = runs_dir+'/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
@@ -294,8 +302,7 @@ def load_run(window, title, runs_dir = consts.RUNS_DIR):
         window['-ARCHIVE/UNARCHIVE-'].update(text='Unarchive')
     else:
         window['-ARCHIVE/UNARCHIVE-'].update(text='Archive')
-
-
+    update_log(f'loaded run: "{title}" successfully')
     return run_info
 
 def get_run_info(values, run_info):
@@ -325,6 +332,7 @@ def clear_selected_run(window):
     return {}
 
 def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
+    update_log(f'updating run list')
     runs = get_runs(hide_archived=hide_archived)
     window['-RUN LIST-'].update(values=runs)
 
@@ -333,7 +341,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
             run_to_select = run_info['title']
         else:
             return run_info
-
+    update_log(f'selecting run: {run_to_select}')
     run_info = {}
     for i in range(len(runs)):
         if runs[i] == run_to_select:
@@ -410,7 +418,7 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
         title = run_info['title']
     else:
         run_info['title'] = title
-
+    update_log(f'saving changes to run: "{title}"')
     title = save_run(run_info, title=title, overwrite=overwrite)
     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
 
@@ -511,15 +519,14 @@ def run_main_window(window, font = None, rampart_running = False):
                     if not old_run_info == None:
                         save_changes(values, old_run_info, window, hide_archived=hide_archived)
                 except Exception as err:
-
                     update_log(traceback.format_exc())
                     sg.popup_error(err)
 
 
                 selected_run_title = values['-RUN LIST-'][0]
-                run_info = load_run(window, selected_run_title)
+                #run_info = load_run(window, selected_run_title)
 
-                run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
+                run_info = update_run_list(window, {}, run_to_select=selected_run_title, hide_archived=hide_archived)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

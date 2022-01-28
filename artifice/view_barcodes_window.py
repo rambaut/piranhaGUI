@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import os.path
 import csv
+import traceback
 
 import parse_columns_window
 import main_window
