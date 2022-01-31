@@ -83,7 +83,7 @@ def setup_layout(theme='Dark', font = None):
         ],
         [
         sg.Push(),
-        sg.Button(button_text='RAMPART >', key='-TO RAMPART-'),
+        sg.Button(button_text='RAMPART >', key='-TO RAMPART INFO-'),
         ],
     ]
     try:
@@ -126,7 +126,7 @@ def setup_layout(theme='Dark', font = None):
     piranha_tab = [
     [sg.Text('piranha'),],
     [
-    sg.Button(button_text='< RAMPART', key='-TO RAMPART-'),
+    sg.Button(button_text='< RAMPART', key='-TO RAMPART PIRNAHA-'),
     sg.Push(),
     ],
     ]
@@ -690,7 +690,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
-        elif event == '-TO RAMPART-':
+        elif event.startswith('-TO RAMPART'):
             window['-RAMPART TAB-'].select()
 
         elif event == '-TO INFO-':
