@@ -83,7 +83,7 @@ def setup_layout(theme='Dark', font = None):
         ],
         [
         sg.Push(),
-        sg.Button(button_text='RAMPART >', key='-TO RAMPART INFO-'),
+        sg.Button(button_text='RAMPART >', key='-TO RAMPART FROM INFO-'),
         ],
     ]
     try:
@@ -120,13 +120,17 @@ def setup_layout(theme='Dark', font = None):
     [
     sg.Button(button_text='< Info', key='-TO INFO-'),
     sg.Push(),
+    sg.Button(button_text='PIRANHA >', key='-TO PIRANHA-'),
     ],
     ]
 
     piranha_tab = [
     [sg.Text('piranha'),],
     [
-    sg.Button(button_text='< RAMPART', key='-TO RAMPART PIRNAHA-'),
+    sg.VPush()
+    ],
+    [
+    sg.Button(button_text='< RAMPART', key='-TO RAMPART FROM PIRNAHA-'),
     sg.Push(),
     ],
     ]
@@ -695,6 +699,9 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-TO INFO-':
             window['-RUN INFO TAB-'].select()
+
+        elif event == '-TO PIRANHA-':
+            window['-PIRANHA TAB-'].select()
 
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(consts.RAMPART_PORT_1)
