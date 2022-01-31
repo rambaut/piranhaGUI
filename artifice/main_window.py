@@ -326,6 +326,7 @@ def get_run_info(values, run_info):
     return run_info
 
 def delete_run(title, window, clear_selected = True, runs_dir = consts.RUNS_DIR):
+    update_log(f'deleting run: "{title}"')
     filepath = runs_dir+'/'+title
 
     if os.path.isdir(filepath):

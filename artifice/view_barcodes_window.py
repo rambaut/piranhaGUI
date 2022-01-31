@@ -60,8 +60,10 @@ def make_barcodes_list(run_info):
 
 def save_barcodes(run_info):
     barcodes_list = make_barcodes_list(run_info)
+    title = run_info['title']
+    update_log(f'saving barcodes file for run: "{title}"')
 
-    with open(consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv', 'w', newline='') as csvfile:
+    with open(consts.RUNS_DIR+'/'+title+'/barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)

@@ -80,6 +80,7 @@ def create_parse_window(samples, theme = None, font = None, window = None, sampl
     if window != None:
         window.close()
 
+    update_log(F'displaying samples: "{samples}"')
     return new_window, column_headers
 
 
@@ -92,6 +93,7 @@ def run_parse_window(window, samples, column_headers):
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-SAVE-':
+
             try:
                 samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
                 barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
@@ -108,6 +110,7 @@ def run_parse_window(window, samples, column_headers):
 
 
                 window.close()
+                update_log(f'column {samples_column} selected for samples, column {barcodes_column} selected for barcodes')
                 return samples_column, barcodes_column
             except Exception as err:
                 update_log(traceback.format_exc())
