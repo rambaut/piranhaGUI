@@ -1,10 +1,12 @@
 import PySimpleGUI as sg
 import os.path
 import csv
+import traceback
 
 import parse_columns_window
 import main_window
 import consts
+from update_log import log_event, update_log
 
 def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
@@ -65,6 +67,7 @@ def save_barcodes(run_info):
             csvwriter.writerow(row)
 
 def check_barcodes(run_info, font = None):
+    update_log(f'checking barcodes for run: "{run_info['title']}" still match chosen samples...')
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
 
@@ -81,10 +84,20 @@ def check_barcodes(run_info, font = None):
             sample_modified = False
 
         if sample_modified:
-            overwrite_barcode = sg.popup_yes_no('Samples file appears to have been edited since it was selected. Do you want to remake the barcodes file with the modified samples?', font=font)
+            update_log('barcodes and samples do not match')
+            overwrite_barcode = sg.popup_yes_no(
+                'Samples file appears to have been edited since it was selected. Do you want to remake the barcodes file with the modified samples?',
+                font=font
+            )
             if overwrite_barcode == "Yes":
+                update_log('user chose to remake barcodes')
                 save_barcodes(run_info)
+            else:
+                update_log('user chose to keep barcodes as they are')
+        else:
+            update_log('barcodes and samples match')
     else:
+        update_log(f'missing barcodes file, creating it now')
         save_barcodes(run_info)
 
     return False
@@ -103,6 +116,9 @@ def create_barcodes_window(samples, theme = 'Artifice', font = None, window = No
 def run_barcodes_window(window, samples, column_headers):
     while True:
         event, values = window.read()
+        if event != None:
+            log_event(f'{event} [view barcodes window]')
+
         if event in {'Exit', '-BARCODES OK-'} or event == sg.WIN_CLOSED:
             window.close()
             break
