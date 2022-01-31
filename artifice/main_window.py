@@ -121,9 +121,17 @@ def setup_layout(theme='Dark', font = None):
     ],
     ]
 
+    piranha_tab = [
+    [sg.Text('piranha'),],
+    [
+    sg.Button(button_text='< RAMPART', key='-TO RAMPART-'),
+    sg.Push(),
+    ],
+    ]
+
     tabs_column = [
         [
-        sg.TabGroup([[sg.Tab('Info',run_info_tab,key='-RUN INFO TAB-'),sg.Tab('RAMPART',rampart_tab,key='-RAMPART TAB-')]])
+        sg.TabGroup([[sg.Tab('Info',run_info_tab,key='-RUN INFO TAB-'),sg.Tab('RAMPART',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA',piranha_tab,key='-PIRANHA TAB-')]])
         ],
         [
         sg.Button(button_text='Hide Runs',key='-SHOW/HIDE RUNLIST-'),
