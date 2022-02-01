@@ -80,7 +80,7 @@ def create_parse_window(samples, theme = None, font = None, window = None, sampl
     if window != None:
         window.close()
 
-    update_log(F'displaying samples: "{samples}"')
+    update_log(f'displaying samples: "{samples}"')
     return new_window, column_headers
 
 
@@ -98,6 +98,7 @@ def run_parse_window(window, samples, column_headers):
                 samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
                 barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
                 #print('columns: '+str(samples_column)+' '+str(barcodes_column))
+                update_log(f'column {samples_column} selected for samples, column {barcodes_column} selected for barcodes')
 
                 if barcodes_column == samples_column:
                     raise Exception('barcodes and samples must be 2 separate columns')
@@ -110,7 +111,6 @@ def run_parse_window(window, samples, column_headers):
 
 
                 window.close()
-                update_log(f'column {samples_column} selected for samples, column {barcodes_column} selected for barcodes')
                 return samples_column, barcodes_column
             except Exception as err:
                 update_log(traceback.format_exc())

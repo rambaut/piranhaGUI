@@ -96,6 +96,7 @@ def setup_layout(theme='Dark', font = None):
     except:
         rampart_running = False
 
+    update_log('checking if RAMPART is running...')
     rampart_running = check_rampart_running()
     if rampart_running:
         rampart_button_text = 'Stop RAMPART'
@@ -198,6 +199,7 @@ def check_rampart_running():
     try:
         r = requests.get(f'http://localhost:{consts.RAMPART_PORT_1}')
         if r.status_code == 200:
+            update_log(f'detected RAMPART running on port: {consts.RAMPART_PORT_1}')
             return True
         else:
             return False
@@ -336,6 +338,7 @@ def delete_run(title, window, clear_selected = True, runs_dir = consts.RUNS_DIR)
         clear_selected_run(window)
 
 def clear_selected_run(window):
+    update_log('clearing run info tab')
     window['-DATE-'].update('')
     window['-RUN NAME-'].update('')
     window['-RUN DESCRIPTION-'].update('')
@@ -369,6 +372,8 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
 def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = consts.RUNS_DIR, font = None, container = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
+    title = run_info['title']
+    update_log(f'launching RAMPART on run: "{title}"')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception('Invalid samples file')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
@@ -376,7 +381,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
 
     basecalled_path = run_info['basecalledPath']
 
-    config_path = runs_dir+'/'+run_info['title']+'/run_configuration.json'
+    config_path = runs_dir+'/'+title+'/run_configuration.json'
 
     try:
         with open(config_path,'r') as file:
@@ -409,6 +414,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
             pass
 
 def create_main_window(theme = 'Artifice', font = None, window = None):
+    update_log('creating main window')
     make_theme()
     layout, rampart_running = setup_layout(theme=theme, font=font)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
@@ -440,7 +446,9 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
 def rename_run(values, run_info, window, hide_archived = True):
     previous_run_title = values['-RUN LIST-'][0]
     run_info = get_run_info(values, run_info)
-    if run_info['title'] != previous_run_title:
+    new_title = run_info['title']
+    if new_title != previous_run_title:
+        update_log(f'renaming run: "{previous_run_title}" to "{new_title}"')
         run_info = save_changes(values, run_info, window, rename=True, overwrite=False, hide_archived=hide_archived)
         edit_archive(run_info['title'], window, archive=run_info['archived'])
         edit_archive(previous_run_title, window, archive=False)
@@ -454,11 +462,14 @@ def edit_archive(title, window, runs_dir = consts.RUNS_DIR, archived_runs = cons
         archived_runs_dict = json.loads(file.read())
 
     if archive:
+        update_log(f'archiving run: {title}')
         archived_runs_dict['archived_runs'].append(title)
     else:
         try:
+            update_log(f'unarchiving run: {title}')
             archived_runs_dict['archived_runs'].remove(title)
         except:
+            update_log('unarchive failed, run probably not archived')
             pass
 
     with open(archived_filepath,'w') as file:
@@ -605,6 +616,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 try:
                     user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
                     if user_confirm != 'OK':
+                        update_log('deletion cancelled')
                         continue
                     selected_run_title = values['-RUN LIST-'][0]
                     delete_run(selected_run_title, window)
@@ -623,12 +635,13 @@ def run_main_window(window, font = None, rampart_running = False):
                     sg.popup_error(err)
 
         elif event == '-SHOW/HIDE RUNLIST-':
-            #log_event(event)
             if runlist_visible:
+                update_log('hiding run list')
                 window['-SELECT RUN COLUMN-'].update(visible=False)
                 window['-SHOW/HIDE RUNLIST-'].update(text='Show Runs')
                 runlist_visible = False
             else:
+                update_log('showing run list')
                 window['-SELECT RUN COLUMN-'].update(visible=True)
                 window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
                 runlist_visible = True
@@ -706,7 +719,12 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(consts.RAMPART_PORT_1)
-            open_new_tab(address)
+            update_log(f'opening address: "{address}" in browser to view RAMPART')
+            try:
+                open_new_tab(address)
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
 
     window.close()
 

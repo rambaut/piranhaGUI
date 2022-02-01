@@ -5,6 +5,8 @@ import docker
 from datetime import datetime
 import PySimpleGUI as sg
 
+from update_log import update_log
+
 def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None):
     if client == None:
         client = docker.from_env()
@@ -17,9 +19,19 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     stop_rampart(client=client,containerName=containerName, container=container)
 
     ports = {firstPort:firstPort, secondPort:secondPort}
+    log_ports = str(ports)
+    update_log(f'ports: {log_ports}')
+
     environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}']
+    log_environment = str(environment)
+    update_log(f'ports: {log_environment}')
+
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
+    log_volumes = str(volumes)
+    update_log(f'ports: {log_volumes}')
+
     container = client.containers.run(image=image, detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
+
 
     #command = f"docker run -it --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
     #print(command)
@@ -42,7 +54,9 @@ def stop_rampart(client = None, containerName='rampart', container = None):
                 container.stop()
                 container.remove()
             except:
+                update_log('tried to stop RAMPART, appears to not be running')
                 return None
+    update_log('stopped RAMPART')
         #command = f"docker stop {containerName} && docker rm {containerName}"
         #os.system(command)
 
