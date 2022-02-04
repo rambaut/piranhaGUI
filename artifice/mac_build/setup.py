@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['../artifice.py']
 DATA_FILES = []
-OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../config.yml", "../docker"]}
+OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../config.yml", "../docker"], "frameworks": ["/usr/lib/libffi.dylib"]}
 
 setup(
     app=APP,

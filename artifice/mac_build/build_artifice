@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+python setup.py py2app
+
+cp -f -r ./Frameworks/. ./dist/artifice.app/Contents/Frameworks
