@@ -4,7 +4,6 @@ import os.path
 import requests
 import json
 from webbrowser import open_new_tab
-import shutil
 from shutil import rmtree, move, copytree
 from datetime import datetime
 from time import sleep
@@ -523,6 +522,11 @@ def run_main_window(window, font = None, rampart_running = False):
     docker_client = None
     rampart_container = None
 
+    docker_installed = start_rampart.check_for_docker()
+    if not docker_installed:
+        window.close()
+        return None
+
     got_image, docker_client = start_rampart.check_for_image(docker_client, consts.DOCKER_IMAGE, font=font)
 
     if not got_image:
@@ -542,7 +546,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 if chk_stop == 'Yes':
                     update_log('stopping RAMPART...')
-                    start_rampart.stop_rampart(client=docker_client, container=rampart_container)
+                    start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     update_log('RAMPART stopped')
                 else:
                     update_log('User chose to keep RAMPART running')
@@ -710,7 +714,7 @@ def run_main_window(window, font = None, rampart_running = False):
                     #except:
                     #    pass
                     rampart_running = False
-                    start_rampart.stop_rampart(client=docker_client, container=rampart_container)
+                    start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
                     window['-RAMPART STATUS-'].update('RAMPART is not running')

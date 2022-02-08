@@ -1,9 +1,9 @@
-import subprocess
 import sys
 import os
 import docker
 from datetime import datetime
 import PySimpleGUI as sg
+from webbrowser import open_new_tab
 
 from update_log import update_log
 
@@ -16,7 +16,7 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     config_file = 'run_configuration.json'
     containerName = "rampart"
 
-    stop_rampart(client=client,containerName=containerName, container=container)
+    stop_docker(client=client,containerName=containerName, container=container)
 
     ports = {firstPort:firstPort, secondPort:secondPort}
     log_ports = str(ports)
@@ -41,7 +41,14 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     #os.system(command)
     return container
 
-def stop_rampart(client = None, containerName='rampart', container = None):
+def stop_docker(client = None, containerName='rampart', container = None):
+    if containerName == 'rampart':
+        tool_name = 'RAMPART'
+    elif containerName == 'piranha':
+        tool_name = 'PIRANHA'
+    else:
+        tool_name = '<unknown application>'
+
     try:
         container.stop()
         container.remove()
@@ -54,9 +61,9 @@ def stop_rampart(client = None, containerName='rampart', container = None):
                 container.stop()
                 container.remove()
             except:
-                update_log('tried to stop RAMPART, appears to not be running')
+                update_log(f'tried to stop {tool_name}, appears to not be running')
                 return None
-    update_log('stopped RAMPART')
+    update_log(f'stopped {tool_name}')
         #command = f"docker stop {containerName} && docker rm {containerName}"
         #os.system(command)
 
@@ -66,6 +73,7 @@ def check_for_image(client, image_name, font = None):
 
     try:
         image = client.images.get(image_name)
+        update_log('confirmed image is installed')
         #print(image.id)
         return True, client
     except:
@@ -77,6 +85,16 @@ def check_for_image(client, image_name, font = None):
         else:
             return False, client
 
+def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/'):
+    try:
+        info = docker.from_env().info()
+        return True
+    except:
+        open_site = sg.popup_ok_cancel('Docker client not found. Please install docker and restart artifice. Press OK below to open docker site in browser', font = font)
+        if open_site == 'OK':
+            open_new_tab
+
+        return False
 
 if __name__ == '__main__':
     path = sys.argv[0]
