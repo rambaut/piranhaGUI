@@ -23,5 +23,7 @@ RUN pip install .
 #create directory to mount the basecalled directory
 RUN mkdir -p /data/run_data/basecalled
 
-# run rampart
-ENTRYPOINT piranha -i /data/run_data/basecalled -b ${BARCODES}
+WORKDIR /data/run_data/analysis
+
+# run piranha
+ENTRYPOINT piranha -i /data/run_data/basecalled -b /data/run_data/analysis/barcodes.csv
