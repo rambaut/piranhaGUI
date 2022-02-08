@@ -1,10 +1,11 @@
 import PySimpleGUI as sg
-from os import listdir, mkdir, remove, getcwd
+from os import listdir, mkdir, remove, getcwd, rename
 import os.path
 import requests
 import json
 from webbrowser import open_new_tab
-from shutil import rmtree, move
+import shutil
+from shutil import rmtree, move, copytree
 from datetime import datetime
 from time import sleep
 import traceback
@@ -217,7 +218,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
     if iter > 0:
         title = title+'('+str(iter)+')'
 
-    update_log(f'attempting to save run: "{title}"...')
+    update_log(f'saving run: "{title}"...')
 
     filepath = runs_dir+'/'+title+'/run_info.json'
 
@@ -242,7 +243,6 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = con
     with open(filepath, 'w') as file:
         json.dump(run_info, file)
 
-    update_log(f'saved run: "{title}" successfully')
     return title
 
 def create_run(font=None):
@@ -279,7 +279,7 @@ def create_run(font=None):
     return title
 
 def load_run(window, title, runs_dir = consts.RUNS_DIR):
-    update_log(f'attempting to load run: "{title}"...')
+    update_log(f'loading run: "{title}"...')
     filepath = runs_dir+'/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
@@ -316,7 +316,7 @@ def load_run(window, title, runs_dir = consts.RUNS_DIR):
         window['-ARCHIVE/UNARCHIVE-'].update(text='Unarchive')
     else:
         window['-ARCHIVE/UNARCHIVE-'].update(text='Archive')
-    update_log(f'loaded run: "{title}" successfully')
+
     return run_info
 
 def get_run_info(values, run_info):
@@ -437,20 +437,35 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
         title = run_info['title']
     else:
         run_info['title'] = title
-    update_log(f'saving changes to run: "{title}"')
+
     title = save_run(run_info, title=title, overwrite=overwrite)
     run_info = update_run_list(window, run_info, hide_archived=hide_archived)
 
     return run_info
 
-def rename_run(values, run_info, window, hide_archived = True):
+def rename_run(values, run_info, window, hide_archived = True, runs_dir = consts.RUNS_DIR):
     previous_run_title = values['-RUN LIST-'][0]
     run_info = get_run_info(values, run_info)
     new_title = run_info['title']
     if new_title != previous_run_title:
         update_log(f'renaming run: "{previous_run_title}" to "{new_title}"')
+
+
+
+        #this is just to get a new title in the event the new name already matches a run
         run_info = save_changes(values, run_info, window, rename=True, overwrite=False, hide_archived=hide_archived)
-        edit_archive(run_info['title'], window, archive=run_info['archived'])
+        new_title = run_info['title']
+        delete_run(new_title, window, clear_selected=False)
+        update_log('moving files to new directory')
+        try:
+            copytree(f'{runs_dir}/{previous_run_title}', f'{runs_dir}/{new_title}')
+        except Exception as err:
+            print('failed to copy some file(s)')
+            update_log(traceback.format_exc())
+
+
+        run_info = save_changes(values, run_info, window, rename=True, overwrite=True, hide_archived=hide_archived)
+        edit_archive(new_title, window, archive=run_info['archived'])
         edit_archive(previous_run_title, window, archive=False)
         delete_run(previous_run_title, window, clear_selected=False)
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
@@ -653,9 +668,12 @@ def run_main_window(window, font = None, rampart_running = False):
                 else:
                     clear_selected_run(window)
             except Exception as err:
-                update_log(traceback.format_exc())
-                run_info = load_run(window, run_info['title'])
                 sg.popup_error(err)
+                try:
+                    update_log(traceback.format_exc())
+                    run_info = load_run(window, run_info['title'])
+                except Exception as err:
+                    sg.popup_error(err)
 
 
         elif event in {'-RUN DESCRIPTION-FocusOut','-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:

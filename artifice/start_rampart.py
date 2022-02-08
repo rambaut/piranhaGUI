@@ -24,11 +24,11 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
 
     environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}']
     log_environment = str(environment)
-    update_log(f'ports: {log_environment}')
+    update_log(f'environment variables: {log_environment}')
 
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
     log_volumes = str(volumes)
-    update_log(f'ports: {log_volumes}')
+    update_log(f'volumes: {log_volumes}')
 
     container = client.containers.run(image=image, detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
 
@@ -72,7 +72,7 @@ def check_for_image(client, image_name, font = None):
         build_ok = sg.popup_ok_cancel('RAMPART docker image not installed yet. Install it? (This may take some time)', font=font)
 
         if build_ok == 'OK':
-            client.images.build(path='./docker', tag=image_name, rm=True)
+            client.images.build(path='./docker_rampart', tag=image_name, rm=True)
             return True, client
         else:
             return False, client
