@@ -92,7 +92,7 @@ def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-dock
     except:
         open_site = sg.popup_ok_cancel('Docker client not found. Please install docker and restart artifice. Press OK below to open docker site in browser', font = font)
         if open_site == 'OK':
-            open_new_tab
+            open_new_tab('https://docs.docker.com/get-docker/')
 
         return False
 
