@@ -80,7 +80,8 @@ def check_for_image(client, image_name, font = None):
         build_ok = sg.popup_ok_cancel('RAMPART docker image not installed yet. Install it? (This may take some time)', font=font)
 
         if build_ok == 'OK':
-            client.images.build(path='./docker_rampart', tag=image_name, rm=True)
+            #client.images.build(path='./docker_rampart', tag=image_name, rm=True)
+            client.images.pull(image_name)
             return True, client
         else:
             return False, client
