@@ -5,7 +5,7 @@ import sys
 from os import getenv
 
 def retrieve_config():
-    with open('config.yml') as file:
+    with open('./config.yml') as file:
         config = safe_load(file)
 
     return config

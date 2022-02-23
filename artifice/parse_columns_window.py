@@ -45,14 +45,17 @@ def setup_parse_layout(samples, theme = None, samples_column = 0, barcodes_colum
         sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], key='-BARCODES COLUMN-'),
         ],
         [
+        sg.Button(button_text='Save',key='-SAVE-'),
+        ],
+        [
         sg.Table(
         values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
         expand_x=True,expand_y=True,num_rows=25,vertical_scroll_only=False,
         ),
         ],
-        [
-        sg.Button(button_text='Save',key='-SAVE-'),
-        ],
+        #[
+        #sg.Button(button_text='Save',key='-SAVE-'),
+        #],
     ]
 
     return layout, column_headers
