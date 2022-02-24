@@ -60,8 +60,10 @@ def make_barcodes_list(run_info):
 
 def save_barcodes(run_info):
     barcodes_list = make_barcodes_list(run_info)
+    title = run_info['title']
+    update_log(f'saving barcodes file for run: "{title}"')
 
-    with open(consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv', 'w', newline='') as csvfile:
+    with open(consts.RUNS_DIR+'/'+title+'/barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
@@ -107,6 +109,7 @@ def check_barcodes(run_info, font = None):
 
 
 def create_barcodes_window(samples, theme = 'Artifice', font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+    update_log('creating view barcodes window')
     layout, column_headers = setup_barcodes_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
     new_window = sg.Window('Artifice', layout, font=font, resizable=True)
     if window != None:

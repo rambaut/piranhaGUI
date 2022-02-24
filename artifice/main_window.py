@@ -1,10 +1,10 @@
 import PySimpleGUI as sg
-from os import listdir, mkdir, remove, getcwd
+from os import listdir, mkdir, remove, getcwd, rename
 import os.path
 import requests
 import json
 from webbrowser import open_new_tab
-from shutil import rmtree, move
+from shutil import rmtree, move, copytree
 from datetime import datetime
 from time import sleep
 import traceback
@@ -15,6 +15,8 @@ import parse_columns_window
 import start_rampart
 import view_barcodes_window
 from update_log import log_event, update_log
+from infotab import infotab_event
+from manage_runs import save_run, delete_run, clear_selected_run, update_run_list, get_runs, save_changes
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -56,34 +58,34 @@ def setup_layout(theme='Dark', font = None):
     run_info_tab = [
         [
         sg.Text('Name:',size=(13,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-RUN NAME-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-INFOTAB-RUN NAME-',),
         ],
         [
         sg.Text('Date Created:',size=(13,1)),
-        sg.Text('', size=(25,1), enable_events=True,expand_y=False, key='-DATE-',),
+        sg.Text('', size=(25,1), enable_events=True,expand_y=False, key='-INFOTAB-DATE-',),
         ],
         [
         sg.Text('Description:',size=(13,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-RUN DESCRIPTION-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-INFOTAB-RUN DESCR-',),
         ],
         [
         sg.Text('Samples:',size=(13,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-INFOTAB-SAMPLES-',),
         sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
-        sg.Button(button_text='View',key='-VIEW SAMPLES-'),
+        sg.Button(button_text='View',key='-INFOTAB-VIEW SAMPLES-'),
         ],
         [
         sg.Text('MinKnow run:',size=(13,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-INFOTAB-MINKNOW-',),
         sg.FolderBrowse(),
         ],
         [
-        sg.Button(button_text='Delete',key='-DELETE RUN-'),
-        sg.Button(button_text='Archive',key='-ARCHIVE/UNARCHIVE-'),
+        sg.Button(button_text='Delete',key='-INFOTAB-DELETE RUN-'),
+        sg.Button(button_text='Archive',key='-INFOTAB-ARCHIVE/UNARCHIVE-'),
         ],
         [
         sg.Push(),
-        sg.Button(button_text='RAMPART >', key='-TO RAMPART INFO-'),
+        sg.Button(button_text='RAMPART >', key='-INFOTAB-TO RAMPART-'),
         ],
     ]
     try:
@@ -96,6 +98,7 @@ def setup_layout(theme='Dark', font = None):
     except:
         rampart_running = False
 
+    update_log('checking if RAMPART is running...')
     rampart_running = check_rampart_running()
     if rampart_running:
         rampart_button_text = 'Stop RAMPART'
@@ -120,13 +123,17 @@ def setup_layout(theme='Dark', font = None):
     [
     sg.Button(button_text='< Info', key='-TO INFO-'),
     sg.Push(),
+    sg.Button(button_text='PIRANHA >', key='-TO PIRANHA-'),
     ],
     ]
 
     piranha_tab = [
     [sg.Text('piranha'),],
     [
-    sg.Button(button_text='< RAMPART', key='-TO RAMPART PIRNAHA-'),
+    sg.VPush()
+    ],
+    [
+    sg.Button(button_text='< RAMPART', key='-TO RAMPART-'),
     sg.Push(),
     ],
     ]
@@ -165,79 +172,17 @@ def setup_layout(theme='Dark', font = None):
 
     return layout, rampart_running
 
-#retrieve the paths of directories in the run folder
-def get_runs(runs_dir = consts.RUNS_DIR, archived_json = consts.ARCHIVED_RUNS, hide_archived = True):
-    paths = listdir(runs_dir)
-    runs_set = set()
-    for path in paths:
-        if os.path.isdir(runs_dir+'/'+path):
-            runs_set.add(path)
-
-    if hide_archived:
-        archived_filepath = runs_dir+'/'+archived_json+'.json'
-
-        with open(archived_filepath,'r') as file:
-            archived_runs_dict = json.loads(file.read())
-
-        archived_runs = archived_runs_dict['archived_runs']
-        for run in archived_runs:
-            try:
-                runs_set.remove(run)
-            except:
-                continue
-
-    runs = list(runs_set)
-
-    return runs
 
 def check_rampart_running():
     try:
         r = requests.get(f'http://localhost:{consts.RAMPART_PORT_1}')
         if r.status_code == 200:
+            update_log(f'detected RAMPART running on port: {consts.RAMPART_PORT_1}')
             return True
         else:
             return False
     except:
         return False
-
-#creates a directory containing run info json
-def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = consts.RUNS_DIR):
-    samples = run_info['samples']
-    if title == None or title == '':
-        title = samples.split('/')[-1].split('.')[0]
-
-    original_title = title
-
-    if iter > 0:
-        title = title+'('+str(iter)+')'
-
-    update_log(f'attempting to save run: "{title}"...')
-
-    filepath = runs_dir+'/'+title+'/run_info.json'
-
-
-    if overwrite == False:
-        if os.path.isfile(filepath):
-            update_log(f'run: "{title}" already exists, adding iterator')
-            return save_run(run_info,title=original_title,overwrite=overwrite,iter=iter+1)
-
-    if os.path.isfile(samples) == False or samples[-4:] != '.csv':
-        raise Exception('No valid samples file provided')
-
-    if not os.path.isdir(runs_dir+'/'+title):
-        mkdir(runs_dir+'/'+title)
-
-    for key, value in run_info.items():
-        if type(run_info[key]) == str:
-            run_info[key] = value.strip()
-
-    run_info['title'] = title
-
-    with open(filepath, 'w') as file:
-        json.dump(run_info, file)
-
-    update_log(f'saved run: "{title}" successfully')
-    return title
 
 def create_run(font=None):
     update_log(f'creating new run')
@@ -272,98 +217,12 @@ def create_run(font=None):
 
     return title
 
-def load_run(window, title, runs_dir = consts.RUNS_DIR):
-    update_log(f'attempting to load run: "{title}"...')
-    filepath = runs_dir+'/'+title+'/run_info.json'
-
-    with open(filepath,'r') as file:
-        run_info = json.loads(file.read())
-        try:
-            window['-DATE-'].update(run_info['date'])
-        except:
-            window['-DATE-'].update('')
-
-        try:
-            window['-RUN NAME-'].update(run_info['title'])
-        except:
-            window['-RUN NAME-'].update('')
-
-        try:
-            window['-RUN DESCRIPTION-'].update(run_info['description'])
-        except:
-            window['-RUN DESCRIPTION-'].update('')
-
-        try:
-            window['-SAMPLES-'].update(run_info['samples'])
-        except:
-            window['-SAMPLES-'].update('')
-
-        try:
-            window['-MINKNOW-'].update(run_info['basecalledPath'])
-        except:
-            window['-MINKNOW-'].update('')
-
-    if 'archived' not in run_info:
-        run_info['archived'] = False
-
-    if run_info['archived'] == True:
-        window['-ARCHIVE/UNARCHIVE-'].update(text='Unarchive')
-    else:
-        window['-ARCHIVE/UNARCHIVE-'].update(text='Archive')
-    update_log(f'loaded run: "{title}" successfully')
-    return run_info
-
-def get_run_info(values, run_info):
-    run_info['title'] = values['-RUN NAME-'].strip()
-    run_info['description'] = values['-RUN DESCRIPTION-'].strip()
-    run_info['samples'] = values['-SAMPLES-'].strip()
-    run_info['basecalledPath'] = values['-MINKNOW-'].strip()
-
-    return run_info
-
-def delete_run(title, window, clear_selected = True, runs_dir = consts.RUNS_DIR):
-    filepath = runs_dir+'/'+title
-
-    if os.path.isdir(filepath):
-        rmtree(filepath)
-
-    if clear_selected:
-        clear_selected_run(window)
-
-def clear_selected_run(window):
-    window['-DATE-'].update('')
-    window['-RUN NAME-'].update('')
-    window['-RUN DESCRIPTION-'].update('')
-    window['-SAMPLES-'].update('')
-    window['-MINKNOW-'].update('')
-
-    return {}
-
-def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
-    update_log(f'updating run list')
-    runs = get_runs(hide_archived=hide_archived)
-    window['-RUN LIST-'].update(values=runs)
-
-    if run_to_select == '':
-        if 'title' in run_info:
-            run_to_select = run_info['title']
-        else:
-            return run_info
-    update_log(f'selecting run: {run_to_select}')
-    run_info = {}
-    for i in range(len(runs)):
-        if runs[i] == run_to_select:
-            window['-RUN LIST-'].update(set_to_index=i)
-            run_info = load_run(window, run_to_select)
-
-    if run_info == {}:
-        run_info = clear_selected_run(window)
-
-    return run_info
 
 def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = consts.RUNS_DIR, font = None, container = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
+    title = run_info['title']
+    update_log(f'launching RAMPART on run: "{title}"')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception('Invalid samples file')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
@@ -371,7 +230,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
 
     basecalled_path = run_info['basecalledPath']
 
-    config_path = runs_dir+'/'+run_info['title']+'/run_configuration.json'
+    config_path = runs_dir+'/'+title+'/run_configuration.json'
 
     try:
         with open(config_path,'r') as file:
@@ -404,6 +263,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
             pass
 
 def create_main_window(theme = 'Artifice', font = None, window = None):
+    update_log('creating main window')
     make_theme()
     layout, rampart_running = setup_layout(theme=theme, font=font)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
@@ -411,78 +271,12 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
     if window != None:
         window.close()
 
-    new_window['-RUN NAME-'].bind("<FocusOut>", "FocusOut")
-    new_window['-SAMPLES-'].bind("<FocusOut>", "FocusOut")
-    new_window['-RUN DESCRIPTION-'].bind("<FocusOut>", "FocusOut")
-    new_window['-MINKNOW-'].bind("<FocusOut>", "FocusOut")
+    new_window['-INFOTAB-RUN NAME-'].bind("<FocusOut>", "FocusOut")
+    new_window['-INFOTAB-SAMPLES-'].bind("<FocusOut>", "FocusOut")
+    new_window['-INFOTAB-RUN DESCR-'].bind("<FocusOut>", "FocusOut")
+    new_window['-INFOTAB-MINKNOW-'].bind("<FocusOut>", "FocusOut")
 
     return new_window, rampart_running
-
-def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True):
-    title = run_info['title']
-    run_info = get_run_info(values, run_info)
-
-    if rename:
-        title = run_info['title']
-    else:
-        run_info['title'] = title
-    update_log(f'saving changes to run: "{title}"')
-    title = save_run(run_info, title=title, overwrite=overwrite)
-    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
-
-    return run_info
-
-def rename_run(values, run_info, window, hide_archived = True):
-    previous_run_title = values['-RUN LIST-'][0]
-    run_info = get_run_info(values, run_info)
-    if run_info['title'] != previous_run_title:
-        run_info = save_changes(values, run_info, window, rename=True, overwrite=False, hide_archived=hide_archived)
-        edit_archive(run_info['title'], window, archive=run_info['archived'])
-        edit_archive(previous_run_title, window, archive=False)
-        delete_run(previous_run_title, window, clear_selected=False)
-        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-
-def edit_archive(title, window, runs_dir = consts.RUNS_DIR, archived_runs = consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
-    archived_filepath = runs_dir+'/'+archived_runs+'.json'
-
-    with open(archived_filepath,'r') as file:
-        archived_runs_dict = json.loads(file.read())
-
-    if archive:
-        archived_runs_dict['archived_runs'].append(title)
-    else:
-        try:
-            archived_runs_dict['archived_runs'].remove(title)
-        except:
-            pass
-
-    with open(archived_filepath,'w') as file:
-        archived_json = json.dump(archived_runs_dict, file)
-
-    if clear_selected:
-        clear_selected_run(window)
-
-def archive_button(run_info, window, values, hide_archived):
-    if 'archived' not in run_info:
-        run_info['archived'] = False
-
-    if run_info['archived'] == True:
-        run_info['archived'] = False
-        run_info = save_changes(values, run_info, window, hide_archived=hide_archived)
-        edit_archive(run_info['title'], window, archive=False, clear_selected=False)
-        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-
-    else:
-        run_info['archived'] = True
-        run_info = save_changes(values, run_info, window, hide_archived=hide_archived)
-        edit_archive(run_info['title'], window, archive=True, clear_selected=True)
-        if hide_archived:
-            run_info = {}
-            run_info = update_run_list(window, run_info, hide_archived=hide_archived)
-        else:
-            run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
-
-    return run_info
 
 def run_main_window(window, font = None, rampart_running = False):
     runlist_visible = True
@@ -491,6 +285,13 @@ def run_main_window(window, font = None, rampart_running = False):
     selected_run_title = ''
     docker_client = None
     rampart_container = None
+
+    #scale_window(window)
+
+    docker_installed = start_rampart.check_for_docker()
+    if not docker_installed:
+        window.close()
+        return None
 
     got_image, docker_client = start_rampart.check_for_image(docker_client, consts.DOCKER_IMAGE, font=font)
 
@@ -511,14 +312,18 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 if chk_stop == 'Yes':
                     update_log('stopping RAMPART...')
-                    start_rampart.stop_rampart(client=docker_client, container=rampart_container)
+                    start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     update_log('RAMPART stopped')
                 else:
                     update_log('User chose to keep RAMPART running')
             break
 
+        elif event.startswith('-INFOTAB-'):
+            run_info, selected_run_title = infotab_event(event, run_info, selected_run_title, hide_archived, font, values, window)
+
         elif event == '-RUN LIST-':
             try:
+                update_log(f'run_info: {run_info}')
                 old_run_info = None
                 if 'title' in run_info:
                     old_run_info = dict(run_info)
@@ -566,94 +371,18 @@ def run_main_window(window, font = None, rampart_running = False):
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
-        elif event == '-VIEW SAMPLES-':
-            if 'title' in run_info:
-                if 'samples_column' in run_info:
-                    samples_column = run_info['samples_column']
-                else:
-                    samples_column = None
-
-                if 'barcodes_column' in run_info:
-                    barcodes_column = run_info['barcodes_column']
-                else:
-                    barcodes_column = None
-
-                try:
-                    samples = values['-SAMPLES-']
-                    parse_window, column_headers = parse_columns_window.create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)
-                    samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
-
-                    if samples_barcodes_indices != None:
-                        samples_column, barcodes_column = samples_barcodes_indices
-                        run_info['samples'] = samples
-                        run_info['barcodes_column'] = barcodes_column
-                        run_info['samples_column']  = samples_column
-                        view_barcodes_window.save_barcodes(run_info)
-
-                    selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
-                except Exception as err:
-                    update_log(traceback.format_exc())
-                    sg.popup_error(err)
-
-        elif event == '-DELETE RUN-':
-            if 'title' in run_info:
-                try:
-                    user_confirm = sg.popup_ok_cancel('Are you sure you want to delete this run?',font=font)
-                    if user_confirm != 'OK':
-                        continue
-                    selected_run_title = values['-RUN LIST-'][0]
-                    delete_run(selected_run_title, window)
-                    run_info = {}
-                    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
-                except Exception as err:
-                    update_log(traceback.format_exc())
-                    sg.popup_error(err)
-
-        elif event == '-ARCHIVE/UNARCHIVE-':
-            if 'title' in run_info:
-                try:
-                    run_info = archive_button(run_info, window, values, hide_archived)
-                except Exception as err:
-                    update_log(traceback.format_exc())
-                    sg.popup_error(err)
-
         elif event == '-SHOW/HIDE RUNLIST-':
-            #log_event(event)
             if runlist_visible:
+                update_log('hiding run list')
                 window['-SELECT RUN COLUMN-'].update(visible=False)
                 window['-SHOW/HIDE RUNLIST-'].update(text='Show Runs')
                 runlist_visible = False
             else:
+                update_log('showing run list')
                 window['-SELECT RUN COLUMN-'].update(visible=True)
                 window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
                 runlist_visible = True
 
-        elif event == '-RUN NAME-FocusOut':
-            try:
-                if 'title' in run_info:
-                    rename_run(values, run_info, window, hide_archived=hide_archived)
-                else:
-                    clear_selected_run(window)
-            except Exception as err:
-                update_log(traceback.format_exc())
-                run_info = load_run(window, run_info['title'])
-                sg.popup_error(err)
-
-
-        elif event in {'-RUN DESCRIPTION-FocusOut','-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:
-            try:
-                if 'title' in run_info:
-                    run_info = save_changes(values, run_info, window, hide_archived=hide_archived)
-                else:
-                    clear_selected_run(window)
-            except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
-                try:
-                    run_info = load_run(window, run_info['title'])
-                except Exception as err:
-                    update_log(traceback.format_exc())
-                    sg.popup_error(err)
 
         elif event == '-VIEW BARCODES-':
             try:
@@ -674,7 +403,7 @@ def run_main_window(window, font = None, rampart_running = False):
                     #except:
                     #    pass
                     rampart_running = False
-                    start_rampart.stop_rampart(client=docker_client, container=rampart_container)
+                    start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
                     window['-RAMPART STATUS-'].update('RAMPART is not running')
@@ -690,18 +419,25 @@ def run_main_window(window, font = None, rampart_running = False):
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
-        elif event.startswith('-TO RAMPART'):
+        elif event.endswith('-TO RAMPART-'):
             window['-RAMPART TAB-'].select()
 
         elif event == '-TO INFO-':
             window['-RUN INFO TAB-'].select()
 
+        elif event == '-TO PIRANHA-':
+            window['-PIRANHA TAB-'].select()
+
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(consts.RAMPART_PORT_1)
-            open_new_tab(address)
+            update_log(f'opening address: "{address}" in browser to view RAMPART')
+            try:
+                open_new_tab(address)
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
 
     window.close()
-
 
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])

@@ -45,14 +45,17 @@ def setup_parse_layout(samples, theme = None, samples_column = 0, barcodes_colum
         sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], key='-BARCODES COLUMN-'),
         ],
         [
+        sg.Button(button_text='Save',key='-SAVE-'),
+        ],
+        [
         sg.Table(
         values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
         expand_x=True,expand_y=True,num_rows=25,vertical_scroll_only=False,
         ),
         ],
-        [
-        sg.Button(button_text='Save',key='-SAVE-'),
-        ],
+        #[
+        #sg.Button(button_text='Save',key='-SAVE-'),
+        #],
     ]
 
     return layout, column_headers
@@ -80,6 +83,7 @@ def create_parse_window(samples, theme = None, font = None, window = None, sampl
     if window != None:
         window.close()
 
+    update_log(f'displaying samples: "{samples}"')
     return new_window, column_headers
 
 
@@ -92,10 +96,12 @@ def run_parse_window(window, samples, column_headers):
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
         elif event == '-SAVE-':
+
             try:
                 samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
                 barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
                 #print('columns: '+str(samples_column)+' '+str(barcodes_column))
+                update_log(f'column {samples_column} selected for samples, column {barcodes_column} selected for barcodes')
 
                 if barcodes_column == samples_column:
                     raise Exception('barcodes and samples must be 2 separate columns')

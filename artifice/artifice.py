@@ -1,3 +1,4 @@
+import PySimpleGUI as sg
 import os.path
 from os import makedirs
 import json
@@ -24,6 +25,14 @@ def check_runs_dir(runs_dir):
         with open(filepath, 'w') as file:
             json.dump(archived_dict, file)
 
+def scale_window(font=None):
+    layout = [[sg.Text('setting up..')]]
+    window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    resolution = window.get_screen_dimensions()[1]
+    scale = resolution/1080
+    update_log(f'scaling by {scale}')
+    sg.set_options(scaling=scale)
+    window.close()
 
 
 if __name__ == '__main__':
@@ -37,7 +46,8 @@ if __name__ == '__main__':
 
     #update_log(test_string)
     #print('a'*200)
-
+    #sg.set_options(scaling=1.0)
+    scale_window()
     window, rampart_running = main_window.create_main_window(font=font)
     main_window.run_main_window(window, rampart_running=rampart_running, font=font)
 
