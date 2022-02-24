@@ -318,6 +318,15 @@ def run_main_window(window, font = None, rampart_running = False):
                     update_log('User chose to keep RAMPART running')
             break
 
+        elif event.endswith('-TO RAMPART-'):
+            window['-RAMPART TAB-'].select()
+
+        elif event.endswith('-TO INFO-'):
+            window['-RUN INFO TAB-'].select()
+
+        elif event.endswith('-TO PIRANHA-'):
+            window['-PIRANHA TAB-'].select()
+
         elif event.startswith('-INFOTAB-'):
             run_info, selected_run_title = infotab_event(event, run_info, selected_run_title, hide_archived, font, values, window)
 
@@ -418,15 +427,6 @@ def run_main_window(window, font = None, rampart_running = False):
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
-
-        elif event.endswith('-TO RAMPART-'):
-            window['-RAMPART TAB-'].select()
-
-        elif event == '-TO INFO-':
-            window['-RUN INFO TAB-'].select()
-
-        elif event == '-TO PIRANHA-':
-            window['-PIRANHA TAB-'].select()
 
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(consts.RAMPART_PORT_1)
