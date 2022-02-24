@@ -30,7 +30,6 @@ def archive_button(run_info, window, values, hide_archived):
 
 def infotab_event(event, run_info, selected_run_title, hide_archived, font, values, window):
     event = event[8:]
-    print(event)
 
     if event == '-VIEW SAMPLES-':
         if 'title' in run_info:

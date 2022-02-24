@@ -286,6 +286,8 @@ def run_main_window(window, font = None, rampart_running = False):
     docker_client = None
     rampart_container = None
 
+    #scale_window(window)
+
     docker_installed = start_rampart.check_for_docker()
     if not docker_installed:
         window.close()
