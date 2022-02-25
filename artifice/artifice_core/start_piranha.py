@@ -1,6 +1,6 @@
 import docker
 
-import start_rampart
+import artifice_core.start_rampart
 
 def start_piranha(run_path, basecalled_path, client, image, container = None):
     if client == None:
@@ -9,7 +9,7 @@ def start_piranha(run_path, basecalled_path, client, image, container = None):
     config_file = 'run_configuration.json'
     containerName = "piranha"
 
-    start_rampart.stop_docker(client=client,containerName=containerName, container=container)
+    artifice_core.start_rampart.stop_docker(client=client,containerName=containerName, container=container)
 
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
     log_volumes = str(volumes)

@@ -10,7 +10,7 @@ def retrieve_config():
 
     return config
 
-#returns directory where Artifice stores data
+#returns directory where Artifice stores data, dependent on os
 def get_datadir():
 
     home = pathlib.Path.home()

@@ -3,15 +3,14 @@ import os.path
 import csv
 import traceback
 
-import parse_columns_window
-import main_window
-import consts
-from update_log import log_event, update_log
+import artifice_core.parse_columns_window
+import artifice_core.consts
+from artifice_core.update_log import log_event, update_log
 
 def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
 
-    samples_list, column_headers = parse_columns_window.samples_to_list(samples, has_headers=has_headers)
+    samples_list, column_headers = artifice_core.parse_columns_window.samples_to_list(samples, has_headers=has_headers)
 
     visible_column_map = []
     for i in range(len(samples_list[0])):
@@ -51,7 +50,7 @@ def make_barcodes_list(run_info):
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception('Invalid samples file')
 
-    samples_list = parse_columns_window.samples_to_list(run_info['samples'], has_headers=False)[0]
+    samples_list = artifice_core.parse_columns_window.samples_to_list(run_info['samples'], has_headers=False)[0]
     barcodes_list = []
     for row in samples_list:
         barcodes_list.append([row[int(samples_column)], row[int(barcodes_column)]])
@@ -63,7 +62,7 @@ def save_barcodes(run_info):
     title = run_info['title']
     update_log(f'saving barcodes file for run: "{title}"')
 
-    with open(consts.RUNS_DIR+'/'+title+'/barcodes.csv', 'w', newline='') as csvfile:
+    with open(artifice_core.consts.RUNS_DIR+'/'+title+'/barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
@@ -75,10 +74,10 @@ def check_barcodes(run_info, font = None):
     title = run_info['title']
     update_log(f'checking barcodes for run: "{title}" still match chosen samples...')
 
-    barcodes_file = consts.RUNS_DIR+'/'+title+'/barcodes.csv'
+    barcodes_file = artifice_core.consts.RUNS_DIR+'/'+title+'/barcodes.csv'
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
-        old_barcodes = parse_columns_window.samples_to_list(barcodes_file, has_headers=False)[0]
+        old_barcodes = artifice_core.parse_columns_window.samples_to_list(barcodes_file, has_headers=False)[0]
         new_barcodes.sort()
         old_barcodes.sort()
 

@@ -4,13 +4,9 @@ from os import makedirs
 import json
 from datetime import datetime
 
-import consts
+import artifice_core.consts
+from artifice_core.update_log import update_log
 import main_window
-import selection_window
-import parse_columns_window
-import start_rampart
-import view_barcodes_window
-from update_log import update_log
 
 def check_runs_dir(runs_dir):
     filepath = runs_dir + '/archived_runs.json'
@@ -37,8 +33,8 @@ def scale_window(font=None):
 
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
-    font = (consts.FONT, 18)
-    check_runs_dir(consts.RUNS_DIR)
+    font = (artifice_core.consts.FONT, 18)
+    check_runs_dir(artifice_core.consts.RUNS_DIR)
 
     startup_time = datetime.today()
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)

@@ -4,8 +4,13 @@ import docker
 from datetime import datetime
 import PySimpleGUI as sg
 from webbrowser import open_new_tab
+import requests
+import json
+from time import sleep
 
-from update_log import update_log
+from artifice_core.update_log import update_log
+import artifice_core.consts
+import artifice_core.view_barcodes_window
 
 def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None):
     if client == None:
@@ -95,6 +100,61 @@ def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-dock
         if open_site == 'OK':
             open_new_tab('https://docs.docker.com/get-docker/')
 
+        return False
+
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None):
+    if 'title' not in run_info or not len(run_info['title']) > 0:
+        raise Exception('Invalid Name/No Run Selected')
+    title = run_info['title']
+    update_log(f'launching RAMPART on run: "{title}"')
+    if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
+        raise Exception('Invalid samples file')
+    if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
+        raise Exception('Invalid MinKnow')
+
+    basecalled_path = run_info['basecalledPath']
+
+    config_path = runs_dir+'/'+title+'/run_configuration.json'
+
+    try:
+        with open(config_path,'r') as file:
+            run_configuration = json.loads(file.read())
+    except:
+        run_configuration = {}
+
+    run_configuration['title'], run_configuration['basecalledPath'] = run_info['title'], run_info['basecalledPath']
+
+    with open(config_path, 'w') as file:
+        config_json = json.dump(run_configuration, file)
+        #file.write(config_json)
+
+    artifice_core.view_barcodes_window.check_barcodes(run_info,font=font)
+
+    run_path = runs_dir+'/'+run_info['title']
+    container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
+
+    iter = 0
+    while True:
+        sleep(0.1)
+        iter += 1
+        if iter > 100:
+            raise Exception('Something went wrong launching RAMPART')
+        try:
+            rampart_running = check_rampart_running()
+            if rampart_running:
+                return container
+        except:
+            pass
+
+def check_rampart_running():
+    try:
+        r = requests.get(f'http://localhost:{artifice_core.consts.RAMPART_PORT_1}')
+        if r.status_code == 200:
+            update_log(f'detected RAMPART running on port: {artifice_core.consts.RAMPART_PORT_1}')
+            return True
+        else:
+            return False
+    except:
         return False
 
 if __name__ == '__main__':

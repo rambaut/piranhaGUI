@@ -7,15 +7,15 @@ from shutil import rmtree, move, copytree
 from datetime import datetime
 import traceback
 
-import consts
-import selection_window
-import parse_columns_window
-import start_rampart
-import view_barcodes_window
-from update_log import log_event, update_log
+import artifice_core.consts
+import artifice_core.selection_window
+import artifice_core.parse_columns_window
+import artifice_core.start_rampart
+import artifice_core.view_barcodes_window
+from artifice_core.update_log import log_event, update_log
+from artifice_core.manage_runs import save_run, update_run_list, get_runs, save_changes
 from infotab import infotab_event
-from rampart_tab import rampart_tab_event, check_rampart_running
-from manage_runs import save_run, delete_run, clear_selected_run, update_run_list, get_runs, save_changes
+from rampart_tab import rampart_tab_event
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -88,7 +88,7 @@ def setup_layout(theme='Dark', font = None):
         ],
     ]
     try:
-        r = requests.get(f'http://localhost:{consts.RAMPART_PORT_1}')
+        r = requests.get(f'http://localhost:{artifice_core.consts.RAMPART_PORT_1}')
         if r.status_code == 200:
             rampart_running = True
             rampart_button_text = 'Stop RAMPART'
@@ -98,7 +98,7 @@ def setup_layout(theme='Dark', font = None):
         rampart_running = False
 
     update_log('checking if RAMPART is running...')
-    rampart_running = check_rampart_running()
+    rampart_running = artifice_core.start_rampart.check_rampart_running()
     if rampart_running:
         rampart_button_text = 'Stop RAMPART'
         rampart_status = 'RAMPART is running'
@@ -108,7 +108,7 @@ def setup_layout(theme='Dark', font = None):
 
     rampart_tab = [
     [sg.Button(button_text='View Barcodes',key='-RAMPART TAB-VIEW BARCODES-'),],
-    [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
+    [sg.Text(rampart_status, key='-RAMPART TAB-RAMPART STATUS-'),],
     [
     sg.Button(button_text=rampart_button_text,key='-RAMPART TAB-START/STOP RAMPART-'),
     sg.Button(button_text='View RAMPART', visible=rampart_running,key='-RAMPART TAB-VIEW RAMPART-'),
@@ -158,7 +158,7 @@ def setup_layout(theme='Dark', font = None):
 
     layout = [
         [
-        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = (consts.FONT,30), background_color = frame_bg)]], background_color = frame_bg)
+        sg.Frame('',[[sg.Image(source = processed_image), sg.Text("ARTIFICE", font = (artifice_core.consts.FONT,30), background_color = frame_bg)]], background_color = frame_bg)
         ],
         [
         sg.pin(sg.Column(select_run_column, element_justification = 'center', key='-SELECT RUN COLUMN-')),
@@ -170,16 +170,16 @@ def setup_layout(theme='Dark', font = None):
 
 def create_run(font=None):
     update_log(f'creating new run')
-    window = selection_window.create_select_window(font=font)
-    selections = selection_window.run_select_window(window)
+    window = artifice_core.selection_window.create_select_window(font=font)
+    selections = artifice_core.selection_window.run_select_window(window)
 
     if selections == None:
         return None
 
     samples, basecalledPath, has_headers = selections
 
-    window, column_headers = parse_columns_window.create_parse_window(samples, font=font,has_headers=has_headers)
-    samples_barcodes_indices = parse_columns_window.run_parse_window(window, samples, column_headers)
+    window, column_headers = artifice_core.parse_columns_window.create_parse_window(samples, font=font,has_headers=has_headers)
+    samples_barcodes_indices = artifice_core.parse_columns_window.run_parse_window(window, samples, column_headers)
 
     if samples_barcodes_indices == None:
         return None
@@ -196,7 +196,7 @@ def create_run(font=None):
     run_info['has_headers'] = has_headers
 
     title = save_run(run_info)
-    view_barcodes_window.save_barcodes(run_info)
+    artifice_core.view_barcodes_window.save_barcodes(run_info)
     update_log(f'created run: "{title}" successfully')
 
     return title
@@ -227,12 +227,12 @@ def run_main_window(window, font = None, rampart_running = False):
 
     #scale_window(window)
 
-    docker_installed = start_rampart.check_for_docker()
+    docker_installed = artifice_core.start_rampart.check_for_docker()
     if not docker_installed:
         window.close()
         return None
 
-    got_image, docker_client = start_rampart.check_for_image(docker_client, consts.DOCKER_IMAGE, font=font)
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.DOCKER_IMAGE, font=font)
 
     if not got_image:
         window.close()
@@ -251,7 +251,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 if chk_stop == 'Yes':
                     update_log('stopping RAMPART...')
-                    start_rampart.stop_docker(client=docker_client, container=rampart_container)
+                    artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     update_log('RAMPART stopped')
                 else:
                     update_log('User chose to keep RAMPART running')
@@ -268,14 +268,14 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event.startswith('-INFOTAB-'):
             try:
-                run_info, selected_run_title = infotab_event(event, run_info, selected_run_title, hide_archived, font, values, window)
+                run_info, selected_run_title, window = infotab_event(event, run_info, selected_run_title, hide_archived, font, values, window)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event.startswith('-RAMPART TAB-'):
             try:
-                run_info, docker_client, rampart_container, rampart_running = rampart_tab_event(event, run_info, docker_client, rampart_container, rampart_running, font)
+                run_info, docker_client, rampart_container, rampart_running, window = rampart_tab_event(event, run_info, docker_client, rampart_container, rampart_running, font, window)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -348,7 +348,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
 if __name__ == '__main__':
     #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
-    font = (consts.FONT, 18)
+    font = (artifice_core.consts.FONT, 18)
 
     window, rampart_running = create_main_window(font=font)
     run_main_window(window, rampart_running=rampart_running, font=font)

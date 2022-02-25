@@ -3,11 +3,11 @@ import json
 from os import mkdir, listdir
 from shutil import rmtree, copytree
 
-from update_log import log_event, update_log
-import consts
+from artifice_core.update_log import log_event, update_log
+import artifice_core.consts
 
 #creates a directory containing run info json
-def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = consts.RUNS_DIR):
+def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = artifice_core.consts.RUNS_DIR):
     samples = run_info['samples']
     if title == None or title == '':
         title = samples.split('/')[-1].split('.')[0]
@@ -58,7 +58,7 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
 
     return run_info
 
-def delete_run(title, window, clear_selected = True, runs_dir = consts.RUNS_DIR):
+def delete_run(title, window, clear_selected = True, runs_dir = artifice_core.consts.RUNS_DIR):
     update_log(f'deleting run: "{title}"')
     filepath = runs_dir+'/'+title
 
@@ -77,7 +77,7 @@ def get_run_info(values, run_info):
     return run_info
 
 #retrieve the paths of directories in the run folder
-def get_runs(runs_dir = consts.RUNS_DIR, archived_json = consts.ARCHIVED_RUNS, hide_archived = True):
+def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_core.consts.ARCHIVED_RUNS, hide_archived = True):
     paths = listdir(runs_dir)
     runs_set = set()
     for path in paths:
@@ -101,7 +101,7 @@ def get_runs(runs_dir = consts.RUNS_DIR, archived_json = consts.ARCHIVED_RUNS, h
 
     return runs
 
-def load_run(window, title, runs_dir = consts.RUNS_DIR):
+def load_run(window, title, runs_dir = artifice_core.consts.RUNS_DIR):
     update_log(f'loading run: "{title}"...')
     filepath = runs_dir+'/'+title+'/run_info.json'
 
@@ -178,7 +178,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
 
     return run_info
 
-def edit_archive(title, window, runs_dir = consts.RUNS_DIR, archived_runs = consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
+def edit_archive(title, window, runs_dir = artifice_core.consts.RUNS_DIR, archived_runs = artifice_core.consts.ARCHIVED_RUNS, clear_selected = True, archive = True):
     archived_filepath = runs_dir+'/'+archived_runs+'.json'
 
     with open(archived_filepath,'r') as file:
@@ -201,7 +201,7 @@ def edit_archive(title, window, runs_dir = consts.RUNS_DIR, archived_runs = cons
     if clear_selected:
         clear_selected_run(window)
 
-def rename_run(values, run_info, window, hide_archived = True, runs_dir = consts.RUNS_DIR):
+def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifice_core.consts.RUNS_DIR):
     previous_run_title = values['-RUN LIST-'][0]
     run_info = get_run_info(values, run_info)
     new_title = run_info['title']

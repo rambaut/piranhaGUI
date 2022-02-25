@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import os.path
 import traceback
 
-from update_log import log_event, update_log
+from artifice_core.update_log import log_event, update_log
 
 #Window for user to select samples csv and possibling MinKnow
 

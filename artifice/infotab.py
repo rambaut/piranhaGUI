@@ -1,10 +1,10 @@
 import PySimpleGUI as sg
-import parse_columns_window
-import view_barcodes_window
+import artifice_core.parse_columns_window
+import artifice_core.view_barcodes_window
 import traceback
 
-from manage_runs import save_run, delete_run, rename_run, update_run_list, edit_archive, save_changes, clear_selected_run, load_run
-from update_log import log_event, update_log
+from artifice_core.manage_runs import save_run, delete_run, rename_run, update_run_list, edit_archive, save_changes, clear_selected_run, load_run
+from artifice_core.update_log import log_event, update_log
 
 def archive_button(run_info, window, values, hide_archived):
     if 'archived' not in run_info:
@@ -45,15 +45,15 @@ def infotab_event(event, run_info, selected_run_title, hide_archived, font, valu
 
             try:
                 samples = values['-INFOTAB-SAMPLES-']
-                parse_window, column_headers = parse_columns_window.create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)
-                samples_barcodes_indices = parse_columns_window.run_parse_window(parse_window,samples,column_headers)
+                parse_window, column_headers = artifice_core.parse_columns_window.create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)
+                samples_barcodes_indices = artifice_core.parse_columns_window.run_parse_window(parse_window,samples,column_headers)
 
                 if samples_barcodes_indices != None:
                     samples_column, barcodes_column = samples_barcodes_indices
                     run_info['samples'] = samples
                     run_info['barcodes_column'] = barcodes_column
                     run_info['samples_column']  = samples_column
-                    view_barcodes_window.save_barcodes(run_info)
+                    artifice_core.view_barcodes_window.save_barcodes(run_info)
 
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
@@ -112,4 +112,4 @@ def infotab_event(event, run_info, selected_run_title, hide_archived, font, valu
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
-    return run_info, selected_run_title
+    return run_info, selected_run_title, window

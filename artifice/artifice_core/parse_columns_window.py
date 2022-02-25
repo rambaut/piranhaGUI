@@ -3,7 +3,7 @@ import os.path
 import csv
 import traceback
 
-from update_log import log_event, update_log
+from artifice_core.update_log import log_event, update_log
 
 def samples_to_list(filepath, has_headers = True, trim = True):
     with open(filepath, newline = '') as csvfile:
