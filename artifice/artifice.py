@@ -7,6 +7,7 @@ from datetime import datetime
 import artifice_core.consts
 from artifice_core.update_log import update_log
 import advanced_window.main_window
+import basic_window.main_window
 
 def check_runs_dir(runs_dir):
     filepath = runs_dir + '/archived_runs.json'
@@ -32,20 +33,23 @@ def scale_window(font=None):
 
 
 if __name__ == '__main__':
-    #print(sg.LOOK_AND_FEEL_TABLE['Dark'])
-    font = (artifice_core.consts.FONT, 18)
-    check_runs_dir(artifice_core.consts.RUNS_DIR)
-
+    advanced = True
     startup_time = datetime.today()
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
 
+    font = (artifice_core.consts.FONT, 18)
 
     #update_log(test_string)
     #print('a'*200)
-    #sg.set_options(scaling=1.0)
+
     scale_window()
-    window, rampart_running = advanced_window.main_window.create_main_window(font=font)
-    advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+    if advanced:
+        check_runs_dir(artifice_core.consts.RUNS_DIR)
+        window, rampart_running = advanced_window.main_window.create_main_window(font=font)
+        advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+    else:
+        window, rampart_running = basic_window.main_window.create_main_window(font=font)
+        basic_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
 
     window.close()
 

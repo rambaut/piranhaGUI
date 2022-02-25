@@ -3,6 +3,7 @@ import os.path
 import csv
 import traceback
 
+import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
 
 def samples_to_list(filepath, has_headers = True, trim = True):
@@ -86,6 +87,30 @@ def create_parse_window(samples, theme = None, font = None, window = None, sampl
     update_log(f'displaying samples: "{samples}"')
     return new_window, column_headers
 
+def view_samples(run_info, values, samples_key, font):
+    if 'title' in run_info:
+        if 'samples_column' in run_info:
+            samples_column = run_info['samples_column']
+        else:
+            samples_column = None
+
+        if 'barcodes_column' in run_info:
+            barcodes_column = run_info['barcodes_column']
+        else:
+            barcodes_column = None
+
+        samples = values[samples_key]
+        parse_window, column_headers = create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)
+        samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
+
+        if samples_barcodes_indices != None:
+            samples_column, barcodes_column = samples_barcodes_indices
+            run_info['samples'] = samples
+            run_info['barcodes_column'] = barcodes_column
+            run_info['samples_column']  = samples_column
+            artifice_core.view_barcodes_window.save_barcodes(run_info)
+
+    return run_info
 
 def run_parse_window(window, samples, column_headers):
     while True:

@@ -44,7 +44,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = art
 
     return title
 
-def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True):
+def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True, element_dict = None):
     title = run_info['title']
     run_info = get_run_info(values, run_info)
     update_log(title)
@@ -54,7 +54,7 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
         run_info['title'] = title
     update_log(title)
     title = save_run(run_info, title=title, overwrite=overwrite)
-    run_info = update_run_list(window, run_info, run_to_select=title, hide_archived=hide_archived)
+    run_info = update_run_list(window, run_info, run_to_select=title, hide_archived=hide_archived, element_dict=element_dict)
 
     return run_info
 
@@ -101,12 +101,21 @@ def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_
 
     return runs
 
-def load_run(window, title, runs_dir = artifice_core.consts.RUNS_DIR):
+def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR):
     update_log(f'loading run: "{title}"...')
     filepath = runs_dir+'/'+title+'/run_info.json'
 
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
+
+    for element in element_dict:
+        #print(f'{element}:{run_info[element_dict[element]]}')
+        try:
+            window[element].update(run_info[element_dict[element]])
+        except:
+            window[element].update('')
+
+            """
         try:
             window['-INFOTAB-DATE-'].update(run_info['date'])
         except:
@@ -131,6 +140,7 @@ def load_run(window, title, runs_dir = artifice_core.consts.RUNS_DIR):
             window['-INFOTAB-MINKNOW-'].update(run_info['basecalledPath'])
         except:
             window['-INFOTAB-MINKNOW-'].update('')
+            """
 
     if 'archived' not in run_info:
         run_info['archived'] = False
@@ -152,7 +162,7 @@ def clear_selected_run(window):
 
     return {}
 
-def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
+def update_run_list(window, run_info, run_to_select = '', hide_archived = True, element_dict = None):
     update_log(f'updating run list')
     runs = get_runs(hide_archived=hide_archived)
     window['-RUN LIST-'].update(values=runs)
@@ -171,7 +181,7 @@ def update_run_list(window, run_info, run_to_select = '', hide_archived = True):
         if runs[i] == run_to_select:
             update_log(f'selecting run: {run_to_select}')
             window['-RUN LIST-'].update(set_to_index=i)
-            run_info = load_run(window, run_to_select)
+            run_info = load_run(window, run_to_select, element_dict)
 
     if run_info == {}:
         run_info = clear_selected_run(window)
@@ -201,7 +211,7 @@ def edit_archive(title, window, runs_dir = artifice_core.consts.RUNS_DIR, archiv
     if clear_selected:
         clear_selected_run(window)
 
-def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifice_core.consts.RUNS_DIR):
+def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifice_core.consts.RUNS_DIR, element_dict = None):
     previous_run_title = values['-RUN LIST-'][0]
     run_info = get_run_info(values, run_info)
     new_title = run_info['title']
@@ -225,4 +235,4 @@ def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifi
         edit_archive(new_title, window, archive=run_info['archived'])
         edit_archive(previous_run_title, window, archive=False)
         delete_run(previous_run_title, window, clear_selected=False)
-        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived)
+        run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived, element_dict=element_dict)

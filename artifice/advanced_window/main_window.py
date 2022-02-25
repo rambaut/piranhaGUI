@@ -87,15 +87,6 @@ def setup_layout(theme='Dark', font = None):
         sg.Button(button_text='RAMPART >', key='-INFOTAB-TO RAMPART-'),
         ],
     ]
-    try:
-        r = requests.get(f'http://localhost:{artifice_core.consts.RAMPART_PORT_1}')
-        if r.status_code == 200:
-            rampart_running = True
-            rampart_button_text = 'Stop RAMPART'
-        else:
-            rampart_running = False
-    except:
-        rampart_running = False
 
     update_log('checking if RAMPART is running...')
     rampart_running = artifice_core.start_rampart.check_rampart_running()
@@ -225,6 +216,12 @@ def run_main_window(window, font = None, rampart_running = False):
     docker_client = None
     rampart_container = None
 
+    element_dict = {'-INFOTAB-DATE-':'date',
+                    '-INFOTAB-RUN NAME-':'title',
+                    '-INFOTAB-RUN DESCR-':'description',
+                    '-INFOTAB-SAMPLES-':'samples',
+                    '-INFOTAB-MINKNOW-':'basecalledPath'}
+
     #scale_window(window)
 
     docker_installed = artifice_core.start_rampart.check_for_docker()
@@ -268,7 +265,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event.startswith('-INFOTAB-'):
             try:
-                run_info, selected_run_title, window = infotab_event(event, run_info, selected_run_title, hide_archived, font, values, window)
+                run_info, selected_run_title, window = infotab_event(event, run_info, selected_run_title, hide_archived, element_dict, font, values, window)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -289,7 +286,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 try:
                     if not old_run_info == None:
-                        save_changes(values, old_run_info, window, hide_archived=hide_archived)
+                        save_changes(values, old_run_info, window, hide_archived=hide_archived, element_dict=element_dict)
                 except Exception as err:
                     update_log(traceback.format_exc())
                     sg.popup_error(err)
@@ -298,7 +295,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 selected_run_title = values['-RUN LIST-'][0]
                 #run_info = load_run(window, selected_run_title)
 
-                run_info = update_run_list(window, {}, run_to_select=selected_run_title, hide_archived=hide_archived)
+                run_info = update_run_list(window, {}, run_to_select=selected_run_title, hide_archived=hide_archived, element_dict=element_dict)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -309,7 +306,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 if selected_run_title == None:
                     continue
 
-                run_info = update_run_list(window, run_info, run_to_select=selected_run_title, hide_archived=hide_archived)
+                run_info = update_run_list(window, run_info, run_to_select=selected_run_title, hide_archived=hide_archived, element_dict=element_dict)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -319,12 +316,12 @@ def run_main_window(window, font = None, rampart_running = False):
                 if hide_archived:
                     update_log('showing archived runs')
                     hide_archived = False
-                    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+                    run_info = update_run_list(window, run_info, hide_archived=hide_archived, element_dict=element_dict)
                     window['-SHOW/HIDE ARCHIVED-'].update(text='Hide Archived Runs')
                 else:
                     update_log('hiding archived runs')
                     hide_archived = True
-                    run_info = update_run_list(window, run_info, hide_archived=hide_archived)
+                    run_info = update_run_list(window, run_info, hide_archived=hide_archived, element_dict=element_dict)
                     window['-SHOW/HIDE ARCHIVED-'].update(text='Show All Runs')
             except Exception as err:
                 update_log(traceback.format_exc())
