@@ -14,8 +14,8 @@ import artifice_core.start_rampart
 import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, update_run_list, get_runs, save_changes
-from infotab import infotab_event
-from rampart_tab import rampart_tab_event
+from advanced_window.infotab import infotab_event
+from advanced_window.rampart_tab import rampart_tab_event
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",

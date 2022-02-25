@@ -6,7 +6,7 @@ from datetime import datetime
 
 import artifice_core.consts
 from artifice_core.update_log import update_log
-import main_window
+import advanced_window.main_window
 
 def check_runs_dir(runs_dir):
     filepath = runs_dir + '/archived_runs.json'
@@ -44,8 +44,8 @@ if __name__ == '__main__':
     #print('a'*200)
     #sg.set_options(scaling=1.0)
     scale_window()
-    window, rampart_running = main_window.create_main_window(font=font)
-    main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+    window, rampart_running = advanced_window.main_window.create_main_window(font=font)
+    advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
 
     window.close()
 
