@@ -60,6 +60,9 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
 
 def delete_run(title, window, clear_selected = True, runs_dir = artifice_core.consts.RUNS_DIR):
     update_log(f'deleting run: "{title}"')
+
+    edit_archive(title, window, clear_selected=False, archive=False) #unarchiving to avoid bugs if a new run with the same name is created
+
     filepath = runs_dir+'/'+title
 
     if os.path.isdir(filepath):
@@ -219,7 +222,7 @@ def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifi
         update_log(f'renaming run: "{previous_run_title}" to "{new_title}"')
 
         #this is just to get a new title in the event the new name already matches a run
-        run_info = save_changes(values, run_info, window, rename=True, overwrite=False, hide_archived=hide_archived)
+        run_info = save_changes(values, run_info, window, rename=True, overwrite=False, hide_archived=hide_archived, element_dict=element_dict)
         new_title = run_info['title']
         delete_run(new_title, window, clear_selected=False)
         update_log('moving files to new directory')
