@@ -44,9 +44,9 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = art
 
     return title
 
-def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True, element_dict = None):
+def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True, element_dict = None, update_list = True):
     title = run_info['title']
-    run_info = get_run_info(values, run_info)
+    run_info = get_run_info(values, run_info, element_dict)
     update_log(title)
     if rename:
         title = run_info['title']
@@ -54,7 +54,9 @@ def save_changes(values, run_info, window, rename = False, overwrite = True, hid
         run_info['title'] = title
     update_log(title)
     title = save_run(run_info, title=title, overwrite=overwrite)
-    run_info = update_run_list(window, run_info, run_to_select=title, hide_archived=hide_archived, element_dict=element_dict)
+
+    if update_list:
+        run_info = update_run_list(window, run_info, run_to_select=title, hide_archived=hide_archived, element_dict=element_dict)
 
     return run_info
 
@@ -71,11 +73,15 @@ def delete_run(title, window, clear_selected = True, runs_dir = artifice_core.co
     if clear_selected:
         clear_selected_run(window)
 
-def get_run_info(values, run_info):
+def get_run_info(values, run_info, element_dict):
+    """
     run_info['title'] = values['-INFOTAB-RUN NAME-'].strip()
     run_info['description'] = values['-INFOTAB-RUN DESCR-'].strip()
     run_info['samples'] = values['-INFOTAB-SAMPLES-'].strip()
     run_info['basecalledPath'] = values['-INFOTAB-MINKNOW-'].strip()
+    """
+    for element in element_dict:
+        run_info[element_dict[element]] = values[element].strip()
 
     return run_info
 
@@ -117,33 +123,6 @@ def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_D
             window[element].update(run_info[element_dict[element]])
         except:
             window[element].update('')
-
-            """
-        try:
-            window['-INFOTAB-DATE-'].update(run_info['date'])
-        except:
-            window['-INFOTAB-DATE-'].update('')
-
-        try:
-            window['-INFOTAB-RUN NAME-'].update(run_info['title'])
-        except:
-            window['-INFOTAB-RUN NAME-'].update('')
-
-        try:
-            window['-INFOTAB-RUN DESCR-'].update(run_info['description'])
-        except:
-            window['-INFOTAB-RUN DESCR-'].update('')
-
-        try:
-            window['-INFOTAB-SAMPLES-'].update(run_info['samples'])
-        except:
-            window['-INFOTAB-SAMPLES-'].update('')
-
-        try:
-            window['-INFOTAB-MINKNOW-'].update(run_info['basecalledPath'])
-        except:
-            window['-INFOTAB-MINKNOW-'].update('')
-            """
 
     if 'archived' not in run_info:
         run_info['archived'] = False
@@ -216,7 +195,7 @@ def edit_archive(title, window, runs_dir = artifice_core.consts.RUNS_DIR, archiv
 
 def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifice_core.consts.RUNS_DIR, element_dict = None):
     previous_run_title = values['-RUN LIST-'][0]
-    run_info = get_run_info(values, run_info)
+    run_info = get_run_info(values, run_info, element_dict)
     new_title = run_info['title']
     if new_title != previous_run_title:
         update_log(f'renaming run: "{previous_run_title}" to "{new_title}"')

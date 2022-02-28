@@ -339,8 +339,6 @@ def run_main_window(window, font = None, rampart_running = False):
                 window['-SHOW/HIDE RUNLIST-'].update(text='Hide Runs')
                 runlist_visible = True
 
-
-
     window.close()
 
 if __name__ == '__main__':

@@ -1,8 +1,10 @@
 import PySimpleGUI as sg
+import traceback
 
 import artifice_core.start_rampart
 import artifice_core.parse_columns_window
 from artifice_core.update_log import log_event, update_log
+from artifice_core.manage_runs import save_changes, load_run
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -42,6 +44,7 @@ def setup_layout(theme='Dark', font = None):
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
     sg.FolderBrowse(),
     ],
+    [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
     sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
     sg.Button(button_text='View RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
@@ -67,8 +70,13 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
     return new_window, rampart_running
 
 def run_main_window(window, font = None, rampart_running = False):
-    run_info = {}
-    selected_run_title = ''
+    run_info = {'title': 'TEMP_RUN'}
+    selected_run_title = 'TEMP_RUN'
+    docker_client = None
+    rampart_container = None
+
+    element_dict = {'-SAMPLES-':'samples',
+                    '-MINKNOW-':'basecalledPath'}
 
     while True:
         event, values = window.read()
@@ -88,10 +96,36 @@ def run_main_window(window, font = None, rampart_running = False):
                 else:
                     update_log('User chose to keep RAMPART running')
             break
+
         elif event == '-VIEW SAMPLES-':
             try:
                 artifice_core.parse_columns_window.view_samples(run_info, values, '-INFOTAB-SAMPLES-', font)
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True, element_dict=element_dict)
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+
+        elif event == '-START/STOP RAMPART-':
+            try:
+                if rampart_running:
+                    #try:
+                        #print(rampart_container.top())
+                    #except:
+                    #    pass
+                    rampart_running = False
+                    artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
+                    window['-VIEW RAMPART-'].update(visible=False)
+                    window['-START/STOP RAMPART-'].update(text='Start RAMPART')
+                    window['-RAMPART STATUS-'].update('RAMPART is not running')
+                else:
+                    run_info = save_changes(values, run_info, window, element_dict = element_dict, update_list=False)
+                    rampart_container = artifice_core.start_rampart.launch_rampart(run_info, docker_client, firstPort=artifice_core.consts.RAMPART_PORT_1, secondPort=artifice_core.consts.RAMPART_PORT_2, font=font, container=rampart_container)
+                    rampart_running = True
+                    window['-VIEW RAMPART-'].update(visible=True)
+                    window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
+                    window['-RAMPART STATUS-'].update('RAMPART is running')
+                    #print(rampart_container.logs())
+
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
