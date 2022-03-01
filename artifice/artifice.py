@@ -34,7 +34,7 @@ def scale_window(font=None):
 
 
 if __name__ == '__main__':
-    advanced = False
+    advanced = True
     startup_time = datetime.today()
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
 

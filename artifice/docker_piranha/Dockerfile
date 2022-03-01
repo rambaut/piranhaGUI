@@ -14,10 +14,12 @@ RUN git clone https://github.com/aineniamh/piranha.git
 RUN ls
 RUN conda env create -f /data/piranha/environment.yml
 
-# everything from now on will be run in the artic-rampart conda environment
+# everything from now on will be run in the piranha conda environment
 SHELL ["conda", "run", "-n", "piranha", "/bin/bash", "-c"]
 
+
 # build piranha
+WORKDIR /data/piranha
 RUN pip install .
 
 #create directory to mount the basecalled directory
@@ -26,4 +28,4 @@ RUN mkdir -p /data/run_data/basecalled
 WORKDIR /data/run_data/analysis
 
 # run piranha
-ENTRYPOINT piranha -i /data/run_data/basecalled -b /data/run_data/analysis/barcodes.csv
+ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled
