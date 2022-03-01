@@ -81,7 +81,8 @@ def get_run_info(values, run_info, element_dict):
     run_info['basecalledPath'] = values['-INFOTAB-MINKNOW-'].strip()
     """
     for element in element_dict:
-        run_info[element_dict[element]] = values[element].strip()
+        if element in values:
+            run_info[element_dict[element]] = values[element].strip()
 
     return run_info
 
