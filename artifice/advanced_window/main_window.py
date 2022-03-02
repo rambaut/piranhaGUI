@@ -12,6 +12,7 @@ import artifice_core.selection_window
 import artifice_core.parse_columns_window
 import artifice_core.start_rampart
 import artifice_core.view_barcodes_window
+from artifice_core.start_piranha import start_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, update_run_list, get_runs, save_changes
 from advanced_window.infotab import infotab_event
@@ -116,6 +117,7 @@ def setup_layout(theme='Dark', font = None):
 
     piranha_tab = [
     [sg.Text('piranha'),],
+    [sg.Button(button_text='Start PIRANHA',key='-START PIRANHA-'),],
     [
     sg.VPush()
     ],
@@ -229,7 +231,7 @@ def run_main_window(window, font = None, rampart_running = False):
         window.close()
         return None
 
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.DOCKER_IMAGE, font=font)
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.RAMPART_IMAGE, font=font)
 
     if not got_image:
         window.close()
@@ -273,6 +275,18 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event.startswith('-RAMPART TAB-'):
             try:
                 run_info, docker_client, rampart_container, rampart_running, window = rampart_tab_event(event, run_info, docker_client, rampart_container, rampart_running, font, window)
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+
+        elif event == '-START PIRANHA-':
+            try:
+                runs_dir = artifice_core.consts.RUNS_DIR
+                artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,font=font)
+
+                run_path = runs_dir+'/'+run_info['title']
+                basecalled_path = run_info['basecalledPath']
+                container = start_piranha(run_path, basecalled_path, docker_client, artifice_core.consts.PIRANHA_IMAGE, container=None)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

@@ -15,12 +15,11 @@ def get_datadir():
 
     home = pathlib.Path.home()
 
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"): #windows
         os_path = getenv("LOCALAPPDATA")
-    elif sys.platform.startswith("darwin"):
+    elif sys.platform.startswith("darwin"): #macOS
         os_path = "~/Library/Application Support"
-    else:
-        # linux
+    else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
     path = Path(os_path) / "ARTIFICE"
@@ -35,7 +34,8 @@ RAMPART_PORT_1 = config['RAMPART_PORT_1']
 RAMPART_PORT_2 = config['RAMPART_PORT_2']
 ARCHIVED_RUNS = config['ARCHIVED_RUNS']
 RUNS_DIR = str(get_datadir() / 'runs')
-DOCKER_IMAGE = config['DOCKER_IMAGE']
+RAMPART_IMAGE = config['RAMPART_IMAGE']
+PIRANHA_IMAGE = config['PIRANHA_IMAGE']
 FONT = config['FONT']
 LOGFILE = config['LOGFILE']
 #BACKGROUND_COLOR = "#072429"

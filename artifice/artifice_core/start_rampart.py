@@ -102,7 +102,8 @@ def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-dock
 
         return False
 
-def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None):
+#makes sure run is valid for running rampart/piranha and creates run_configuration json
+def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     title = run_info['title']
@@ -112,7 +113,6 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
         raise Exception('Invalid MinKnow')
 
-    basecalled_path = run_info['basecalledPath']
 
     config_path = runs_dir+'/'+title+'/run_configuration.json'
 
@@ -126,12 +126,16 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
 
     with open(config_path, 'w') as file:
         config_json = json.dump(run_configuration, file)
-        #file.write(config_json)
 
     artifice_core.view_barcodes_window.check_barcodes(run_info,font=font)
 
+
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None):
+    prepare_run(run_info,runs_dir=runs_dir,font=font)
+
+    basecalled_path = run_info['basecalledPath']
     run_path = runs_dir+'/'+run_info['title']
-    container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.DOCKER_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
+    container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
 
     iter = 0
     while True:

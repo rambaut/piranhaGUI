@@ -15,6 +15,7 @@ def start_piranha(run_path, basecalled_path, client, image, container = None):
 
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
     log_volumes = str(volumes)
+    print(log_volumes)
     #update_log(f'volumes: {log_volumes}')
 
     container = client.containers.run(image=image, detach=False, name=containerName, volumes=volumes)
