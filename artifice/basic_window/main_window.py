@@ -1,7 +1,9 @@
 import PySimpleGUI as sg
 import traceback
 import re
-from time import sleep
+from datetime import datetime
+from datetime import timedelta
+from time import sleep, time
 
 import artifice_core.start_rampart
 import artifice_core.parse_columns_window
@@ -73,11 +75,14 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
     return new_window, rampart_running
 
 def run_main_window(window, font = None, rampart_running = False):
+    print(datetime.now())
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
     docker_client = None
     rampart_container = None
     piranha_log = None
+    piranha_log_since = datetime.min
+    piranha_log_called = 0
     piranha_running = False
 
     element_dict = {'-SAMPLES-':'samples',
@@ -88,10 +93,20 @@ def run_main_window(window, font = None, rampart_running = False):
         pass
 
     while True:
-        event, values = window.read()
+        event, values = window.read(timeout=2000)
 
-        if event != None:
+        if event != '__TIMEOUT__':
             log_event(f'{event} [main window]')
+
+        if piranha_running:
+            #since_log = datetime.now() - piranha_log_since
+            #since_log = int(time()) - piranha_log_called
+            #if since_log > 0:
+                #piranha_log_called = int(time())
+            #print('logs')
+            piranha_output, piranha_log_since = artifice_core.start_rampart.return_log(piranha_container, piranha_log_since)
+            if len(piranha_output) > 0:
+                window['-PIRANHA OUTPUT-'].print(piranha_output, end='')
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             if rampart_running:
@@ -156,14 +171,18 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-START PIRANHA-':
             try:
+                #piranha_log
                 piranha_container = launch_piranha(run_info, font, docker_client)
-                sleep(1)
-                #remove ANSI escape codes
-                ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-                piranha_output = ansi_escape.sub('', piranha_container.logs().decode('utf-8'))
+                #sleep(1)
 
-                #window['-PIRANHA OUTPUT-'].print(piranha_container.logs().decode('unicode_escape'))
-                window['-PIRANHA OUTPUT-'].print(piranha_output)
+                #ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+                #piranha_output = ansi_escape.sub('', piranha_container.logs().decode('utf-8'))
+                #window['-PIRANHA OUTPUT-'].print(piranha_output)
+
+                #piranha_log = piranha_container.attach(stream = True, logs =True)
+                piranha_log = piranha_container.logs(stream=True)
+                piranha_running = True
+
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

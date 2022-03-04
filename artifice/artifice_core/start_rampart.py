@@ -6,7 +6,8 @@ import PySimpleGUI as sg
 from webbrowser import open_new_tab
 import requests
 import json
-from time import sleep
+from time import sleep, time
+import re
 
 from artifice_core.update_log import update_log
 import artifice_core.consts
@@ -72,6 +73,21 @@ def stop_docker(client = None, containerName='rampart', container = None):
         #command = f"docker stop {containerName} && docker rm {containerName}"
         #os.system(command)
 
+def return_log(container, since):
+    #print(since)
+    #try:
+        #log_str = next(log)
+    log_str = container.logs(since=since)
+    #remove ANSI escape codes
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    piranha_output = ansi_escape.sub('', log_str.decode('utf-8'))
+    #except:
+    #    piranha_output = ''
+    #finally:
+    since = datetime.now()
+
+    return piranha_output, since
+
 def check_for_image(client, image_name, font = None):
     if client == None:
         client = docker.from_env()
@@ -128,7 +144,6 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None)
         config_json = json.dump(run_configuration, file)
 
     artifice_core.view_barcodes_window.check_barcodes(run_info,font=font)
-
 
 def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None):
     prepare_run(run_info,runs_dir=runs_dir,font=font)
