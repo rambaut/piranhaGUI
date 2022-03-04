@@ -107,9 +107,9 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None)
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     title = run_info['title']
-    update_log(f'launching RAMPART on run: "{title}"')
+    update_log(f'preparing run: "{title}"')
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
-        raise Exception('Invalid samples file')
+        raise Exception(f'Invalid samples file')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
         raise Exception('Invalid MinKnow')
 

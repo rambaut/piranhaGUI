@@ -1,8 +1,11 @@
 import PySimpleGUI as sg
 import traceback
+import re
+from time import sleep
 
 import artifice_core.start_rampart
 import artifice_core.parse_columns_window
+from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_changes, load_run
 
@@ -49,6 +52,8 @@ def setup_layout(theme='Dark', font = None):
     sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
     sg.Button(button_text='View RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
     ],
+    [sg.Button(button_text='Start PIRANHA',key='-START PIRANHA-'),],
+    [sg.Multiline(size=(100,20),write_only=True, key='-PIRANHA OUTPUT-'),],
     ]
 
     return layout, rampart_running
@@ -62,10 +67,8 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
     if window != None:
         window.close()
 
-    #new_window['-INFOTAB-RUN NAME-'].bind("<FocusOut>", "FocusOut")
-    #new_window['-INFOTAB-SAMPLES-'].bind("<FocusOut>", "FocusOut")
-    #new_window['-INFOTAB-RUN DESCR-'].bind("<FocusOut>", "FocusOut")
-    #new_window['-INFOTAB-MINKNOW-'].bind("<FocusOut>", "FocusOut")
+    new_window['-SAMPLES-'].bind("<FocusOut>", "FocusOut")
+    new_window['-MINKNOW-'].bind("<FocusOut>", "FocusOut")
 
     return new_window, rampart_running
 
@@ -74,9 +77,15 @@ def run_main_window(window, font = None, rampart_running = False):
     selected_run_title = 'TEMP_RUN'
     docker_client = None
     rampart_container = None
+    piranha_log = None
+    piranha_running = False
 
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath'}
+    try:
+        run_info = load_run(window, selected_run_title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button=False)
+    except:
+        pass
 
     while True:
         event, values = window.read()
@@ -99,11 +108,26 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-VIEW SAMPLES-':
             try:
-                artifice_core.parse_columns_window.view_samples(run_info, values, '-INFOTAB-SAMPLES-', font)
+                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-INFOTAB-SAMPLES-', font)
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True, element_dict=element_dict)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
+
+        elif event in {'-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:
+            try:
+                if 'title' in run_info:
+                    run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+                else:
+                    clear_selected_run(window)
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+                try:
+                    run_info = load_run(window, run_info['title'])
+                except Exception as err:
+                    update_log(traceback.format_exc())
+                    sg.popup_error(err)
 
         elif event == '-START/STOP RAMPART-':
             try:
@@ -126,6 +150,20 @@ def run_main_window(window, font = None, rampart_running = False):
                     window['-RAMPART STATUS-'].update('RAMPART is running')
                     #print(rampart_container.logs())
 
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+
+        elif event == '-START PIRANHA-':
+            try:
+                piranha_container = launch_piranha(run_info, font, docker_client)
+                sleep(1)
+                #remove ANSI escape codes
+                ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+                piranha_output = ansi_escape.sub('', piranha_container.logs().decode('utf-8'))
+
+                #window['-PIRANHA OUTPUT-'].print(piranha_container.logs().decode('unicode_escape'))
+                window['-PIRANHA OUTPUT-'].print(piranha_output)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

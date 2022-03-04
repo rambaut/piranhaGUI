@@ -32,7 +32,7 @@ def infotab_event(event, run_info, selected_run_title, hide_archived, element_di
 
     if event == '-VIEW SAMPLES-':
         try:
-            artifice_core.parse_columns_window.view_samples(run_info, values, '-INFOTAB-SAMPLES-', font)
+            run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-INFOTAB-SAMPLES-', font)
             selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
         except Exception as err:
             update_log(traceback.format_exc())

@@ -17,7 +17,7 @@ RUN conda env create -f /data/piranha/environment.yml
 #ENV PYTHONUNBUFFERED=1
 
 # everything from now on will be run in the piranha conda environment
-SHELL ["conda", "run", "--no-capture-output", "-n", "piranha", "/bin/bash", "-c", "PYTHONUNBUFFERED=1"]
+SHELL ["conda", "run", "--no-capture-output", "-n", "piranha", "/bin/bash", "-c"]
 
 
 # build piranha
@@ -29,7 +29,8 @@ RUN mkdir -p /data/run_data/basecalled
 
 WORKDIR /data/run_data/analysis
 
-#ENV PYTHONUNBUFFERED=1
-SHELL ["conda", "run", "--no-capture-output", "-n", "piranha"]
+ENV PYTHONUNBUFFERED=1
+#SHELL ["conda", "run", "--no-capture-output", "-n", "piranha"]
+
 # run piranha
 ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled

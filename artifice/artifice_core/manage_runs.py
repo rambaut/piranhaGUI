@@ -111,7 +111,7 @@ def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_
 
     return runs
 
-def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR):
+def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button = True):
     update_log(f'loading run: "{title}"...')
     filepath = runs_dir+'/'+title+'/run_info.json'
 
@@ -128,10 +128,11 @@ def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_D
     if 'archived' not in run_info:
         run_info['archived'] = False
 
-    if run_info['archived'] == True:
-        window['-INFOTAB-ARCHIVE/UNARCHIVE-'].update(text='Unarchive')
-    else:
-        window['-INFOTAB-ARCHIVE/UNARCHIVE-'].update(text='Archive')
+    if update_archive_button:
+        if run_info['archived'] == True:
+            window['-INFOTAB-ARCHIVE/UNARCHIVE-'].update(text='Unarchive')
+        else:
+            window['-INFOTAB-ARCHIVE/UNARCHIVE-'].update(text='Archive')
 
     return run_info
 

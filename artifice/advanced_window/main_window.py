@@ -6,6 +6,8 @@ import json
 from shutil import rmtree, move, copytree
 from datetime import datetime
 import traceback
+from time import sleep
+import re
 
 import artifice_core.consts
 import artifice_core.selection_window
@@ -118,6 +120,7 @@ def setup_layout(theme='Dark', font = None):
     piranha_tab = [
     [sg.Text('piranha'),],
     [sg.Button(button_text='Start PIRANHA',key='-START PIRANHA-'),],
+    [sg.Multiline(size=(70,20),write_only=True, key='-PIRANHA OUTPUT-'),],
     [
     sg.VPush()
     ],
@@ -217,6 +220,7 @@ def run_main_window(window, font = None, rampart_running = False):
     selected_run_title = ''
     docker_client = None
     rampart_container = None
+    piranha_container = None
 
     element_dict = {'-INFOTAB-DATE-':'date',
                     '-INFOTAB-RUN NAME-':'title',
@@ -286,7 +290,14 @@ def run_main_window(window, font = None, rampart_running = False):
 
                 run_path = runs_dir+'/'+run_info['title']
                 basecalled_path = run_info['basecalledPath']
-                container = start_piranha(run_path, basecalled_path, docker_client, artifice_core.consts.PIRANHA_IMAGE, container=None)
+                piranha_container = start_piranha(run_path, basecalled_path, docker_client, artifice_core.consts.PIRANHA_IMAGE, container=None)
+                sleep(1)
+                #remove ANSI escape codes
+                ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+                piranha_output = ansi_escape.sub('', piranha_container.logs().decode('utf-8'))
+
+                #window['-PIRANHA OUTPUT-'].print(piranha_container.logs().decode('unicode_escape'))
+                window['-PIRANHA OUTPUT-'].print(piranha_output)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
