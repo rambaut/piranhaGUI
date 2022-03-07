@@ -4,6 +4,9 @@ import re
 from datetime import datetime
 from datetime import timedelta
 from time import sleep, time
+import multiprocessing
+import threading
+import queue
 
 import artifice_core.start_rampart
 import artifice_core.parse_columns_window
@@ -80,10 +83,11 @@ def run_main_window(window, font = None, rampart_running = False):
     selected_run_title = 'TEMP_RUN'
     docker_client = None
     rampart_container = None
-    piranha_log = None
-    piranha_log_since = datetime.min
-    piranha_log_called = 0
+
+    piranha_container = None
     piranha_running = False
+    piranha_log_queue = queue.Queue()
+    piranha_log_thread = None
 
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath'}
@@ -93,20 +97,22 @@ def run_main_window(window, font = None, rampart_running = False):
         pass
 
     while True:
-        event, values = window.read(timeout=2000)
+        event, values = window.read(timeout=500)
 
         if event != '__TIMEOUT__':
             log_event(f'{event} [main window]')
 
+
         if piranha_running:
-            #since_log = datetime.now() - piranha_log_since
-            #since_log = int(time()) - piranha_log_called
-            #if since_log > 0:
-                #piranha_log_called = int(time())
-            #print('logs')
-            piranha_output, piranha_log_since = artifice_core.start_rampart.return_log(piranha_container, piranha_log_since)
-            if len(piranha_output) > 0:
-                window['-PIRANHA OUTPUT-'].print(piranha_output, end='')
+            queue_empty = False
+            while not queue_empty:
+                try:
+                    piranha_output = piranha_log_queue.get(block=False)
+                    piranha_log_queue.task_done()
+                    window['-PIRANHA OUTPUT-'].print(piranha_output, end='')
+                except queue.Empty:
+                    queue_empty = True
+                    pass
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             if rampart_running:
@@ -123,7 +129,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-VIEW SAMPLES-':
             try:
-                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-INFOTAB-SAMPLES-', font)
+                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font)
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True, element_dict=element_dict)
             except Exception as err:
                 update_log(traceback.format_exc())
@@ -158,7 +164,11 @@ def run_main_window(window, font = None, rampart_running = False):
                     window['-RAMPART STATUS-'].update('RAMPART is not running')
                 else:
                     run_info = save_changes(values, run_info, window, element_dict = element_dict, update_list=False)
-                    rampart_container = artifice_core.start_rampart.launch_rampart(run_info, docker_client, firstPort=artifice_core.consts.RAMPART_PORT_1, secondPort=artifice_core.consts.RAMPART_PORT_2, font=font, container=rampart_container)
+                    rampart_container = artifice_core.start_rampart.launch_rampart(
+                            run_info, docker_client,
+                            firstPort=artifice_core.consts.RAMPART_PORT_1, secondPort=artifice_core.consts.RAMPART_PORT_2,
+                            font=font, container=rampart_container
+                            )
                     rampart_running = True
                     window['-VIEW RAMPART-'].update(visible=True)
                     window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
@@ -171,16 +181,10 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event == '-START PIRANHA-':
             try:
-                #piranha_log
                 piranha_container = launch_piranha(run_info, font, docker_client)
-                #sleep(1)
-
-                #ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-                #piranha_output = ansi_escape.sub('', piranha_container.logs().decode('utf-8'))
-                #window['-PIRANHA OUTPUT-'].print(piranha_output)
-
-                #piranha_log = piranha_container.attach(stream = True, logs =True)
                 piranha_log = piranha_container.logs(stream=True)
+                piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)
+                piranha_log_thread.start()
                 piranha_running = True
 
             except Exception as err:
