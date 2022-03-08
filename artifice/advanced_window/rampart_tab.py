@@ -57,9 +57,4 @@ def rampart_tab_event(event, run_info, docker_client, rampart_container, rampart
             update_log(traceback.format_exc())
             sg.popup_error(err)
 
-                #print(rampart_container.logs())
-        except Exception as err:
-            update_log(traceback.format_exc())
-            sg.popup_error(err)
-
     return run_info, docker_client, rampart_container, rampart_running, window

@@ -14,8 +14,6 @@ RUN git clone https://github.com/aineniamh/piranha.git
 RUN ls
 RUN conda env create -f /data/piranha/environment.yml
 
-#ENV PYTHONUNBUFFERED=1
-
 # everything from now on will be run in the piranha conda environment
 SHELL ["conda", "run", "--no-capture-output", "-n", "piranha", "/bin/bash", "-c"]
 
@@ -24,13 +22,12 @@ SHELL ["conda", "run", "--no-capture-output", "-n", "piranha", "/bin/bash", "-c"
 WORKDIR /data/piranha
 RUN pip install .
 
-#create directory to mount the basecalled directory
+# create directory to mount the basecalled directory
 RUN mkdir -p /data/run_data/basecalled
 
 WORKDIR /data/run_data/analysis
 
 ENV PYTHONUNBUFFERED=1
-#SHELL ["conda", "run", "--no-capture-output", "-n", "piranha"]
 
 # run piranha
 ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled
