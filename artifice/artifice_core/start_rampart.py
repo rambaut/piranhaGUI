@@ -93,16 +93,19 @@ def check_for_image(client, image_name, font = None):
         image = client.images.get(image_name)
         update_log('confirmed image is installed')
         #print(image.id)
-        return True, client
+        build_ok = sg.popup_ok_cancel('RAMPART docker image installed, check for updates?', font=font)
+        print(build_ok)
+        if build_ok != 'OK':
+            return True, client
     except:
         build_ok = sg.popup_ok_cancel('RAMPART docker image not installed yet. Install it? (This may take some time)', font=font)
 
-        if build_ok == 'OK':
-            #client.images.build(path='./docker_rampart', tag=image_name, rm=True)
-            client.images.pull(image_name)
-            return True, client
-        else:
-            return False, client
+    if build_ok == 'OK':
+        #client.images.build(path='./docker_rampart', tag=image_name, rm=True)
+        client.images.pull(image_name)
+        return True, client
+    else:
+        return False, client
 
 def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/'):
     try:

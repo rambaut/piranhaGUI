@@ -55,7 +55,7 @@ if __name__ == '__main__':
     except Exception as err:
         exit_time = datetime.today()
         update_log(traceback.format_exc())
-        update_log(f'\ncExited unexpectedly at {exit_time}')
+        update_log(f'\nExited unexpectedly at {exit_time}')
     else:
         window.close()
 

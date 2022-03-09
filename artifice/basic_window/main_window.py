@@ -99,6 +99,17 @@ def run_main_window(window, font = None, rampart_running = False):
     piranha_log_queue = queue.Queue()
     #piranha_log_thread = None
 
+    docker_installed = artifice_core.start_rampart.check_for_docker()
+    if not docker_installed:
+        window.close()
+        return None
+
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.RAMPART_IMAGE, font=font)
+
+    if not got_image:
+        window.close()
+        return None
+
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath'}
     try:
