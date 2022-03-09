@@ -15,7 +15,7 @@ RUN git clone https://github.com/polio-nanopore/realtime-polio
 RUN ls
 RUN conda env create -f /data/realtime-polio/environment.yml
 
-# everything from now on will be run in the artic-rampart conda environment
+# everything from now on will be run in the realtime-polio conda environment
 SHELL ["conda", "run", "--no-capture-output", "-n", "realtime-polio", "/bin/bash", "-c"]
 
 # install rampart
@@ -30,9 +30,6 @@ RUN npm run build
 WORKDIR /data/run_data/analysis
 
 ENV PYTHONUNBUFFERED=1
-
-# run rampart
-#ENTRYPOINT node /data/rampart/rampart.js --protocol /data/realtime-polio/ --ports ${PORT_ONE} ${PORT_TWO} --clearAnnotated
 
 #create directory to mount the basecalled directory
 RUN mkdir -p /data/run_data/basecalled

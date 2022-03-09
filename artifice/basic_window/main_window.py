@@ -11,7 +11,7 @@ import artifice_core.parse_columns_window
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_changes, load_run
-from artifice_core.window_functions import print_container_log
+from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -30,6 +30,9 @@ def make_theme():
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
+    rampart_running, rampart_button_text, rampart_status = setup_check_container('RAMPART')
+    piranha_running, piranha_button_text, piranha_status = setup_check_container('PIRANHA')
+    """
     update_log('checking if RAMPART is running...')
     rampart_running = artifice_core.start_rampart.check_rampart_running()
     if rampart_running:
@@ -38,6 +41,7 @@ def setup_layout(theme='Dark', font = None):
     else:
         rampart_button_text = 'Start RAMPART'
         rampart_status = 'RAMPART is not running'
+    """
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, key='-RAMPART OUTPUT-'),],
@@ -59,12 +63,18 @@ def setup_layout(theme='Dark', font = None):
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
     sg.FolderBrowse(),
     ],
+    [
+    sg.Text('Output directory:',size=(13,1)),
+    sg.In(size=(25,1), enable_events=True,expand_y=False, key='-OUTDIR-',),
+    sg.FolderBrowse(),
+    ],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
     sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
     sg.Button(button_text='View RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
     ],
-    [sg.Button(button_text='Start PIRANHA',key='-START/STOP PIRANHA-'),],
+    [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
+    [sg.Button(button_text=piranha_button_text, key='-START/STOP PIRANHA-'),],
     [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
     ]
 
@@ -83,6 +93,7 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
 
     new_window['-SAMPLES-'].bind("<FocusOut>", "FocusOut")
     new_window['-MINKNOW-'].bind("<FocusOut>", "FocusOut")
+    new_window['-OUTDIR-'].bind("<FocusOut>", "FocusOut")
 
     return new_window, rampart_running
 
@@ -97,20 +108,20 @@ def run_main_window(window, font = None, rampart_running = False):
     piranha_container = None
     piranha_running = False
     piranha_log_queue = queue.Queue()
-    #piranha_log_thread = None
 
     element_dict = {'-SAMPLES-':'samples',
-                    '-MINKNOW-':'basecalledPath'}
+                    '-MINKNOW-':'basecalledPath',
+                    '-OUTDIR-':'outputPath'}
     try:
         run_info = load_run(window, selected_run_title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button=False)
     except:
         pass
 
     if rampart_running:
-        rampart_container = docker_client.containers.get('rampart')
-        rampart_log = rampart_container.logs(stream=True)
-        rampart_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(rampart_log, rampart_log_queue), daemon=True)
-        rampart_log_thread.start()
+        container = get_pre_log(docker_client, rampart_log_queue, 'rampart')
+
+    if piranha_running:
+        container = get_pre_log(docker_client, rampart_log_queue, 'piranha')
 
     while True:
         event, values = window.read(timeout=500)
@@ -126,18 +137,15 @@ def run_main_window(window, font = None, rampart_running = False):
             print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-')
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
+            running_tools = []
             if rampart_running:
-                chk_stop = sg.popup_yes_no('Do you wish to stop RAMPART while closing', font=font)
-                window.close()
+                running_tools.append('RAMPART')
+            if piranha_running:
+                running_tools.append('PIRANHA')
 
-                if chk_stop == 'Yes':
-                    update_log('stopping RAMPART...')
-                    artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
-                    update_log('RAMPART stopped')
-                else:
-                    update_log('User chose to keep RAMPART running')
+            check_stop_on_close(names, window, docker_client, rampart_container, font=font)
+
             break
-
         elif event == '-VIEW SAMPLES-':
             try:
                 run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font)
@@ -146,7 +154,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
-        elif event in {'-SAMPLES-FocusOut','-MINKNOW-FocusOut'}:
+        elif event in {'-SAMPLES-FocusOut','-MINKNOW-FocusOut','-OUTDIR-FocusOut'}:
             try:
                 if 'title' in run_info:
                     run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
@@ -164,10 +172,6 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-START/STOP RAMPART-':
             try:
                 if rampart_running:
-                    #try:
-                        #print(rampart_container.top())
-                    #except:
-                    #    pass
                     rampart_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     window['-VIEW RAMPART-'].update(visible=False)
@@ -218,6 +222,7 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(artifice_core.consts.RAMPART_PORT_1)
             update_log(f'opening address: "{address}" in browser to view RAMPART')
+
             try:
                 open_new_tab(address)
             except Exception as err:

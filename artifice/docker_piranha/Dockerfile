@@ -25,9 +25,12 @@ RUN pip install .
 # create directory to mount the basecalled directory
 RUN mkdir -p /data/run_data/basecalled
 
+# create directory to mount the output directory
+RUN mkdir -p /data/run_data/output
+
 WORKDIR /data/run_data/analysis
 
 ENV PYTHONUNBUFFERED=1
 
 # run piranha
-ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled
+ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output --overwrite -t 8

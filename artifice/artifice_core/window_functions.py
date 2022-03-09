@@ -1,4 +1,9 @@
+import PySimpleGUI as sg
 import queue
+import threading
+
+import artifice_core.start_rampart
+from artifice_core.update_log import log_event, update_log
 
 
 def print_container_log(log_queue, window, output_key):
@@ -11,3 +16,45 @@ def print_container_log(log_queue, window, output_key):
         except queue.Empty:
             queue_empty = True
             pass
+
+def check_stop_on_close(names: list, window, client, container, font = None):
+    to_stop = []
+    for name in names:
+        chk_stop = sg.popup_yes_no(f'Do you wish to stop {name} while closing?', font=font)
+        if chk_stop == 'Yes':
+            to_stop.append(name)
+        else:
+            update_log(f'User chose to keep {name} running')
+
+    window.close()
+
+    for name in to_stop:
+        container_name = name.lower()
+        update_log(f'stopping {name}...')
+        artifice_core.start_rampart.stop_docker(client=client, container=None, container_name=container_name)
+        update_log(f'{name} stopped')
+
+def get_pre_log(client, log_queue, container_name):
+    container = client.containers.get(container_name)
+    log = container.logs(stream=True)
+    log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(log, log_queue), daemon=True)
+    log_thread.start()
+
+    return container
+
+def setup_check_container(tool_name):
+    update_log(f'checking if {tool_name} is running...')
+    if tool_name == 'RAMPART':
+        running = artifice_core.start_rampart.check_rampart_running()
+    else:
+        container_name = tool_name.lower()
+        runnning = artifice_core.start_rampart.check_container(container_name)
+
+    if running:
+        button_text = f'Stop {tool_name}'
+        status = f'{tool_name} is running'
+    else:
+        button_text = f'Start {tool_name}'
+        status = f'{tool_name} is not running'
+
+    return running, button_text, status

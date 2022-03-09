@@ -21,9 +21,9 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     firstPort = str(firstPort)
     secondPort = str(secondPort)
     config_file = 'run_configuration.json'
-    containerName = "rampart"
+    container_name = "rampart"
 
-    stop_docker(client=client,containerName=containerName, container=container)
+    stop_docker(client=client,container_name=container_name, container=container)
 
     ports = {firstPort:firstPort, secondPort:secondPort}
     log_ports = str(ports)
@@ -37,21 +37,21 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 
-    container = client.containers.run(image=image, detach=True, name=containerName, ports=ports, environment=environment, volumes=volumes)
+    container = client.containers.run(image=image, detach=True, name=container_name, ports=ports, environment=environment, volumes=volumes)
 
 
-    #command = f"docker run -it --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
+    #command = f"docker run -it --name {container_name} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
     #print(command)
-    #command = f"docker run -d --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} -e RUN_PATH=/data/run_data/ --volume {path}:/data/run_data/ rampart_test"
-    #command = f"docker run -d --name {containerName} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} -e RUN_PATH=/data/run_data/ --volume {path}:/data/run_data/ emilyscher/polio_rampart"
+    #command = f"docker run -d --name {container_name} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} -e RUN_PATH=/data/run_data/ --volume {path}:/data/run_data/ rampart_test"
+    #command = f"docker run -d --name {container_name} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} -e RUN_PATH=/data/run_data/ --volume {path}:/data/run_data/ emilyscher/polio_rampart"
 
     #os.system(command)
     return container
 
-def stop_docker(client = None, containerName='rampart', container = None):
-    if containerName == 'rampart':
+def stop_docker(client = None, container_name='rampart', container = None):
+    if container_name == 'rampart':
         tool_name = 'RAMPART'
-    elif containerName == 'piranha':
+    elif container_name == 'piranha':
         tool_name = 'PIRANHA'
     else:
         tool_name = '<unknown application>'
@@ -64,15 +64,14 @@ def stop_docker(client = None, containerName='rampart', container = None):
             if client == None:
                 client = docker.from_env()
             try:
-                container = client.containers.get(containerName)
+                container = client.containers.get(container_name)
                 container.stop()
                 container.remove()
             except:
                 update_log(f'tried to stop {tool_name}, appears to not be running')
                 return None
     update_log(f'stopped {tool_name}')
-        #command = f"docker stop {containerName} && docker rm {containerName}"
-        #os.system(command)
+
 
 def queue_log(log, queue):
     while True:
@@ -116,7 +115,7 @@ def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-dock
         return False
 
 #makes sure run is valid for running rampart/piranha and creates run_configuration json
-def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None):
+def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None, output = False):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     title = run_info['title']
@@ -125,6 +124,11 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None)
         raise Exception(f'Invalid samples file')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
         raise Exception('Invalid MinKnow')
+
+    if output:
+        if 'outputPath' not in run_info or os.path.isdir(run_info['outputPath']) == False:
+            raise Exception('Invalid output directory')
+
 
 
     config_path = runs_dir+'/'+title+'/run_configuration.json'
@@ -172,6 +176,19 @@ def check_rampart_running():
             return False
     except:
         return False
+
+def check_container(container_name, client = None):
+    if client == None:
+        client = docker.from_env()
+
+    #client.containers.prune()
+
+    try:
+        client.containers.get(container_name)
+        return True
+    except docker.errors.NotFound:
+        return False
+
 
 if __name__ == '__main__':
     path = sys.argv[0]
