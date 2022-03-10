@@ -5,6 +5,7 @@ import docker
 import multiprocessing
 import threading
 import queue
+from webbrowser import open_new_tab
 
 import artifice_core.start_rampart
 import artifice_core.parse_columns_window
@@ -32,16 +33,6 @@ def setup_layout(theme='Dark', font = None):
 
     rampart_running, rampart_button_text, rampart_status = setup_check_container('RAMPART')
     piranha_running, piranha_button_text, piranha_status = setup_check_container('PIRANHA')
-    """
-    update_log('checking if RAMPART is running...')
-    rampart_running = artifice_core.start_rampart.check_rampart_running()
-    if rampart_running:
-        rampart_button_text = 'Stop RAMPART'
-        rampart_status = 'RAMPART is running'
-    else:
-        rampart_button_text = 'Start RAMPART'
-        rampart_status = 'RAMPART is not running'
-    """
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, key='-RAMPART OUTPUT-'),],
@@ -77,7 +68,6 @@ def setup_layout(theme='Dark', font = None):
     [sg.Button(button_text=piranha_button_text, key='-START/STOP PIRANHA-'),],
     [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
     ]
-
 
 
     return layout, rampart_running
@@ -154,7 +144,7 @@ def run_main_window(window, font = None, rampart_running = False):
             if piranha_running:
                 running_tools.append('PIRANHA')
 
-            check_stop_on_close(names, window, docker_client, rampart_container, font=font)
+            check_stop_on_close(running_tools, window, docker_client, rampart_container, font=font)
 
             break
         elif event == '-VIEW SAMPLES-':

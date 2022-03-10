@@ -91,13 +91,15 @@ def view_samples(run_info, values, samples_key, font):
     if 'title' in run_info:
         if 'samples_column' in run_info:
             samples_column = run_info['samples_column']
-        else:
-            samples_column = None
 
-        if 'barcodes_column' in run_info:
-            barcodes_column = run_info['barcodes_column']
+            if 'barcodes_column' in run_info:
+                barcodes_column = run_info['barcodes_column']
+            else:
+                samples_column = 0
+                barcodes_column = 1
         else:
-            barcodes_column = None
+            samples_column = 0
+            barcodes_column = 1
 
         samples = values[samples_key]
         parse_window, column_headers = create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)

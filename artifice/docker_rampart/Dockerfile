@@ -29,6 +29,7 @@ RUN npm run build
 
 WORKDIR /data/run_data/analysis
 
+#set environment variable PYTHONUNBUFFERED to allow unbuffered log output
 ENV PYTHONUNBUFFERED=1
 
 #create directory to mount the basecalled directory

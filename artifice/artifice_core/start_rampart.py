@@ -72,7 +72,6 @@ def stop_docker(client = None, container_name='rampart', container = None):
                 return None
     update_log(f'stopped {tool_name}')
 
-
 def queue_log(log, queue):
     while True:
         log_str = ''
@@ -93,7 +92,7 @@ def check_for_image(client, image_name, font = None):
         update_log('confirmed image is installed')
         #print(image.id)
         build_ok = sg.popup_ok_cancel('RAMPART docker image installed, check for updates?', font=font)
-        
+
         if build_ok != 'OK':
             return True, client
     except:
