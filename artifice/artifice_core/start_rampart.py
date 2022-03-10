@@ -93,7 +93,7 @@ def check_for_image(client, image_name, font = None):
         update_log('confirmed image is installed')
         #print(image.id)
         build_ok = sg.popup_ok_cancel('RAMPART docker image installed, check for updates?', font=font)
-        print(build_ok)
+        
         if build_ok != 'OK':
             return True, client
     except:

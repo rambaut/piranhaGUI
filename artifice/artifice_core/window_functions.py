@@ -44,11 +44,13 @@ def get_pre_log(client, log_queue, container_name):
 
 def setup_check_container(tool_name):
     update_log(f'checking if {tool_name} is running...')
+    running = False
+
     if tool_name == 'RAMPART':
         running = artifice_core.start_rampart.check_rampart_running()
     else:
         container_name = tool_name.lower()
-        runnning = artifice_core.start_rampart.check_container(container_name)
+        running = artifice_core.start_rampart.check_container(container_name)
 
     if running:
         button_text = f'Stop {tool_name}'
