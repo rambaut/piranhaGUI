@@ -11,7 +11,7 @@ import artifice_core.start_rampart
 import artifice_core.parse_columns_window
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_changes, load_run
+from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container
 
 def make_theme():
@@ -132,7 +132,11 @@ def run_main_window(window, font = None, rampart_running = False):
 
 
         if piranha_running:
-            print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-')
+            piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-')
+            if piranha_finished:
+                piranha_running = False
+                artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
+                window['-START/STOP PIRANHA-'].update(text='Start PIRANHA')
 
         if rampart_running:
             print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-')
@@ -150,7 +154,7 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-VIEW SAMPLES-':
             try:
                 run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font)
-                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True, element_dict=element_dict)
+                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

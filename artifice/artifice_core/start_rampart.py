@@ -75,13 +75,20 @@ def stop_docker(client = None, container_name='rampart', container = None):
 def queue_log(log, queue):
     while True:
         log_str = ''
-        log_str = next(log)
 
+        try:
+            log_str = next(log)
+        except StopIteration:
+            log_output ='###CONTAINER STOPPED###'
+            queue.put(log_output)
+            return
         #remove ANSI escape codes
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         log_output = ansi_escape.sub('', log_str.decode('utf-8'))
         if len(log_output) > 0:
             queue.put(log_output)
+
+
 
 def check_for_image(client, image_name, font = None):
     if client == None:

@@ -11,21 +11,22 @@ RUN apt install build-essential -y --no-install-recommends
 # copy in protocol files
 RUN git clone https://github.com/polio-nanopore/realtime-polio
 
-# create rampart environment
-RUN ls
-RUN conda env create -f /data/realtime-polio/environment.yml
-
-# everything from now on will be run in the realtime-polio conda environment
-SHELL ["conda", "run", "--no-capture-output", "-n", "realtime-polio", "/bin/bash", "-c"]
-
 # install rampart
 RUN git clone https://github.com/artic-network/rampart.git
+
+# create rampart environment
+RUN conda env create -f /data/rampart/environment.yml
+
+# everything from now on will be run in the realtime-polio conda environment
+SHELL ["conda", "run", "--no-capture-output", "-n", "artic-rampart", "/bin/bash", "-c"]
 
 WORKDIR /data/rampart
 
 # update npm, install npm packages, build rampart
 RUN npm install
+#RUN npm update
 RUN npm run build
+RUN npm install --global .
 
 WORKDIR /data/run_data/analysis
 
@@ -36,4 +37,5 @@ ENV PYTHONUNBUFFERED=1
 RUN mkdir -p /data/run_data/basecalled
 
 #run rampart
-ENTRYPOINT node /data/rampart/rampart.js --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
+#ENTRYPOINT node /data/rampart/rampart.js --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
+ENTRYPOINT rampart --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated

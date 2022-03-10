@@ -13,9 +13,13 @@ def print_container_log(log_queue, window, output_key):
             output = log_queue.get(block=False)
             log_queue.task_done()
             window[output_key].print(output, end='')
+            if output == '###CONTAINER STOPPED###':
+                return True
         except queue.Empty:
             queue_empty = True
             pass
+
+    return False
 
 def check_stop_on_close(names: list, window, client, container, font = None):
     to_stop = []
