@@ -6,13 +6,14 @@ import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
 
 
-def print_container_log(log_queue, window, output_key):
+def print_container_log(log_queue, window, output_key, logfile):
     queue_empty = False
     while not queue_empty:
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
             window[output_key].print(output, end='')
+            update_log(output, filename=logfile)
             if output == '###CONTAINER STOPPED###':
                 return True
         except queue.Empty:

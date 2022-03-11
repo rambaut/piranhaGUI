@@ -33,4 +33,4 @@ WORKDIR /data/run_data/analysis
 ENV PYTHONUNBUFFERED=1
 
 # run piranha
-ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output --overwrite -t 8
+ENTRYPOINT piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output --overwrite -t ${THREADS}

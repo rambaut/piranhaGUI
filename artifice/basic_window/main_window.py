@@ -42,31 +42,47 @@ def setup_layout(theme='Dark', font = None):
     [sg.Multiline(size=(100,20),write_only=True, key='-PIRANHA OUTPUT-'),],
     ]
 
-    layout = [
+    edit_run_layout = [
     [
-    sg.Text('Samples:',size=(13,1)),
+    sg.Text('Samples:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
     sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
     sg.Button(button_text='View',key='-VIEW SAMPLES-'),
     ],
     [
-    sg.Text('MinKnow run:',size=(13,1)),
+    sg.Text('MinKnow run:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
     sg.FolderBrowse(),
     ],
     [
-    sg.Text('Output directory:',size=(13,1)),
+    sg.Text('Output Folder:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-OUTDIR-',),
     sg.FolderBrowse(),
     ],
+    ]
+
+    edit_run_frame = sg.Frame('', edit_run_layout,border_width=0,visible=True,key='-EDIT FRAME-')
+
+    run_containers_layout = [
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
     sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
-    sg.Button(button_text='View RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
+    sg.Button(button_text='Display RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
-    [sg.Button(button_text=piranha_button_text, key='-START/STOP PIRANHA-'),],
+    [
+    sg.Button(button_text=piranha_button_text, key='-START/STOP PIRANHA-'),
+    sg.Button(button_text='Display PIRANHA', visible=True, key='-VIEW PIRANHA-'),
+    ],
     [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
+    ]
+
+    run_containers_frame = sg.Frame('', run_containers_layout,border_width=0,visible=False,key='-CONTAINERS FRAME-')
+
+    layout = [
+    [edit_run_frame],
+    [sg.Button(button_text='Confirm',key='-CONFIRM/EDIT-'),],
+    [run_containers_frame],
     ]
 
 
@@ -90,11 +106,11 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
 def run_main_window(window, font = None, rampart_running = False):
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
-    docker_client = docker.from_env()
+    edit_run = True
 
+    docker_client = docker.from_env()
     rampart_container = None
     rampart_log_queue = queue.Queue()
-
     piranha_container = None
     piranha_running = False
     piranha_log_queue = queue.Queue()
@@ -132,14 +148,32 @@ def run_main_window(window, font = None, rampart_running = False):
 
 
         if piranha_running:
-            piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-')
-            if piranha_finished:
-                piranha_running = False
-                artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
-                window['-START/STOP PIRANHA-'].update(text='Start PIRANHA')
+            try:
+                piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', artifice_core.consts.PIRANHA_LOGFILE)
+                if piranha_finished:
+                    piranha_running = False
+                    artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
+                    window['-START/STOP PIRANHA-'].update(text='Start PIRANHA')
+                    window['-PIRANHA STATUS-'].update('PIRANHA is not running')
+                    window['-VIEW PIRANHA-'].update(visible=True)
+                    try:
+                        output_path = run_info['outputPath']
+                        open_new_tab(f'{output_path}/report.html')
+                    except:
+                        pass
+
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
 
         if rampart_running:
-            print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-')
+            rampart_finished = print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', artifice_core.consts.RAMPART_LOGFILE)
+            if rampart_finished:
+                rampart_running = False
+                artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
+                window['-VIEW RAMPART-'].update(visible=False)
+                window['-START/STOP RAMPART-'].update(text='Start RAMPART')
+                window['-RAMPART STATUS-'].update('RAMPART is not running')
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             running_tools = []
@@ -179,6 +213,7 @@ def run_main_window(window, font = None, rampart_running = False):
                 if rampart_running:
                     rampart_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
+                    print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', artifice_core.consts.RAMPART_LOGFILE)
                     window['-VIEW RAMPART-'].update(visible=False)
                     window['-START/STOP RAMPART-'].update(text='Start RAMPART')
                     window['-RAMPART STATUS-'].update('RAMPART is not running')
@@ -198,6 +233,8 @@ def run_main_window(window, font = None, rampart_running = False):
                     rampart_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(rampart_log, rampart_log_queue), daemon=True)
                     rampart_log_thread.start()
 
+                    update_log('',filename=artifice_core.consts.RAMPART_LOGFILE,overwrite=True)
+
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -207,18 +244,22 @@ def run_main_window(window, font = None, rampart_running = False):
                 if piranha_running:
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
+                    print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', artifice_core.consts.PIRANHA_LOGFILE)
                     window['-START/STOP PIRANHA-'].update(text='Start PIRANHA')
-                    #window['-RAMPART STATUS-'].update('RAMPART is not running')
+                    window['-PIRANHA STATUS-'].update('PIRANHA is not running')
 
                 else:
+                    run_info = save_changes(values, run_info, window, element_dict = element_dict, update_list=False)
                     piranha_container = launch_piranha(run_info, font, docker_client)
                     piranha_running = True
                     window['-START/STOP PIRANHA-'].update(text='Stop PIRANHA')
+                    window['-PIRANHA STATUS-'].update('PIRANHA is running')
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)
                     piranha_log_thread.start()
 
+                    update_log('',filename=artifice_core.consts.PIRANHA_LOGFILE,overwrite=True)
 
             except Exception as err:
                 update_log(traceback.format_exc())
@@ -233,6 +274,31 @@ def run_main_window(window, font = None, rampart_running = False):
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
+
+        elif event == '-VIEW PIRANHA-':
+            try:
+                output_path = run_info['outputPath']
+                open_new_tab(f'{output_path}/report.html')
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+
+        elif event == '-CONFIRM/EDIT-':
+            if edit_run:
+                if 'title' in run_info:
+                    run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+                    edit_run = False
+                    window['-CONFIRM/EDIT-'].update(text='Edit Run')
+                    window['-CONTAINERS FRAME-'].update(visible=True)
+                    window['-EDIT FRAME-'].update(visible=False)
+                else:
+                    clear_selected_run(window)
+            else:
+                edit_run = True
+                window['-CONFIRM/EDIT-'].update(text='Confirm')
+                window['-CONTAINERS FRAME-'].update(visible=False)
+                window['-EDIT FRAME-'].update(visible=True)
+
 
 
     window.close()

@@ -1,10 +1,10 @@
 import docker
+import os
 
 import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.update_log import update_log
 
-#def launch_piranha(run_info, client, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None):
 def launch_piranha(run_info, font, docker_client):
     runs_dir = artifice_core.consts.RUNS_DIR
     artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,font=font,output=True)
@@ -29,6 +29,10 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, contain
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled', f'{output_path}:/data/run_data/output']
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
+
+    environment = [f'THREADS={artifice_core.consts.THREADS}']
+    log_environment = str(environment)
+    update_log(f'environment variables: {log_environment}')
 
     container = client.containers.run(image=image, detach=True, name=container_name, volumes=volumes)
 

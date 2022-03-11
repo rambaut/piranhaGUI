@@ -2,7 +2,10 @@ RAMPART_PORT_1: 1100
 RAMPART_PORT_2: 1200
 ARCHIVED_RUNS: 'archived_runs'
 RUNS_DIR: 'runs'
-RAMPART_IMAGE: 'coreyansley/artifice_polio_rampart'
+RAMPART_IMAGE: 'artifice_polio_rampart' #'coreyansley/artifice_polio_rampart'
+RAMPART_LOGFILE: 'RAMPART_log.txt'
 PIRANHA_IMAGE: 'artifice_piranha'
+PIRANHA_LOGFILE: 'PIRANHA_log.txt'
 FONT: 'Arial'
 LOGFILE: 'log.txt'
+THREADS: null
