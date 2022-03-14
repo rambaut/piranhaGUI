@@ -13,8 +13,8 @@ def print_container_log(log_queue, window, output_key, logfile):
             output = log_queue.get(block=False)
             log_queue.task_done()
             window[output_key].print(output, end='')
-            update_log(output, filename=logfile)
-            if output == '###CONTAINER STOPPED###':
+            update_log(output, filename=logfile, add_newline=False)
+            if output == '###CONTAINER STOPPED###\n':
                 return True
         except queue.Empty:
             queue_empty = True

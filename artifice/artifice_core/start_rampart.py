@@ -79,7 +79,7 @@ def queue_log(log, queue):
         try:
             log_str = next(log)
         except StopIteration:
-            log_output ='###CONTAINER STOPPED###'
+            log_output ='###CONTAINER STOPPED###\n'
             queue.put(log_output)
             return
         #remove ANSI escape codes
