@@ -8,7 +8,8 @@ import traceback
 import artifice_core.consts
 from artifice_core.update_log import update_log
 import advanced_window.main_window
-import basic_window.main_window
+import basic_window.edit_run_window
+import basic_window.execute_run_window
 
 def check_runs_dir(runs_dir):
     filepath = runs_dir + '/archived_runs.json'
@@ -50,8 +51,21 @@ if __name__ == '__main__':
             window, rampart_running = advanced_window.main_window.create_main_window(font=font)
             advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
         else:
-            window, rampart_running = basic_window.main_window.create_main_window(font=font)
-            basic_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+            #window, rampart_running = basic_window.main_window.create_main_window(font=font)
+            #basic_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+            while True:
+                window = basic_window.edit_run_window.create_edit_window(font=font)
+                run_info = basic_window.edit_run_window.run_edit_window(window, font=font)
+                if run_info == None:
+                    break
+
+                update_log(f'\nrun details confirmed, creating main window\n')
+                window, rampart_running = basic_window.execute_run_window.create_main_window(font=font)
+                edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running)
+                if edit != True:
+                    break
+
+
     except Exception as err:
         exit_time = datetime.today()
         update_log(traceback.format_exc())
