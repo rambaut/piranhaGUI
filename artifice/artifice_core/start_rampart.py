@@ -112,14 +112,15 @@ def check_for_image(client, image_name, font = None):
     else:
         return False, client
 
-def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/'):
+def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/', popup = True):
     try:
         info = docker.from_env().info()
         return True
     except:
-        open_site = sg.popup_ok_cancel('Docker client not found. Please install docker and restart artifice. Press OK below to open docker site in browser', font = font)
-        if open_site == 'OK':
-            open_new_tab('https://docs.docker.com/get-docker/')
+        if popup:
+            open_site = sg.popup_ok_cancel('Docker client not found. Please install docker and restart artifice. Press OK below to open docker site in browser', font = font)
+            if open_site == 'OK':
+                open_new_tab(docker_url)
 
         return False
 
