@@ -88,26 +88,30 @@ def queue_log(log, queue):
         if len(log_output) > 0:
             queue.put(log_output)
 
-
-
-def check_for_image(client, image_name, font = None):
+def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'RAMPART'):
     if client == None:
         client = docker.from_env()
 
     try:
-        image = client.images.get(image_name)
-        update_log('confirmed image is installed')
+        image = client.images.get(image_tag)
+        update_log(f'confirmed image: {image_tag} is installed')
         #print(image.id)
-        build_ok = sg.popup_ok_cancel('RAMPART docker image installed, check for updates?', font=font)
-
-        if build_ok != 'OK':
+        if popup:
+            build_ok = sg.popup_ok_cancel(f'{tool_name} docker image installed, check for updates?', font=font)
+            if build_ok != 'OK':
+                return True, client
+        else:
             return True, client
+
     except:
-        build_ok = sg.popup_ok_cancel('RAMPART docker image not installed yet. Install it? (This may take some time)', font=font)
+        if popup:
+            build_ok = sg.popup_ok_cancel(f'{tool_name} docker image not installed yet. Install it? (This may take some time)', font=font)
+        else:
+            return False, client
 
     if build_ok == 'OK':
-        #client.images.build(path='./docker_rampart', tag=image_name, rm=True)
-        client.images.pull(image_name)
+        #client.images.build(path='./docker_rampart', tag=image_tag, rm=True)
+        client.images.pull(image_tag)
         return True, client
     else:
         return False, client
