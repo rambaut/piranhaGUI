@@ -5,6 +5,7 @@ import docker
 import multiprocessing
 import threading
 import queue
+import os.path
 from webbrowser import open_new_tab
 
 import artifice_core.start_rampart
@@ -108,7 +109,9 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                     window['-VIEW PIRANHA-'].update(visible=True)
                     try:
                         output_path = run_info['outputPath']
-                        open_new_tab(f'{output_path}/report.html')
+                        output_file = f'{output_path}/report.html'
+                        if os.path.isfile(output_file):
+                            open_new_tab(output_file)
                     except:
                         pass
 
