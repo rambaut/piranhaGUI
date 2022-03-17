@@ -70,18 +70,6 @@ def run_edit_window(window, font = None):
 
     docker_client = docker.from_env()
 
-
-    docker_installed = artifice_core.start_rampart.check_for_docker()
-    if not docker_installed:
-        window.close()
-        return None
-
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.RAMPART_IMAGE, font=font)
-
-    if not got_image:
-        window.close()
-        return None
-
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath',
                     '-OUTDIR-':'outputPath'}
