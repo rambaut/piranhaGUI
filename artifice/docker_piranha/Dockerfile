@@ -7,6 +7,10 @@ WORKDIR /data
 # check for updates
 RUN apt-get update -y && apt-get upgrade -y
 
+RUN python -m venv /opt/venv
+# Make sure we use the virtualenv:
+ENV PATH="/opt/venv/bin:$PATH"
+
 # copy in piranha
 RUN git clone https://github.com/aineniamh/piranha.git
 
@@ -19,7 +23,8 @@ SHELL ["conda", "run", "--no-capture-output", "-n", "piranha", "/bin/bash", "-c"
 
 # build piranha
 WORKDIR /data/piranha
-RUN pip install --user .
+RUN pip install .
+#--user .
 
 # Install conda-pack:
 RUN conda install -c conda-forge conda-pack
@@ -35,7 +40,7 @@ RUN conda-pack -n piranha -o /tmp/env.tar && \
 RUN /venv/bin/conda-unpack
 
 # build image
-FROM debian:buster AS runtime-image
+FROM continuumio/miniconda3 AS runtime-image
 
 COPY --from=compile-image /root/.local /root/.local
 
