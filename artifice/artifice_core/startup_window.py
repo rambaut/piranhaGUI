@@ -1,23 +1,11 @@
 import PySimpleGUI as sg
 import traceback
 from webbrowser import open_new_tab
+from PIL import Image
 
 import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
-
-    sg.theme_add_new('Artifice', Artifice_Theme)
 
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
@@ -25,7 +13,7 @@ def setup_layout(theme='Dark', font = None):
     docker_installed = artifice_core.start_rampart.check_for_docker()
     if docker_installed:
         docker_status = 'Docker installed'
-        docker_text_color = None#'#00bd00' #green
+        docker_text_color = None #'#00bd00' #green
     else:
         docker_status = 'Docker not installed'
         docker_text_color = '#db4325' #red
@@ -48,7 +36,18 @@ def setup_layout(theme='Dark', font = None):
         piranha_image_status = 'PIRANHA image not installed'
         piranha_text_color = '#db4325' #red
 
+
+    # Resize PNG file to size (300, 300)
+    processed_image = './resources/poseqco_scaled.png'
+    image_file = './resources/poseqco_logo.png'
+    size = (100, 120)
+    im = Image.open(image_file)
+    im = im.resize(size, resample=Image.BICUBIC)
+    im.save(processed_image)
+    #im_bytes = im.tobytes()
+
     layout = [
+    [sg.Image(source = processed_image)],
     [
     sg.Text(docker_status,size=(30,1),text_color=docker_text_color),
     sg.Button(button_text='Open Docker Site in Browser',key='-DOCKER INSTALL-', visible= docker_installed),
@@ -69,7 +68,6 @@ def setup_layout(theme='Dark', font = None):
 
 def create_startup_window(theme = 'Artifice', font = None, window = None):
     update_log('creating main window')
-    make_theme()
     layout = setup_layout(theme=theme, font=font)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
 

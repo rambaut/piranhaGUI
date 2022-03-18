@@ -5,6 +5,7 @@ dependencies:
   - python=3.10
   - pip=21.2.4
   - pip:
+    - Pillow==9.0.1
     - PySimpleGUI==4.55.1
     - docker==4.2.2
     - requests==2.27.1
