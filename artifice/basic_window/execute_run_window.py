@@ -220,7 +220,6 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
 
     window.close()
 
-
 if __name__ == '__main__':
     font = (artifice_core.consts.FONT, 18)
 

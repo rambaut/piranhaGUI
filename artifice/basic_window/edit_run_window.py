@@ -25,6 +25,7 @@ def make_theme():
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
+
     layout = [
     [
     sg.Text('Samples:',size=(14,1)),

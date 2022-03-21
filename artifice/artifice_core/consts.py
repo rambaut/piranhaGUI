@@ -4,7 +4,9 @@ import pathlib
 import sys
 from os import getenv, cpu_count
 
+
 def retrieve_config():
+    config_path = str(get_datadir() / 'config.yml')
     with open('./config.yml') as file:
         config = safe_load(file)
 
@@ -19,7 +21,7 @@ def get_datadir():
         os_path = getenv("LOCALAPPDATA")
     elif sys.platform.startswith("darwin"): #macOS
         os_path = "~/Library/Application Support"
-    else: #linuxWomen’s Health Innovation Forum Scotland conference - 24 & 25 March 2022
+    else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
     path = Path(os_path) / "ARTIFICE"

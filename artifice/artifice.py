@@ -12,6 +12,32 @@ import basic_window.edit_run_window
 import basic_window.execute_run_window
 import artifice_core.startup_window
 
+def make_theme(poseqco_scheme=True):
+    if poseqco_scheme:
+        Artifice_Theme = {'BACKGROUND': "#FBECA6",
+                   'TEXT': '#000000',
+                   'INPUT': '#FFAE59',
+                   'TEXT_INPUT': '#000000',
+                   'SCROLL': '#707070',
+                   'BUTTON': ('#FEAE63', '#FF4600'),
+                   'PROGRESS': ('#000000', '#000000'),
+                   'BORDER': 1,
+                   'SLIDER_DEPTH': 0,
+                   'PROGRESS_DEPTH': 0}
+    else:
+        Artifice_Theme = {'BACKGROUND': "#072429",
+                   'TEXT': '#f7eacd',
+                   'INPUT': '#1e5b67',
+                   'TEXT_INPUT': '#f7eacd',
+                   'SCROLL': '#707070',
+                   'BUTTON': ('#f7eacd', '#d97168'),
+                   'PROGRESS': ('#000000', '#000000'),
+                   'BORDER': 1,
+                   'SLIDER_DEPTH': 0,
+                   'PROGRESS_DEPTH': 0}
+
+    sg.theme_add_new('Artifice', Artifice_Theme)
+
 def check_runs_dir(runs_dir):
     filepath = runs_dir + '/archived_runs.json'
     if os.path.isfile(filepath):
@@ -34,7 +60,6 @@ def scale_window(font=None):
     sg.set_options(scaling=scale)
     window.close()
 
-
 if __name__ == '__main__':
     advanced = False
     startup_time = datetime.today()
@@ -46,6 +71,7 @@ if __name__ == '__main__':
     #print('a'*200)
 
     scale_window()
+    make_theme()
     window = artifice_core.startup_window.create_startup_window(font=font)
     advanced = artifice_core.startup_window.run_startup_window(window, font=font)
 
