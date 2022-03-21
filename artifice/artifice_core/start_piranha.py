@@ -34,7 +34,7 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, contain
     log_environment = str(environment)
     update_log(f'environment variables: {log_environment}')
 
-    container = client.containers.run(image=image, detach=True, name=container_name, volumes=volumes)
+    container = client.containers.run(image=image, detach=True, name=container_name, volumes=volumes, environment=environment)
 
 
     return container
