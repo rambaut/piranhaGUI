@@ -1,11 +1,36 @@
 # start with an image with conda installed
-FROM dmmalone/rampart:0.0.4
+FROM continuumio/miniconda3 AS compile-image
 
 # set working directory
 WORKDIR /data
 
+# install gcc/make for porechop
+RUN apt-get update -y && apt-get upgrade -y
+RUN apt install build-essential -y --no-install-recommends
+
+# copy in protocol files
+RUN git clone https://github.com/polio-nanopore/realtime-polio
+
+# install rampart
+RUN git clone https://github.com/artic-network/rampart.git
+
+# create rampart environment
+RUN conda env create -f /data/rampart/environment.yml
+
 # everything from now on will be run in the realtime-polio conda environment
 SHELL ["conda", "run", "--no-capture-output", "-n", "artic-rampart", "/bin/bash", "-c"]
+
+WORKDIR /data/rampart
+
+# update npm, install npm packages, build rampart
+RUN npm install
+RUN npm run build
+RUN npm install --global .
+
+# runtime image
+FROM debian:buster AS runtime-image
+
+COPY --from=compile-image /data/rampart /
 
 WORKDIR /data/run_data/analysis
 
@@ -16,4 +41,5 @@ ENV PYTHONUNBUFFERED=1
 RUN mkdir -p /data/run_data/basecalled
 
 # run rampart
+#ENTRYPOINT rampart --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
 ENTRYPOINT rampart --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
