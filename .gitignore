@@ -130,3 +130,6 @@ dmypy.json
 
 #run configuration files
 gui_test/resources
+
+#scaled poseqco logo
+artifice/resources/poseqco_scaled.png
