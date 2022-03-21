@@ -4,11 +4,8 @@ FROM continuumio/miniconda3 AS compile-image
 # set working directory
 WORKDIR /data
 
-
 # check for updates
 RUN apt-get update -y && apt-get upgrade -y
-
-#RUN python -m venv /opt/venv
 
 # copy in piranha
 RUN git clone https://github.com/aineniamh/piranha.git
@@ -30,12 +27,6 @@ RUN conda-pack -n piranha -o /tmp/env.tar && \
 # so now fix up paths:
 RUN /venv/bin/conda-unpack
 
-# everything from now on will be run in the piranha conda environment
-#SHELL ["conda", "run", "--no-capture-output", "-n", "piranha", "/bin/bash", "-c"]
-
-# Make sure we use the virtualenv:
-#ENV PATH="/opt/venv/bin:$PATH"
-#SHELL ["/bin/bash", "-c", "source", "/venv/bin/activate", "&&"]
 
 SHELL ["/bin/bash", "-c"]
 # build piranha
@@ -63,9 +54,10 @@ WORKDIR /data/run_data/analysis
 
 SHELL ["/bin/bash", "-c"]
 
+# to allow streamed log output
 ENV PYTHONUNBUFFERED=1
+
 ENV PATH=/root/.local/bin:$PATH
-# run piranha
-#source /venv/bin/activate && \
+
 ENTRYPOINT   source /venv/bin/activate && \
              piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output --overwrite -t ${THREADS}
