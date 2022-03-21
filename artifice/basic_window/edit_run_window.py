@@ -1,7 +1,6 @@
 import PySimpleGUI as sg
 import traceback
 import docker
-from PIL import Image
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
