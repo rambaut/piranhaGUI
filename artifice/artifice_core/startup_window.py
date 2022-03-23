@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import docker
 import traceback
 from webbrowser import open_new_tab
 from PIL import Image
@@ -77,6 +78,7 @@ def create_startup_window(theme = 'Artifice', font = None, window = None):
     return new_window
 
 def run_startup_window(window, font=None):
+    client = docker.from_env()
 
     while True:
         event, values = window.read()
