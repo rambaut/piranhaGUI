@@ -36,7 +36,7 @@ RUN source /venv/bin/activate && pip install --user --no-cache-dir .
 
 
 # build image
-FROM debian:buster AS runtime-image
+FROM debian:buster-slim AS runtime-image
 
 COPY --from=compile-image /root/.local /root/.local
 
