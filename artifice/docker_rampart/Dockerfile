@@ -46,8 +46,6 @@ COPY --from=compile-image /data/rampart /data/rampart
 # Copy /venv from the previous stage:
 COPY --from=compile-image /venv /venv
 
-COPY --from=compile-image /data/realtime-polio/rampart/ /data/realtime-polio/rampart/
-
 WORKDIR /data/run_data/analysis
 
 # set environment variable PYTHONUNBUFFERED to allow unbuffered log output for artifice
@@ -59,4 +57,4 @@ RUN mkdir -p /data/run_data/basecalled
 SHELL ["/bin/bash", "-c"]
 # run rampart
 #ENTRYPOINT rampart --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
-ENTRYPOINT source /venv/bin/activate && rampart --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
+ENTRYPOINT source /venv/bin/activate && rampart --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
