@@ -35,7 +35,7 @@ def setup_layout(theme='Dark', font = None):
     piranha_running, piranha_button_text, piranha_status = setup_check_container('PIRANHA')
 
     rampart_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, key='-RAMPART OUTPUT-'),],
+    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-RAMPART OUTPUT-'),],
     ]
 
     piranha_tab = [
