@@ -95,7 +95,7 @@ def run_edit_window(window, font = None):
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
-
+                """
         elif event in {'-SAMPLES-FocusOut','-MINKNOW-FocusOut','-OUTDIR-FocusOut'}:
             try:
                 if 'title' in run_info:
@@ -110,7 +110,7 @@ def run_edit_window(window, font = None):
                 except Exception as err:
                     update_log(traceback.format_exc())
                     sg.popup_error(err)
-
+        """
         elif event == '-CONFIRM-':
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
