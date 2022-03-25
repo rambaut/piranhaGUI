@@ -9,6 +9,7 @@ import os.path
 from webbrowser import open_new_tab
 
 import artifice_core.start_rampart
+import artifice_core.consts
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container
@@ -38,7 +39,7 @@ def setup_layout(theme='Dark', font = None):
     ]
 
     piranha_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, key='-PIRANHA OUTPUT-'),],
+    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-PIRANHA OUTPUT-'),],
     ]
 
     layout = [

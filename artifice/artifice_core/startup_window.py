@@ -47,8 +47,10 @@ def setup_layout(theme='Dark', font = None):
     im.save(processed_image)
     #im_bytes = im.tobytes()
 
-    layout = [
-    [sg.Image(source = processed_image)],
+    logo_column = [
+        [sg.Image(source = processed_image)],
+    ]
+    info_column = [
     [
     sg.Text(docker_status,size=(30,1),text_color=docker_text_color),
     sg.Button(button_text='Open Docker Site in Browser',key='-DOCKER INSTALL-', visible= docker_installed),
@@ -64,7 +66,10 @@ def setup_layout(theme='Dark', font = None):
     [sg.Button(button_text='Launch ARTIFICE',key='-LAUNCH-'),],
     ]
 
-
+    layout = [
+        [sg.Column(logo_column),
+         sg.Column(info_column),],
+    ]
     return layout
 
 def create_startup_window(theme = 'Artifice', font = None, window = None):
