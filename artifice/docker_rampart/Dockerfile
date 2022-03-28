@@ -30,6 +30,9 @@ RUN conda-pack -n artic-rampart -o /tmp/env.tar && \
 # so now fix up paths:
 RUN /venv/bin/conda-unpack
 
+#removing git files and example data to save space in final image
+RUN rm -rf /data/rampart/.git && rm -rf /data/rampart/example_data
+
 SHELL ["/bin/bash", "-c"]
 
 WORKDIR /data/rampart
