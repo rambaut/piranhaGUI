@@ -3,6 +3,7 @@ import docker
 import traceback
 from webbrowser import open_new_tab
 from PIL import Image
+from time import sleep
 
 import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
@@ -14,7 +15,7 @@ def setup_layout(theme='Dark', font = None):
     docker_installed = artifice_core.start_rampart.check_for_docker()
     if docker_installed:
         docker_status = 'Docker installed'
-        docker_text_color = None #'#00bd00' #green
+        docker_text_color = '#00bd00' #green
     else:
         docker_status = 'Docker not installed'
         docker_text_color = '#db4325' #red
@@ -23,18 +24,22 @@ def setup_layout(theme='Dark', font = None):
 
     if got_rampart_image:
         rampart_image_status = 'RAMPART image installed'
-        rampart_text_color = None
+        rampart_pull_text = 'Check for updates to RAMPART image'
+        rampart_text_color = '#00bd00'
     else:
         rampart_image_status = 'RAMPART image not installed'
+        rampart_pull_text = 'Install RAMPART image'
         rampart_text_color = '#db4325' #red
 
     got_piranha_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.PIRANHA_IMAGE, font=font, popup=False)
 
     if got_piranha_image:
         piranha_image_status = 'PIRANHA image installed'
-        piranha_text_color = None
+        rampart_pull_text = 'Check for updates to RAMPART image'
+        piranha_text_color = '#00bd00'
     else:
         piranha_image_status = 'PIRANHA image not installed'
+        rampart_pull_text = 'Install RAMPART image'
         piranha_text_color = '#db4325' #red
 
 
@@ -51,9 +56,10 @@ def setup_layout(theme='Dark', font = None):
         [sg.Image(source = processed_image)],
     ]
     info_column = [
+    [sg.Text('An internet connection and a Docker install is required to install RAMPART and PIRANHA images')],
     [
     sg.Text(docker_status,size=(30,1),text_color=docker_text_color),
-    sg.Button(button_text='Open Docker Site in Browser',key='-DOCKER INSTALL-', visible= docker_installed),
+    sg.Button(button_text='Open Docker Site in Browser',key='-DOCKER INSTALL-', visible=not docker_installed),
     ],
     [
     sg.Text(rampart_image_status,size=(30,1),text_color=rampart_text_color),
@@ -61,7 +67,7 @@ def setup_layout(theme='Dark', font = None):
     ],
     [
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color),
-    sg.Button(button_text='Install PIRANHA image',key='-PIRANHA INSTALL-', visible=not got_piranha_image),
+    sg.Button(button_text='Install PIRANHA image',key='-PIRANHA INSTALL-', visible=True)#not got_piranha_image),
     ],
     [sg.Button(button_text='Launch ARTIFICE',key='-LAUNCH-'),],
     ]
@@ -81,6 +87,14 @@ def create_startup_window(theme = 'Artifice', font = None, window = None):
         window.close()
 
     return new_window
+
+def create_install_popup(name, font):
+    sg.theme('Artifice')
+    inst_frame = sg.Frame('', [[sg.Text(f'Installing {name} image')],],size=(250,50))
+    install_popup = sg.Window('', [[inst_frame]], disable_close=True, finalize=True,
+                                font=font, resizable=False, keep_on_top=True, no_titlebar=True,)
+    install_popup.read(timeout=100)
+    return install_popup
 
 def run_startup_window(window, font=None):
     client = docker.from_env()
@@ -104,14 +118,21 @@ def run_startup_window(window, font=None):
 
         elif event == '-RAMPART INSTALL-':
             try:
+                #install_popup = sg.popup('Installing RAMPART image',non_blocking=True)
+                install_popup = create_install_popup('RAMPART', font)
+                #sleep(10)
+                #print('aa')
                 client.images.pull(artifice_core.consts.RAMPART_IMAGE)
+                install_popup.close()
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-PIRANHA INSTALL-':
             try:
+                install_popup = create_install_popup('PIRANHA', font)
                 client.images.pull(artifice_core.consts.PIRANHA_IMAGE)
+                install_popup.close()
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
