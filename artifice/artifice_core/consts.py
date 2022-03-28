@@ -30,13 +30,13 @@ def setup_config():
 
 
 def retrieve_config():
-    config_path = str(get_datadir() / 'config.yml')
+    config_path = 'config.yml'#str(get_datadir() / 'config.yml')
     with open(config_path) as file:
         config = safe_load(file)
 
     return config
 
-
+#setup_config()
 config = retrieve_config()
 
 RAMPART_PORT_1 = config['RAMPART_PORT_1']
@@ -49,6 +49,7 @@ PIRANHA_IMAGE = config['PIRANHA_IMAGE']
 PIRANHA_LOGFILE = config['PIRANHA_LOGFILE']
 FONT = config['FONT']
 LOGFILE = config['LOGFILE']
+#FIRST_TIME_SETUP = config['FIRST_TIME_SETUP']
 CONSOLE_FONT = 'Consolas'
 
 

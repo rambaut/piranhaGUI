@@ -61,7 +61,6 @@ def scale_window(font=None):
     window.close()
 
 if __name__ == '__main__':
-    artifice_core.consts.setup_config()
     advanced = False
     startup_time = datetime.today()
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
