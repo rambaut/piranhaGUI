@@ -1,11 +1,14 @@
 import PySimpleGUI as sg
 import docker
 import traceback
+import os.path
+from os import mkdir
 from webbrowser import open_new_tab
 from PIL import Image
 from time import sleep
 
 import artifice_core.start_rampart
+import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 
 
@@ -44,8 +47,10 @@ def setup_layout(theme='Dark', font = None):
 
 
     # Resize PNG file to size (300, 300)
-    processed_image = './resources/poseqco_scaled.png'
-    image_file = './resources/poseqco_logo.png'
+    if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
+        mkdir(artifice_core.consts.get_datadir() / 'resources')
+    processed_image = str(artifice_core.consts.get_datadir() / 'resources' / 'poseqco_scaled.png')
+    image_file = f'./resources/poseqco_logo.png'
     size = (100, 120)
     im = Image.open(image_file)
     im = im.resize(size, resample=Image.BICUBIC)

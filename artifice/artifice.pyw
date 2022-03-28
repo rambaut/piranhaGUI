@@ -63,6 +63,7 @@ def scale_window(font=None):
 if __name__ == '__main__':
     advanced = False
     startup_time = datetime.today()
+    check_runs_dir(artifice_core.consts.RUNS_DIR)
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
 
     font = (artifice_core.consts.FONT, 18)
@@ -75,7 +76,6 @@ if __name__ == '__main__':
     if advanced != None:
         try:
             if advanced:
-                check_runs_dir(artifice_core.consts.RUNS_DIR)
                 window, rampart_running = advanced_window.main_window.create_main_window(font=font)
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
             else:
