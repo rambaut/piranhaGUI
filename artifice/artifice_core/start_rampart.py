@@ -166,7 +166,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     basecalled_path = run_info['basecalledPath']
     run_path = runs_dir+'/'+run_info['title']
     container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
-
+    """
     iter = 0
     while True:
         sleep(0.1)
@@ -179,6 +179,8 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
                 return container
         except:
             pass
+    """
+    return container
 
 def check_rampart_running():
     try:
