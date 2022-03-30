@@ -62,6 +62,7 @@ def scale_window(font=None):
     update_log(f'scaling by {scale}')
     sg.set_options(scaling=scale)
     window.close()
+    return scale
 
 if __name__ == '__main__':
     advanced = False
@@ -71,9 +72,9 @@ if __name__ == '__main__':
 
     font = (artifice_core.consts.FONT, 18)
 
-    scale_window()
+    scale = scale_window()
     make_theme()
-    window = artifice_core.startup_window.create_startup_window(font=font) #create the startup window to check/install docker and images
+    window = artifice_core.startup_window.create_startup_window(font=font, scale=scale) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font)
 
     if advanced != None:

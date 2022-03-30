@@ -12,7 +12,7 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 
 #create layout
-def setup_layout(theme='Dark', font = None):
+def setup_layout(theme='Dark', font = None, scale = 1):
     sg.theme(theme)
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
@@ -51,7 +51,7 @@ def setup_layout(theme='Dark', font = None):
         mkdir(artifice_core.consts.get_datadir() / 'resources')
     processed_image = str(artifice_core.consts.get_datadir() / 'resources' / 'poseqco_scaled.png')
     image_file = f'./resources/poseqco_logo.png'
-    size = (100, 120)
+    size = (int(150*scale), int(150*scale))
     im = Image.open(image_file)
     im = im.resize(size, resample=Image.BICUBIC)
     im.save(processed_image)
@@ -83,9 +83,9 @@ def setup_layout(theme='Dark', font = None):
     ]
     return layout
 
-def create_startup_window(theme = 'Artifice', font = None, window = None):
+def create_startup_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating main window')
-    layout = setup_layout(theme=theme, font=font)
+    layout = setup_layout(theme=theme, font=font, scale=scale)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
 
     if window != None:
