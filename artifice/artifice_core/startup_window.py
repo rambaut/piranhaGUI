@@ -11,11 +11,11 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 
-
+#create layout
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
-    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False)
+    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
         docker_status = 'Docker installed'
         docker_text_color = '#00bd00' #green
@@ -46,7 +46,7 @@ def setup_layout(theme='Dark', font = None):
         piranha_text_color = '#db4325' #red
 
 
-    # Resize PNG file to size (300, 300)
+    # Resize PNG file to appropiate size
     if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
         mkdir(artifice_core.consts.get_datadir() / 'resources')
     processed_image = str(artifice_core.consts.get_datadir() / 'resources' / 'poseqco_scaled.png')

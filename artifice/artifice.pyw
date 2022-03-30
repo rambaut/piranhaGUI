@@ -12,6 +12,7 @@ import basic_window.edit_run_window
 import basic_window.execute_run_window
 import artifice_core.startup_window
 
+#create artifice theme
 def make_theme(poseqco_scheme=True):
     if poseqco_scheme:
         Artifice_Theme = {'BACKGROUND': "#FBECA6",
@@ -38,6 +39,7 @@ def make_theme(poseqco_scheme=True):
 
     sg.theme_add_new('Artifice', Artifice_Theme)
 
+#make sure a directory exists to save runs
 def check_runs_dir(runs_dir):
     filepath = runs_dir + '/archived_runs.json'
     if os.path.isfile(filepath):
@@ -51,6 +53,7 @@ def check_runs_dir(runs_dir):
         with open(filepath, 'w') as file:
             json.dump(archived_dict, file)
 
+#set scaling for all window elements based on screen resolution
 def scale_window(font=None):
     layout = [[sg.Text('setting up..')]]
     window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
@@ -70,7 +73,7 @@ if __name__ == '__main__':
 
     scale_window()
     make_theme()
-    window = artifice_core.startup_window.create_startup_window(font=font)
+    window = artifice_core.startup_window.create_startup_window(font=font) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font)
 
     if advanced != None:
