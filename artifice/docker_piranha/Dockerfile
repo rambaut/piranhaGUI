@@ -60,4 +60,4 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH=/root/.local/bin:$PATH
 
 ENTRYPOINT   source /venv/bin/activate && \
-             piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output --overwrite -t ${THREADS}
+             piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output -t ${THREADS}
