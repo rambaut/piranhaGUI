@@ -15,7 +15,7 @@ from artifice_core.update_log import log_event, update_log
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
-    docker_installed = artifice_core.start_rampart.check_for_docker()
+    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False)
     if docker_installed:
         docker_status = 'Docker installed'
         docker_text_color = '#00bd00' #green
