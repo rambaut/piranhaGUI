@@ -19,7 +19,7 @@ def get_datadir():
 
     path = Path(os_path) / "ARTIFICE"
 
-    return path.expanduser() #/ file_name
+    return path.expanduser()
 
 def setup_config():
     config_path = str(get_datadir() / 'config.yml')
@@ -30,13 +30,13 @@ def setup_config():
 
 
 def retrieve_config():
-    config_path = 'config.yml'#str(get_datadir() / 'config.yml')
+    config_path = str(get_datadir() / 'config.yml')
     with open(config_path) as file:
         config = safe_load(file)
 
     return config
 
-#setup_config()
+setup_config()
 config = retrieve_config()
 
 RAMPART_PORT_1 = config['RAMPART_PORT_1']
