@@ -50,12 +50,11 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
         mkdir(artifice_core.consts.get_datadir() / 'resources')
     processed_image = str(artifice_core.consts.get_datadir() / 'resources' / 'poseqco_scaled.png')
-    image_file = f'./resources/poseqco_logo.png'
+    image_file = './resources/poseqco_logo.png'
     size = (int(150*scale), int(150*scale))
     im = Image.open(image_file)
     im = im.resize(size, resample=Image.BICUBIC)
     im.save(processed_image)
-    #im_bytes = im.tobytes()
 
     logo_column = [
         [sg.Image(source = processed_image)],
@@ -101,6 +100,16 @@ def create_install_popup(name, font):
     install_popup.read(timeout=100)
     return install_popup
 
+def install_image(name, image_tag, window, font, client):
+    install_popup = create_install_popup(name, font)
+    client.images.pull(image_tag)
+    install_popup.close()
+    image_status = f'{name} image installed'
+    pull_text = f'Check for updates to {name} image'
+    text_color = '#00bd00'
+    window[f'-{name} INSTALL-'].update(text=pull_text)
+    window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
+
 def run_startup_window(window, font=None):
     client = docker.from_env()
 
@@ -123,28 +132,14 @@ def run_startup_window(window, font=None):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_popup = create_install_popup('RAMPART', font)
-                client.images.pull(artifice_core.consts.RAMPART_IMAGE)
-                install_popup.close()
-                rampart_image_status = 'RAMPART image installed'
-                rampart_pull_text = 'Check for updates to RAMPART image'
-                rampart_text_color = '#00bd00'
-                window['-RAMPART INSTALL-'].update(text=rampart_pull_text)
-                window['-RAMPART IMAGE STATUS-'].update(rampart_image_status, text_color=rampart_text_color)
+                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,client)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_popup = create_install_popup('PIRANHA', font)
-                client.images.pull(artifice_core.consts.PIRANHA_IMAGE)
-                install_popup.close()
-                piranha_image_status = 'PIRANHA image installed'
-                piranha_pull_text = 'Check for updates to PIRANHA image'
-                piranha_text_color = '#00bd00'
-                window['-PIRANHA INSTALL-'].update(text=piranha_pull_text)
-                window['-PIRANHA IMAGE STATUS-'].update(piranha_image_status, text_color=piranha_text_color)
+                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,client)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
