@@ -41,7 +41,7 @@ def make_theme(poseqco_scheme=True):
 
 #make sure a directory exists to save runs
 def check_runs_dir(runs_dir):
-    filepath = runs_dir + '/archived_runs.json'
+    filepath = runs_dir / 'archived_runs.json'
     if os.path.isfile(filepath):
         return True
     else:

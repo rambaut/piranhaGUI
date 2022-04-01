@@ -62,7 +62,7 @@ def save_barcodes(run_info):
     title = run_info['title']
     update_log(f'saving barcodes file for run: "{title}"')
 
-    with open(artifice_core.consts.RUNS_DIR+'/'+title+'/barcodes.csv', 'w', newline='') as csvfile:
+    with open(artifice_core.consts.RUNS_DIR / title / 'barcodes.csv', 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
@@ -74,7 +74,7 @@ def check_barcodes(run_info, font = None):
     title = run_info['title']
     update_log(f'checking barcodes for run: "{title}" still match chosen samples...')
 
-    barcodes_file = artifice_core.consts.RUNS_DIR+'/'+title+'/barcodes.csv'
+    barcodes_file = artifice_core.consts.RUNS_DIR / title / 'barcodes.csv'
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
         old_barcodes = artifice_core.parse_columns_window.samples_to_list(barcodes_file, has_headers=False)[0]

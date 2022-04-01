@@ -19,7 +19,7 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = art
 
     update_log(f'saving run: "{title}"...')
 
-    filepath = runs_dir+'/'+title+'/run_info.json'
+    filepath = runs_dir / title / 'run_info.json'
 
 
     if overwrite == False:
@@ -30,8 +30,8 @@ def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = art
     if os.path.isfile(samples) == False or samples[-4:] != '.csv':
         raise Exception('No valid samples file provided')
 
-    if not os.path.isdir(runs_dir+'/'+title):
-        mkdir(runs_dir+'/'+title)
+    if not os.path.isdir(runs_dir / title):
+        mkdir(runs_dir / title)
 
     for key, value in run_info.items():
         if type(run_info[key]) == str:
@@ -65,7 +65,7 @@ def delete_run(title, window, clear_selected = True, runs_dir = artifice_core.co
 
     edit_archive(title, window, clear_selected=False, archive=False) #unarchiving to avoid bugs if a new run with the same name is created
 
-    filepath = runs_dir+'/'+title
+    filepath = runs_dir / title
 
     if os.path.isdir(filepath):
         rmtree(filepath)
@@ -91,11 +91,11 @@ def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_
     paths = listdir(runs_dir)
     runs_set = set()
     for path in paths:
-        if os.path.isdir(runs_dir+'/'+path):
+        if os.path.isdir(runs_dir / path):
             runs_set.add(path)
 
     if hide_archived:
-        archived_filepath = runs_dir+'/'+archived_json+'.json'
+        archived_filepath = runs_dir / str(archived_json+'.json')
 
         with open(archived_filepath,'r') as file:
             archived_runs_dict = json.loads(file.read())
@@ -113,7 +113,7 @@ def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_
 
 def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button = True):
     update_log(f'loading run: "{title}"...')
-    filepath = runs_dir+'/'+title+'/run_info.json'
+    filepath = runs_dir / title / 'run_info.json'
 
     with open(filepath,'r') as file:
         run_info = json.loads(file.read())
@@ -208,7 +208,8 @@ def rename_run(values, run_info, window, hide_archived = True, runs_dir = artifi
         delete_run(new_title, window, clear_selected=False)
         update_log('moving files to new directory')
         try:
-            copytree(f'{runs_dir}/{previous_run_title}', f'{runs_dir}/{new_title}')
+            #copytree(f'{runs_dir}/{previous_run_title}', f'{runs_dir}/{new_title}')
+            copytree(runs_dir / previous_run_title, runs_dir / new_title)
         except Exception as err:
             print('failed to copy some file(s)')
             update_log(traceback.format_exc())

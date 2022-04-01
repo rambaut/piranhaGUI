@@ -145,7 +145,7 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None,
 
 
 
-    config_path = runs_dir+'/'+title+'/run_configuration.json'
+    config_path = runs_dir / title / 'run_configuration.json'
 
     try:
         with open(config_path,'r') as file:
@@ -164,7 +164,7 @@ def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_d
     prepare_run(run_info,runs_dir=runs_dir,font=font)
 
     basecalled_path = run_info['basecalledPath']
-    run_path = runs_dir+'/'+run_info['title']
+    run_path = runs_dir / run_info['title']
     container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
     """
     iter = 0
