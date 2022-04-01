@@ -96,7 +96,7 @@ def create_install_popup(name, font):
     sg.theme('Artifice')
     inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     install_popup = sg.Window('', [[inst_frame]], disable_close=True, finalize=True,
-                                font=font, resizable=False, keep_on_top=True, no_titlebar=True,)
+                                font=font, resizable=False, no_titlebar=True,)
     install_popup.read(timeout=100)
     return install_popup
 
