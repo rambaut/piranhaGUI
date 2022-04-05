@@ -46,6 +46,9 @@ def run_options_window(window):
             try:
                 if values['-THREADS SELECT-'] != config['THREADS']:
                     artifice_core.consts.edit_config('THREADS', values['-THREADS SELECT-'])
+                window.close()
+                return True
+                break
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
