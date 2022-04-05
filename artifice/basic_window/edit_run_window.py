@@ -65,6 +65,7 @@ def create_edit_window(theme = 'Artifice', font = None, window = None):
     return new_window
 
 def run_edit_window(window, font = None):
+    config = artifice_core.consts.retrieve_config()
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
     edit_run = True
@@ -75,7 +76,7 @@ def run_edit_window(window, font = None):
                     '-MINKNOW-':'basecalledPath',
                     '-OUTDIR-':'outputPath'}
     try:
-        run_info = load_run(window, selected_run_title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button=False)
+        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
     except:
         pass
 

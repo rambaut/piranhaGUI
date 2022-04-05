@@ -33,7 +33,7 @@ def setup_selection_layout(theme = 'Dark'):
 def create_select_window(theme = 'Artifice', font = None, window = None):
     update_log(f'opening selection window')
     layout = setup_selection_layout(theme=theme)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
+    new_window = sg.Window('Artifice', layout, font=font, resizable=False)
 
     if window != None:
         window.close()

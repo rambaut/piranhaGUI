@@ -10,6 +10,8 @@ from time import sleep
 import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
+from artifice_core.options_window import create_options_window, run_options_window
+
 
 #create layout
 def setup_layout(theme='Dark', font = None, scale = 1):
@@ -73,7 +75,11 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),
     sg.Button(button_text=piranha_pull_text,key='-PIRANHA INSTALL-'),
     ],
-    [sg.Button(button_text='Launch ARTIFICE',key='-LAUNCH-'),],
+    [
+    sg.Button(button_text='Launch ARTIFICE',key='-LAUNCH-'),
+    sg.Push(),
+    sg.Button(button_text='Options', key='-OPTIONS-')
+    ],
     ]
 
     layout = [
@@ -140,6 +146,15 @@ def run_startup_window(window, font=None):
         elif event == '-PIRANHA INSTALL-':
             try:
                 install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,client)
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+
+        elif event == '-OPTIONS-':
+            try:
+                options_window = create_options_window()
+                run_options_window(options_window)
+                options_window.close()
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

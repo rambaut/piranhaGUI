@@ -6,18 +6,19 @@ import artifice_core.consts
 from artifice_core.update_log import update_log
 
 def launch_piranha(run_info, font, docker_client):
+    config = artifice_core.consts.retrieve_config()
     runs_dir = artifice_core.consts.RUNS_DIR
     artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,font=font,output=True)
 
     run_path = runs_dir / run_info['title']
     basecalled_path = run_info['basecalledPath']
     output_path = run_info['outputPath']
-    piranha_container = start_piranha(run_path, basecalled_path, output_path, docker_client, artifice_core.consts.PIRANHA_IMAGE, container=None)
+    piranha_container = start_piranha(run_path, basecalled_path, output_path, docker_client, config['PIRANHA_IMAGE'], threads=config['THREADS'], container=None)
 
     return piranha_container
 
 
-def start_piranha(run_path, basecalled_path, output_path, client, image, container = None):
+def start_piranha(run_path, basecalled_path, output_path, client, image, threads = artifice_core.consts.THREADS, container = None):
     if client == None:
         client = docker.from_env()
 
@@ -30,7 +31,7 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, contain
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 
-    environment = [f'THREADS={artifice_core.consts.THREADS}']
+    environment = [f'THREADS={threads}']
     log_environment = str(environment)
     update_log(f'environment variables: {log_environment}')
 
