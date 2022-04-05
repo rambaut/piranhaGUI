@@ -72,6 +72,7 @@ def stop_docker(client = None, container_name='rampart', container = None):
                 return None
     update_log(f'stopped {tool_name}')
 
+#put the streamed output of container log into queue
 def queue_log(log, queue):
     while True:
         log_str = ''
@@ -82,12 +83,15 @@ def queue_log(log, queue):
             log_output ='###CONTAINER STOPPED###\n'
             queue.put(log_output)
             return
+            
         #remove ANSI escape codes
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         log_output = ansi_escape.sub('', log_str.decode('utf-8'))
+
         if len(log_output) > 0:
             queue.put(log_output)
 
+#check image exists for given tag
 def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'RAMPART'):
     if client == None:
         client = docker.from_env()
@@ -143,8 +147,6 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None,
         if 'outputPath' not in run_info or os.path.isdir(run_info['outputPath']) == False:
             raise Exception('Invalid output directory')
 
-
-
     config_path = runs_dir / title / 'run_configuration.json'
 
     try:
@@ -193,6 +195,7 @@ def check_rampart_running():
     except:
         return False
 
+#check container exists for given name
 def check_container(container_name, client = None):
     if client == None:
         client = docker.from_env()
