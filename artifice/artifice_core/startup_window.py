@@ -11,6 +11,7 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
+from artifice_core.alt_button import AltButton
 
 
 #create layout
@@ -73,7 +74,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     ],
     [
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),
-    sg.Button(button_text=piranha_pull_text,key='-PIRANHA INSTALL-'),
+    AltButton(button_text=piranha_pull_text,font=font,key='-PIRANHA INSTALL-'),
     ],
     [
     sg.Button(button_text='Launch ARTIFICE',key='-LAUNCH-'),
@@ -95,6 +96,10 @@ def create_startup_window(theme = 'Artifice', font = None, window = None, scale 
 
     if window != None:
         window.close()
+
+    for element in new_window.element_list():
+        if hasattr(element, 'bind_mouseover'):
+            element.bind_mouseover()
 
     return new_window
 
