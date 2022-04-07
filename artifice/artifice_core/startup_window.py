@@ -84,15 +84,22 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     ]
 
     layout = [
-        [sg.Column(logo_column),
-         sg.Column(info_column),],
+        [
+        sg.Push(),
+        AltButton(button_text='_', font=font, key='-MIN-'),
+        AltButton(button_text='X', font=font, key='-EXIT-'),
+        ],
+        [
+        sg.Column(logo_column),
+        sg.Column(info_column),
+        ],
     ]
     return layout
 
 def create_startup_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating main window')
     layout = setup_layout(theme=theme, font=font, scale=scale)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, no_titlebar=True, grab_anywhere=True, finalize=True)
 
     if window != None:
         window.close()
@@ -128,9 +135,16 @@ def run_startup_window(window, font=None):
         if event != None:
             log_event(f'{event} [main window]')
 
-        if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
+        if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == '-EXIT-':
             window.close()
             break
+
+        elif event == '-MIN-':
+            try:
+                window.minimize()
+            except Exception as err:
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
 
         elif event == '-DOCKER INSTALL-':
             try:
