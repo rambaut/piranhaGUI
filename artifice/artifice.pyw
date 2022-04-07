@@ -62,6 +62,7 @@ def scale_window(font=None):
     update_log(f'scaling by {scale}')
     sg.set_options(scaling=scale)
     window.close()
+    artifice_core.consts.edit_config('SCALING', scale)
     return scale
 
 if __name__ == '__main__':
