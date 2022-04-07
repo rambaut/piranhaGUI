@@ -5,6 +5,7 @@ import traceback
 
 import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
+from artifice_core.alt_button import AltButton
 
 def samples_to_list(filepath, has_headers = True, trim = True):
     with open(filepath, newline = '') as csvfile:
@@ -27,7 +28,7 @@ def samples_to_list(filepath, has_headers = True, trim = True):
 
     return samples_list, column_headers
 
-def setup_parse_layout(samples, theme = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def setup_parse_layout(samples, font = None, theme = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
 
     samples_list, column_headers = samples_to_list(samples, has_headers=has_headers)
@@ -46,7 +47,7 @@ def setup_parse_layout(samples, theme = None, samples_column = 0, barcodes_colum
         sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], key='-BARCODES COLUMN-'),
         ],
         [
-        sg.Button(button_text='Save',key='-SAVE-'),
+        AltButton(button_text='Save',font=font,key='-SAVE-'),
         ],
         [
         sg.Table(
@@ -78,11 +79,13 @@ def check_for_duplicate_entries(samples, column):
 
 def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
 
-    layout, column_headers = setup_parse_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
+    layout, column_headers = setup_parse_layout(samples, font=font, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
+    new_window = sg.Window('Artifice', layout, font=font, resizable=True, finalize=True)
 
     if window != None:
         window.close()
+
+    AltButton.intialise_buttons(new_window)
 
     update_log(f'displaying samples: "{samples}"')
     return new_window, column_headers

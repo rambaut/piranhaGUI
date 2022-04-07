@@ -13,6 +13,7 @@ import artifice_core.consts
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container
+from artifice_core.alt_button import AltButton
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -43,16 +44,16 @@ def setup_layout(theme='Dark', font = None):
     ]
 
     layout = [
-    [sg.Button(button_text='Edit run',key='-EDIT-'),],
+    [AltButton(button_text='Edit run',font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
-    sg.Button(button_text=rampart_button_text,key='-START/STOP RAMPART-'),
-    sg.Button(button_text='Display RAMPART', visible=rampart_running,key='-VIEW RAMPART-'),
+    AltButton(button_text=rampart_button_text,font=font,key='-START/STOP RAMPART-'),
+    AltButton(button_text='Display RAMPART',font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
     [
-    sg.Button(button_text=piranha_button_text, key='-START/STOP PIRANHA-'),
-    sg.Button(button_text='Display PIRANHA', visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=piranha_button_text, font=font, key='-START/STOP PIRANHA-'),
+    AltButton(button_text='Display PIRANHA', font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
     ]
@@ -68,6 +69,8 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
 
     if window != None:
         window.close()
+
+    AltButton.intialise_buttons(new_window)
 
     return new_window, rampart_running
 

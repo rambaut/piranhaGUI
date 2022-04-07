@@ -7,7 +7,7 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 import artifice_core.start_rampart
-from artifice_core.alt_button import AltButton
+from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -31,18 +31,18 @@ def setup_layout(theme='Dark', font = None):
     [
     sg.Text('Samples:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
-    sg.FileBrowse(file_types=(("CSV Files", "*.csv"),)),
-    sg.Button(button_text='View',key='-VIEW SAMPLES-'),
+    AltFileBrowse(file_types=(("CSV Files", "*.csv"),),font=font),
+    AltButton(button_text='View',font=font,key='-VIEW SAMPLES-'),
     ],
     [
     sg.Text('MinKnow run:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
-    sg.FolderBrowse(),
+    AltFolderBrowse(font=font),
     ],
     [
     sg.Text('Output Folder:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-OUTDIR-',),
-    sg.FolderBrowse(),
+    AltFolderBrowse(font=font),
     ],
     [AltButton(button_text='Confirm',font=font,key='-CONFIRM-'),],
     ]
@@ -63,9 +63,7 @@ def create_edit_window(theme = 'Artifice', font = None, window = None):
     new_window['-MINKNOW-'].bind("<FocusOut>", "FocusOut")
     new_window['-OUTDIR-'].bind("<FocusOut>", "FocusOut")
 
-    for element in new_window.element_list():
-        if hasattr(element, 'bind_mouseover'):
-            element.bind_mouseover()
+    AltButton.intialise_buttons(new_window)
 
     return new_window
 

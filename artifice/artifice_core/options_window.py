@@ -4,8 +4,9 @@ from os import cpu_count
 
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
+from artifice_core.alt_button import AltButton
 
-def setup_options_layout(theme = 'Dark'):
+def setup_options_layout(theme = 'Dark', font = None):
     config = artifice_core.consts.retrieve_config()
     sg.theme(theme)
     threads_list = range(1, cpu_count()+1)
@@ -15,7 +16,7 @@ def setup_options_layout(theme = 'Dark'):
         sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
         ],
         [
-        sg.Button(button_text='Save',key='-SAVE-'),
+        AltButton(button_text='Save', font=font,key='-SAVE-'),
         ],
     ]
 
@@ -23,11 +24,13 @@ def setup_options_layout(theme = 'Dark'):
 
 def create_options_window(theme = 'Artifice', font = None, window = None):
     update_log(f'opening options window')
-    layout = setup_options_layout(theme=theme)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=False)
+    layout = setup_options_layout(theme=theme, font=font)
+    new_window = sg.Window('Artifice', layout, font=font, resizable=False, finalize=True)
 
     if window != None:
         window.close()
+
+    AltButton.intialise_buttons(new_window)
 
     return new_window
 

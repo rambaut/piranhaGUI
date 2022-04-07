@@ -66,20 +66,20 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     [sg.Text('An internet connection and a Docker install is required to install RAMPART and PIRANHA images')],
     [
     sg.Text(docker_status,size=(30,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
-    sg.Button(button_text='Open Docker Site in Browser',key='-DOCKER INSTALL-', visible=not docker_installed),
+    AltButton(button_text='Open Docker Site in Browser',font=font,key='-DOCKER INSTALL-', visible=not docker_installed),
     ],
     [
     sg.Text(rampart_image_status,size=(30,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
-    sg.Button(button_text=rampart_pull_text,key='-RAMPART INSTALL-'),
+    AltButton(button_text=rampart_pull_text,font=font,key='-RAMPART INSTALL-'),
     ],
     [
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),
     AltButton(button_text=piranha_pull_text,font=font,key='-PIRANHA INSTALL-'),
     ],
     [
-    sg.Button(button_text='Launch ARTIFICE',key='-LAUNCH-'),
+    AltButton(button_text='Launch ARTIFICE',font=font,key='-LAUNCH-'),
     sg.Push(),
-    sg.Button(button_text='Options', key='-OPTIONS-')
+    AltButton(button_text='Options',font=font,key='-OPTIONS-')
     ],
     ]
 
@@ -97,9 +97,7 @@ def create_startup_window(theme = 'Artifice', font = None, window = None, scale 
     if window != None:
         window.close()
 
-    for element in new_window.element_list():
-        if hasattr(element, 'bind_mouseover'):
-            element.bind_mouseover()
+    AltButton.intialise_buttons(new_window)
 
     return new_window
 
@@ -157,7 +155,7 @@ def run_startup_window(window, font=None):
 
         elif event == '-OPTIONS-':
             try:
-                options_window = create_options_window()
+                options_window = create_options_window(font=font)
                 run_options_window(options_window)
                 options_window.close()
             except Exception as err:
