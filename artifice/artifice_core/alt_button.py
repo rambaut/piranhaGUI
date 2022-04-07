@@ -5,41 +5,52 @@ from io import BytesIO
 
 class AltButton(sg.Button):
 
-    def __init__(self, size=(None, None), s=(None,None), **kwargs):
+    def __init__(self, size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
         self.Font = kwargs['font'] if 'font' in kwargs else sg.DEFAULT_FONT
         self.ButtonText = kwargs['button_text'] if 'button_text' in kwargs else ''
+        self.ButtonColor = sg.button_color_to_tuple(button_color)
 
         self.Size = size if size != (None, None) else s
         if self.Size == (None, None):
             #width = int(self.get_string_size()
             #print(width)
             self.Size = self.get_string_size()
-            self.Size = (self.Size[0]+self.Size[1]*3, self.Size[1]*2)
+            self.Size = (self.Size[0]+self.Size[1]*3, int(self.Size[1]*1.75))
             #self.Size = tuple([3*x for x in self.Size])
 
         #kwargs['image_filename']='./resources/button.png'
 
-
+        if mouseover_colors != (None, None):
+            self.MouseOverColors = sg.button_color_to_tuple(mouseover_colors)
+        elif button_color != None:
+            self.MouseOverColors = (self.ButtonColor[1], self.ButtonColor[0])
+        else:
+            self.MouseOverColors = (sg.theme_button_color()[1], sg.theme_button_color()[0])
         #self
-        self.RegImage = self.create_button_image(fill=sg.theme_button_color()[1])
-        self.PressImage = self.create_button_image(fill=sg.theme_button_color()[0])
+        #self.RegImage = self.create_button_image(fill=sg.theme_button_color()[1])
+        #self.PressImage = self.create_button_image(fill=sg.theme_button_color()[0])
+        self.RegImage = self.create_button_image(fill=self.MouseOverColors[0])
+        self.PressImage = self.create_button_image(fill=self.MouseOverColors[1])
 
         kwargs['image_data'] = self.RegImage
         kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
         kwargs['border_width'] = 0
 
-        super().__init__(**kwargs)
+        super().__init__(mouseover_colors=self.MouseOverColors, **kwargs)
 
 
     def bind_mouseover(self):
         self.Widget.bind("<Enter>", self.on_enter)
         self.Widget.bind("<Leave>", self.on_leave)
+        self.Widget.config(fg=self.MouseOverColors[1])
 
     def on_enter(self, e):
         self.update(image_data=self.PressImage)
+        self.Widget.config(fg=self.MouseOverColors[0])
 
     def on_leave(self, e):
         self.update(image_data=self.RegImage)
+        self.Widget.config(fg=self.MouseOverColors[1])
 
 
     def get_string_size(self):
