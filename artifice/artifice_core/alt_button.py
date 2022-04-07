@@ -15,6 +15,7 @@ class AltButton(sg.Button):
             #width = int(self.get_string_size()
             #print(width)
             self.Size = self.get_string_size()
+            print(self.Size)
             self.Size = (self.Size[0]+self.Size[1]*3, int(self.Size[1]*1.75))
             #self.Size = tuple([3*x for x in self.Size])
 
@@ -57,7 +58,10 @@ class AltButton(sg.Button):
 
         #font = ImageFont.truetype('arial.ttf', 18)
         font = ImageFont.truetype('arial.ttf', self.Font[1])
+        print(self.Font)
         size = font.getsize(self.ButtonText)
+        height = font.getsize(f'{self.ButtonText}g')[1]
+        size = (size[0], height)
         return size
 
     def create_button_image(self,  fill='#ff0000'):
