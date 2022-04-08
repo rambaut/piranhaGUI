@@ -67,9 +67,11 @@ class AltButton(sg.Button):
         return size
 
     def create_button_image(self, scaling = 1, fill='#ff0000'):
-        button_image = Image.new("RGBA", self.Size, (255, 255, 255, 0))
+        scl_fctr = 4 #amount to scale up by when drawing
+        button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)
-        draw.rounded_rectangle([(0,0),(self.Size[0]-5,self.Size[1])], radius=self.Size[1], fill=fill)
+        draw.rounded_rectangle([(0,0),((self.Size[0]-5)*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
+        button_image = button_image.resize(self.Size, resample=Image.ANTIALIAS) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()
         button_image.save(buffered, format="PNG")
