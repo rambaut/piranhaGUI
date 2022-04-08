@@ -14,13 +14,15 @@ class AltButton(sg.Button):
         self.ButtonColor = sg.button_color_to_tuple(button_color)
 
         self.Size = size if size != (None, None) else s
+        config = artifice_core.consts.retrieve_config()
+        scaling=config['SCALING']
         if self.Size == (None, None):
             #width = int(self.get_string_size()
             #print(width)
             self.Size = self.get_string_size()
-            config = artifice_core.consts.retrieve_config()
-            scaling=config['SCALING']
             self.Size = (int(self.Size[0]+self.Size[1]*3*scaling), int(self.Size[1]*1.75*scaling))
+        else:
+            self.Size = (int(self.Size[0]*scaling), int(self.Size[1]*scaling))
             #self.Size = tuple([3*x for x in self.Size])
 
         #kwargs['image_filename']='./resources/button.png'
@@ -66,7 +68,7 @@ class AltButton(sg.Button):
         size = (size[0], height)
         return size
 
-    def create_button_image(self, scaling = 1, fill='#ff0000'):
+    def create_button_image(self, fill='#ff0000'):
         scl_fctr = 4 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)

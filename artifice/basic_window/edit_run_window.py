@@ -26,25 +26,25 @@ def make_theme():
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
-
+    button_size=(120,36)
     layout = [
     [
     sg.Text('Samples:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
-    AltFileBrowse(file_types=(("CSV Files", "*.csv"),),font=font),
-    AltButton(button_text='View',size=(120,36),font=font,key='-VIEW SAMPLES-'),
+    AltFileBrowse(file_types=(("CSV Files", "*.csv"),),size=button_size,font=font),
+    AltButton(button_text='View',size=button_size,font=font,key='-VIEW SAMPLES-'),
     ],
     [
     sg.Text('MinKnow run:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
-    AltFolderBrowse(font=font),
+    AltFolderBrowse(font=font,size=button_size),
     ],
     [
     sg.Text('Output Folder:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-OUTDIR-',),
-    AltFolderBrowse(font=font),
+    AltFolderBrowse(font=font,size=button_size,),
     ],
-    [AltButton(button_text='Confirm',font=font,key='-CONFIRM-'),],
+    [AltButton(button_text='Confirm',size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
 

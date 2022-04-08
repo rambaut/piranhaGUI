@@ -43,17 +43,19 @@ def setup_layout(theme='Dark', font = None):
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-PIRANHA OUTPUT-'),],
     ]
 
+    button_size=(200,36)
+
     layout = [
-    [AltButton(button_text='Edit run',size=(200,36),font=font,key='-EDIT-'),],
+    [AltButton(button_text='Edit run',size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
-    AltButton(button_text=rampart_button_text,size=(200,36),font=font,key='-START/STOP RAMPART-'),
-    AltButton(button_text='Display RAMPART',size=(200,36),font=font,visible=rampart_running,key='-VIEW RAMPART-'),
+    AltButton(button_text=rampart_button_text,size=button_size,font=font,key='-START/STOP RAMPART-'),
+    AltButton(button_text='Display RAMPART',size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
     [
-    AltButton(button_text=piranha_button_text,size=(200,36),font=font, key='-START/STOP PIRANHA-'),
-    AltButton(button_text='Display PIRANHA',size=(200,36), font=font, visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=piranha_button_text,size=button_size,font=font, key='-START/STOP PIRANHA-'),
+    AltButton(button_text='Display PIRANHA',size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
     ]
