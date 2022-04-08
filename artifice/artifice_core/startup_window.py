@@ -66,15 +66,15 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     [sg.Text('An internet connection and a Docker install is required to install RAMPART and PIRANHA images')],
     [
     sg.Text(docker_status,size=(30,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
-    AltButton(button_text='Open Docker Site in Browser',font=font,key='-DOCKER INSTALL-', visible=not docker_installed),
+    AltButton(button_text='Open Docker Site in Browser',font=font,size=(350,36),key='-DOCKER INSTALL-', visible=not docker_installed),
     ],
     [
     sg.Text(rampart_image_status,size=(30,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
-    AltButton(button_text=rampart_pull_text,font=font,key='-RAMPART INSTALL-'),
+    AltButton(button_text=rampart_pull_text,font=font,size=(350,36),key='-RAMPART INSTALL-'),
     ],
     [
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),
-    AltButton(button_text=piranha_pull_text,font=font,key='-PIRANHA INSTALL-'),
+    AltButton(button_text=piranha_pull_text,size=(350,36),font=font,key='-PIRANHA INSTALL-'),
     ],
     [
     AltButton(button_text='Launch ARTIFICE',font=font,key='-LAUNCH-'),
@@ -85,11 +85,6 @@ def setup_layout(theme='Dark', font = None, scale = 1):
 
     layout = [
         [
-        sg.Push(),
-        AltButton(button_text='_', font=font, key='-MIN-'),
-        AltButton(button_text='X', font=font, key='-EXIT-'),
-        ],
-        [
         sg.Column(logo_column),
         sg.Column(info_column),
         ],
@@ -99,7 +94,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
 def create_startup_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating main window')
     layout = setup_layout(theme=theme, font=font, scale=scale)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, no_titlebar=True, grab_anywhere=True, finalize=True)
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
 
     if window != None:
         window.close()
@@ -138,10 +133,11 @@ def run_startup_window(window, font=None):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT or event == '-EXIT-':
             window.close()
             break
+            return
 
         elif event == '-MIN-':
             try:
-                window.minimize()
+                window.hide()
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)

@@ -32,7 +32,7 @@ def setup_layout(theme='Dark', font = None):
     sg.Text('Samples:',size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
     AltFileBrowse(file_types=(("CSV Files", "*.csv"),),font=font),
-    AltButton(button_text='View',font=font,key='-VIEW SAMPLES-'),
+    AltButton(button_text='View',size=(120,36),font=font,key='-VIEW SAMPLES-'),
     ],
     [
     sg.Text('MinKnow run:',size=(14,1)),
@@ -90,7 +90,8 @@ def run_edit_window(window, font = None):
             log_event(f'{event} [main window]')
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
-            break
+            window.close()
+            return
 
         elif event == '-VIEW SAMPLES-':
             try:
