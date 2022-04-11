@@ -73,7 +73,11 @@ class AltButton(sg.Button):
 
     def get_string_size(self):
         #font = ImageFont.truetype('arial.ttf', 18)
-        font = ImageFont.truetype('arial.ttf', self.Font[1])
+        try:
+            font = ImageFont.truetype('arial.ttf', self.Font[1])
+        except:
+            font = ImageFont.truetype('HelveticaNeue.dfont', self.Font[1])
+
         size = font.getsize(self.ButtonText)
         height = font.getsize(f'{self.ButtonText}g')[1]
         size = (size[0], height)
