@@ -7,9 +7,9 @@ Usage:
 
 from setuptools import setup
 
-APP = ['../artifice.py']
+APP = ['../artifice.pyw']
 DATA_FILES = []
-OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../config.yml", "../docker_rampart", "../docker_piranha"], "frameworks": ["/usr/lib/libffi.dylib"]}
+OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../config.yml", "../docker_rampart", "../docker_piranha", "../Keyboard.ttf"], "frameworks": ["/usr/lib/libffi.dylib"]}
 
 setup(
     app=APP,

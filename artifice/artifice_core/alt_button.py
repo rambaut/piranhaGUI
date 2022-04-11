@@ -76,7 +76,7 @@ class AltButton(sg.Button):
         try:
             font = ImageFont.truetype('arial.ttf', self.Font[1])
         except:
-            font = ImageFont.truetype('HelveticaNeue.dfont', self.Font[1])
+            font = ImageFont.truetype('Keyboard.ttf', self.Font[1])
 
         size = font.getsize(self.ButtonText)
         height = font.getsize(f'{self.ButtonText}g')[1]
