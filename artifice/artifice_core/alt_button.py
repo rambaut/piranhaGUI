@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import base64
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from io import BytesIO
+from tkinter import ttk
 
 import artifice_core.consts
 
@@ -43,21 +44,31 @@ class AltButton(sg.Button):
 
         super().__init__(mouseover_colors=self.MouseOverColors, **kwargs)
 
+    def set_text_color(self, color):
+        try:
+            alt_style = ttk.Style()
+            alt_style.configure(self.Widget.cget('style'), foreground=color)
+            #self.Widget.config(style=self.Widget.cget('style'))
+        except:
+            self.Widget.config(fg=color)
+
     # bind mouseover events to button, window must be finalized first
     def bind_mouseover(self):
         self.Widget.bind("<Enter>", self.on_enter)
         self.Widget.bind("<Leave>", self.on_leave)
-        self.Widget.config(fg=self.MouseOverColors[1])
+        self.set_text_color(self.MouseOverColors[1])
+
 
     # highlight button
     def on_enter(self, e):
         self.update(image_data=self.PressImage)
-        self.Widget.config(fg=self.MouseOverColors[0])
+        self.set_text_color(self.MouseOverColors[0])
+        #self.Widget.config(fg=self.MouseOverColors[0])
 
     # return to normal color scheme
     def on_leave(self, e):
         self.update(image_data=self.RegImage)
-        self.Widget.config(fg=self.MouseOverColors[1])
+        self.set_text_color(self.MouseOverColors[1])
 
 
     def get_string_size(self):
