@@ -136,14 +136,7 @@ def run_startup_window(window, font=None):
             window.close()
             break
             return
-
-        elif event == '-MIN-':
-            try:
-                window.hide()
-            except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
-
+            
         elif event == '-DOCKER INSTALL-':
             try:
                 open_new_tab('https://docs.docker.com/get-docker/')
