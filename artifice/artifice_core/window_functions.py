@@ -5,7 +5,7 @@ import threading
 import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
 
-
+# prints the queued log output until it's empty, prints a message if container stopped
 def print_container_log(log_queue, window, output_key, logfile):
     queue_empty = False
     while not queue_empty:
@@ -22,6 +22,7 @@ def print_container_log(log_queue, window, output_key, logfile):
 
     return False
 
+# asks the user whether they would like to stop the running container(s) when they close the window
 def check_stop_on_close(names: list, window, client, container, font = None):
     to_stop = []
     for name in names:
@@ -39,6 +40,7 @@ def check_stop_on_close(names: list, window, client, container, font = None):
         artifice_core.start_rampart.stop_docker(client=client, container=None, container_name=container_name)
         update_log(f'{name} stopped')
 
+# queues the log output from already running container
 def get_pre_log(client, log_queue, container_name):
     container = client.containers.get(container_name)
     log = container.logs(stream=True)
@@ -47,6 +49,7 @@ def get_pre_log(client, log_queue, container_name):
 
     return container
 
+# checks if container running
 def setup_check_container(tool_name):
     update_log(f'checking if {tool_name} is running...')
     running = False
