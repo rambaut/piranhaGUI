@@ -53,6 +53,16 @@ def get_pre_log(client, log_queue, container_name):
 def setup_check_container(tool_name):
     update_log(f'checking if {tool_name} is running...')
     running = False
+    if tool_name == 'RAMPART':
+        image_tag = artifice_core.consts.RAMPART_IMAGE
+    elif tool_name == 'PIRANHA':
+        image_tag = artifice_core.consts.PIRANHA_IMAGE
+
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(None, image_tag, font=None, popup=False)
+
+    if not got_image:
+        status = f'{tool_name} is not installed'
+        return False, '', status, got_image
 
     if tool_name == 'RAMPART':
         running = artifice_core.start_rampart.check_rampart_running()
@@ -67,4 +77,4 @@ def setup_check_container(tool_name):
         button_text = f'Start {tool_name}'
         status = f'{tool_name} is not running'
 
-    return running, button_text, status
+    return running, button_text, status, True

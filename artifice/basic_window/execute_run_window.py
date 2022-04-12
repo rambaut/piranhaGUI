@@ -32,8 +32,8 @@ def make_theme():
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
-    rampart_running, rampart_button_text, rampart_status = setup_check_container('RAMPART')
-    piranha_running, piranha_button_text, piranha_status = setup_check_container('PIRANHA')
+    rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
+    piranha_running, piranha_button_text, piranha_status, got_piranha_image = setup_check_container('PIRANHA')
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-RAMPART OUTPUT-'),],
@@ -49,12 +49,12 @@ def setup_layout(theme='Dark', font = None):
     [AltButton(button_text='Edit run',size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
-    AltButton(button_text=rampart_button_text,size=button_size,font=font,key='-START/STOP RAMPART-'),
+    AltButton(button_text=rampart_button_text,size=button_size, visible=got_piranha_image, font=font,key='-START/STOP RAMPART-'),
     AltButton(button_text='Display RAMPART',size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
     [
-    AltButton(button_text=piranha_button_text,size=button_size,font=font, key='-START/STOP PIRANHA-'),
+    AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_rampart_image, key='-START/STOP PIRANHA-'),
     AltButton(button_text='Display PIRANHA',size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
