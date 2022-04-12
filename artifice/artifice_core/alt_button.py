@@ -37,6 +37,8 @@ class AltButton(sg.Button):
 
         self.RegImage = self.create_button_image(fill=self.MouseOverColors[0])
         self.PressImage = self.create_button_image(fill=self.MouseOverColors[1])
+        self.AltColors = (self.MouseOverColors[0], self.MouseOverColors[1])
+        self.MouseOverColors = (self.MouseOverColors[0], sg.theme_background_color())
 
         kwargs['image_data'] = self.RegImage
         kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
@@ -56,19 +58,22 @@ class AltButton(sg.Button):
     def bind_mouseover(self):
         self.Widget.bind("<Enter>", self.on_enter)
         self.Widget.bind("<Leave>", self.on_leave)
-        self.set_text_color(self.MouseOverColors[1])
+        self.set_text_color(self.AltColors[1])
 
 
     # highlight button
     def on_enter(self, e):
         self.update(image_data=self.PressImage)
-        self.set_text_color(self.MouseOverColors[0])
+        #self.set_text_color(self.MouseOverColors[0])
+        self.set_text_color(self.AltColors[0])
         #self.Widget.config(fg=self.MouseOverColors[0])
 
     # return to normal color scheme
     def on_leave(self, e):
         self.update(image_data=self.RegImage)
-        self.set_text_color(self.MouseOverColors[1])
+        self.set_text_color(self.AltColors[1])
+        #self.set_text_color(self.MouseOverColors[1])
+        #self.set_text_color(self.MouseOverColors[1])
 
 
     def get_string_size(self):
@@ -76,7 +81,10 @@ class AltButton(sg.Button):
         try:
             font = ImageFont.truetype('arial.ttf', self.Font[1])
         except:
-            font = ImageFont.truetype('Keyboard.ttf', self.Font[1])
+            try:
+                font = ImageFont.truetype('Keyboard.ttf', self.Font[1])
+            except:
+                font = ImageFont.truetype('./resources/LiberationSans-Regular.ttf', self.Font[1])
 
         size = font.getsize(self.ButtonText)
         height = font.getsize(f'{self.ButtonText}g')[1]
