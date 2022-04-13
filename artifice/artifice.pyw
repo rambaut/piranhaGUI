@@ -14,7 +14,7 @@ import artifice_core.startup_window
 
 #create artifice theme
 def make_theme(poseqco_scheme=True):
-    if poseqco_scheme:
+    if poseqco_scheme: # poseqco color scheme
         Artifice_Theme = {'BACKGROUND': "#FBECA6",
                    'TEXT': '#000000',
                    'INPUT': '#FFAE59',
@@ -25,7 +25,7 @@ def make_theme(poseqco_scheme=True):
                    'BORDER': 1,
                    'SLIDER_DEPTH': 0,
                    'PROGRESS_DEPTH': 0}
-    else:
+    else: # artic color scheme
         Artifice_Theme = {'BACKGROUND': "#072429",
                    'TEXT': '#f7eacd',
                    'INPUT': '#1e5b67',
@@ -78,15 +78,13 @@ if __name__ == '__main__':
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font)
 
-    if advanced != None:
+    if advanced != None: # if button pressed to launch artifice
         try:
             if advanced:
                 window, rampart_running = advanced_window.main_window.create_main_window(font=font)
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
             else:
-                #window, rampart_running = basic_window.main_window.create_main_window(font=font)
-                #basic_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
-                while True:
+                while True: # user can go back and forth between editing and executing runs
                     window = basic_window.edit_run_window.create_edit_window(font=font)
                     run_info = basic_window.edit_run_window.run_edit_window(window, font=font)
                     if run_info == None:
@@ -97,6 +95,8 @@ if __name__ == '__main__':
                     edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running)
                     if edit != True:
                         break
+            exit_time = datetime.today()
+            update_log(f'\nExited successfully at {exit_time}\n')
 
 
         except Exception as err:
@@ -106,8 +106,6 @@ if __name__ == '__main__':
         else:
             window.close()
 
-        exit_time = datetime.today()
-        update_log(f'\nExited successfully at {exit_time}\n')
 
     else:
         exit_time = datetime.today()
