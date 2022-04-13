@@ -18,15 +18,10 @@ class AltButton(sg.Button):
         config = artifice_core.consts.retrieve_config()
         scaling=config['SCALING']
         if self.Size == (None, None):
-            #width = int(self.get_string_size()
-            #print(width)
             self.Size = self.get_string_size()
             self.Size = (int(self.Size[0]+self.Size[1]*3*scaling), int(self.Size[1]*1.75*scaling))
         else:
             self.Size = (int(self.Size[0]*scaling), int(self.Size[1]*scaling))
-            #self.Size = tuple([3*x for x in self.Size])
-
-        #kwargs['image_filename']='./resources/button.png'
 
         if mouseover_colors != (None, None):
             self.MouseOverColors = sg.button_color_to_tuple(mouseover_colors)
@@ -36,7 +31,7 @@ class AltButton(sg.Button):
             self.MouseOverColors = (sg.theme_button_color()[1], sg.theme_button_color()[0])
 
         self.RegImage = self.create_button_image(fill=self.MouseOverColors[0])
-        self.PressImage = self.create_button_image(fill=self.MouseOverColors[1])
+        self.HighlightImage = self.create_button_image(fill=self.MouseOverColors[1])
         self.AltColors = (self.MouseOverColors[0], self.MouseOverColors[1])
         self.MouseOverColors = (self.MouseOverColors[0], sg.theme_background_color())
 
@@ -46,6 +41,7 @@ class AltButton(sg.Button):
 
         super().__init__(mouseover_colors=self.MouseOverColors, **kwargs)
 
+# set text color of button whether it is a ttk (on Mac) or tk button
     def set_text_color(self, color):
         try:
             alt_style = ttk.Style()
@@ -63,21 +59,15 @@ class AltButton(sg.Button):
 
     # highlight button
     def on_enter(self, e):
-        self.update(image_data=self.PressImage)
-        #self.set_text_color(self.MouseOverColors[0])
+        self.update(image_data=self.HighlightImage)
         self.set_text_color(self.AltColors[0])
-        #self.Widget.config(fg=self.MouseOverColors[0])
 
     # return to normal color scheme
     def on_leave(self, e):
         self.update(image_data=self.RegImage)
         self.set_text_color(self.AltColors[1])
-        #self.set_text_color(self.MouseOverColors[1])
-        #self.set_text_color(self.MouseOverColors[1])
-
 
     def get_string_size(self):
-        #font = ImageFont.truetype('arial.ttf', 18)
         try:
             font = ImageFont.truetype('arial.ttf', self.Font[1])
         except:
@@ -91,11 +81,12 @@ class AltButton(sg.Button):
         size = (size[0], height)
         return size
 
+# create image to be used as button icon
     def create_button_image(self, fill='#ff0000'):
         scl_fctr = 4 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)
-        draw.rounded_rectangle([(0,0),((self.Size[0]-5)*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
+        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
         button_image = button_image.resize(self.Size, resample=Image.ANTIALIAS) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()
