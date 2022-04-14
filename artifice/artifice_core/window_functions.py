@@ -100,6 +100,7 @@ def error_popup(err, font):
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     error_popup = sg.Window('ERROR', layout, disable_close=False, finalize=True,
                                 font=font, resizable=False, no_titlebar=False,)
+    AltButton.intialise_buttons(error_popup)
 
     run_error_popup(error_popup)
     #sg.popup_error(AltButton(button_text='Launch ARTIFICE',font=('Arial',18),key='-LAUNCH-'))
@@ -114,7 +115,6 @@ def run_error_popup(window):
             break
             return
         elif event == '-SHOW LOG-':
-            #print('?')
             window['-LOG-'].update(visible=True)
             window['-SHOW LOG-'].update(visible=False)
 
