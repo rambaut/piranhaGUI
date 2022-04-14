@@ -1,9 +1,12 @@
 import PySimpleGUI as sg
 import queue
 import threading
+import traceback
 
 import artifice_core.start_rampart
+import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
+from artifice_core.alt_button import AltButton
 
 # prints the queued log output until it's empty, prints a message if container stopped
 def print_container_log(log_queue, window, output_key, logfile):
@@ -78,3 +81,43 @@ def setup_check_container(tool_name):
         status = f'{tool_name} is not running'
 
     return running, button_text, status, True
+
+def error_popup(err, font):
+    update_log(traceback.format_exc())
+    sg.theme('Artifice')
+    #log = ''
+    filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
+    with open(filepath, 'r') as logfile:
+        log = logfile.read()
+
+    layout = [
+            [sg.Text(f'Error: {err}',)],
+            [AltButton(button_text='Show logs',font=font,key='-SHOW LOG-')],
+            [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
+            [AltButton(button_text='OK',font=font,key='-EXIT-')],
+
+    ]
+    #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
+    error_popup = sg.Window('ERROR', layout, disable_close=False, finalize=True,
+                                font=font, resizable=False, no_titlebar=False,)
+
+    run_error_popup(error_popup)
+    #sg.popup_error(AltButton(button_text='Launch ARTIFICE',font=('Arial',18),key='-LAUNCH-'))
+
+def run_error_popup(window):
+    while True:
+        #config = artifice_core.consts.retrieve_config()
+        event, values = window.read()
+
+        if event == 'Exit' or event == sg.WIN_CLOSED or event == '-EXIT-':
+            window.close()
+            break
+            return
+        elif event == '-SHOW LOG-':
+            #print('?')
+            window['-LOG-'].update(visible=True)
+            window['-SHOW LOG-'].update(visible=False)
+
+
+    window.close()
+    return None
