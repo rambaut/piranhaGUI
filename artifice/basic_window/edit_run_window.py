@@ -4,10 +4,11 @@ import docker
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
+import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
-import artifice_core.start_rampart
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
+from artifice_core.window_functions import error_popup
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -98,8 +99,7 @@ def run_edit_window(window, font = None):
                 run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font)
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
                 """
         elif event in {'-SAMPLES-FocusOut','-MINKNOW-FocusOut','-OUTDIR-FocusOut'}:
             try:
@@ -122,8 +122,7 @@ def run_edit_window(window, font = None):
                 window.close()
                 return run_info
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
     window.close()
 

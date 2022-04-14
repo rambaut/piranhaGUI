@@ -12,6 +12,7 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from artifice_core.alt_button import AltButton
+from artifice_core.window_functions import error_popup
 
 
 #create layout
@@ -136,27 +137,24 @@ def run_startup_window(window, font=None):
             window.close()
             break
             return
-            
+
         elif event == '-DOCKER INSTALL-':
             try:
                 open_new_tab('https://docs.docker.com/get-docker/')
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-RAMPART INSTALL-':
             try:
                 install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,client)
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-PIRANHA INSTALL-':
             try:
                 install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,client)
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-OPTIONS-':
             try:
@@ -164,8 +162,11 @@ def run_startup_window(window, font=None):
                 run_options_window(options_window)
                 options_window.close()
             except Exception as err:
+                """
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
+                """
+                error_popup(err, font)
 
 
         elif event == '-LAUNCH-':

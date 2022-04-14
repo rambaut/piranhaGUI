@@ -6,6 +6,7 @@ import traceback
 import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
+from artifice_core.window_functions import error_popup
 
 def samples_to_list(filepath, has_headers = True, trim = True):
     with open(filepath, newline = '') as csvfile:
@@ -146,8 +147,7 @@ def run_parse_window(window, samples, column_headers):
                 window.close()
                 return samples_column, barcodes_column
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
 
     window.close()

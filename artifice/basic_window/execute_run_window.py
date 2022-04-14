@@ -12,7 +12,7 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
-from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container
+from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
 from artifice_core.alt_button import AltButton
 
 def make_theme():
@@ -123,8 +123,7 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                         pass
 
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         if rampart_running:
             rampart_finished = print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'])
@@ -173,8 +172,7 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                     update_log('',filename=config['RAMPART_LOGFILE'],overwrite=True)
 
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-START/STOP PIRANHA-':
             try:
@@ -198,8 +196,7 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                     update_log('',filename=config['PIRANHA_LOGFILE'],overwrite=True)
 
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-VIEW RAMPART-':
             address = 'http://localhost:'+str(config['RAMPART_PORT_1'])
@@ -208,16 +205,14 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
             try:
                 open_new_tab(address)
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-VIEW PIRANHA-':
             try:
                 output_path = run_info['outputPath']
                 open_new_tab(f'{output_path}/report.html')
             except Exception as err:
-                update_log(traceback.format_exc())
-                sg.popup_error(err)
+                error_popup(err, font)
 
         elif event == '-EDIT-':
             window.close()
