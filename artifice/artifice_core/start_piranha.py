@@ -17,7 +17,7 @@ def launch_piranha(run_info, font, docker_client):
 
     return piranha_container
 
-
+# starts a container with the piranha docker image
 def start_piranha(run_path, basecalled_path, output_path, client, image, threads = artifice_core.consts.THREADS, container = None):
     if client == None:
         client = docker.from_env()

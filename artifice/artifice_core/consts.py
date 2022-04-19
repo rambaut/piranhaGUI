@@ -21,6 +21,7 @@ def get_datadir():
 
     return path.expanduser()
 
+# checks config file exists, if not creates the config file
 def setup_config():
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
@@ -28,7 +29,7 @@ def setup_config():
     else:
         shutil.copyfile('./config.yml', config_path)
 
-
+# returns a dict with config value taken from the config file
 def retrieve_config():
     config_path = str(get_datadir() / 'config.yml')
     with open(config_path) as file:
@@ -47,6 +48,7 @@ def retrieve_config():
 
     return config
 
+# edits the value of one config value
 def edit_config(key, value):
     config_path = str(get_datadir() / 'config.yml')
     with open(config_path) as file:
@@ -73,7 +75,7 @@ FONT = config['FONT']
 LOGFILE = config['LOGFILE']
 #FIRST_TIME_SETUP = config['FIRST_TIME_SETUP']
 CONSOLE_FONT = config['CONSOLE_FONT']
-THREADS = config['THREADS'] 
+THREADS = config['THREADS']
 #BACKGROUND_COLOR = "#072429"
 
 if __name__ == '__main__':

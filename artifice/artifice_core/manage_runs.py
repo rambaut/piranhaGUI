@@ -6,7 +6,7 @@ from shutil import rmtree, copytree
 from artifice_core.update_log import log_event, update_log
 import artifice_core.consts
 
-#creates a directory containing run info json
+# creates a directory containing run info json
 def save_run(run_info, title = None, overwrite = False, iter = 0, runs_dir = artifice_core.consts.RUNS_DIR):
     samples = run_info['samples']
     if title == None or title == '':
@@ -86,7 +86,7 @@ def get_run_info(values, run_info, element_dict):
 
     return run_info
 
-#retrieve the paths of directories in the run folder
+# retrieve the paths of directories in the run folder
 def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_core.consts.ARCHIVED_RUNS, hide_archived = True):
     paths = listdir(runs_dir)
     runs_set = set()
@@ -110,7 +110,8 @@ def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_
     runs = list(runs_set)
 
     return runs
-
+    
+# loads run info into window elemnts
 def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button = True):
     update_log(f'loading run: "{title}"...')
     filepath = runs_dir / title / 'run_info.json'

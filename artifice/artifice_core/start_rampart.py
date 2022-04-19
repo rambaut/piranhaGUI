@@ -48,6 +48,7 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     #os.system(command)
     return container
 
+# Stops docker container corresponding to given tool
 def stop_docker(client = None, container_name='rampart', container = None):
     if container_name == 'rampart':
         tool_name = 'RAMPART'
@@ -83,7 +84,7 @@ def queue_log(log, queue):
             log_output ='###CONTAINER STOPPED###\n'
             queue.put(log_output)
             return
-            
+
         #remove ANSI escape codes
         ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
         log_output = ansi_escape.sub('', log_str.decode('utf-8'))
@@ -120,6 +121,7 @@ def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'R
     else:
         return False, client
 
+# Checks if docker is installed
 def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/', popup = True):
     try:
         info = docker.from_env().info()

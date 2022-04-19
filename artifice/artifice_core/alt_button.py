@@ -6,7 +6,7 @@ from tkinter import ttk
 
 import artifice_core.consts
 
-# Alternative to standard PySimpleGUI button with curved edges. Highlights on mouseover
+# Alternative to standard PySimpleGUI button, with curved edges. Highlights on mouseover
 class AltButton(sg.Button):
 
     def __init__(self, size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
@@ -41,7 +41,7 @@ class AltButton(sg.Button):
 
         super().__init__(mouseover_colors=self.MouseOverColors, **kwargs)
 
-# set text color of button whether it is a ttk (on Mac) or tk button
+    # set text color of button whether it is a ttk (on Mac) or tk button
     def set_text_color(self, color):
         try:
             alt_style = ttk.Style()
@@ -67,6 +67,7 @@ class AltButton(sg.Button):
         self.update(image_data=self.RegImage)
         self.set_text_color(self.AltColors[1])
 
+    # determines the size of the string for font size given
     def get_string_size(self):
         try:
             font = ImageFont.truetype('arial.ttf', self.Font[1])
@@ -81,7 +82,7 @@ class AltButton(sg.Button):
         size = (size[0], height)
         return size
 
-# create image to be used as button icon
+    # create image to be used as button icon
     def create_button_image(self, fill='#ff0000'):
         scl_fctr = 4 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))

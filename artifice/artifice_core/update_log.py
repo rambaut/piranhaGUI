@@ -19,5 +19,6 @@ def update_log(line, filename = artifice_core.consts.LOGFILE, overwrite = False,
         else:
             f.write(line)
 
+# lazy function to log a PySimpleGUI event 
 def log_event(input, filename = artifice_core.consts.LOGFILE):
     update_log(f'\nEVENT: {input}', filename)

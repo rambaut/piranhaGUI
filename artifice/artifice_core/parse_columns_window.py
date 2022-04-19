@@ -8,6 +8,7 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup
 
+# return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
     with open(filepath, newline = '') as csvfile:
         csvreader = csv.reader(csvfile)
@@ -63,6 +64,7 @@ def setup_parse_layout(samples, font = None, theme = None, samples_column = 0, b
 
     return layout, column_headers
 
+# returns True if there are duplicate entries in given column
 def check_for_duplicate_entries(samples, column):
     samples_list = samples_to_list(samples)[0]
     entries = []

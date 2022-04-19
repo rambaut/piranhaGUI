@@ -106,6 +106,7 @@ def create_startup_window(theme = 'Artifice', font = None, window = None, scale 
 
     return new_window
 
+# popup to show user while pulling image
 def create_install_popup(name, font):
     sg.theme('Artifice')
     inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))

@@ -82,6 +82,7 @@ def setup_check_container(tool_name):
 
     return running, button_text, status, True
 
+# creates a popup stating the exception raised with option of showing the logs
 def error_popup(err, font):
     update_log(traceback.format_exc())
     sg.theme('Artifice')

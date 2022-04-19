@@ -6,6 +6,8 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 
+# Options window to allow user to modify certain config values
+
 def setup_options_layout(theme = 'Dark', font = None):
     config = artifice_core.consts.retrieve_config()
     sg.theme(theme)
