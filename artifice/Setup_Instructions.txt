@@ -1,3 +1,4 @@
+### Running from terminal ###
 These instructions assume you have installed conda and docker installed before you proceed.
 Instructions for installing conda: https://conda.io/projects/conda/en/latest/user-guide/install/index.html
 Instructions for installing docker: https://docs.docker.com/engine/install/
@@ -12,6 +13,12 @@ $ conda activate artifice
 
 To run artifice from the terminal:
 
-$ python artifice.py
+$ python artifice.pyw
 
-[TODO: ADD INSTRUCTIONS TO CREATE EXECUTABLE WITH PYINSTALLER]
+### Creating executable (windows) ###
+
+To create an executable on windows first follow the steps above to create the conda environment, then create executable using pyinstaller and the provided spec file:
+
+$ pyinstaller windows_build\artifice.spec
+
+You can find the executable at ./windows_build/dist/artifice.exe
