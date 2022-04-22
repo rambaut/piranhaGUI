@@ -12,16 +12,23 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
 
 
 #create layout
 def setup_layout(theme='Dark', font = None, scale = 1):
     sg.theme(theme)
+    config = artifice_core.consts.retrieve_config()
+
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
-        docker_status = 'Docker installed'
+        docker_status = translate_text('Docker installed', language, translate_scheme)
         docker_text_color = '#00bd00' #green
     else:
         docker_status = 'Docker not installed'
@@ -30,7 +37,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     got_rampart_image, docker_client = artifice_core.start_rampart.check_for_image(None, artifice_core.consts.RAMPART_IMAGE, font=font, popup=False)
 
     if got_rampart_image:
-        rampart_image_status = 'RAMPART image installed'
+        rampart_image_status = translate_text('RAMPART image installed', language, translate_scheme)
         rampart_pull_text = 'Check for updates to RAMPART image'
         rampart_text_color = '#00bd00'
     else:
@@ -95,7 +102,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     return layout
 
 def create_startup_window(theme = 'Artifice', font = None, window = None, scale = 1):
-    update_log('creating main window')
+    update_log('creating startup window')
     layout = setup_layout(theme=theme, font=font, scale=scale)
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
 
@@ -160,8 +167,9 @@ def run_startup_window(window, font=None):
         elif event == '-OPTIONS-':
             try:
                 options_window = create_options_window(font=font)
-                run_options_window(options_window)
+                run_options_window(options_window, font)
                 options_window.close()
+                window = create_startup_window(font=font)
             except Exception as err:
                 """
                 update_log(traceback.format_exc())
