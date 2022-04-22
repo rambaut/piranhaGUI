@@ -57,6 +57,7 @@ def make_barcodes_list(run_info):
 
     return barcodes_list
 
+# save a barcode file based on given samples file and selected columns
 def save_barcodes(run_info):
     barcodes_list = make_barcodes_list(run_info)
     title = run_info['title']
@@ -67,6 +68,7 @@ def save_barcodes(run_info):
         for row in barcodes_list:
             csvwriter.writerow(row)
 
+# checks if the sample file used to make barcodes file has been edited  since barcode file created
 def check_barcodes(run_info, font = None):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
@@ -105,8 +107,6 @@ def check_barcodes(run_info, font = None):
 
     return False
 
-
-
 def create_barcodes_window(samples, theme = 'Artifice', font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
     layout, column_headers = setup_barcodes_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
@@ -115,7 +115,6 @@ def create_barcodes_window(samples, theme = 'Artifice', font = None, window = No
         window.close()
 
     return new_window, column_headers
-
 
 def run_barcodes_window(window, samples, column_headers):
     while True:
