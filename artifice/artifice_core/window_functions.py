@@ -122,3 +122,7 @@ def run_error_popup(window):
 
     window.close()
     return None
+
+def translate_element(string: str, language: str):
+
+    return string
