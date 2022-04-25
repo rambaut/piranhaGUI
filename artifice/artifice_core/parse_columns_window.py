@@ -32,7 +32,7 @@ def samples_to_list(filepath, has_headers = True, trim = True):
 
 def setup_parse_layout(samples, font = None, theme = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
-
+    config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
         language = config['LANGUAGE']

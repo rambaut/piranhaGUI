@@ -31,7 +31,7 @@ def make_theme():
 
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
-
+    config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
         language = config['LANGUAGE']
