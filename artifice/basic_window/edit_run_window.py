@@ -8,7 +8,7 @@ import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
-from artifice_core.window_functions import error_popup
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -27,25 +27,32 @@ def make_theme():
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+
+
     button_size=(120,36)
     layout = [
     [
-    sg.Text('Samples:',size=(14,1)),
+    sg.Text(translate_text('Samples:',language,translate_scheme),size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
-    AltFileBrowse(file_types=(("CSV Files", "*.csv"),),size=button_size,font=font),
-    AltButton(button_text='View',size=button_size,font=font,key='-VIEW SAMPLES-'),
+    AltFileBrowse(button_text=translate_text('Browse',language,translate_scheme),file_types=(("CSV Files", "*.csv"),),size=button_size,font=font),
+    AltButton(button_text=translate_text('View',language,translate_scheme),size=button_size,font=font,key='-VIEW SAMPLES-'),
     ],
     [
-    sg.Text('MinKnow run:',size=(14,1)),
+    sg.Text(translate_text('MinKnow run:',language,translate_scheme),size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-MINKNOW-',),
-    AltFolderBrowse(font=font,size=button_size),
+    AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),font=font,size=button_size),
     ],
     [
-    sg.Text('Output Folder:',size=(14,1)),
+    sg.Text(translate_text('Output Folder:',language,translate_scheme),size=(14,1)),
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-OUTDIR-',),
-    AltFolderBrowse(font=font,size=button_size,),
+    AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),font=font,size=button_size,),
     ],
-    [AltButton(button_text='Confirm',size=button_size,font=font,key='-CONFIRM-'),],
+    [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
 
