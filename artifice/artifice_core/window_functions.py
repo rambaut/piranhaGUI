@@ -98,8 +98,11 @@ def error_popup(err, font):
     except:
         language = 'English'
 
+    er_tr = translate_text('Error',language,translate_scheme)
+    error_message = f'{er_tr}: {err}'
+
     layout = [
-            [sg.Text(translate_text(f'Error: {err}',language,translate_scheme),)],
+            [sg.Text(error_message,)],
             [AltButton(button_text=translate_text('Show logs',language,translate_scheme),font=font,key='-SHOW LOG-')],
             [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
             [AltButton(button_text=translate_text('OK',language,translate_scheme),font=font,key='-EXIT-')],
