@@ -6,7 +6,7 @@ import traceback
 import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
 
 # return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
@@ -33,6 +33,12 @@ def samples_to_list(filepath, has_headers = True, trim = True):
 def setup_parse_layout(samples, font = None, theme = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme(theme)
 
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+
     samples_list, column_headers = samples_to_list(samples, has_headers=has_headers)
 
     visible_column_map = []
@@ -41,15 +47,15 @@ def setup_parse_layout(samples, font = None, theme = None, samples_column = 0, b
 
     layout = [
         [
-        sg.Text('Choose Samples column:',size=(25,1)),
+        sg.Text(translate_text('Choose Samples column:',language,translate_scheme),size=(25,1)),
         sg.OptionMenu(column_headers, default_value=column_headers[int(samples_column)], key='-SAMPLES COLUMN-'),
         ],
         [
-        sg.Text('Choose Barcodes column:',size=(25,1)),
+        sg.Text(translate_text('Choose Barcodes column:',language,translate_scheme),size=(25,1)),
         sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], key='-BARCODES COLUMN-'),
         ],
         [
-        AltButton(button_text='Save',font=font,key='-SAVE-'),
+        AltButton(button_text=translate_text('Save',language,translate_scheme),font=font,key='-SAVE-'),
         ],
         [
         sg.Table(
