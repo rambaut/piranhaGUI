@@ -90,6 +90,12 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
 
 def run_main_window(window, run_info, font = None, rampart_running = False):
     config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    print(language)
     selected_run_title = 'TEMP_RUN'
 
     docker_client = docker.from_env()
@@ -123,8 +129,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                 if piranha_finished:
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
-                    window['-START/STOP PIRANHA-'].update(text='Start PIRANHA')
-                    window['-PIRANHA STATUS-'].update('PIRANHA is not running')
+                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start PIRANHA',language,translate_scheme))
+                    window['-PIRANHA STATUS-'].update(translate_text('PIRANHA is not running',language,translate_scheme))
                     window['-VIEW PIRANHA-'].update(visible=True)
                     try:
                         output_path = run_info['outputPath']
@@ -143,8 +149,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                 rampart_running = False
                 artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
                 window['-VIEW RAMPART-'].update(visible=False)
-                window['-START/STOP RAMPART-'].update(text='Start RAMPART')
-                window['-RAMPART STATUS-'].update('RAMPART is not running')
+                window['-START/STOP RAMPART-'].update(text=translate_text('Start RAMPART',language,translate_scheme))
+                window['-RAMPART STATUS-'].update(translate_text('RAMPART is not running',language,translate_scheme))
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             running_tools = []
@@ -164,8 +170,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'])
                     window['-VIEW RAMPART-'].update(visible=False)
-                    window['-START/STOP RAMPART-'].update(text='Start RAMPART')
-                    window['-RAMPART STATUS-'].update('RAMPART is not running')
+                    window['-START/STOP RAMPART-'].update(text=translate_text('Start RAMPART',language,translate_scheme))
+                    window['-RAMPART STATUS-'].update(translate_text('RAMPART is not running',language,translate_scheme))
                 else:
                     rampart_container = artifice_core.start_rampart.launch_rampart(
                             run_info, docker_client,
@@ -174,8 +180,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                             )
                     rampart_running = True
                     window['-VIEW RAMPART-'].update(visible=True)
-                    window['-START/STOP RAMPART-'].update(text='Stop RAMPART')
-                    window['-RAMPART STATUS-'].update('RAMPART is running')
+                    window['-START/STOP RAMPART-'].update(text=translate_text('Stop RAMPART',language,translate_scheme,pr=True))
+                    window['-RAMPART STATUS-'].update(translate_text('RAMPART is running',language,translate_scheme))
 
                     rampart_log = rampart_container.logs(stream=True)
                     rampart_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(rampart_log, rampart_log_queue), daemon=True)
@@ -192,14 +198,14 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container_name='piranha', container=piranha_container)
                     print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'])
-                    window['-START/STOP PIRANHA-'].update(text='Start PIRANHA')
-                    window['-PIRANHA STATUS-'].update('PIRANHA is not running')
+                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start PIRANHA',language,translate_scheme))
+                    window['-PIRANHA STATUS-'].update(translate_text('PIRANHA is not running',language,translate_scheme))
 
                 else:
                     piranha_container = launch_piranha(run_info, font, docker_client)
                     piranha_running = True
-                    window['-START/STOP PIRANHA-'].update(text='Stop PIRANHA')
-                    window['-PIRANHA STATUS-'].update('PIRANHA is running')
+                    window['-START/STOP PIRANHA-'].update(text=translate_text('Stop PIRANHA',language,translate_scheme))
+                    window['-PIRANHA STATUS-'].update(translate_text('PIRANHA is running',language,translate_scheme))
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)

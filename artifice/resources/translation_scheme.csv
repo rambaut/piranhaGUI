@@ -30,6 +30,10 @@ Start RAMPART,Démarrez RAMPART
 RAMPART is not running,RAMPART ne tourne pas
 Start PIRANHA,Démarrez PIRANHA
 PIRANHA is not running,PIRANHA ne tourne pas
+Stop RAMPART,Arrêz RAMPART
+RAMPART is running,RAMPART tourne
+Stop PIRANHA,Arrêz PIRANHA
+PIRANHA is running,PIRANHA tourne 
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
 Edit run,Éditez la course
@@ -43,6 +47,6 @@ ERROR,ERREUR
 ~PARSE COLUMNS WINDOW~,
 Choose Samples column:,Choisissez la colonne énchantillons
 Choose Barcodes column:,Choisissez la colonne codes-barres
-barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées 
+barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
 specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
 specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
