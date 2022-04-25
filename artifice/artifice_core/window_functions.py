@@ -92,15 +92,21 @@ def error_popup(err, font):
     with open(filepath, 'r') as logfile:
         log = logfile.read()
 
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+
     layout = [
-            [sg.Text(f'Error: {err}',)],
-            [AltButton(button_text='Show logs',font=font,key='-SHOW LOG-')],
+            [sg.Text(translate_text(f'Error: {err}',language,translate_scheme),)],
+            [AltButton(button_text=translate_text('Show logs',language,translate_scheme),font=font,key='-SHOW LOG-')],
             [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
-            [AltButton(button_text='OK',font=font,key='-EXIT-')],
+            [AltButton(button_text=translate_text('OK',language,translate_scheme),font=font,key='-EXIT-')],
 
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
-    error_popup = sg.Window('ERROR', layout, disable_close=False, finalize=True,
+    error_popup = sg.Window(translate_text('ERROR',language,translate_scheme), layout, disable_close=False, finalize=True,
                                 font=font, resizable=False, no_titlebar=False,)
     AltButton.intialise_buttons(error_popup)
 
