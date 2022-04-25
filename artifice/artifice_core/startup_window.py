@@ -35,7 +35,6 @@ def setup_layout(theme='Dark', font = None, scale = 1):
         docker_text_color = '#db4325' #red
 
     got_rampart_image, docker_client = artifice_core.start_rampart.check_for_image(None, artifice_core.consts.RAMPART_IMAGE, font=font, popup=False)
-    got_rampart_image = False
 
     if got_rampart_image:
         rampart_image_status = translate_text('RAMPART image installed', language, translate_scheme)
@@ -47,7 +46,6 @@ def setup_layout(theme='Dark', font = None, scale = 1):
         rampart_text_color = '#db4325' #red
 
     got_piranha_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.PIRANHA_IMAGE, font=font, popup=False)
-    got_piranha_image = False
 
     if got_piranha_image:
         piranha_image_status = translate_text('PIRANHA image installed',language,translate_scheme)
