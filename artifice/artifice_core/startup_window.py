@@ -169,7 +169,7 @@ def run_startup_window(window, font=None):
                 options_window = create_options_window(font=font)
                 run_options_window(options_window, font)
                 options_window.close()
-                window = create_startup_window(font=font)
+                window = create_startup_window(window=window,font=font)
             except Exception as err:
                 """
                 update_log(traceback.format_exc())
