@@ -25,15 +25,15 @@ def setup_options_layout(theme = 'Dark', font = None):
 
     layout = [
         [
-        sg.Text('Threads to use for Piranha:',size=(30,1)),
+        sg.Text(translate_text('Threads to use for Piranha:',language,translate_scheme),size=(30,1)),
         sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
         ],
         [
-        sg.Text(translate_text('Select language:', language, translate_scheme),size=(30,1)),
+        sg.Text(translate_text('Select language:',language,translate_scheme),size=(30,1)),
         sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
         ],
         [
-        AltButton(button_text='Save', font=font,key='-SAVE-'),
+        AltButton(button_text=translate_text('Save',language,translate_scheme), font=font,key='-SAVE-'),
         ],
     ]
 

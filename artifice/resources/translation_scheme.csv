@@ -1,15 +1,20 @@
 English,Français
+~SETUP WINDOW~
 Docker installed,[Docker Status in French]
 Docker not installed,
 RAMPART image installed,
 Check for updates to RAMPART image
 PIRANHA image installed
 Check for updates to PIRANHA image
-An internet connection and a Docker install is required to install RAMPART and PIRANHA images
-Open Docker Site in Browser
-Launch ARTIFICE
-Options
 RAMPART image not installed
 Install RAMPART image
 PIRANHA image not installed
 Install PIRANHA image
+An internet connection and a Docker install is required to install RAMPART and PIRANHA images
+Open Docker Site in Browser
+Launch ARTIFICE
+Options
+~OPTIONS WINDOW~
+Select language:
+Threads to use for Piranha:
+Save
