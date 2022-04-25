@@ -43,3 +43,6 @@ ERROR
 ~PARSE COLUMNS WINDOW~
 Choose Samples column:
 Choose Barcodes column:
+barcodes and samples must be 2 separate columns
+specified barcodes column contains duplicates
+specified samples column contains duplicates
