@@ -12,7 +12,7 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
-from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
+from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme
 from artifice_core.alt_button import AltButton
 
 def make_theme():
@@ -32,8 +32,18 @@ def make_theme():
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)
 
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
+    rampart_button_text = translate_text(rampart_button_text,language,translate_scheme)
+    rampart_status = translate_text(rampart_status,language,translate_scheme)
     piranha_running, piranha_button_text, piranha_status, got_piranha_image = setup_check_container('PIRANHA')
+    piranha_button_text = translate_text(piranha_button_text,language,translate_scheme)
+    piranha_status = translate_text(piranha_status,language,translate_scheme)
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-RAMPART OUTPUT-'),],
@@ -44,20 +54,22 @@ def setup_layout(theme='Dark', font = None):
     ]
 
     button_size=(200,36)
+    rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
+    piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
 
     layout = [
-    [AltButton(button_text='Edit run',size=button_size,font=font,key='-EDIT-'),],
+    [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
     [
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_piranha_image, font=font,key='-START/STOP RAMPART-'),
-    AltButton(button_text='Display RAMPART',size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
+    AltButton(button_text=translate_text('Display RAMPART',language,translate_scheme),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_rampart_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text='Display PIRANHA',size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=translate_text('Display PIRANHA',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([[sg.Tab('RAMPART OUTPUT',rampart_tab,key='-RAMPART TAB-'),sg.Tab('PIRANHA OUTPUT',piranha_tab,key='-PIRANHA TAB-')]])],
+    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,key='-PIRANHA TAB-')]])],
     ]
 
 
