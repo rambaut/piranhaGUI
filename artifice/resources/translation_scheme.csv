@@ -1,48 +1,48 @@
 English,Français
-~SETUP WINDOW~
-Docker installed,[Docker Status in French]
-Docker not installed,
-RAMPART image installed,
-Check for updates to RAMPART image
-PIRANHA image installed
-Check for updates to PIRANHA image
-RAMPART image not installed
-Install RAMPART image
-PIRANHA image not installed
-Install PIRANHA image
-An internet connection and a Docker install is required to install RAMPART and PIRANHA images
-Open Docker Site in Browser
-Launch ARTIFICE
-Options
-~OPTIONS WINDOW~
-Select language:
-Threads to use for Piranha:
-Save
-~EDIT RUN WINDOW~
-Samples:
-Browse
-View
-MinKnow run:
-Output Folder:
-Confirm
-~EXECUTE RUN WINDOW~
-Start RAMPART
-RAMPART is not running
-Start PIRANHA
-PIRANHA is not running
-RAMPART OUTPUT
-PIRANHA OUTPUT
-Edit run
-Display RAMPART
-Display PIRANHA
-~ERROR POPUP~
-Error
-Show logs
-OK
-ERROR
-~PARSE COLUMNS WINDOW~
-Choose Samples column:
-Choose Barcodes column:
-barcodes and samples must be 2 separate columns
-specified barcodes column contains duplicates
-specified samples column contains duplicates
+~SETUP WINDOW~,
+Docker installed,Docker est installé
+Docker not installed,Docker n’est installé pas
+RAMPART image installed,Image RAMPART est installé
+Check for updates to RAMPART image,Vérifie les mises à jour de image RAMPART
+PIRANHA image installed,Image PIRANHA est installé
+Check for updates to PIRANHA image,Vérifie les mises à jour de image PIRANHA
+RAMPART image not installed,Image RAMPART n’est installé pas
+Install RAMPART image,Installez image RAMPART
+PIRANHA image not installed,Image PIRANHA n’est installé pas
+Install PIRANHA image,Installez image PIRANHA
+An internet connection and a Docker install is required to install RAMPART and PIRANHA images,Une connexion internet et un installation Docker est nécessaire pour installer la image RAMPART et la image PIRANHA
+Open Docker Site in Browser,Ouvrez le site Docker dans le navigateur
+Launch ARTIFICE,Lancez ARTIFICE
+Options,Paramétres
+~OPTIONS WINDOW~,
+Select language:,Sélectionnez la langue
+Threads to use for Piranha:,Threads à utiliser pour Piranha
+Save,Enregistrez
+~EDIT RUN WINDOW~,
+Samples:,Énchantillons:
+Browse,Parcourez
+View,Voyez
+MinKnow run:,MinKnow course:
+Output Folder:,Répetoire de sortie:
+Confirm,Confirmez
+~EXECUTE RUN WINDOW~,
+Start RAMPART,Démarrez RAMPART
+RAMPART is not running,RAMPART ne tourne pas
+Start PIRANHA,Démarrez PIRANHA
+PIRANHA is not running,PIRANHA ne tourne pas
+RAMPART OUTPUT,SORTIE RAMPART
+PIRANHA OUTPUT,SORTIE PIRANHA
+Edit run,Éditez la course
+Display RAMPART,Affichez RAMPART
+Display PIRANHA,Affichez PIRANHA
+~ERROR POPUP~,
+Error,
+Show logs,
+OK,
+ERROR,
+~PARSE COLUMNS WINDOW~,
+Choose Samples column:,
+Choose Barcodes column:,
+barcodes and samples must be 2 separate columns,
+specified barcodes column contains duplicates,
+specified samples column contains duplicates,
