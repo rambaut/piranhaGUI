@@ -134,14 +134,14 @@ def run_error_popup(window):
     return None
 
 def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
-    with open(filepath, newline = '') as csvfile:
+    with open(filepath, newline = '', encoding='utf-8') as csvfile:
         csvreader = csv.reader(csvfile)
         scheme_list = list(csvreader)
 
     return scheme_list
 
 # Takes text (in english) and returns version in given language if translation in scheme
-def translate_text(string: str, language: str, scheme_list = None, append_scheme = True, pr = False):
+def translate_text(string: str, language: str, scheme_list = None, append_scheme = True, vb = False):
     if scheme_list == None or append_scheme:
         scheme_list = get_translate_scheme()
 
@@ -150,10 +150,7 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
     for lang in languages:
         if lang == language:
             lang_pos = languages.index(language)
-    if pr:
-        print(language)
-        print(languages)
-        print(lang_pos)
+
     return_string = string # if no translation exists, the given string is returned back
     string_in_scheme = False
     for row in scheme_list:
@@ -176,5 +173,8 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
                 for row in scheme_list:
                     csvwriter.writerow(row)
 
+    if vb: # for debugging 
+        print(language)
+        print(return_string)
 
     return return_string
