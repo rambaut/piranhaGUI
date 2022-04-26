@@ -46,6 +46,9 @@ def retrieve_config():
 
     config['THREADS'] = THREADS
 
+    if 'LANGUAGE' not in config:
+        config['LANGUAGE'] = 'English'
+
     return config
 
 # edits the value of one config value
