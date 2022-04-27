@@ -12,7 +12,7 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
 
 #create layout
@@ -58,17 +58,11 @@ def setup_layout(theme='Dark', font = None, scale = 1):
 
 
     # Resize PNG file to appropiate size
-    if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
-        mkdir(artifice_core.consts.get_datadir() / 'resources')
-    processed_image = str(artifice_core.consts.get_datadir() / 'resources' / 'poseqco_scaled.png')
-    image_file = './resources/poseqco_logo.png'
-    size = (int(150*scale), int(150*scale))
-    im = Image.open(image_file)
-    im = im.resize(size, resample=Image.BICUBIC)
-    im.save(processed_image)
+    poseqco_scaled = scale_image('poseqco_logo.png',scale,(150,150))
+
 
     logo_column = [
-        [sg.Image(source = processed_image)],
+        [sg.Image(source = poseqco_scaled)],
     ]
 
     install_buttons_size = (360,36)

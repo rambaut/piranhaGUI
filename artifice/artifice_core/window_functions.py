@@ -3,6 +3,8 @@ import queue
 import threading
 import traceback
 import csv
+import os.path
+from PIL import Image
 
 import artifice_core.start_rampart
 import artifice_core.consts
@@ -133,6 +135,19 @@ def run_error_popup(window):
     window.close()
     return None
 
+def scale_image(filename, scale, size):
+    if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
+        mkdir(artifice_core.consts.get_datadir() / 'resources')
+
+    processed_image = str(artifice_core.consts.get_datadir() / 'resources' / filename)
+    image_file = f'./resources/{filename}'
+    size = (int(size[0]*scale), int(size[1]*scale))
+    im = Image.open(image_file)
+    im = im.resize(size, resample=Image.BICUBIC)
+    im.save(processed_image)
+
+    return processed_image
+
 def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
     with open(filepath, newline = '', encoding='utf-8') as csvfile:
         csvreader = csv.reader(csvfile)
@@ -173,7 +188,7 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
                 for row in scheme_list:
                     csvwriter.writerow(row)
 
-    if vb: # for debugging 
+    if vb: # for debugging
         print(language)
         print(return_string)
 
