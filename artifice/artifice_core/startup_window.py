@@ -59,10 +59,12 @@ def setup_layout(theme='Dark', font = None, scale = 1):
 
     # Resize PNG file to appropiate size
     poseqco_scaled = scale_image('poseqco_logo.png',scale,(150,150))
+    piranha_scaled = scale_image('piranha.png',scale,(150,150))
 
 
     logo_column = [
         [sg.Image(source = poseqco_scaled)],
+        [sg.Image(source = piranha_scaled)],
     ]
 
     install_buttons_size = (360,36)
