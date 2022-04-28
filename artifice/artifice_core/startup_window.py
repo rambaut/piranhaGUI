@@ -58,7 +58,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
 
 
     # Resize PNG file to appropiate size
-    poseqco_scaled = scale_image('poseqco_logo.png',scale,(150,150))
+    poseqco_scaled = scale_image('poseqco_logo_cropped.png',scale,(150,68))
     piranha_scaled = scale_image('piranha.png',scale,(150,150))
 
 
