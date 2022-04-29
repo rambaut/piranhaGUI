@@ -41,7 +41,7 @@ def setup_layout(theme='Dark', font = None):
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
     rampart_button_text = translate_text(rampart_button_text,language,translate_scheme)
     rampart_status = translate_text(rampart_status,language,translate_scheme)
-    piranha_running, piranha_button_text, piranha_status, got_piranha_image = setup_check_container('PIRANHA')
+    piranha_running, piranha_button_text, piranha_status, got_piranha_image = setup_check_container('Analysis')
     piranha_button_text = translate_text(piranha_button_text,language,translate_scheme)
     piranha_status = translate_text(piranha_status,language,translate_scheme)
 

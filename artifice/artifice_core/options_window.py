@@ -25,7 +25,7 @@ def setup_options_layout(theme = 'Dark', font = None):
 
     layout = [
         [
-        sg.Text(translate_text('Threads to use for Piranha:',language,translate_scheme),size=(30,1)),
+        sg.Text(translate_text('Threads to use for analysis:',language,translate_scheme),size=(30,1)),
         sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
         ],
         [

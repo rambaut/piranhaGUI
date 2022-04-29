@@ -61,7 +61,7 @@ def setup_check_container(tool_name):
     running = False
     if tool_name == 'RAMPART':
         image_tag = artifice_core.consts.RAMPART_IMAGE
-    elif tool_name == 'PIRANHA':
+    elif tool_name == 'PIRANHA' or 'Analysis':
         image_tag = artifice_core.consts.PIRANHA_IMAGE
 
     got_image, docker_client = artifice_core.start_rampart.check_for_image(None, image_tag, font=None, popup=False)
@@ -72,6 +72,8 @@ def setup_check_container(tool_name):
 
     if tool_name == 'RAMPART':
         running = artifice_core.start_rampart.check_rampart_running()
+    elif tool_name == 'PIRANHA' or 'Analysis':
+        running = artifice_core.start_rampart.check_container('piranha')
     else:
         container_name = tool_name.lower()
         running = artifice_core.start_rampart.check_container(container_name)
@@ -156,7 +158,7 @@ def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
     return scheme_list
 
 # Takes text (in english) and returns version in given language if translation in scheme
-def translate_text(string: str, language: str, scheme_list = None, append_scheme = False, vb = False):
+def translate_text(string: str, language: str, scheme_list = None, append_scheme = True, vb = False):
     if scheme_list == None or append_scheme:
         scheme_list = get_translate_scheme()
 
@@ -183,7 +185,7 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
     if append_scheme:
         if not string_in_scheme:
             scheme_list.append([string,])
-            with open('./resources/translation_scheme.csv', 'w', newline='') as csvfile:
+            with open('./resources/translation_scheme.csv', 'w', newline='', encoding='utf-8') as csvfile:
                 csvwriter = csv.writer(csvfile)
                 for row in scheme_list:
                     csvwriter.writerow(row)

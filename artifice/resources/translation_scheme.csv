@@ -16,7 +16,7 @@ Launch ARTIFICE,Lancez ARTIFICE
 Options,Paramétres
 ~OPTIONS WINDOW~,
 Select language:,Sélectionnez la langue
-Threads to use for Piranha:,Threads à utiliser pour Piranha
+Threads to use for analysis:,Threads à utiliser pour analyse
 Save,Enregistrez
 ~EDIT RUN WINDOW~,
 Samples:,Énchantillons:
@@ -33,7 +33,7 @@ PIRANHA is not running,PIRANHA ne tourne pas
 Stop RAMPART,Arrêz RAMPART
 RAMPART is running,RAMPART tourne
 Stop PIRANHA,Arrêz PIRANHA
-PIRANHA is running,PIRANHA tourne 
+PIRANHA is running,PIRANHA tourne
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
 Edit run,Éditez la course
@@ -50,3 +50,7 @@ Choose Barcodes column:,Choisissez la colonne codes-barres
 barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
 specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
 specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
+Start Analysis
+Analysis is not running
+Stop Analysis
+Analysis is running
