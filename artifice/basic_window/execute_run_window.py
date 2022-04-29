@@ -67,7 +67,7 @@ def setup_layout(theme='Dark', font = None):
     [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_rampart_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translate_text('Display PIRANHA',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,key='-PIRANHA TAB-')]])],
     ]
@@ -129,8 +129,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                 if piranha_finished:
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
-                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start PIRANHA',language,translate_scheme))
-                    window['-PIRANHA STATUS-'].update(translate_text('PIRANHA is not running',language,translate_scheme))
+                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start Analysis',language,translate_scheme))
+                    window['-PIRANHA STATUS-'].update(translate_text('Analysis is not running',language,translate_scheme))
                     window['-VIEW PIRANHA-'].update(visible=True)
                     try:
                         output_path = run_info['outputPath']
@@ -198,14 +198,14 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container_name='piranha', container=piranha_container)
                     print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'])
-                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start PIRANHA',language,translate_scheme))
-                    window['-PIRANHA STATUS-'].update(translate_text('PIRANHA is not running',language,translate_scheme))
+                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start Analysis',language,translate_scheme))
+                    window['-PIRANHA STATUS-'].update(translate_text('Analysis is not running',language,translate_scheme))
 
                 else:
                     piranha_container = launch_piranha(run_info, font, docker_client)
                     piranha_running = True
-                    window['-START/STOP PIRANHA-'].update(text=translate_text('Stop PIRANHA',language,translate_scheme))
-                    window['-PIRANHA STATUS-'].update(translate_text('PIRANHA is running',language,translate_scheme))
+                    window['-START/STOP PIRANHA-'].update(text=translate_text('Stop Analysis',language,translate_scheme))
+                    window['-PIRANHA STATUS-'].update(translate_text('Analysis is running',language,translate_scheme))
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)
