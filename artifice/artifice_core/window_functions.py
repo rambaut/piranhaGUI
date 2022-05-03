@@ -4,6 +4,7 @@ import threading
 import traceback
 import csv
 import os.path
+from os import mkdir
 from PIL import Image
 
 import artifice_core.start_rampart
