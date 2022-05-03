@@ -36,14 +36,15 @@ Stop PIRANHA,Arrêz PIRANHA
 PIRANHA is running,PIRANHA tourne
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
+ANALYSIS OUTPUT,SORTIE ANALYSE
 Edit run,Éditez la course
 Display RAMPART,Affichez RAMPART
 Display PIRANHA,Affichez PIRANHA
-Start Analysis,
-Analysis is not running,
-Stop Analysis,
-Analysis is running,
-Open Report,
+Start Analysis, Démarrez Analyse
+Analysis is not running, Analyse ne tourne pas
+Stop Analysis, ,Arrêz Analyse
+Analysis is running, Analyse tourne
+Open Report, OuvreZ Rapport
 ~ERROR POPUP~,
 Error,Erreur
 Show logs,Affichez le journal
