@@ -4,7 +4,7 @@ import pathlib
 import sys
 import shutil
 import os.path
-from os import getenv, cpu_count
+from os import getenv, cpu_count, mkdir
 
 #returns directory where Artifice stores data, dependent on os
 def get_datadir():
@@ -18,8 +18,12 @@ def get_datadir():
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
     path = Path(os_path) / "ARTIFICE"
+    path = path.expanduser()
 
-    return path.expanduser()
+    if not os.path.isdir(path): #creates data directory if it doesn't exist
+        mkdir(path)
+
+    return path
 
 # checks config file exists, if not creates the config file
 def setup_config():
