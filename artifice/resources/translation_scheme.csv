@@ -34,17 +34,20 @@ Stop RAMPART,Arrêz RAMPART
 RAMPART is running,RAMPART tourne
 Stop PIRANHA,Arrêz PIRANHA
 PIRANHA is running,PIRANHA tourne
-RAMPART OUTPUT,SORTIE RAMPART
-PIRANHA OUTPUT,SORTIE PIRANHA
-ANALYSIS OUTPUT,SORTIE ANALYSE
 Edit run,Éditez la course
 Display RAMPART,Affichez RAMPART
 Display PIRANHA,Affichez PIRANHA
 Start Analysis, Démarrez Analyse
 Analysis is not running, Analyse ne tourne pas
-Stop Analysis, Arrêz Analyse
-Analysis is running, Analyse tourne
-Open Report, Ouvrez Rapport
+Stop Analysis,Arrêz Analyse
+Analysis is running,Analyse tourne
+Open Report,Ouvrez Rapport
+RAMPART is not installed,RAMPART n’est installé pas
+PIRANHA is not installed,PIRANHA n’est installé pas
+Analysis is not installed,Analyse n'est installé pas
+RAMPART OUTPUT,SORTIE RAMPART
+PIRANHA OUTPUT,SORTIE PIRANHA
+ANALYSIS OUTPUT,SORTIE ANALYSE
 ~ERROR POPUP~,
 Error,Erreur
 Show logs,Affichez le journal
@@ -56,3 +59,4 @@ Choose Barcodes column:,Choisissez la colonne codes-barres
 barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
 specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
 specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
+""
