@@ -3,9 +3,11 @@ import queue
 import threading
 import traceback
 import csv
+import base64
 import os.path
 from os import mkdir
 from PIL import Image
+from io import BytesIO
 
 import artifice_core.start_rampart
 import artifice_core.consts
@@ -138,7 +140,7 @@ def run_error_popup(window):
     window.close()
     return None
 
-def scale_image(filename, scale, size):
+def scale_image(filename, scale, size, output_name = ''):
     if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
         mkdir(artifice_core.consts.get_datadir() / 'resources')
 
@@ -147,9 +149,12 @@ def scale_image(filename, scale, size):
     size = (int(size[0]*scale), int(size[1]*scale))
     im = Image.open(image_file)
     im = im.resize(size, resample=Image.BICUBIC)
-    im.save(processed_image)
+    #im.save(processed_image)
 
-    return processed_image
+    buffered = BytesIO()
+    im.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue())
+
 
 def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
     with open(filepath, newline = '', encoding='utf-8') as csvfile:
