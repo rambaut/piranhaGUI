@@ -83,7 +83,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,key='-PIRANHA INSTALL-'),
     ],
     [
-    AltButton(button_text=translate_text('Launch ARTIFICE',language,translate_scheme),font=font,key='-LAUNCH-'),
+    AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
     sg.Push(),
     AltButton(button_text=translate_text('Options',language,translate_scheme),font=font,key='-OPTIONS-')
     ],
@@ -100,7 +100,8 @@ def setup_layout(theme='Dark', font = None, scale = 1):
 def create_startup_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating startup window')
     layout = setup_layout(theme=theme, font=font, scale=scale)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    #piranha_scaled = scale_image('piranha.png',scale,(32,32),output_name='piranha_titlebar.png')
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,titlebar_icon=piranha_scaled)
 
     if window != None:
         window.close()
