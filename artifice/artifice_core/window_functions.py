@@ -164,7 +164,7 @@ def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
     return scheme_list
 
 # Takes text (in english) and returns version in given language if translation in scheme
-def translate_text(string: str, language: str, scheme_list = None, append_scheme = True, vb = False):
+def translate_text(string: str, language: str, scheme_list = None, append_scheme = False, vb = False):
     if scheme_list == None or append_scheme:
         scheme_list = get_translate_scheme()
 
