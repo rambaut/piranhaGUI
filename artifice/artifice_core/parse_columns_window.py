@@ -86,6 +86,15 @@ def check_for_duplicate_entries(samples, column):
 
     return False
 
+# returns True if there are spaces in given column
+def check_spaces(samples, column):
+    samples_list = samples_to_list(samples)[0]
+    for row in samples_list:
+        if ' ' in str(row[int(column)]):
+            return True
+        
+
+
 def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
 
     layout, column_headers = setup_parse_layout(samples, font=font, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)

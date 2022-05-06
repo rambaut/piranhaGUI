@@ -101,7 +101,7 @@ def create_startup_window(theme = 'Artifice', font = None, window = None, scale 
     update_log('creating startup window')
     layout = setup_layout(theme=theme, font=font, scale=scale)
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=piranha_scaled)
+    new_window = sg.Window('piranhaGUI', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=piranha_scaled)
 
     if window != None:
         window.close()

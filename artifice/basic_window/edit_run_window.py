@@ -79,8 +79,6 @@ def run_edit_window(window, font = None):
     config = artifice_core.consts.retrieve_config()
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
-    edit_run = True
-
     docker_client = docker.from_env()
 
     element_dict = {'-SAMPLES-':'samples',
@@ -126,6 +124,8 @@ def run_edit_window(window, font = None):
         elif event == '-CONFIRM-':
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+                if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
+                    sg.popup_ok('Warning there are spaces in samples')
                 window.close()
                 return run_info
             except Exception as err:
