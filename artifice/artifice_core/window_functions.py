@@ -13,6 +13,7 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
+from artifice_core.alt_popup import alt_popup
 
 # prints the queued log output until it's empty, prints a message if container stopped
 def print_container_log(log_queue, window, output_key, logfile):
@@ -35,7 +36,7 @@ def print_container_log(log_queue, window, output_key, logfile):
 def check_stop_on_close(names: list, window, client, container, font = None):
     to_stop = []
     for name in names:
-        chk_stop = sg.popup_yes_no(f'Do you wish to stop {name} while closing?', font=font)
+        chk_stop = alt_popup_yes_no(f'Do you wish to stop {name} while closing?', font=font)
         if chk_stop == 'Yes':
             to_stop.append(name)
         else:
