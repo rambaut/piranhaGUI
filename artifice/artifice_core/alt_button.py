@@ -7,12 +7,12 @@ from tkinter import ttk
 import artifice_core.consts
 
 # Alternative to standard PySimpleGUI button, with curved edges. Highlights on mouseover
+# intialise_buttons function must be called
 class AltButton(sg.Button):
 
     def __init__(self, button_text='', size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
         self.Font = kwargs['font'] if 'font' in kwargs else ('Arial', '18')
         self.ButtonText = button_text
-        print(self.ButtonText)
         self.ButtonColor = sg.button_color_to_tuple(button_color)
 
         self.Size = size if size != (None, None) else s
@@ -71,7 +71,6 @@ class AltButton(sg.Button):
     # determines the size of the string for font size given
     def get_string_size(self):
         try:
-            print(self.Font[1])
             font = ImageFont.truetype('arial.ttf', int(self.Font[1]))
         except:
             try:
@@ -101,7 +100,7 @@ class AltButton(sg.Button):
     # NOTE: window must first be finalized in order for this work
     def intialise_buttons(window):
         for element in window.element_list():
-            if hasattr(element, 'bind_mouseover'):
+            if isinstance(element, AltButton):
                 element.bind_mouseover()
 
 # Lazy function to create AltButton folder browser, consult PySimpleGUI docs for info on parameters

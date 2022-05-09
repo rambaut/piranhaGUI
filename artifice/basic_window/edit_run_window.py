@@ -126,7 +126,7 @@ def run_edit_window(window, font = None):
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
-                    alt_popup_ok('Warning there are spaces in samples',font=font)
+                    alt_popup_ok('Warning: there are spaces in samples',font=font)
                 window.close()
                 return run_info
             except Exception as err:

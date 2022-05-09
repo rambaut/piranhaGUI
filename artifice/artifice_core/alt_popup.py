@@ -113,23 +113,23 @@ def alt_popup(*args, title=None, button_color=None, background_color=None, text_
                                     bind_return_key=True,font=font),]] #EDITED include font argument
         elif custom_text[1] is None:
             layout += [[
-                PopupButton(custom_text[0], size=(len(custom_text[0]), 1), button_color=button_color, focus=True,
-                            bind_return_key=True,font=font)]] #EDITED include font argument
+                PopupButton(custom_text[0], button_color=button_color, focus=True,
+                            bind_return_key=True,font=font)]] #EDITED include font argument removed size argument
         else:
             layout += [[PopupButton(custom_text[0], button_color=button_color, focus=True, bind_return_key=True,
-                                    size=(len(custom_text[0]), 1),font=font),
-                        PopupButton(custom_text[1], button_color=button_color, size=(len(custom_text[1]), 1),font=font)]] #EDITED include font argument
+                                    font=font), #EDITED removed size argument
+                        PopupButton(custom_text[1], button_color=button_color,font=font)]] #EDITED include font argument removed size argument
     elif button_type is sg.POPUP_BUTTONS_YES_NO: #EDITED to put sg.
         layout += [[PopupButton('Yes', button_color=button_color, focus=True, bind_return_key=True, pad=((20, 5), 3),
-                                size=(5, 1),font=font), PopupButton('No', button_color=button_color, size=(5, 1),font=font)]] #EDITED include font argument
+                                font=font), PopupButton('No', button_color=button_color,font=font)]] #EDITED include font argument removed size argument
     elif button_type is sg.POPUP_BUTTONS_CANCELLED: #EDITED to put sg.
         layout += [[
-            PopupButton('Cancelled', button_color=button_color, focus=True, bind_return_key=True, pad=((20, 0), 3),font=font)]] #EDITED include font argumen
+            PopupButton('Cancelled', button_color=button_color, focus=True, bind_return_key=True, pad=((20, 0), 3),font=font)]] #EDITED include font argument
     elif button_type is sg.POPUP_BUTTONS_ERROR: #EDITED to put sg.
-        layout += [[PopupButton('Error', size=(6, 1), button_color=button_color, focus=True, bind_return_key=True,
-                                pad=((20, 0), 3),font=font)]] #EDITED include font argumen
+        layout += [[PopupButton('Error', button_color=button_color, focus=True, bind_return_key=True,
+                                pad=((20, 0), 3),font=font)]] #EDITED include font argument removed size argument
     elif button_type is sg.POPUP_BUTTONS_OK_CANCEL: #EDITED to put sg.
-        layout += [[PopupButton('OK', size=(6, 1), button_color=button_color, focus=True, bind_return_key=True,font=font), #EDITED include font argumen
+        layout += [[PopupButton('OK', button_color=button_color, focus=True, bind_return_key=True,font=font), #EDITED include font argument removed size argument
                     PopupButton('Cancel', size=(6, 1), button_color=button_color,font=font)]] #EDITED include font argumen
     elif button_type is sg.POPUP_BUTTONS_NO_BUTTONS: #EDITED to put sg.
         pass
@@ -140,9 +140,9 @@ def alt_popup(*args, title=None, button_color=None, background_color=None, text_
     window = sg.Window(_title, layout, auto_size_text=True, background_color=background_color, button_color=button_color, #EDITED to put sg.
                     auto_close=auto_close, auto_close_duration=auto_close_duration, icon=icon, font=font, #EDITED include font argumen
                     no_titlebar=no_titlebar, grab_anywhere=grab_anywhere, keep_on_top=keep_on_top, location=location, relative_location=relative_location, return_keyboard_events=any_key_closes,
-                    modal=modal)
+                    modal=modal, finalize=True) #EDITED added finalize
 
-
+    AltButton.intialise_buttons(window)
     if non_blocking:
         button, values = window.read(timeout=0)
     else:
