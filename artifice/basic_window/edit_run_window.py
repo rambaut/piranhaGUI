@@ -82,6 +82,12 @@ def run_edit_window(window, font = None):
     selected_run_title = 'TEMP_RUN'
     docker_client = docker.from_env()
 
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath',
                     '-OUTDIR-':'outputPath'}
@@ -126,7 +132,7 @@ def run_edit_window(window, font = None):
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
-                    alt_popup_ok('Warning: there are spaces in samples',font=font)
+                    alt_popup_ok(translate_text('Warning: there are spaces in samples', language, translate_scheme),font=font)
                 window.close()
                 return run_info
             except Exception as err:

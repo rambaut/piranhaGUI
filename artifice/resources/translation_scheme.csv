@@ -1,7 +1,7 @@
 English,Français
 ~SETUP WINDOW~ ,
 Docker installed,Docker est installé
-Docker not installed,Docker n’est pas installé 
+Docker not installed,Docker n’est pas installé
 RAMPART image installed,Image RAMPART est installé
 Check for updates to RAMPART image,Vérifier les mises à jour de l'image RAMPART
 PIRANHA image installed,Image PIRANHA est installé
@@ -25,6 +25,7 @@ Browse,Parcourez
 View,Voyez
 MinKnow run:,MinKnow course:
 Output Folder:,Répetoire de sortie:
+Warning: there are spaces in samples,
 Confirm,Confirmez
 ~EXECUTE RUN WINDOW~,
 Start RAMPART,Démarrez RAMPART
@@ -60,3 +61,4 @@ Choose Barcodes column:,Choisissez la colonne codes-barres
 barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
 specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
 specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
+""
