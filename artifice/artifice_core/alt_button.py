@@ -9,9 +9,10 @@ import artifice_core.consts
 # Alternative to standard PySimpleGUI button, with curved edges. Highlights on mouseover
 class AltButton(sg.Button):
 
-    def __init__(self, size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
+    def __init__(self, button_text='', size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
         self.Font = kwargs['font'] if 'font' in kwargs else ('Arial', '18')
-        self.ButtonText = kwargs['button_text'] if 'button_text' in kwargs else ''
+        self.ButtonText = button_text
+        print(self.ButtonText)
         self.ButtonColor = sg.button_color_to_tuple(button_color)
 
         self.Size = size if size != (None, None) else s
@@ -39,7 +40,7 @@ class AltButton(sg.Button):
         kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
         kwargs['border_width'] = 0
 
-        super().__init__(mouseover_colors=self.MouseOverColors, **kwargs)
+        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, **kwargs)
 
     # set text color of button whether it is a ttk (on Mac) or tk button
     def set_text_color(self, color):
@@ -70,12 +71,13 @@ class AltButton(sg.Button):
     # determines the size of the string for font size given
     def get_string_size(self):
         try:
-            font = ImageFont.truetype('arial.ttf', self.Font[1])
+            print(self.Font[1])
+            font = ImageFont.truetype('arial.ttf', int(self.Font[1]))
         except:
             try:
-                font = ImageFont.truetype('Keyboard.ttf', self.Font[1])
+                font = ImageFont.truetype('Keyboard.ttf', int(self.Font[1]))
             except:
-                font = ImageFont.truetype('./resources/LiberationSans-Regular.ttf', self.Font[1])
+                font = ImageFont.truetype('./resources/LiberationSans-Regular.ttf', int(self.Font[1]))
 
         size = font.getsize(self.ButtonText)
         height = font.getsize(f'{self.ButtonText}g')[1]
@@ -122,3 +124,14 @@ def AltFileBrowse(button_text='Browse', target=(sg.ThisRow, -1), file_types=sg.F
                   initial_folder=initial_folder, tooltip=tooltip, size=size, s=s, auto_size_button=auto_size_button,
                   change_submits=change_submits, enable_events=enable_events, disabled=disabled,
                   button_color=button_color, font=font, pad=pad, p=p, key=key, k=k, visible=visible, metadata=metadata)
+
+# Lazy function for DummyButton based on AltButton, otherqise identical to PySimpleGUI DummyButton
+def AltDummyButton(button_text, image_filename=None, image_data=None, image_size=(None, None), image_subsample=None,
+                border_width=None, tooltip=None, size=(None, None), s=(None, None), auto_size_button=None, button_color=None, font=None,
+                disabled=False, bind_return_key=False, focus=False, pad=None, p=None, key=None, k=None, visible=True, metadata=None):
+
+    return AltButton(button_text=button_text, button_type=sg.BUTTON_TYPE_CLOSES_WIN_ONLY, image_filename=image_filename,
+                  image_data=image_data, image_size=image_size, image_subsample=image_subsample,
+                  border_width=border_width, tooltip=tooltip, size=size, s=s, auto_size_button=auto_size_button,
+                  button_color=button_color, font=font, disabled=disabled, bind_return_key=bind_return_key, focus=focus,
+                  pad=pad, p=p, key=key, k=k, visible=visible, metadata=metadata)
