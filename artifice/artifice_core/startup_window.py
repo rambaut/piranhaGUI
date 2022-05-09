@@ -129,7 +129,7 @@ def install_image(name, image_tag, window, font, client):
     window[f'-{name} INSTALL-'].update(text=pull_text)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
 
-def run_startup_window(window, font=None):
+def run_startup_window(window, font=None, scale=1):
     client = docker.from_env()
 
     while True:
@@ -163,7 +163,7 @@ def run_startup_window(window, font=None):
 
         elif event == '-OPTIONS-':
             try:
-                options_window = create_options_window(font=font)
+                options_window = create_options_window(font=font, scale=scale)
                 run_options_window(options_window, font)
                 options_window.close()
                 window = create_startup_window(window=window,font=font)

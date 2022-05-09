@@ -76,7 +76,7 @@ if __name__ == '__main__':
     scale = scale_window()
     make_theme()
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale) #create the startup window to check/install docker and images
-    advanced = artifice_core.startup_window.run_startup_window(window, font=font)
+    advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale)
 
     if advanced != None: # if button pressed to launch artifice
         try:
@@ -85,13 +85,13 @@ if __name__ == '__main__':
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
             else:
                 while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window(font=font)
+                    window = basic_window.edit_run_window.create_edit_window(font=font, scale=scale)
                     run_info = basic_window.edit_run_window.run_edit_window(window, font=font)
                     if run_info == None:
                         break
 
                     update_log(f'\nrun details confirmed, creating main window\n')
-                    window, rampart_running = basic_window.execute_run_window.create_main_window(font=font)
+                    window, rampart_running = basic_window.execute_run_window.create_main_window(font=font, scale=scale)
                     edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running)
                     if edit != True:
                         break

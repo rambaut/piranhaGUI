@@ -9,7 +9,7 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -59,11 +59,12 @@ def setup_layout(theme='Dark', font = None):
 
     return layout
 
-def create_edit_window(theme = 'Artifice', font = None, window = None):
+def create_edit_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating main window')
     make_theme()
     layout = setup_layout(theme=theme, font=font)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    piranha_scaled = scale_image('piranha.png',scale,(64,64))
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled)
 
     if window != None:
         window.close()

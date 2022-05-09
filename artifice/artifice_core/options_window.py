@@ -5,7 +5,7 @@ from os import cpu_count
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
 # Options window to allow user to modify certain config values
 
@@ -39,10 +39,11 @@ def setup_options_layout(theme = 'Dark', font = None):
 
     return layout
 
-def create_options_window(theme = 'Artifice', font = None, window = None):
+def create_options_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log(f'opening options window')
     layout = setup_options_layout(theme=theme, font=font)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=False, finalize=True)
+    piranha_scaled = scale_image('piranha.png',scale,(64,64))
+    new_window = sg.Window('Artifice', layout, font=font, resizable=False, finalize=True,icon=piranha_scaled)
 
     if window != None:
         window.close()

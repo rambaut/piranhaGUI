@@ -12,7 +12,7 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
-from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme
+from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
 from artifice_core.alt_button import AltButton
 
 def make_theme():
@@ -75,11 +75,12 @@ def setup_layout(theme='Dark', font = None):
 
     return layout, rampart_running
 
-def create_main_window(theme = 'Artifice', font = None, window = None):
+def create_main_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating main window')
     make_theme()
     layout, rampart_running = setup_layout(theme=theme, font=font)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    piranha_scaled = scale_image('piranha.png',scale,(64,64))
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled)
 
     if window != None:
         window.close()

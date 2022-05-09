@@ -6,7 +6,7 @@ import traceback
 import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
 # return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
@@ -92,13 +92,14 @@ def check_spaces(samples, column):
     for row in samples_list:
         if ' ' in str(row[int(column)]):
             return True
-        
 
 
-def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+
+def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True, scale = 1):
 
     layout, column_headers = setup_parse_layout(samples, font=font, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True, finalize=True)
+    piranha_scaled = scale_image('piranha.png',scale,(64,64))
+    new_window = sg.Window('Artifice', layout, font=font, resizable=True, finalize=True,icon=piranha_scaled)
 
     if window != None:
         window.close()
