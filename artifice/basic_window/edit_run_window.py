@@ -8,6 +8,7 @@ import artifice_core.start_rampart
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
+from artifice_core.alt_popup import alt_popup_ok
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme
 
 def make_theme():
@@ -125,7 +126,7 @@ def run_edit_window(window, font = None):
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
-                    sg.popup_ok('Warning there are spaces in samples')
+                    alt_popup_ok('Warning there are spaces in samples',font=font)
                 window.close()
                 return run_info
             except Exception as err:
