@@ -96,7 +96,7 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
         language = config['LANGUAGE']
     except:
         language = 'English'
-    print(language)
+    
     selected_run_title = 'TEMP_RUN'
 
     docker_client = docker.from_env()
