@@ -181,7 +181,7 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                             )
                     rampart_running = True
                     window['-VIEW RAMPART-'].update(visible=True)
-                    window['-START/STOP RAMPART-'].update(text=translate_text('Stop RAMPART',language,translate_scheme,pr=True))
+                    window['-START/STOP RAMPART-'].update(text=translate_text('Stop RAMPART',language,translate_scheme))
                     window['-RAMPART STATUS-'].update(translate_text('RAMPART is running',language,translate_scheme))
 
                     rampart_log = rampart_container.logs(stream=True)
