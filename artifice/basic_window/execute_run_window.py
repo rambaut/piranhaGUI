@@ -155,12 +155,16 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             running_tools = []
+            print(piranha_running)
             if rampart_running:
                 running_tools.append('RAMPART')
             if piranha_running:
                 running_tools.append('PIRANHA')
+            try:
+                check_stop_on_close(running_tools, window, docker_client, rampart_container, font=font)
+            except Exception as err:
+                error_popup(err, font)
 
-            check_stop_on_close(running_tools, window, docker_client, rampart_container, font=font)
 
             break
 
