@@ -73,12 +73,12 @@ def setup_layout(theme='Dark', font = None):
     ]
 
 
-    return layout, rampart_running
+    return layout, rampart_running, piranha_running
 
 def create_main_window(theme = 'Artifice', font = None, window = None, scale = 1):
     update_log('creating main window')
     make_theme()
-    layout, rampart_running = setup_layout(theme=theme, font=font)
+    layout, rampart_running, piranha_running = setup_layout(theme=theme, font=font)
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
     new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled)
 
@@ -87,23 +87,22 @@ def create_main_window(theme = 'Artifice', font = None, window = None, scale = 1
 
     AltButton.intialise_buttons(new_window)
 
-    return new_window, rampart_running
+    return new_window, rampart_running, piranha_running
 
-def run_main_window(window, run_info, font = None, rampart_running = False):
+def run_main_window(window, run_info, font = None, rampart_running = False, piranha_running = False):
     config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
         language = config['LANGUAGE']
     except:
         language = 'English'
-    
+
     selected_run_title = 'TEMP_RUN'
 
     docker_client = docker.from_env()
     rampart_container = None
     rampart_log_queue = queue.Queue()
     piranha_container = None
-    piranha_running = False
     piranha_log_queue = queue.Queue()
 
 
@@ -115,7 +114,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
         container = get_pre_log(docker_client, rampart_log_queue, 'rampart')
 
     if piranha_running:
-        container = get_pre_log(docker_client, rampart_log_queue, 'piranha')
+        container = get_pre_log(docker_client, piranha_log_queue, 'piranha')
+
 
     while True:
         event, values = window.read(timeout=500)
@@ -155,7 +155,7 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             running_tools = []
-            print(piranha_running)
+
             if rampart_running:
                 running_tools.append('RAMPART')
             if piranha_running:
@@ -238,6 +238,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False):
                 error_popup(err, font)
 
         elif event == '-EDIT-':
+            #rampart_log_queue.task_done()
+            #piranha_log_queue.task_done()
             window.close()
             return True
 
