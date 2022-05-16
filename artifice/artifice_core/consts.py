@@ -45,7 +45,7 @@ def retrieve_config():
 
     THREADS = config['THREADS'] #how many threads piranha should use
     if THREADS == None:
-        THREADS = cpu_count()
+        THREADS = int(cpu_count()/2)
         if THREADS == None:
             THREADS = 1
 
@@ -84,7 +84,6 @@ LOGFILE = config['LOGFILE']
 #FIRST_TIME_SETUP = config['FIRST_TIME_SETUP']
 CONSOLE_FONT = config['CONSOLE_FONT']
 THREADS = config['THREADS']
-#BACKGROUND_COLOR = "#072429"
 
 if __name__ == '__main__':
     #home = pathlib.Path.home()
