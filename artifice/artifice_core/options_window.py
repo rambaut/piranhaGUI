@@ -39,11 +39,11 @@ def setup_options_layout(theme = 'Dark', font = None):
 
     return layout
 
-def create_options_window(theme = 'Artifice', font = None, window = None, scale = 1):
+def create_options_window(theme = 'Artifice', font = None, window = None, scale = 1, version='ARTIFICE'):
     update_log(f'opening options window')
     layout = setup_options_layout(theme=theme, font=font)
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window('Artifice', layout, font=font, resizable=False, finalize=True,icon=piranha_scaled)
+    new_window = sg.Window(version, layout, font=font, resizable=False, finalize=True,icon=piranha_scaled)
 
     if window != None:
         window.close()

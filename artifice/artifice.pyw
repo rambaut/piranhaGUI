@@ -77,7 +77,7 @@ if __name__ == '__main__':
     version = artifice_core.consts.VERSION
     make_theme(version)
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
-    advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale)
+    advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
 
     if advanced != None: # if button pressed to launch artifice
         try:
