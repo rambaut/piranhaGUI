@@ -13,8 +13,8 @@ import basic_window.execute_run_window
 import artifice_core.startup_window
 
 #create artifice theme
-def make_theme(poseqco_scheme=True):
-    if poseqco_scheme: # poseqco color scheme
+def make_theme(version):
+    if version == 'piranhaGUI': # poseqco color scheme
         Artifice_Theme = {'BACKGROUND': "#FBECA6",
                    'TEXT': '#000000',
                    'INPUT': '#FFAE59',
@@ -74,8 +74,9 @@ if __name__ == '__main__':
     font = (artifice_core.consts.FONT, 18)
 
     scale = scale_window()
-    make_theme()
-    window = artifice_core.startup_window.create_startup_window(font=font, scale=scale) #create the startup window to check/install docker and images
+    version = artifice_core.consts.VERSION
+    make_theme(version)
+    window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale)
 
     if advanced != None: # if button pressed to launch artifice
@@ -85,13 +86,13 @@ if __name__ == '__main__':
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
             else:
                 while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window(font=font, scale=scale)
+                    window = basic_window.edit_run_window.create_edit_window(font=font, scale=scale, version=version)
                     run_info = basic_window.edit_run_window.run_edit_window(window, font=font)
                     if run_info == None:
                         break
 
                     update_log(f'\nrun details confirmed, creating main window\n')
-                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(font=font, scale=scale)
+                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(font=font, scale=scale, version=version)
                     edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running, piranha_running=piranha_running)
                     if edit != True:
                         break

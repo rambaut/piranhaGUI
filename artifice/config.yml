@@ -11,3 +11,4 @@ LOGFILE: 'log.txt'
 THREADS: null
 FIRST_TIME_SETUP: true
 LANGUAGE: 'English'
+VERSION: 'piranhaGUI'
