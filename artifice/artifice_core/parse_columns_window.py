@@ -95,11 +95,11 @@ def check_spaces(samples, column):
 
 
 
-def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True, scale = 1):
+def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True, scale = 1, version='ARTIFICE'):
 
     layout, column_headers = setup_parse_layout(samples, font=font, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True, finalize=True,icon=piranha_scaled)
+    new_window = sg.Window(version, layout, font=font, resizable=True, finalize=True,icon=piranha_scaled)
 
     if window != None:
         window.close()
@@ -109,7 +109,7 @@ def create_parse_window(samples, theme = None, font = None, window = None, sampl
     update_log(f'displaying samples: "{samples}"')
     return new_window, column_headers
 
-def view_samples(run_info, values, samples_key, font):
+def view_samples(run_info, values, samples_key, font, version='ARTIFICE'):
     if 'title' in run_info:
         if 'samples_column' in run_info:
             samples_column = run_info['samples_column']
@@ -124,7 +124,7 @@ def view_samples(run_info, values, samples_key, font):
             barcodes_column = 1
 
         samples = values[samples_key]
-        parse_window, column_headers = create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column)
+        parse_window, column_headers = create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column, version=version)
         samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
 
         if samples_barcodes_indices != None:

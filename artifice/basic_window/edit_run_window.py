@@ -77,7 +77,7 @@ def create_edit_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
 
     return new_window
 
-def run_edit_window(window, font = None):
+def run_edit_window(window, font = None, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
@@ -109,7 +109,7 @@ def run_edit_window(window, font = None):
 
         elif event == '-VIEW SAMPLES-':
             try:
-                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font)
+                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font, version=version)
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
                 error_popup(err, font)

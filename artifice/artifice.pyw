@@ -87,7 +87,7 @@ if __name__ == '__main__':
             else:
                 while True: # user can go back and forth between editing and executing runs
                     window = basic_window.edit_run_window.create_edit_window(font=font, scale=scale, version=version)
-                    run_info = basic_window.edit_run_window.run_edit_window(window, font=font)
+                    run_info = basic_window.edit_run_window.run_edit_window(window, font=font, version=version)
                     if run_info == None:
                         break
 
