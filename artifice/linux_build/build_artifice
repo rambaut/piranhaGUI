@@ -1,0 +1,3 @@
+pyinstaller piranhaGUI.spec
+cp -r ../resources ./dist/resources
+cp ../config.yml ./dist
