@@ -1,0 +1,6 @@
+#!/bin/bash
+
+mkdir /usr/local/ARTIFICE
+docker run -d --name="compile_art" --volume=/usr/local/ARTIFICE:/data/artifice/artifice/linux_build/dist compile_artifice
+docker wait compile_art
+docker rm compile_art
