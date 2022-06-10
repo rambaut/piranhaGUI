@@ -67,7 +67,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
         [sg.Image(source = piranha_scaled)],
     ]
 
-    install_buttons_size = (360,36)
+    install_buttons_size = (480,36)
     info_column = [
     [sg.Text(translate_text('An internet connection and a Docker install is required to install RAMPART and PIRANHA images',language,translate_scheme))],
     [
@@ -76,7 +76,7 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     ],
     [
     sg.Text(rampart_image_status,size=(30,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
-    AltButton(button_text=rampart_pull_text,font=font,size=install_buttons_size,key='-RAMPART INSTALL-'),
+    AltButton(button_text=rampart_pull_text,size=install_buttons_size,font=font,key='-RAMPART INSTALL-'),
     ],
     [
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),

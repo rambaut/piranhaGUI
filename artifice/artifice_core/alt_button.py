@@ -78,9 +78,10 @@ class AltButton(sg.Button):
             except:
                 font = ImageFont.truetype('./resources/LiberationSans-Regular.ttf', int(self.Font[1]))
 
-        size = font.getsize(self.ButtonText)
+        #size = font.getsize(self.ButtonText)
+        width = sg.tkinter.font.Font(font=self.Font).measure(self.ButtonText)
         height = font.getsize(f'{self.ButtonText}g')[1]
-        size = (size[0], height)
+        size = (width, height)
         return size
 
     # create image to be used as button icon

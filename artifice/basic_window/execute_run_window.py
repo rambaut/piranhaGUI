@@ -53,7 +53,7 @@ def setup_layout(theme='Dark', font = None):
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-PIRANHA OUTPUT-'),],
     ]
 
-    button_size=(200,36)
+    button_size=(220,36)
     rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
     piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
 
