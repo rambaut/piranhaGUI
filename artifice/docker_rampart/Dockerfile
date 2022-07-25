@@ -54,10 +54,10 @@ WORKDIR /data/run_data/analysis
 # set environment variable PYTHONUNBUFFERED to allow unbuffered log output for artifice
 ENV PYTHONUNBUFFERED=1
 
-# create directories to mount the basecalled directory and protocol 
+# create directories to mount the basecalled directory and protocol
 RUN mkdir -p /data/run_data/basecalled && \
 mkdir -p /data/run_data/protocol && \
-cp /data/rampart/default_protocol  /data/run_data/protocol
+cp -a /data/rampart/default_protocol/.  /data/run_data/protocol
 
 SHELL ["/bin/bash", "-c"]
 # run rampart
