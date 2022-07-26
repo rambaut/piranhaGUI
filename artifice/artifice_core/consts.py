@@ -54,6 +54,9 @@ def retrieve_config():
     if 'LANGUAGE' not in config:
         config['LANGUAGE'] = 'English'
 
+    if 'PROTOCOL' not in config:
+        config['PROTOCOL'] = 'default'
+
     return config
 
 # edits the value of one config value
