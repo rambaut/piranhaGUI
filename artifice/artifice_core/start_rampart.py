@@ -14,7 +14,7 @@ from artifice_core.update_log import update_log
 import artifice_core.consts
 import artifice_core.view_barcodes_window
 
-def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None):
+def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None, protocol = None,):
     if client == None:
         client = docker.from_env()
 
@@ -34,6 +34,8 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     update_log(f'environment variables: {log_environment}')
 
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
+    if protocol != None or protocol != 'default':
+        volumes.append(f'{protocol}:/data/run_data/protocol')
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 
