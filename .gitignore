@@ -133,3 +133,6 @@ gui_test/resources
 
 #scaled poseqco logo
 artifice/resources/poseqco_scaled.png
+
+#protocol dir
+artifice/protocols
