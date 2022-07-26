@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
                     update_log(f'\nrun details confirmed, creating main window\n')
                     window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(font=font, scale=scale, version=version)
-                    edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running, piranha_running=piranha_running)
+                    edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running, piranha_running=piranha_running, scale=scale)
                     if edit != True:
                         break
             exit_time = datetime.today()

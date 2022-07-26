@@ -10,6 +10,7 @@ from webbrowser import open_new_tab
 
 import artifice_core.start_rampart
 import artifice_core.consts
+import artifice_core.select_protocol_window
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
@@ -59,7 +60,9 @@ def setup_layout(theme='Dark', font = None):
 
     layout = [
     [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
-    [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),sg.Text(f'Selected Protocol: {config["PROTOCOL"]}', key='-PROTOCOL STATUS-'),],
+    [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),
+    sg.Text(f'Selected Protocol: {config["PROTOCOL"]}', visible=got_rampart_image, key='-PROTOCOL STATUS-'), 
+    AltButton(button_text='Select Another Protocol',size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
     AltButton(button_text=translate_text('Display RAMPART',language,translate_scheme),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
@@ -89,7 +92,7 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
 
     return new_window, rampart_running, piranha_running
 
-def run_main_window(window, run_info, font = None, rampart_running = False, piranha_running = False):
+def run_main_window(window, run_info, font = None, rampart_running = False, piranha_running = False, scale = 1):
     config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
@@ -234,6 +237,15 @@ def run_main_window(window, run_info, font = None, rampart_running = False, pira
             try:
                 output_path = run_info['outputPath']
                 open_new_tab(f'{output_path}/report.html')
+            except Exception as err:
+                error_popup(err, font)
+
+        elif event == '-SELECT PROTOCOL-':
+            try:
+                protocol_window = artifice_core.select_protocol_window.create_protocol_window(font=font, scale=scale)
+                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font)
+                
+                print(rampart_protocol)
             except Exception as err:
                 error_popup(err, font)
 
