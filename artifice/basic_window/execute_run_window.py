@@ -59,7 +59,7 @@ def setup_layout(theme='Dark', font = None):
 
     layout = [
     [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
-    [sg.Text(rampart_status, key='-RAMPART STATUS-'),],
+    [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),sg.Text(f'Selected Protocol: {config["PROTOCOL"]}', key='-PROTOCOL STATUS-'),],
     [
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
     AltButton(button_text=translate_text('Display RAMPART',language,translate_scheme),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
