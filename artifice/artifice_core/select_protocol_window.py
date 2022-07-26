@@ -1,7 +1,7 @@
 from asyncio import protocols
 import PySimpleGUI as sg
 import traceback
-import docker
+from os import listdir
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
@@ -77,6 +77,18 @@ def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None
     AltButton.intialise_buttons(new_window)
 
     return new_window
+
+def get_protocols(protocols_dir):
+    paths = listdir(protocols_dir)
+    runs_set = set()
+    for path in paths:
+        if os.path.isdir(protocols_dir / path):
+            runs_set.add(path)
+
+
+    runs = list(runs_set)
+
+    return runs
 
 def run_protocol_window(window, font = None, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
