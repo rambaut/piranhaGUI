@@ -128,11 +128,14 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-#run configuration files
+# run configuration files
 gui_test/resources
 
-#scaled poseqco logo
+# scaled poseqco logo
 artifice/resources/poseqco_scaled.png
 
-#protocol dir
-artifice/protocols
+# protocol dir
+artifice/preinstalled_protocols/
+
+# macOS .DS_Store
+.DS_Store
