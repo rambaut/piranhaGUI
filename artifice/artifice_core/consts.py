@@ -41,6 +41,7 @@ def retrieve_config():
         config = safe_load(file)
 
     config['RUNS_DIR'] = get_datadir() / 'runs'
+    config['PROTOCOLS_DIR'] = get_datadir() / 'runs'
     config['CONSOLE_FONT'] = 'Consolas'
 
     THREADS = config['THREADS'] #how many threads piranha should use
