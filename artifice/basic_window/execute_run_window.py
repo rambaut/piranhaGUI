@@ -1,3 +1,4 @@
+from ensurepip import version
 import PySimpleGUI as sg
 import traceback
 import re
@@ -92,7 +93,7 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
 
     return new_window, rampart_running, piranha_running
 
-def run_main_window(window, run_info, font = None, rampart_running = False, piranha_running = False, scale = 1):
+def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart_running = False, piranha_running = False, scale = 1):
     config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
@@ -242,8 +243,8 @@ def run_main_window(window, run_info, font = None, rampart_running = False, pira
 
         elif event == '-SELECT PROTOCOL-':
             try:
-                protocol_window = artifice_core.select_protocol_window.create_protocol_window(font=font, scale=scale)
-                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font)
+                protocol_window = artifice_core.select_protocol_window.create_protocol_window(font=font, scale=scale, version=version)
+                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font, version=version)
                 
                 print(rampart_protocol)
             except Exception as err:

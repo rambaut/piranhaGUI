@@ -1,4 +1,5 @@
 from asyncio import protocols
+from msilib.schema import Directory
 import PySimpleGUI as sg
 import traceback
 from os import listdir
@@ -36,8 +37,8 @@ def setup_layout(theme='Dark', font = None):
 
     button_size=(120,36)
 
+    protocols = listdir(config['PROTOCOLS_DIR'])
     view_protocol_column = [
-        [sg.Text('test')],
         [
             sg.Listbox(
                 values=protocols, enable_events = True, size=(40,20), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
@@ -45,22 +46,32 @@ def setup_layout(theme='Dark', font = None):
         ],
     ]
 
+    protcol_dir = get_protocol_dir(config['PROTOCOL'])
+    protcol_descr = get_protocol_desc(config['PROTOCOL'])
     protocol_info_column = [
-    [
-    sg.Text(translate_text('Samples:',language,translate_scheme),size=(14,1)),
-    sg.In(size=(25,1), enable_events=True,expand_y=False, key='-SAMPLES-',),
-    AltFileBrowse(button_text=translate_text('Browse',language,translate_scheme),file_types=(("CSV Files", "*.csv"),),size=button_size,font=font),
-    ],
+    [sg.Text(translate_text('Directory:',language,translate_scheme),size=(14,1)),],
+    [sg.Text(protcol_dir,size=(14,1),key='-PROTOCOL DIR-'),],
+    [sg.VPush()],
+    [sg.Text(translate_text('Description:',language,translate_scheme),size=(14,1)),],
+    [sg.Text(protcol_descr,size=(14,1),key='-PROTOCOL DESC-'),],
+    [sg.VPush()],
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
     layout = [
         [sg.Column(view_protocol_column),
-         sg.Column(protocol_info_column)],
+         sg.Column(protocol_info_column, expand_y=True)],
     
     ]
 
 
     return layout
+
+def get_protocol_dir(protocol):
+    return 'test/test/test'
+
+def get_protocol_desc(protocol):
+    return 'dees'
+
 
 def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating protocol window')
@@ -72,7 +83,6 @@ def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None
     if window != None:
         window.close()
 
-    new_window['-SAMPLES-'].bind("<FocusOut>", "FocusOut")
 
     AltButton.intialise_buttons(new_window)
 
@@ -101,11 +111,6 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE'):
     except:
         language = 'English'
 
-    element_dict = {'-SAMPLES-':'samples',}
-    try:
-        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
-    except:
-        pass
 
     while True:
         event, values = window.read()
