@@ -4,6 +4,7 @@ import PySimpleGUI as sg
 import traceback
 import json
 from os import listdir
+from pathlib import Path
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
@@ -50,11 +51,14 @@ def setup_layout(theme='Dark', font = None):
         ],
     ]
 
-    protcol_dir = get_protocol_dir(config['PROTOCOLS_DIR'] / config['PROTOCOL'])
-    protcol_descr = get_protocol_desc(config['PROTOCOL'])
+    protocol_dir = get_protocol_dir(config['PROTOCOLS_DIR'] / config['PROTOCOL'])
+    if protocol_dir == None:
+        protcol_descr = ""
+    else:
+        protcol_descr = get_protocol_desc(protocol_dir)
     protocol_info_column = [
     [sg.Text(translate_text('Directory:',language,translate_scheme),size=(14,1)),],
-    [sg.Text(protcol_dir,font=(None,12),size=(80,1),key='-PROTOCOL DIR-'),],
+    [sg.Text(protocol_dir,font=(None,12),size=(80,1),key='-PROTOCOL DIR-'),],
     [sg.VPush()],
     [sg.Text(translate_text('Description:',language,translate_scheme),size=(14,1)),],
     [sg.Text(protcol_descr,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
@@ -72,6 +76,7 @@ def setup_layout(theme='Dark', font = None):
 
 def get_protocol_dir(art_protocol_path):
     try: 
+        print(art_protocol_path / 'info.json')
         with open(art_protocol_path / 'info.json','r') as file:
             protocol_info = json.loads(file.read())
             dir = protocol_info["directory"]
@@ -80,8 +85,15 @@ def get_protocol_dir(art_protocol_path):
 
     return dir
 
-def get_protocol_desc(protocol_info_path):
-    return 'dees'
+def get_protocol_desc(protocol_dir):
+    #try: 
+    with open(protocol_dir + '/protocol.json','r') as file:
+        protocol_json = json.loads(file.read())
+        desc = protocol_json["description"]
+    #except:
+    #    desc = ""
+
+    return desc
 
 
 def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
