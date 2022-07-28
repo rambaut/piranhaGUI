@@ -101,6 +101,7 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
     except:
         language = 'English'
 
+    rampart_protocol = config['PROTOCOL']
     selected_run_title = 'TEMP_RUN'
 
     docker_client = docker.from_env()
@@ -182,10 +183,13 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
                     window['-START/STOP RAMPART-'].update(text=translate_text('Start RAMPART',language,translate_scheme))
                     window['-RAMPART STATUS-'].update(translate_text('RAMPART is not running',language,translate_scheme))
                 else:
+                    art_protocol_path = config['PROTOCOLS_DIR'] / rampart_protocol
+                    protocol_path = artifice_core.select_protocol_window.get_protocol_dir(art_protocol_path)
                     rampart_container = artifice_core.start_rampart.launch_rampart(
                             run_info, docker_client,
                             firstPort=config['RAMPART_PORT_1'], secondPort=config['RAMPART_PORT_2'],
-                            font=font, container=rampart_container
+                            font=font, container=rampart_container,
+                            protocol_path=protocol_path
                             )
                     rampart_running = True
                     window['-VIEW RAMPART-'].update(visible=True)
@@ -245,8 +249,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
             try:
                 protocol_window = artifice_core.select_protocol_window.create_protocol_window(font=font, scale=scale, version=version)
                 rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font, version=version)
+                window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
                 
-                print(rampart_protocol)
             except Exception as err:
                 error_popup(err, font)
 

@@ -14,7 +14,7 @@ from artifice_core.update_log import update_log
 import artifice_core.consts
 import artifice_core.view_barcodes_window
 
-def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None, protocol = None,):
+def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None, protocol_path = None,):
     if client == None:
         client = docker.from_env()
 
@@ -34,8 +34,8 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     update_log(f'environment variables: {log_environment}')
 
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled']
-    if protocol != None or protocol != 'default':
-        volumes.append(f'{protocol}:/data/run_data/protocol')
+    if protocol_path != None or protocol_path != 'default':
+        volumes.append(f'{protocol_path}:/data/run_data/protocol')
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 
@@ -166,12 +166,12 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None,
 
     artifice_core.view_barcodes_window.check_barcodes(run_info,font=font)
 
-def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None):
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None, protocol_path = None):
     prepare_run(run_info,runs_dir=runs_dir,font=font)
 
     basecalled_path = run_info['basecalledPath']
     run_path = runs_dir / run_info['title']
-    container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container)
+    container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container, protocol_path=protocol_path)
     """
     iter = 0
     while True:

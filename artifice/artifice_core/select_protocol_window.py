@@ -109,17 +109,6 @@ def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None
 
     return new_window
 
-def get_protocols(protocols_dir):
-    paths = listdir(protocols_dir)
-    runs_set = set()
-    for path in paths:
-        if os.path.isdir(protocols_dir / path):
-            runs_set.add(path)
-
-
-    runs = list(runs_set)
-
-    return runs
 
 def get_protocol_info(art_protocol_path):
     protocol_dir = get_protocol_dir(art_protocol_path)
@@ -146,21 +135,25 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE'):
         event, values = window.read()
 
         if event != None:
-            log_event(f'{event} [main window]')
+            log_event(f'{event} [select protocol window]')
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
             return
         
         elif event == '-PROTOCOL LIST-':
-            protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / values['-PROTOCOL LIST-'][0])
-            window['-PROTOCOL DIR-'].update(protocol_dir)
-            window['-PROTOCOL DESC-'].update(protocol_desc)
+            try:
+                protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / values['-PROTOCOL LIST-'][0])
+                window['-PROTOCOL DIR-'].update(protocol_dir)
+                window['-PROTOCOL DESC-'].update(protocol_desc)
+            except Exception as err:
+                error_popup(err, font)
    
         elif event == '-CONFIRM-':
             try:
                 protocol = values['-PROTOCOL LIST-'][0]
                 artifice_core.consts.edit_config('PROTOCOL', protocol)
+                update_log(f'selected protocol: {protocol}')
                 window.close()
                 return protocol
             except Exception as err:
