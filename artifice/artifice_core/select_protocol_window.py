@@ -2,6 +2,7 @@ from asyncio import protocols
 from msilib.schema import Directory
 import PySimpleGUI as sg
 import traceback
+import json
 from os import listdir
 
 import artifice_core.parse_columns_window
@@ -33,27 +34,30 @@ def setup_layout(theme='Dark', font = None):
     translate_scheme = get_translate_scheme()
     language = config['LANGUAGE']
 
-    protocols = ['test', 'test1']
-
     button_size=(120,36)
 
     protocols = listdir(config['PROTOCOLS_DIR'])
+    if config['PROTOCOL'] in protocols:
+        selected_protocol = config['PROTOCOL']
+    else:
+        selected_protocol = protocols[0]
+
     view_protocol_column = [
         [
             sg.Listbox(
-                values=protocols, enable_events = True, size=(40,20), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-RUN LIST-',
+                values=protocols, default_values=[selected_protocol], enable_events = True, size=(40,20), select_mode = sg.LISTBOX_SELECT_MODE_BROWSE, key ='-PROTOCOL LIST-',
             )
         ],
     ]
 
-    protcol_dir = get_protocol_dir(config['PROTOCOL'])
+    protcol_dir = get_protocol_dir(config['PROTOCOLS_DIR'] / config['PROTOCOL'])
     protcol_descr = get_protocol_desc(config['PROTOCOL'])
     protocol_info_column = [
     [sg.Text(translate_text('Directory:',language,translate_scheme),size=(14,1)),],
-    [sg.Text(protcol_dir,size=(14,1),key='-PROTOCOL DIR-'),],
+    [sg.Text(protcol_dir,font=(None,12),size=(80,1),key='-PROTOCOL DIR-'),],
     [sg.VPush()],
     [sg.Text(translate_text('Description:',language,translate_scheme),size=(14,1)),],
-    [sg.Text(protcol_descr,size=(14,1),key='-PROTOCOL DESC-'),],
+    [sg.Text(protcol_descr,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
     [sg.VPush()],
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
@@ -66,10 +70,17 @@ def setup_layout(theme='Dark', font = None):
 
     return layout
 
-def get_protocol_dir(protocol):
-    return 'test/test/test'
+def get_protocol_dir(art_protocol_path):
+    try: 
+        with open(art_protocol_path / 'info.json','r') as file:
+            protocol_info = json.loads(file.read())
+            dir = protocol_info["directory"]
+    except:
+        dir = None
 
-def get_protocol_desc(protocol):
+    return dir
+
+def get_protocol_desc(protocol_info_path):
     return 'dees'
 
 
@@ -100,6 +111,7 @@ def get_protocols(protocols_dir):
 
     return runs
 
+
 def run_protocol_window(window, font = None, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
     run_info = {'title': 'TEMP_RUN'}
@@ -111,7 +123,16 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE'):
     except:
         language = 'English'
 
-
+    """""
+    print(config['PROTOCOL'])
+    event, values = window.read()
+    print(values['-PROTOCOL LIST-'])
+    try:
+        protocol_pos = values['-PROTOCOL LIST-'].index(config['PROTOCOL'])
+        window['-PROTOCOL LIST-'].update(set_to_index=protocol_pos)
+    except:
+        window['-PROTOCOL LIST-'].update(set_to_index=0)
+    """""
     while True:
         event, values = window.read()
 

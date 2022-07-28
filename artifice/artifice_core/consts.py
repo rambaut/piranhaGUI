@@ -56,7 +56,7 @@ def retrieve_config():
         config['LANGUAGE'] = 'English'
 
     if 'PROTOCOL' not in config:
-        config['PROTOCOL'] = 'default'
+        config['PROTOCOL'] = 'ARTIC Poliovirus protocol v1.1'
 
     return config
 
