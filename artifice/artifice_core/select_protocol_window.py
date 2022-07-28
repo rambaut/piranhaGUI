@@ -1,5 +1,6 @@
 from asyncio import protocols
 from msilib.schema import Directory
+from typing import Protocol
 import PySimpleGUI as sg
 import traceback
 import json
@@ -51,17 +52,14 @@ def setup_layout(theme='Dark', font = None):
         ],
     ]
 
-    protocol_dir = get_protocol_dir(config['PROTOCOLS_DIR'] / config['PROTOCOL'])
-    if protocol_dir == None:
-        protcol_descr = ""
-    else:
-        protcol_descr = get_protocol_desc(protocol_dir)
+    protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / config['PROTOCOL'])
+
     protocol_info_column = [
     [sg.Text(translate_text('Directory:',language,translate_scheme),size=(14,1)),],
     [sg.Text(protocol_dir,font=(None,12),size=(80,1),key='-PROTOCOL DIR-'),],
     [sg.VPush()],
     [sg.Text(translate_text('Description:',language,translate_scheme),size=(14,1)),],
-    [sg.Text(protcol_descr,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
+    [sg.Text(protocol_desc,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
     [sg.VPush()],
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
@@ -86,12 +84,12 @@ def get_protocol_dir(art_protocol_path):
     return dir
 
 def get_protocol_desc(protocol_dir):
-    #try: 
-    with open(protocol_dir + '/protocol.json','r') as file:
-        protocol_json = json.loads(file.read())
-        desc = protocol_json["description"]
-    #except:
-    #    desc = ""
+    try: 
+        with open(protocol_dir + '/protocol.json','r') as file:
+            protocol_json = json.loads(file.read())
+            desc = protocol_json["description"]
+    except:
+        desc = ""
 
     return desc
 
@@ -123,6 +121,14 @@ def get_protocols(protocols_dir):
 
     return runs
 
+def get_protocol_info(art_protocol_path):
+    protocol_dir = get_protocol_dir(art_protocol_path)
+    if protocol_dir == None:
+        protcol_descr = ""
+    else:
+        protcol_descr = get_protocol_desc(protocol_dir)
+
+    return protocol_dir, protcol_descr
 
 def run_protocol_window(window, font = None, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
@@ -135,16 +141,7 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE'):
     except:
         language = 'English'
 
-    """""
-    print(config['PROTOCOL'])
-    event, values = window.read()
-    print(values['-PROTOCOL LIST-'])
-    try:
-        protocol_pos = values['-PROTOCOL LIST-'].index(config['PROTOCOL'])
-        window['-PROTOCOL LIST-'].update(set_to_index=protocol_pos)
-    except:
-        window['-PROTOCOL LIST-'].update(set_to_index=0)
-    """""
+    
     while True:
         event, values = window.read()
 
@@ -154,12 +151,18 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE'):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
             return
+        
+        elif event == '-PROTOCOL LIST-':
+            protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / values['-PROTOCOL LIST-'][0])
+            window['-PROTOCOL DIR-'].update(protocol_dir)
+            window['-PROTOCOL DESC-'].update(protocol_desc)
    
         elif event == '-CONFIRM-':
             try:
-                run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+                protocol = values['-PROTOCOL LIST-'][0]
+                artifice_core.consts.edit_config('PROTOCOL', protocol)
                 window.close()
-                return 'test'
+                return protocol
             except Exception as err:
                 error_popup(err, font)
 

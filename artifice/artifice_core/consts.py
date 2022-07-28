@@ -56,7 +56,7 @@ def retrieve_config():
         config['LANGUAGE'] = 'English'
 
     if 'PROTOCOL' not in config:
-        config['PROTOCOL'] = 'ARTIC Poliovirus protocol v1.1'
+        config['PROTOCOL'] = 'default RAMPART protocol'#'ARTIC Poliovirus protocol v1.1'
 
     return config
 
