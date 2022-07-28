@@ -135,7 +135,7 @@ gui_test/resources
 artifice/resources/poseqco_scaled.png
 
 # protocol dir
-artifice/preinstalled_protocols/
+artifice/builtin_protocols/
 
 # macOS .DS_Store
 .DS_Store
