@@ -4,7 +4,7 @@ from typing import Protocol
 import PySimpleGUI as sg
 import traceback
 import json
-from os import listdir
+from os import listdir, mkdir
 from pathlib import Path
 
 import artifice_core.parse_columns_window
@@ -87,14 +87,17 @@ def get_protocol_dir(art_protocol_path):
     return dir
 
 def get_protocol_desc(protocol_dir):
+    return get_protocol_details(protocol_dir, "description")
+
+def get_protocol_details(protocol_dir, key):
     try: 
         with open(protocol_dir + '/protocol.json','r') as file:
             protocol_json = json.loads(file.read())
-            desc = protocol_json["description"]
+            value = protocol_json[key]
     except:
-        desc = ""
+        value = ""
 
-    return desc
+    return value
 
 
 def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
@@ -122,10 +125,18 @@ def get_protocol_info(art_protocol_path):
 
     return protocol_dir, protcol_descr
 
-def add_protocol(protocols_folder, version = 'ARTIFICE', font = None, scale = 1):
-    add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(font=font, scale=scale, version=version)
-    added_protocol = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window, font=font, version=version)
-    print(added_protocol)
+def add_protocol(protocol_name, protocol_dir, config):
+    art_protocol_path = config['PROTOCOLS_DIR'] / protocol_name
+    
+    mkdir(art_protocol_path)
+    
+    protocol_info = {"directory":protocol_dir}
+    
+    with open(art_protocol_path / 'info.json', 'w') as file:
+        json.dump(protocol_info, file)
+
+
+    
 
 def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
     config = artifice_core.consts.retrieve_config()
@@ -156,8 +167,19 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
 
         elif event == '-ADD PROTOCOL-':
             try:
-                add_protocol(config['PROTOCOLS_DIR'],font=font, scale=scale, version=version)
-            
+                add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(font=font, scale=scale, version=version)
+                added_protocol_dir = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window, font=font, version=version)
+                print(added_protocol_dir)
+                if added_protocol_dir != None:
+                    protocol_name = get_protocol_details(added_protocol_dir, "name")
+                    if protocol_name == "":
+                        raise Exception(translate_text('Error parsing protocol',language,translate_scheme))
+
+                    try:
+                        add_protocol(protocol_name, added_protocol_dir, config)
+                    except FileExistsError:
+                        raise Exception(translate_text('a protocol with that name already exists, please change the name in protocol.json and try again',language,translate_scheme))
+        
             except Exception as err:
                 error_popup(err, font)
 
