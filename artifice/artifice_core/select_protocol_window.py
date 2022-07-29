@@ -4,8 +4,10 @@ from typing import Protocol
 import PySimpleGUI as sg
 import traceback
 import json
+import os.path
 from os import listdir, mkdir
 from pathlib import Path
+from shutil import copytree
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
@@ -30,6 +32,14 @@ def make_theme():
                'PROGRESS_DEPTH': 0}
 
     sg.theme_add_new('Artifice', Artifice_Theme)
+
+# makes sure builtin protocols are installed
+def setup_config():
+    config_path = str(artifice_core.consts.get_datadir() / 'builtin_protocols')
+    if os.path.isfile(config_path):
+        return True
+    else:
+        copytree('builtin_protocols', config_path)
 
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)

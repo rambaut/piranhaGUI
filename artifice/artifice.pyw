@@ -1,9 +1,10 @@
 import PySimpleGUI as sg
 import os.path
-from os import makedirs
+from os import makedirs, mkdir
 import json
-from datetime import datetime
 import traceback
+from datetime import datetime
+from shutil import copytree
 
 import artifice_core.consts
 from artifice_core.update_log import update_log
@@ -11,6 +12,7 @@ import advanced_window.main_window
 import basic_window.edit_run_window
 import basic_window.execute_run_window
 import artifice_core.startup_window
+from artifice_core.manage_protocols import add_protocol
 
 #create artifice theme
 def make_theme(version):
@@ -53,6 +55,32 @@ def check_runs_dir(runs_dir):
         with open(filepath, 'w') as file:
             json.dump(archived_dict, file)
 
+# makes sure builtin protocols are installed
+def setup_builtin_protocols():
+    config = artifice_core.consts.retrieve_config()
+    builtin_path = str(artifice_core.consts.get_datadir() / 'builtin_protocols')
+    if os.path.isfile(builtin_path):
+        pass
+    else:
+        copytree('builtin_protocols', builtin_path)
+    
+    try:
+        mkdir(config['PROTOCOLS_DIR'])
+    except:
+        pass
+
+    try:
+        add_protocol('ARTIC Poliovirus protocol v1.1', str(artifice_core.consts.get_datadir() / 'builtin_protocols' / 'rampart'), config)
+    except:
+        pass
+
+    try:
+        add_protocol('default RAMPART protocol', str(artifice_core.consts.get_datadir() / 'builtin_protocols' / 'default_protocol'), config)
+    except:
+        pass
+
+
+
 #set scaling for all window elements based on screen resolution
 def scale_window(font=None):
     layout = [[sg.Text('setting up..')]]
@@ -70,6 +98,7 @@ if __name__ == '__main__':
     startup_time = datetime.today()
     check_runs_dir(artifice_core.consts.RUNS_DIR)
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
+    setup_builtin_protocols()
 
     font = (artifice_core.consts.FONT, 18)
 
