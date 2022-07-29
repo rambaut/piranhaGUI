@@ -135,7 +135,15 @@ def add_protocol(protocol_name, protocol_dir, config):
     with open(art_protocol_path / 'info.json', 'w') as file:
         json.dump(protocol_info, file)
 
+def update_protocols_list(protocol_to_select, window, config):
+    protocols = listdir(config['PROTOCOLS_DIR'])
+    window['-PROTOCOL LIST-'].update(values=protocols)
 
+    for i in range(len(protocols)):
+        print(protocols[i])
+        if protocols[i] == protocol_to_select:
+            update_log(f'selecting run: {protocol_to_select}')
+            window['-PROTOCOL LIST-'].update(set_to_index=i)
     
 
 def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
@@ -179,7 +187,9 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
                         add_protocol(protocol_name, added_protocol_dir, config)
                     except FileExistsError:
                         raise Exception(translate_text('a protocol with that name already exists, please change the name in protocol.json and try again',language,translate_scheme))
-        
+                    
+                    update_protocols_list(protocol_name, window, config)
+                    
             except Exception as err:
                 error_popup(err, font)
 
