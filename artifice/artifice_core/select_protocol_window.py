@@ -38,12 +38,17 @@ def setup_layout(theme='Dark', font = None):
     language = config['LANGUAGE']
 
     try:
-        add_protocol('ARTIC Poliovirus protocol v1.1', str(artifice_core.consts.get_datadir() / 'rampart'), config)
+        mkdir(config['PROTOCOLS_DIR'])
     except:
         pass
 
     try:
-        add_protocol('default RAMPART protocol', str(artifice_core.consts.get_datadir() / 'rampart'), config)
+        add_protocol('ARTIC Poliovirus protocol v1.1', str(artifice_core.consts.get_datadir() / 'builtin_protocols' / 'rampart'), config)
+    except:
+        pass
+
+    try:
+        add_protocol('default RAMPART protocol', str(artifice_core.consts.get_datadir() / 'builtin_protocols' / 'default_protocol'), config)
     except:
         pass
 
