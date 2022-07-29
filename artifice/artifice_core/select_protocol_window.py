@@ -10,6 +10,7 @@ from pathlib import Path
 import artifice_core.parse_columns_window
 import artifice_core.consts
 import artifice_core.start_rampart
+import artifice_core.add_protocol_window
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
@@ -61,7 +62,10 @@ def setup_layout(theme='Dark', font = None):
     [sg.Text(translate_text('Description:',language,translate_scheme),size=(14,1)),],
     [sg.Text(protocol_desc,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
     [sg.VPush()],
-    [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
+    [
+        AltButton(button_text=translate_text('Add Protocol',language,translate_scheme),size=button_size,font=font,key='-ADD PROTOCOL-'),
+        sg.Push(),
+        AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
     layout = [
         [sg.Column(view_protocol_column),
@@ -73,8 +77,7 @@ def setup_layout(theme='Dark', font = None):
     return layout
 
 def get_protocol_dir(art_protocol_path):
-    try: 
-        print(art_protocol_path / 'info.json')
+    try:
         with open(art_protocol_path / 'info.json','r') as file:
             protocol_info = json.loads(file.read())
             dir = protocol_info["directory"]
@@ -119,17 +122,19 @@ def get_protocol_info(art_protocol_path):
 
     return protocol_dir, protcol_descr
 
-def run_protocol_window(window, font = None, version = 'ARTIFICE'):
-    config = artifice_core.consts.retrieve_config()
-    run_info = {'title': 'TEMP_RUN'}
-    selected_run_title = 'TEMP_RUN'
+def add_protocol(protocols_folder, version = 'ARTIFICE', font = None, scale = 1):
+    add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(font=font, scale=scale, version=version)
+    added_protocol = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window, font=font, version=version)
+    print(added_protocol)
 
+def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
+    config = artifice_core.consts.retrieve_config()
+    
     translate_scheme = get_translate_scheme()
     try:
         language = config['LANGUAGE']
     except:
         language = 'English'
-
     
     while True:
         event, values = window.read()
@@ -148,7 +153,14 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE'):
                 window['-PROTOCOL DESC-'].update(protocol_desc)
             except Exception as err:
                 error_popup(err, font)
-   
+
+        elif event == '-ADD PROTOCOL-':
+            try:
+                add_protocol(config['PROTOCOLS_DIR'],font=font, scale=scale, version=version)
+            
+            except Exception as err:
+                error_popup(err, font)
+
         elif event == '-CONFIRM-':
             try:
                 protocol = values['-PROTOCOL LIST-'][0]

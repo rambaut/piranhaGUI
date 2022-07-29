@@ -248,8 +248,9 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         elif event == '-SELECT PROTOCOL-':
             try:
                 protocol_window = artifice_core.select_protocol_window.create_protocol_window(font=font, scale=scale, version=version)
-                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font, version=version)
-                window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
+                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font, scale=scale, version=version)
+                if rampart_protocol != None:
+                    window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
                 
             except Exception as err:
                 error_popup(err, font)
