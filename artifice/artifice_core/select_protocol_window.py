@@ -1,6 +1,3 @@
-from asyncio import protocols
-from msilib.schema import Directory
-from typing import Protocol
 import PySimpleGUI as sg
 import traceback
 import json

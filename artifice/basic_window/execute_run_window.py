@@ -1,4 +1,3 @@
-from ensurepip import version
 import PySimpleGUI as sg
 import traceback
 import re
