@@ -24,6 +24,7 @@ Source: "resources\poseqco_logo_cropped.png"; DestDir: "{app}\resources"
 Source: "resources\LiberationSans-Regular.ttf"; DestDir: "{app}\resources"
 Source: "resources\translation_scheme.csv"; DestDir: "{app}\resources"
 Source: "resources\piranha.png"; DestDir: "{app}\resources"
+Source: "builtin_protocols\*"; DestDir: "{app}\builtin_protocols"
 Source: "config.yml"; DestDir: "{app}"
 
 [Icons]
