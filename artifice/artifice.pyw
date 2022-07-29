@@ -59,10 +59,10 @@ def check_runs_dir(runs_dir):
 def setup_builtin_protocols():
     config = artifice_core.consts.retrieve_config()
     builtin_path = str(artifice_core.consts.get_datadir() / 'builtin_protocols')
-    if os.path.isfile(builtin_path):
-        pass
-    else:
+    try:
         copytree('builtin_protocols', builtin_path)
+    except:
+        pass
     
     try:
         mkdir(config['PROTOCOLS_DIR'])
