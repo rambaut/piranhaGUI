@@ -37,6 +37,16 @@ def setup_layout(theme='Dark', font = None):
     translate_scheme = get_translate_scheme()
     language = config['LANGUAGE']
 
+    try:
+        add_protocol('ARTIC Poliovirus protocol v1.1', str(artifice_core.consts.get_datadir() / 'rampart'), config)
+    except:
+        pass
+
+    try:
+        add_protocol('default RAMPART protocol', str(artifice_core.consts.get_datadir() / 'rampart'), config)
+    except:
+        pass
+
     button_size=(120,36)
 
     protocols = listdir(config['PROTOCOLS_DIR'])
