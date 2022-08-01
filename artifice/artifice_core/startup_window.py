@@ -16,7 +16,7 @@ from artifice_core.window_functions import error_popup, translate_text, get_tran
 
 
 #create layout
-def setup_layout(theme='Dark', font = None, scale = 1):
+def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     sg.theme(theme)
     config = artifice_core.consts.retrieve_config()
 
@@ -25,6 +25,8 @@ def setup_layout(theme='Dark', font = None, scale = 1):
         language = config['LANGUAGE']
     except:
         language = 'English'
+
+    is_piranhaGUI = version.startswith('piranhaGUI')
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
@@ -56,15 +58,16 @@ def setup_layout(theme='Dark', font = None, scale = 1):
         piranha_pull_text = translate_text('Install PIRANHA image',language,translate_scheme)
         piranha_text_color = '#db4325' #red
 
-
     # Resize PNG file to appropiate size
     poseqco_scaled = scale_image('poseqco_logo_cropped.png',scale,(150,68))
-    piranha_scaled = scale_image('piranha.png',scale,(150,150))
-
+    if is_piranhaGUI:
+        main_logo_scaled = scale_image('piranha.png',scale,(150,150))
+    else:
+        main_logo_scaled = scale_image('a_logo.png',scale,(100,120))
 
     logo_column = [
-        [sg.Image(source = poseqco_scaled)],
-        [sg.Image(source = piranha_scaled)],
+        [sg.Image(source = poseqco_scaled, visible=is_piranhaGUI)],
+        [sg.Image(source = main_logo_scaled)],
     ]
 
     install_buttons_size = (480,36)
@@ -78,9 +81,10 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     sg.Text(rampart_image_status,size=(30,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
     AltButton(button_text=rampart_pull_text,size=install_buttons_size,font=font,key='-RAMPART INSTALL-'),
     ],
+
     [
-    sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),
-    AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,key='-PIRANHA INSTALL-'),
+    sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color, visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
+    AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font, visible=is_piranhaGUI,key='-PIRANHA INSTALL-'),
     ],
     [
     AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
@@ -89,9 +93,12 @@ def setup_layout(theme='Dark', font = None, scale = 1):
     ],
     ]
 
+    #if is_piranhaGUI:
+    logo_bg = sg.LOOK_AND_FEEL_TABLE['Artifice']['INPUT']
+
     layout = [
         [
-        sg.Column(logo_column),
+        sg.Column(logo_column, visible=is_piranhaGUI),
         sg.Column(info_column),
         ],
     ]
