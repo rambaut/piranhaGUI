@@ -25,7 +25,7 @@ def make_theme():
 
     sg.theme_add_new('Artifice', Artifice_Theme)
 
-def setup_layout(theme='Dark', font = None):
+def setup_layout(theme='Dark', font = None, version = 'ARTIFICE',):
     sg.theme(theme)
     config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
@@ -34,6 +34,7 @@ def setup_layout(theme='Dark', font = None):
     except:
         language = 'English'
 
+    is_piranhaGUI = version.startswith('piranhaGUI')
 
     button_size=(120,36)
     layout = [
@@ -49,9 +50,9 @@ def setup_layout(theme='Dark', font = None):
     AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),font=font,size=button_size),
     ],
     [
-    sg.Text(translate_text('Output Folder:',language,translate_scheme),size=(14,1)),
-    sg.In(size=(25,1), enable_events=True,expand_y=False, key='-OUTDIR-',),
-    AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),font=font,size=button_size,),
+    sg.Text(translate_text('Output Folder:',language,translate_scheme),visible=is_piranhaGUI, size=(14,1)),
+    sg.In(size=(25,1), enable_events=True,expand_y=False,visible=is_piranhaGUI, key='-OUTDIR-',),
+    AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),font=font,visible=is_piranhaGUI,size=button_size,),
     ],
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
@@ -62,7 +63,7 @@ def setup_layout(theme='Dark', font = None):
 def create_edit_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating main window')
     make_theme()
-    layout = setup_layout(theme=theme, font=font)
+    layout = setup_layout(theme=theme, font=font, version=version)
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
     new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled)
 

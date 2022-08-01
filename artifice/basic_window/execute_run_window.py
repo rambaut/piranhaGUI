@@ -30,7 +30,7 @@ def make_theme():
 
     sg.theme_add_new('Artifice', Artifice_Theme)
 
-def setup_layout(theme='Dark', font = None):
+def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     sg.theme(theme)
     config = artifice_core.consts.retrieve_config()
     translate_scheme = get_translate_scheme()
@@ -38,6 +38,8 @@ def setup_layout(theme='Dark', font = None):
         language = config['LANGUAGE']
     except:
         language = 'English'
+    
+    is_piranhaGUI = version.startswith('piranhaGUI')
 
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
     rampart_button_text = translate_text(rampart_button_text,language,translate_scheme)
@@ -67,12 +69,12 @@ def setup_layout(theme='Dark', font = None):
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
     AltButton(button_text=translate_text('Display RAMPART',language,translate_scheme),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
-    [sg.Text(piranha_status, key='-PIRANHA STATUS-'),],
+    [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
     AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,key='-PIRANHA TAB-')]])],
+    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
     ]
 
 
