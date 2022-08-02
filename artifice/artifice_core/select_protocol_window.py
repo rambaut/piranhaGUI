@@ -126,8 +126,13 @@ def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None
     update_log('creating protocol window')
     make_theme()
     layout = setup_layout(theme=theme, font=font)
-    piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled)
+
+    if version == 'piranhaGUI':
+        icon_scaled = scale_image('piranha.png',scale,(64,64))
+    else:
+        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+
+    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
 
     if window != None:
         window.close()

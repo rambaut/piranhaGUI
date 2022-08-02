@@ -98,8 +98,12 @@ def check_spaces(samples, column):
 def create_parse_window(samples, theme = None, font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True, scale = 1, version='ARTIFICE'):
 
     layout, column_headers = setup_parse_layout(samples, font=font, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
-    piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window(version, layout, font=font, resizable=True, finalize=True,icon=piranha_scaled)
+    if version == 'piranhaGUI':
+        icon_scaled = scale_image('piranha.png',scale,(64,64))
+    else:
+        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+    
+    new_window = sg.Window(version, layout, font=font, resizable=True, finalize=True,icon=icon_scaled)
 
     if window != None:
         window.close()

@@ -107,8 +107,12 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
 def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating startup window')
     layout = setup_layout(theme=theme, font=font, scale=scale)
-    piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=piranha_scaled)
+    if version == 'piranhaGUI':
+        icon_scaled = scale_image('piranha.png',scale,(64,64))
+    else:
+        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+        
+    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=icon_scaled)
 
     if window != None:
         window.close()
