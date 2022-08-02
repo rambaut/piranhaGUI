@@ -17,8 +17,9 @@ def get_datadir():
     else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
-    #path = Path(os_path) / "ARTIFICE"
-    path = Path(os_path) / "piranhaGUI"
+    path = Path(os_path) / "ARTIFICE"
+    #path = Path(os_path) / "piranhaGUI"
+
     path = path.expanduser()
 
     if not os.path.isdir(path): #creates data directory if it doesn't exist
