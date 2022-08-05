@@ -10,9 +10,14 @@ RUN apt-get update -y && apt-get upgrade -y
 # copy in piranha
 RUN git clone https://github.com/aineniamh/piranha.git
 
-# create piranha environment
-RUN ls
-RUN conda env create -f /data/piranha/environment.yml
+#install mamba
+RUN conda install -n base -c conda-forge mamba
+
+RUN mamba env create -f /data/piranha/environment.yml
+
+# Make RUN commands use the new environment:
+SHELL ["conda", "run", "-n", "piranha", "/bin/bash", "-c"]
+RUN cd /data/piranha  && pip install .
 
 # Install conda-pack:
 RUN conda install -c conda-forge conda-pack
@@ -60,4 +65,4 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH=/root/.local/bin:$PATH
 
 ENTRYPOINT   source /venv/bin/activate && \
-             piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output -t ${THREADS}
+             piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output/piranha_output -t ${THREADS}
