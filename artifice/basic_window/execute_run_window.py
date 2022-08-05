@@ -59,12 +59,13 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     button_size=(220,36)
     rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
     piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
+    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + config["PROTOCOL"]
 
     layout = [
     [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),
-    sg.Text(f'Selected Protocol: {config["PROTOCOL"]}', visible=got_rampart_image, key='-PROTOCOL STATUS-'), 
-    AltButton(button_text='Select Another Protocol',size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
+    sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'), 
+    AltButton(button_text=translate_text('Select Another Protocol',language,translate_scheme),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
     AltButton(button_text=translate_text('Display RAMPART',language,translate_scheme),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
