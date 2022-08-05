@@ -27,6 +27,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         language = 'English'
 
     is_piranhaGUI = version.startswith('piranhaGUI')
+    print(version)
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
@@ -108,7 +109,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
 
 def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating startup window')
-    layout = setup_layout(theme=theme, font=font, scale=scale)
+    layout = setup_layout(theme=theme, font=font, version=version, scale=scale)
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
     else:
