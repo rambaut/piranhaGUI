@@ -247,7 +247,7 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         elif event == '-VIEW PIRANHA-':
             try:
                 output_path = run_info['outputPath']
-                open_new_tab(f'{output_path}/piranha_outpit/report.html')
+                open_new_tab(f'{output_path}/piranha_output/report.html')
             except Exception as err:
                 error_popup(err, font)
 
