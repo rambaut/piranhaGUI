@@ -59,6 +59,9 @@ def retrieve_config():
     if 'PROTOCOL' not in config:
         config['PROTOCOL'] = 'ARTIC Poliovirus protocol v1.1' #'default RAMPART protocol'#
 
+    if 'VERSION' not in config:
+        config['VERSION'] = 'piranhaGUI'
+    
     return config
 
 # edits the value of one config value
