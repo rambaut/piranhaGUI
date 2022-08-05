@@ -27,7 +27,6 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         language = 'English'
 
     is_piranhaGUI = version.startswith('piranhaGUI')
-    print(version)
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
