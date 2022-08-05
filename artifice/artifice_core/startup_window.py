@@ -180,7 +180,7 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
                 options_window = create_options_window(font=font, scale=scale, version=version)
                 run_options_window(options_window, font)
                 options_window.close()
-                window = create_startup_window(window=window,font=font)
+                window = create_startup_window(window=window,version=version,scale=scale,font=font)
             except Exception as err:
                 """
                 update_log(traceback.format_exc())
