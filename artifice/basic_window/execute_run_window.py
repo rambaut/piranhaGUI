@@ -6,6 +6,7 @@ import multiprocessing
 import threading
 import queue
 import os.path
+import sys
 from webbrowser import open_new_tab
 
 import artifice_core.start_rampart
@@ -73,7 +74,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=True, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
     ]
@@ -247,7 +248,11 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         elif event == '-VIEW PIRANHA-':
             try:
                 output_path = run_info['outputPath']
-                open_new_tab(f'{output_path}/piranha_output/report.html')
+                print(f'{output_path}/piranha_output/report.html')
+                if sys.platform.startswith("darwin"):
+                    open_new_tab(f'file:///{output_path}/piranha_output/report.html')
+                else:
+                    open_new_tab(f'{output_path}/piranha_output/report.html')
             except Exception as err:
                 error_popup(err, font)
 
