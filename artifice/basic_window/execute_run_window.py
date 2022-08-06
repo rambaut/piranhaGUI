@@ -39,7 +39,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
         language = config['LANGUAGE']
     except:
         language = 'English'
-    
+
     is_piranhaGUI = version.startswith('piranhaGUI')
 
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
@@ -65,7 +65,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     layout = [
     [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),
-    sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'), 
+    sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
     AltButton(button_text=translate_text('Select Another Protocol',language,translate_scheme),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
@@ -74,7 +74,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=True, key='-VIEW PIRANHA-'),
+    AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
     ]
@@ -90,7 +90,7 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
         icon_scaled = scale_image('piranha.png',scale,(64,64))
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
-    
+
     new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
 
     if window != None:
@@ -248,11 +248,13 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         elif event == '-VIEW PIRANHA-':
             try:
                 output_path = run_info['outputPath']
-                print(f'{output_path}/piranha_output/report.html')
+                """
                 if sys.platform.startswith("darwin"):
                     open_new_tab(f'file:///{output_path}/piranha_output/report.html')
                 else:
                     open_new_tab(f'{output_path}/piranha_output/report.html')
+                """
+                open_new_tab(f'file:///{output_path}/piranha_output/report.html')
             except Exception as err:
                 error_popup(err, font)
 
@@ -262,7 +264,7 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
                 rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font, scale=scale, version=version)
                 if rampart_protocol != None:
                     window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
-                
+
             except Exception as err:
                 error_popup(err, font)
 
