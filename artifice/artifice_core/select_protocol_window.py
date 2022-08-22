@@ -1,10 +1,11 @@
+from tkinter import W
 import PySimpleGUI as sg
 import traceback
 import json
 import os.path
 from os import listdir, mkdir
 from pathlib import Path
-from shutil import copytree
+from shutil import rmtree, copytree
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
@@ -87,6 +88,8 @@ def setup_layout(theme='Dark', font = None):
     [
         AltButton(button_text=translate_text('Add Protocol',language,translate_scheme),size=button_size,font=font,key='-ADD PROTOCOL-'),
         sg.Push(),
+        AltButton(button_text=translate_text('Remove Protocol',language,translate_scheme),size=button_size,font=font,key='-REMOVE PROTOCOL-'),
+        sg.Push(),
         AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
     layout = [
@@ -164,6 +167,17 @@ def add_protocol(protocol_name, protocol_dir, config):
 
     update_log(f'created protocol: {protocol_name}')
 
+def remove_protocol(protocol_name, config, clear_selected = True,):
+    update_log(f'removing protocol: "{protocol_name}"')
+
+    art_protocol_path = config['PROTOCOLS_DIR'] / protocol_name
+
+    if os.path.isdir(art_protocol_path):
+        rmtree(art_protocol_path)
+
+    #if clear_selected:
+     #   clear_selected_run(window)
+
 def update_protocols_list(protocol_to_select, window, config):
     protocols = listdir(config['PROTOCOLS_DIR'])
     window['-PROTOCOL LIST-'].update(values=protocols)
@@ -173,6 +187,11 @@ def update_protocols_list(protocol_to_select, window, config):
         if protocols[i] == protocol_to_select:
             update_log(f'selecting run: {protocol_to_select}')
             window['-PROTOCOL LIST-'].update(set_to_index=i)
+
+def select_protocol(config, values, window):
+    protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / values['-PROTOCOL LIST-'][0])
+    window['-PROTOCOL DIR-'].update(protocol_dir)
+    window['-PROTOCOL DESC-'].update(protocol_desc)
     
 
 def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
@@ -196,12 +215,10 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
         
         elif event == '-PROTOCOL LIST-':
             try:
-                protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / values['-PROTOCOL LIST-'][0])
-                window['-PROTOCOL DIR-'].update(protocol_dir)
-                window['-PROTOCOL DESC-'].update(protocol_desc)
+                select_protocol(config,values,window)
             except Exception as err:
                 error_popup(err, font)
-
+    
         elif event == '-ADD PROTOCOL-':
             try:
                 add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(font=font, scale=scale, version=version)
@@ -222,9 +239,26 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
             except Exception as err:
                 error_popup(err, font)
 
-        elif event == '-CONFIRM-':
+        elif event == '-REMOVE PROTOCOL-':
             try:
                 protocol = values['-PROTOCOL LIST-'][0]
+                remove_protocol(protocol, config)
+                if protocol == config['PROTOCOL']:
+                    artifice_core.consts.edit_config('PROTOCOL', 'None')
+                
+                update_protocols_list(None, window, config)
+                select_protocol(config,values,window)
+                
+            except Exception as err:
+                error_popup(err, font)
+
+
+        elif event == '-CONFIRM-':
+            try:
+                if len(values['-PROTOCOL LIST-']) > 0:
+                    protocol = values['-PROTOCOL LIST-'][0]
+                else:
+                    protocol = None
                 artifice_core.consts.edit_config('PROTOCOL', protocol)
                 update_log(f'selected protocol: {protocol}')
                 window.close()
