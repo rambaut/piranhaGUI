@@ -162,6 +162,8 @@ def add_protocol(protocol_name, protocol_dir, config):
     with open(art_protocol_path / 'info.json', 'w') as file:
         json.dump(protocol_info, file)
 
+    update_log(f'created protocol: {protocol_name}')
+
 def update_protocols_list(protocol_to_select, window, config):
     protocols = listdir(config['PROTOCOLS_DIR'])
     window['-PROTOCOL LIST-'].update(values=protocols)
