@@ -60,7 +60,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     button_size=(220,36)
     rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
     piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
-    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + config["PROTOCOL"]
+    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + str(config["PROTOCOL"])
 
     layout = [
     [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],

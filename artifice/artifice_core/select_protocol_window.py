@@ -76,7 +76,7 @@ def setup_layout(theme='Dark', font = None):
         ],
     ]
 
-    protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / config['PROTOCOL'])
+    protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'], config['PROTOCOL'])
 
     protocol_info_column = [
     [sg.Text(translate_text('Directory:',language,translate_scheme),size=(14,1)),],
@@ -146,7 +146,12 @@ def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None
     return new_window
 
 
-def get_protocol_info(art_protocol_path):
+def get_protocol_info(protocols_dir, protcol):
+    try:
+        art_protocol_path = protocols_dir / protcol
+    except:
+        art_protocol_path = None
+
     protocol_dir = get_protocol_dir(art_protocol_path)
     if protocol_dir == None:
         protcol_descr = ""
@@ -189,7 +194,7 @@ def update_protocols_list(protocol_to_select, window, config):
             window['-PROTOCOL LIST-'].update(set_to_index=i)
 
 def select_protocol(config, values, window):
-    protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'] / values['-PROTOCOL LIST-'][0])
+    protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'], values['-PROTOCOL LIST-'][0])
     window['-PROTOCOL DIR-'].update(protocol_dir)
     window['-PROTOCOL DESC-'].update(protocol_desc)
     
