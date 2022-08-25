@@ -62,7 +62,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE',):
 
 def create_edit_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating main window')
-    make_theme()
+    #make_theme()
     layout = setup_layout(theme=theme, font=font, version=version)
 
     if version == 'piranhaGUI':

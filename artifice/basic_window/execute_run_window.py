@@ -84,7 +84,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
 
 def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating main window')
-    make_theme()
+    #make_theme()
     layout, rampart_running, piranha_running = setup_layout(theme=theme, version=version, font=font)
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
