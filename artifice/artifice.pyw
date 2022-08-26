@@ -18,7 +18,7 @@ from artifice_core.manage_protocols import add_protocol
 def make_theme(version):
     if version == 'piranhaGUI': # poseqco color scheme
         Artifice_Theme = {'BACKGROUND': '#ED6D37' ,
-                   'TEXT': '#000000',
+                   'TEXT': '#FCE0B0',
                    'INPUT': '#F7AE6C',
                    'TEXT_INPUT': '#000000',
                    'SCROLL': '#707070',
