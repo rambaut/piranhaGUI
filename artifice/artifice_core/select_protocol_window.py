@@ -127,7 +127,7 @@ def get_protocol_details(protocol_dir, key):
 
 def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating protocol window')
-    make_theme()
+    #make_theme()
     layout = setup_layout(theme=theme, font=font)
 
     if version == 'piranhaGUI':
