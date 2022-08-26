@@ -27,36 +27,38 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         language = 'English'
 
     is_piranhaGUI = version.startswith('piranhaGUI')
+    pass_text_colour = '#1E707E' #blueish '#00bd00'<-green
+    fail_text_colour = '#FF0000' #'#db4325' #red
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
         docker_status = translate_text('Docker installed',language,translate_scheme)
-        docker_text_color = '#00bd00' #green
+        docker_text_color =  fail_text_colour
     else:
         docker_status = translate_text('Docker not installed',language,translate_scheme)
-        docker_text_color = '#db4325' #red
+        docker_text_color = fail_text_colour
 
     got_rampart_image, docker_client = artifice_core.start_rampart.check_for_image(None, artifice_core.consts.RAMPART_IMAGE, font=font, popup=False)
 
     if got_rampart_image:
         rampart_image_status = translate_text('RAMPART image installed', language, translate_scheme)
         rampart_pull_text = translate_text('Check for updates to RAMPART image', language, translate_scheme)
-        rampart_text_color = '#00bd00'
+        rampart_text_color = pass_text_colour
     else:
         rampart_image_status = translate_text('RAMPART image not installed',language,translate_scheme)
         rampart_pull_text = translate_text('Install RAMPART image',language,translate_scheme)
-        rampart_text_color = '#db4325' #red
+        rampart_text_color = fail_text_colour
 
     got_piranha_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.PIRANHA_IMAGE, font=font, popup=False)
 
     if got_piranha_image:
         piranha_image_status = translate_text('PIRANHA image installed',language,translate_scheme)
         piranha_pull_text = translate_text('Check for updates to PIRANHA image',language,translate_scheme)
-        piranha_text_color = '#00bd00'
+        piranha_text_color = pass_text_colour
     else:
         piranha_image_status = translate_text('PIRANHA image not installed',language,translate_scheme)
         piranha_pull_text = translate_text('Install PIRANHA image',language,translate_scheme)
-        piranha_text_color = '#db4325' #red
+        piranha_text_color = fail_text_colour
 
     # Resize PNG file to appropiate size
     poseqco_scaled = scale_image('poseqco_logo_cropped.png',scale,(150,68))
