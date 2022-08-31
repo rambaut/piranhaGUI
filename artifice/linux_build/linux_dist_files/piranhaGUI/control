@@ -1,0 +1,5 @@
+Package: piranhaGUI
+Version: 1.3.4-beta
+Architecture: arm64
+Maintainer: Corey Ansley <c.ansley@ed.ac.uk>
+Description: Graphical interface for bioinformatics tools
