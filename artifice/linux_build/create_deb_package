@@ -4,9 +4,9 @@ $ART_PKG_NAME = piranhagui_1.3.3prerelease-1_arm64
 mkdir $ART_PKG_NAME
 mkdir -p $ART_PKG_NAME/usr/local/ARTIFICE
 mkdir -p $ART_PKG_NAME/usr/share/applications
-sudo cp ./linux_dist_files/piranhaGUI.desktop $ART_PKG_NAME/usr/share/applications
-docker build -t artifice_linux_compiler ./compiler_docker
-docker run -d --name="artifice_linux_compiler" --volume=$(pwd)/$ART_PKG_NAME/usr/local/ARTIFICE:/data/artifice/artifice/linux_build/dist compile_artifice
+cp ./linux_dist_files/piranhaGUI.desktop $ART_PKG_NAME/usr/share/applications
+source build_artifice
+cp ./dist $ART_PKG_NAME/usr/local/ARTIFICE
 mkdir -p $ART_PKG_NAME/DEBIAN
-sudo cp ./linux_dist_files/control $ART_PKG_NAME/DEBIAN/
+cp ./linux_dist_files/control $ART_PKG_NAME/DEBIAN/
 dpkg-deb --build --root-owner-group $ART_PKG_NAME
