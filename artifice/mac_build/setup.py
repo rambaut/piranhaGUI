@@ -16,7 +16,7 @@ OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../c
 
 setup(
     name="PiranhaGUI",
-      version="1.3.4_prerelease",
+    version="1.3.4_prerelease",
     app=APP,
     data_files=DATA_FILES,
     options={'py2app': OPTIONS},
