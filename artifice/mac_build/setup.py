@@ -10,7 +10,7 @@ from setuptools import setup
 APP = ['../artifice.pyw']
 DATA_FILES = []
 #OPTIONS = {"qt_plugins": ["dyld"], "resources": ["../resources", "../config.yml", "../docker_rampart", "../docker_piranha","../builtin_protocols"], "frameworks": ["/usr/lib/libffi.dylib"]} #, "../Keyboard.ttf"
-OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../config.yml", "../docker_rampart", "../docker_piranha","../builtin_protocols"], "frameworks": ["/usr/lib/libffi.dylib"]} #, "../Keyboard.ttf"
+OPTIONS = {"qt_plugins": ["libffi", "dyld"], "resources": ["../resources", "../config.yml", "../docker_rampart", "../docker_piranha","../builtin_protocols"], 'iconfile':'../resources/piranha_resized.icns', "frameworks": ["/usr/lib/libffi.dylib"]} #, "../Keyboard.ttf"
 
 
 
