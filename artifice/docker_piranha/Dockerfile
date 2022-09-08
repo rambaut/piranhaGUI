@@ -7,8 +7,14 @@ WORKDIR /data
 # check for updates
 RUN apt-get update -y && apt-get upgrade -y
 
+# install gcc
+RUN apt install build-essential -y --no-install-recommends
+
 # copy in piranha
 RUN git clone https://github.com/aineniamh/piranha.git
+
+# TEMP change branch
+RUN cd /data/piranha && git checkout analytical-update
 
 #install mamba
 RUN conda install -n base -c conda-forge mamba
@@ -21,6 +27,9 @@ RUN cd /data/piranha  && pip install .
 
 # Install conda-pack:
 RUN conda install -c conda-forge conda-pack
+
+# fix conda conflicts for conda-pack
+RUN conda list
 
 # Use conda-pack to create a standalone enviornment
 # in /venv:

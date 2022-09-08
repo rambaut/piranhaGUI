@@ -2,4 +2,4 @@
 
 python setup.py py2app
 
-cp -f -r ./Frameworks/. ./dist/artifice.app/Contents/Frameworks
+cp -f -r ./Frameworks/. ./dist/PiranhaGUI.app/Contents/Frameworks
