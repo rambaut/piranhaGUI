@@ -17,16 +17,17 @@ from artifice_core.manage_protocols import add_protocol
 #create artifice theme
 def make_theme(version):
     if version == 'piranhaGUI': # poseqco color scheme
-        Artifice_Theme = {'BACKGROUND': '#ED6D37' ,
-                   'TEXT': '#FCE0B0',
-                   'INPUT': '#F7AE6C',
+        Artifice_Theme = {'BACKGROUND': "#FBECA6",
+                   'TEXT': '#000000',
+                   'INPUT': '#FFAE59',
                    'TEXT_INPUT': '#000000',
                    'SCROLL': '#707070',
-                   'BUTTON': ('#F7AE6C', '#1E707E',),
+                   'BUTTON': ('#FEAE63', '#FF4600'),
                    'PROGRESS': ('#000000', '#000000'),
                    'BORDER': 1,
                    'SLIDER_DEPTH': 0,
                    'PROGRESS_DEPTH': 0}
+
     else: # artic color scheme
         Artifice_Theme = {'BACKGROUND': "#072429",
                    'TEXT': '#f7eacd',
@@ -107,6 +108,7 @@ if __name__ == '__main__':
     make_theme(version)
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
+    make_theme('artifice')
 
     if advanced != None: # if button pressed to launch artifice
         try:

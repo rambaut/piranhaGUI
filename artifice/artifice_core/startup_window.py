@@ -33,7 +33,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
         docker_status = translate_text('Docker installed',language,translate_scheme)
-        docker_text_color =  fail_text_colour
+        docker_text_color =  pass_text_colour
     else:
         docker_status = translate_text('Docker not installed',language,translate_scheme)
         docker_text_color = fail_text_colour
