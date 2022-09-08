@@ -5,6 +5,7 @@ import traceback
 import csv
 import base64
 import os.path
+import sys
 from os import mkdir
 from PIL import Image
 from io import BytesIO
@@ -16,13 +17,16 @@ from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
 
 # prints the queued log output until it's empty, prints a message if container stopped
-def print_container_log(log_queue, window, output_key, logfile):
+def print_container_log(log_queue, window, output_key, logfile,):
     queue_empty = False
     while not queue_empty:
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
-            window[output_key].print(output, end='')
+            if sys.platform.startswith("darwin"): #macOS
+                window[output_key].print(output, font='Menlo', end='')
+            else:
+                window[output_key].print(output, font='Menlo', end='')
             update_log(output, filename=logfile, add_newline=False)
             if output == '###CONTAINER STOPPED###\n':
                 return True
