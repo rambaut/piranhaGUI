@@ -8,7 +8,7 @@ cp ./linux_dist_files/piranhaGUI.desktop $ART_PKG_NAME/usr/share/applications
 source build_artifice
 cp ./dist $ART_PKG_NAME/usr/local/ARTIFICE
 mkdir -p $ART_PKG_NAME/DEBIAN
-cp ./linux_dist_files/control $ART_PKG_NAME/DEBIAN/
+cp ./linux_dist_files/piranhaGUI/control $ART_PKG_NAME/DEBIAN/
 mv $ART_PKG_NAME ./pkg_file
 cd pkg_file
-dpkg-deb --build --root-owner-group $ART_PKG_NAME
+dpkg-deb --build . --root-owner-group $ART_PKG_NAME
