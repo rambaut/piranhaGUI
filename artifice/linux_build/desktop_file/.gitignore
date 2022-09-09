@@ -1,0 +1,3 @@
+# directory ahould be empty on repo, everythine ignored apart from this file
+*
+!.gitignore
