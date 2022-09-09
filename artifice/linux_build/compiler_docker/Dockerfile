@@ -22,7 +22,7 @@ RUN python3 -m pip install --user virtualenv
 RUN python3 -m venv env && source env/bin/activate && pip install -r /data/artifice/artifice/requirements.txt && pip install tk
 
 RUN mkdir -p  data/artifice/artifice/linux_build/dist/
-WORKDIR /data/artifice/artifice/linux_build/pkg_file
+WORKDIR /data/artifice/artifice/linux_build/
 
 #ENTRYPOINT source /data/env/bin/activate && source /data/artifice/artifice/linux_build/build_artifice
 ENTRYPOINT source /data/env/bin/activate && source /data/artifice/artifice/linux_build/build_artifice && source /data/artifice/artifice/linux_build/create_deb_package
