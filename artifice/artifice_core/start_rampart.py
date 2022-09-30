@@ -38,9 +38,16 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
         volumes.append(f'{protocol_path}:/data/run_data/protocol')
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
+    test = False
 
-    container = client.containers.run(image=image, detach=True, name=container_name, ports=ports, environment=environment, volumes=volumes)
+    if test:
+        command = f"docker run -d --name {container_name} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled {artifice_core.consts.RAMPART_IMAGE                      }"
+        print(command)
+        os.system(command)
+        client = None
 
+    else:
+        container = client.containers.run(image=image, detach=True, name=container_name, ports=ports, environment=environment, volumes=volumes)
 
     #command = f"docker run -it --name {container_name} -p {secondPort}:{secondPort} -p {firstPort}:{firstPort} -e PORT_ONE={firstPort} -e PORT_TWO={secondPort} --volume {run_path}:/data/run_data/analysis --volume {basecalled_path}:/data/run_data/basecalled artifice_polio_rampart"
     #print(command)
