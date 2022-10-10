@@ -94,6 +94,9 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font, visible=is_piranhaGUI,key='-PIRANHA INSTALL-'),
     ],
     [
+    AltButton(button_text='fix docker', font=font, key='-FIX DOCKER-')
+    ],
+    [
     AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
     sg.Push(),
     AltButton(button_text=translate_text('Options',language,translate_scheme),font=font,key='-OPTIONS-')
@@ -137,20 +140,19 @@ def create_install_popup(name, font):
     install_popup.read(timeout=100)
     return install_popup
 
-def install_image(name, image_tag, window, font, client):
+def fix_docker_mac():
     if sys.platform.startswith("darwin"):
-        try:
-            filepath = f"{os.getenv('HOME')}/.docker/config.json"
-            with open(filepath, mode='r') as file:
-                file_data = file.read()
-            replace_data = file_data.replace('credsStore','credStore')
+        filepath = f"{os.getenv('HOME')}/.docker/config.json"
+        with open(filepath, mode='r') as file:
+            file_data = file.read()
+        replace_data = file_data.replace('credsStore','credStore')
 
-            with open(filepath, mode='w') as file:
-                file.write(replace_data)
-                print(file.read())
-        except:
-            pass
+        with open(filepath, mode='w') as file:
+            file.write(replace_data)
         
+
+def install_image(name, image_tag, window, font):
+    client = docker.from_env()        
     install_popup = create_install_popup(name, font)
     client.images.pull(image_tag)
     install_popup.close()
@@ -182,13 +184,21 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,client)
+                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font)
+                client = docker.from_env()
             except Exception as err:
                 error_popup(err, font)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,client)
+                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font)
+                client = docker.from_env()
+            except Exception as err:
+                error_popup(err, font)
+        
+        elif event == '-FIX DOCKER-':
+            try:
+                fix_docker_mac()
             except Exception as err:
                 error_popup(err, font)
 
