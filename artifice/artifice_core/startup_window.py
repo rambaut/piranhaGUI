@@ -2,7 +2,9 @@ import PySimpleGUI as sg
 import docker
 import traceback
 import os.path
-from os import mkdir
+import sys
+import os
+from os import system
 from webbrowser import open_new_tab
 from PIL import Image
 from time import sleep
@@ -136,6 +138,19 @@ def create_install_popup(name, font):
     return install_popup
 
 def install_image(name, image_tag, window, font, client):
+    if sys.platform.startswith("darwin"):
+        try:
+            filepath = f"{os.getenv('HOME')}/.docker/config.json"
+            with open(filepath, mode='r') as file:
+                file_data = file.read()
+            replace_data = file_data.replace('credsStore','credStore')
+
+            with open(filepath, mode='w') as file:
+                file.write(replace_data)
+                print(file.read())
+        except:
+            pass
+        
     install_popup = create_install_popup(name, font)
     client.images.pull(image_tag)
     install_popup.close()
