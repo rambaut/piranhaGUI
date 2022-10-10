@@ -152,15 +152,18 @@ def fix_docker_mac():
         
 
 def install_image(name, image_tag, window, font):
-    client = docker.from_env()        
-    install_popup = create_install_popup(name, font)
-    client.images.pull(image_tag)
-    install_popup.close()
-    image_status = f'{name} image installed'
-    pull_text = f'Check for updates to {name} image'
-    text_color = PASS_TEXT_COLOUR
-    window[f'-{name} INSTALL-'].update(text=pull_text)
-    window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
+    client = docker.from_env()
+    try:        
+        install_popup = create_install_popup(name, font)
+        client.images.pull(image_tag)
+        install_popup.close()
+        image_status = f'{name} image installed'
+        pull_text = f'Check for updates to {name} image'
+        text_color = PASS_TEXT_COLOUR
+        window[f'-{name} INSTALL-'].update(text=pull_text)
+        window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
+    except docker.credentials.errors.InitializationError as err:
+        print('caught docker error')
 
 def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
     client = docker.from_env()
