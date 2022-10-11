@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+from artifice.artifice.artifice_core.alt_popup import alt_popup
 import docker
 import traceback
 import os.path
@@ -151,22 +152,40 @@ def fix_docker_mac():
             file.write(replace_data)
         
 
-def install_image(name, image_tag, window, font):
+def install_image(name, image_tag, window, font, language, translate_scheme):
     client = docker.from_env()
+    install_popup = create_install_popup(name, font)
     try:        
-        install_popup = create_install_popup(name, font)
         client.images.pull(image_tag)
-        install_popup.close()
         image_status = f'{name} image installed'
         pull_text = f'Check for updates to {name} image'
         text_color = PASS_TEXT_COLOUR
         window[f'-{name} INSTALL-'].update(text=pull_text)
         window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     except docker.credentials.errors.InitializationError as err:
-        print('caught docker error')
+        update_log(traceback.format_exc())
+        popup_text = """
+        Docker has returned an inialization error, this likely the result of an issue with docker on MacOS; changing credsStore 
+        to credStore in .docker/config.json should fix it. It should be resolved automatically from here by pressing 'OK' which will edit the file, or you can press 'Cancel' and try to fix it manually. If this error persists or you are using 
+        an operating system other than MacOS this may be a different issue
+        """
+        docker_err_popup = alt_popup(translate_text(popup_text, language, translate_scheme),font=font, button_type=sg.POPUP_BUTTONS_OK_CANCEL)
+    
+    install_popup.close()
+        
 
 def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
     client = docker.from_env()
+
+    config = artifice_core.consts.retrieve_config()
+    
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    
+    translate_scheme = get_translate_scheme()
+
 
     while True:
         event, values = window.read()
@@ -187,14 +206,14 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font)
+                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,language,translate_scheme)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err, font)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font)
+                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,language, translate_scheme)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err, font)
@@ -211,6 +230,12 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
                 run_options_window(options_window, font)
                 options_window.close()
                 window = create_startup_window(window=window,version=version,scale=scale,font=font)
+
+                config = artifice_core.consts.retrieve_config()
+                try:
+                    language = config['LANGUAGE']
+                except:
+                    language = 'English'
             except Exception as err:
                 """
                 update_log(traceback.format_exc())
