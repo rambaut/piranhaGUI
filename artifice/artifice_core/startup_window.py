@@ -1,5 +1,5 @@
+from pydoc import doc
 import PySimpleGUI as sg
-from artifice.artifice.artifice_core.alt_popup import alt_popup
 import docker
 import traceback
 import os.path
@@ -15,6 +15,7 @@ import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from artifice_core.alt_button import AltButton
+from artifice_core.alt_popup import alt_popup
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
@@ -155,7 +156,8 @@ def fix_docker_mac():
 def install_image(name, image_tag, window, font, language, translate_scheme):
     client = docker.from_env()
     install_popup = create_install_popup(name, font)
-    try:        
+    try:
+        raise docker.credentials.errors.InitializationError      
         client.images.pull(image_tag)
         image_status = f'{name} image installed'
         pull_text = f'Check for updates to {name} image'
@@ -164,17 +166,21 @@ def install_image(name, image_tag, window, font, language, translate_scheme):
         window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     except docker.credentials.errors.InitializationError as err:
         update_log(traceback.format_exc())
-        popup_text = """
-        Docker has returned an inialization error, this likely the result of an issue with docker on MacOS; changing credsStore 
-        to credStore in .docker/config.json should fix it. It should be resolved automatically from here by pressing 'OK' which will edit the file, or you can press 'Cancel' and try to fix it manually. If this error persists or you are using 
-        an operating system other than MacOS this may be a different issue
-        """
-        docker_err_popup = alt_popup(translate_text(popup_text, language, translate_scheme),font=font, button_type=sg.POPUP_BUTTONS_OK_CANCEL)
+        popup_text = "Docker has returned an inialization error, this likely the result of an issue with docker on MacOS; changing credsStore " \
+        "to credStore in .docker/config.json should fix it. It should be resolved automatically from here by pressing 'OK' which will edit the file, or you can press 'Cancel' and try to fix it manually. If this error persists or you are using " \
+        "an operating system other than MacOS there may be another issue with Docker" 
+        docker_err_popup_choice = alt_popup(translate_text(popup_text, language, translate_scheme),font=font, button_type=sg.POPUP_BUTTONS_OK_CANCEL)
+        if docker_err_popup_choice == 'OK':
+            #fix_docker_mac()
+            install_popup.close()
+            install_image(name, image_tag, window, font, language, translate_scheme)
     
     install_popup.close()
         
 
 def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
+    #client = docker.from_env(credstore_env={'credStore':'desktop'})
+    #print(client.configs())
     client = docker.from_env()
 
     config = artifice_core.consts.retrieve_config()
@@ -206,14 +212,14 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,language,translate_scheme)
+                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,language,translate_scheme,client)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err, font)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,language, translate_scheme)
+                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,language, translate_scheme,client)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err, font)
