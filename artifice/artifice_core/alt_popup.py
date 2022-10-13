@@ -130,7 +130,7 @@ def alt_popup(*args, title=None, button_color=None, background_color=None, text_
                                 pad=((20, 0), 3),font=font)]] #EDITED include font argument removed size argument
     elif button_type is sg.POPUP_BUTTONS_OK_CANCEL: #EDITED to put sg.
         layout += [[PopupButton('OK', button_color=button_color, focus=True, bind_return_key=True,font=font), #EDITED include font argument removed size argument
-                    PopupButton('Cancel', size=(6, 1), button_color=button_color,font=font)]] #EDITED include font argumen
+                    PopupButton('Cancel', button_color=button_color,font=font)]] #EDITED include font argument removed size argument
     elif button_type is sg.POPUP_BUTTONS_NO_BUTTONS: #EDITED to put sg.
         pass
     else:
