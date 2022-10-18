@@ -1,4 +1,5 @@
 from pydoc import doc
+from turtle import update
 import PySimpleGUI as sg
 import docker
 import traceback
@@ -157,12 +158,12 @@ def create_alt_docker_config():
             print('y')
 
         alt_config_filepath = docker_data_dir / 'config.json'
-
+        update_log('creating alternate fixed docker config')
         with open(alt_config_filepath, mode='w') as file:
             file.write(replace_data)
         
 
-def install_image(name, image_tag, window, font, language, translate_scheme):
+def install_image(name, image_tag, window, font, language, translate_scheme, client):
     client = docker.from_env()
     install_popup = create_install_popup(name, font)
     try:
@@ -174,20 +175,17 @@ def install_image(name, image_tag, window, font, language, translate_scheme):
         window[f'-{name} INSTALL-'].update(text=pull_text)
         window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     except docker.credentials.errors.InitializationError as err:
-        update_log(traceback.format_exc())
-        command = f"docker pull {image_tag}"
+        #raise Exception
+        update_log('Credential initaliasion error (likely MacOS), attempting fix...')
+        #create_alt_docker_config()
+        docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
+        #update_log(f'pulling {name} image using alternate config')
+        command = f'docker --config {docker_data_dir} pull {image_tag}'
+        #command = f"docker pull {image_tag}"
+        update_log(command)
 
         os.system(command)
-        """
-        popup_text = "Docker has returned an inialization error, this likely the result of an issue with docker on MacOS; changing credsStore " \
-        "to credStore in .docker/config.json should fix it. It should be resolved automatically from here by pressing 'OK' which will edit the file, or you can press 'Cancel' and try to fix it manually. If this error persists or you are using " \
-        "an operating system other than MacOS there may be another issue with Docker" 
-        docker_err_popup_choice = alt_popup(translate_text(popup_text, language, translate_scheme),font=font, button_type=sg.POPUP_BUTTONS_OK_CANCEL)
-        if docker_err_popup_choice == 'OK':
-            #fix_docker_mac()
-            install_popup.close()
-            install_image(name, image_tag, window, font, language, translate_scheme)
-        """
+        
     
     install_popup.close()
         
