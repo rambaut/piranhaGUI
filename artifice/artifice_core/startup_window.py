@@ -5,7 +5,7 @@ import traceback
 import os.path
 import sys
 import os
-from os import system
+from os import system, mkdir
 from webbrowser import open_new_tab
 from PIL import Image
 from time import sleep
@@ -142,14 +142,23 @@ def create_install_popup(name, font):
     install_popup.read(timeout=100)
     return install_popup
 
-def fix_docker_mac():
+# creates an alternate config file for docker. Used as a workaround for issue #16
+def create_alt_docker_config():
     if sys.platform.startswith("darwin"):
         filepath = f"{os.getenv('HOME')}/.docker/config.json"
         with open(filepath, mode='r') as file:
             file_data = file.read()
         replace_data = file_data.replace('credsStore','credStore')
 
-        with open(filepath, mode='w') as file:
+        docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
+        try:
+            mkdir(docker_data_dir)
+        except FileExistsError:
+            print('y')
+
+        alt_config_filepath = docker_data_dir / 'config.json'
+
+        with open(alt_config_filepath, mode='w') as file:
             file.write(replace_data)
         
 
@@ -166,6 +175,10 @@ def install_image(name, image_tag, window, font, language, translate_scheme):
         window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     except docker.credentials.errors.InitializationError as err:
         update_log(traceback.format_exc())
+        command = f"docker pull {image_tag}"
+
+        os.system(command)
+        """
         popup_text = "Docker has returned an inialization error, this likely the result of an issue with docker on MacOS; changing credsStore " \
         "to credStore in .docker/config.json should fix it. It should be resolved automatically from here by pressing 'OK' which will edit the file, or you can press 'Cancel' and try to fix it manually. If this error persists or you are using " \
         "an operating system other than MacOS there may be another issue with Docker" 
@@ -174,6 +187,7 @@ def install_image(name, image_tag, window, font, language, translate_scheme):
             #fix_docker_mac()
             install_popup.close()
             install_image(name, image_tag, window, font, language, translate_scheme)
+        """
     
     install_popup.close()
         
@@ -226,7 +240,7 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
         
         elif event == '-FIX DOCKER-':
             try:
-                fix_docker_mac()
+                create_alt_docker_config()
             except Exception as err:
                 error_popup(err, font)
 
