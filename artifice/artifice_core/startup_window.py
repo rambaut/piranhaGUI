@@ -169,25 +169,23 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
     try:
         raise docker.credentials.errors.InitializationError      
         client.images.pull(image_tag)
-        image_status = f'{name} image installed'
-        pull_text = f'Check for updates to {name} image'
-        text_color = PASS_TEXT_COLOUR
-        window[f'-{name} INSTALL-'].update(text=pull_text)
-        window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     except docker.credentials.errors.InitializationError as err:
         #raise Exception
         update_log('Credential initaliasion error (likely MacOS), attempting fix...')
         #create_alt_docker_config()
         docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
-        #update_log(f'pulling {name} image using alternate config')
+        update_log(f'pulling {name} image using alternate config')
         command = f'docker --config {docker_data_dir} pull {image_tag}'
         #command = f"docker pull {image_tag}"
         update_log(command)
-
         os.system(command)
         
-    
+    image_status = f'{name} image installed'
+    pull_text = f'Check for updates to {name} image'
+    text_color = PASS_TEXT_COLOUR
+    window[f'-{name} INSTALL-'].update(text=pull_text)
+    window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
         
 
@@ -234,12 +232,6 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
             try:
                 install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,language, translate_scheme,client)
                 client = docker.from_env()
-            except Exception as err:
-                error_popup(err, font)
-        
-        elif event == '-FIX DOCKER-':
-            try:
-                create_alt_docker_config()
             except Exception as err:
                 error_popup(err, font)
 
