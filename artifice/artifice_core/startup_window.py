@@ -179,6 +179,7 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         update_log('Credential initaliasion error (likely MacOS), attempting fix...')
         #create_alt_docker_config()
         docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
+        docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
         #update_log(f'pulling {name} image using alternate config')
         command = f'docker --config {docker_data_dir} pull {image_tag}'
         #command = f"docker pull {image_tag}"
