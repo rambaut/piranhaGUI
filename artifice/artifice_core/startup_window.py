@@ -6,6 +6,7 @@ import traceback
 import os.path
 import sys
 import os
+import subprocess
 from os import system, mkdir
 from webbrowser import open_new_tab
 from PIL import Image
@@ -166,8 +167,14 @@ def create_alt_docker_config():
 def install_image(name, image_tag, window, font, language, translate_scheme, client):
     client = docker.from_env()
     install_popup = create_install_popup(name, font)
+    command = f"docker pull {image_tag}"
+    update_log(command)
+    #os.system(command)
+    ret = subprocess.run(command, shell=True, text=True, stderr=subprocess.STDOUT)
+    update_log(ret.stdout)
+    """
     try:
-        #raise docker.credentials.errors.InitializationError      
+        raise docker.credentials.errors.InitializationError      
         client.images.pull(image_tag)
     except docker.credentials.errors.InitializationError as err:
         #raise Exception
@@ -176,11 +183,13 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
         update_log(f'pulling {name} image using alternate config')
-        command = f'docker --config {docker_data_dir} pull {image_tag}'
-        #command = f"docker pull {image_tag}"
+        command = f'docker --config {docker_data_dir}'# pull {image_tag}'
+        update_log(command)
+        #os.system(command)
+        command = f"docker pull {image_tag}"
         update_log(command)
         os.system(command)
-        
+    """    
     image_status = f'{name} image installed'
     pull_text = f'Check for updates to {name} image'
     text_color = PASS_TEXT_COLOUR
