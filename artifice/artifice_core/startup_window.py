@@ -167,11 +167,13 @@ def create_alt_docker_config():
 def install_image(name, image_tag, window, font, language, translate_scheme, client):
     client = docker.from_env()
     install_popup = create_install_popup(name, font)
-    command = f"docker pull {image_tag}"
+    #command = f"docker pull {image_tag}"
+    command = "docker ps"
     update_log(command)
     #os.system(command)
-    ret = subprocess.run(command, shell=True, text=True, stderr=subprocess.STDOUT)
+    ret = subprocess.run(command, shell=True, text=True, capture_output=True)
     update_log(ret.stdout)
+    update_log(ret.stderr)
     """
     try:
         raise docker.credentials.errors.InitializationError      
