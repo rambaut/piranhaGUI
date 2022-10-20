@@ -2,7 +2,12 @@ import artifice_core.consts
 
 #update the log with a new line
 def update_log(line, filename = artifice_core.consts.LOGFILE, overwrite = False, add_newline = True):
-    line = str(line)
+    #make sure line can be converted to string
+    try:
+        line = str(line)
+    except:
+        return
+
     if overwrite:
         mode = 'w'
     else:
