@@ -168,15 +168,15 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
     client = docker.from_env()
     install_popup = create_install_popup(name, font)
     #command = f"docker pull {image_tag}"
-    command = "docker ps"
-    update_log(command)
+    #command = "docker ps"
+    #update_log(command)
     #os.system(command)
-    ret = subprocess.run(command, shell=True, text=True, capture_output=True)
-    update_log(ret.stdout)
-    update_log(ret.stderr)
-    """
+    #ret = subprocess.run(command, shell=True, text=True, capture_output=True)
+    #update_log(ret.stdout)
+    #update_log(ret.stderr)
+    
     try:
-        raise docker.credentials.errors.InitializationError      
+        #raise docker.credentials.errors.InitializationError      
         client.images.pull(image_tag)
     except docker.credentials.errors.InitializationError as err:
         #raise Exception
@@ -190,8 +190,11 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         #os.system(command)
         command = f"docker pull {image_tag}"
         update_log(command)
-        os.system(command)
-    """    
+        #os.system(command)
+        ret = subprocess.run(command, shell=True, text=True, capture_output=True)
+        update_log(ret.stdout)
+        update_log(ret.stderr)
+
     image_status = f'{name} image installed'
     pull_text = f'Check for updates to {name} image'
     text_color = PASS_TEXT_COLOUR
