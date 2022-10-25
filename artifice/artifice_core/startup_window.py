@@ -180,6 +180,7 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         client.images.pull(image_tag)
     except docker.credentials.errors.InitializationError as err:
         #raise Exception
+        update_log(err)
         update_log('Credential initaliasion error (likely MacOS), attempting fix...')
         create_alt_docker_config()
         docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
