@@ -180,17 +180,19 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
         update_log(f'pulling {name} image using alternate config')
-        #command = f'docker --config {docker_data_dir}'# pull {image_tag}'
-        #update_log(command)
-        #os.system(command)
 
         #command = f"docker pull {image_tag}"
         command = ["/usr/local/bin/docker", "--config",docker_data_dir,"pull", image_tag]
         update_log(command)
         #os.system(command)
-        ret = subprocess.run(command, shell=False, text=True, capture_output=True)
-        update_log(ret.stdout)
-        update_log(ret.stderr)
+        #ret = subprocess.run(command, shell=False, text=True, capture_output=True)
+        #update_log(ret.stdout)
+        #update_log(ret.stderr)
+
+    try:
+        client.images.get(image_tag)
+    except:
+        raise Exception('docker was unable to pull image')
 
     image_status = f'{name} image installed'
     pull_text = f'Check for updates to {name} image'
