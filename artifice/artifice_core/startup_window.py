@@ -185,7 +185,7 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         #os.system(command)
 
         #command = f"docker pull {image_tag}"
-        command = ["/usr/local/bin/docker", "pull", image_tag]
+        command = ["/usr/local/bin/docker", "--config",docker_data_dir,"pull", image_tag]
         update_log(command)
         #os.system(command)
         ret = subprocess.run(command, shell=False, text=True, capture_output=True)
