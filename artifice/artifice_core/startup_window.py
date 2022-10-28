@@ -42,7 +42,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         docker_status = translate_text('Docker installed',language,translate_scheme)
         docker_text_color =  PASS_TEXT_COLOUR
     else:
-        docker_status = translate_text('Docker not installed',language,translate_scheme)
+        docker_status = translate_text('Docker not installed/not running',language,translate_scheme)
         docker_text_color = FAIL_TEXT_COLOUR
 
     got_rampart_image, docker_client = artifice_core.start_rampart.check_for_image(None, artifice_core.consts.RAMPART_IMAGE, font=font, popup=False)
