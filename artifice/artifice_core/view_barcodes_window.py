@@ -62,6 +62,8 @@ def save_barcodes(run_info):
     barcodes_list = make_barcodes_list(run_info)
     title = run_info['title']
     update_log(f'saving barcodes file for run: "{title}"')
+    
+    # make sure run dir exists
     if not os.path.exists(artifice_core.consts.RUNS_DIR / title):
          os.mkdir(artifice_core.consts.RUNS_DIR / title)
 
