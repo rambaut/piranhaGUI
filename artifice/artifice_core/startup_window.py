@@ -170,10 +170,8 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
    
     
     try:
-        #raise docker.credentials.errors.InitializationError      
         client.images.pull(image_tag)
     except docker.credentials.errors.InitializationError as err:
-        #raise Exception
         update_log(err)
         update_log('Credential initaliasion error (likely MacOS), attempting fix...')
         create_alt_docker_config()
@@ -181,13 +179,12 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
         update_log(f'pulling {name} image using alternate config')
 
-        #command = f"docker pull {image_tag}"
         command = ["/usr/local/bin/docker", "--config",docker_data_dir,"pull", image_tag]
         update_log(command)
         #os.system(command)
-        #ret = subprocess.run(command, shell=False, text=True, capture_output=True)
-        #update_log(ret.stdout)
-        #update_log(ret.stderr)
+        ret = subprocess.run(command, shell=False, text=True, capture_output=True)
+        update_log(ret.stdout)
+        update_log(ret.stderr)
 
     try:
         client.images.get(image_tag)
