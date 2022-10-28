@@ -1,7 +1,7 @@
 English,Français
 ~SETUP WINDOW~ ,
 Docker installed,Docker est installé
-Docker not installed,Docker n’est pas installé
+Docker not installed/not running,Docker n’est pas installé/n'exécute pas
 RAMPART image installed,Image RAMPART est installé
 Check for updates to RAMPART image,Vérifier les mises à jour de l'image RAMPART
 PIRANHA image installed,Image PIRANHA est installé
