@@ -98,9 +98,6 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font, visible=is_piranhaGUI,key='-PIRANHA INSTALL-'),
     ],
     [
-    AltButton(button_text='fix docker', font=font, key='-FIX DOCKER-')
-    ],
-    [
     AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
     sg.Push(),
     AltButton(button_text=translate_text('Options',language,translate_scheme),font=font,key='-OPTIONS-')
