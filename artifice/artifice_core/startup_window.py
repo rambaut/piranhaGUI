@@ -189,10 +189,13 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
     try:
         client.images.get(image_tag)
     except:
-        raise Exception('docker was unable to pull image')
+        err_text = translate_text('docker was unable to pull image',language,translate_scheme)
+        raise Exception(err_text)
 
     image_status = f'{name} image installed'
+    image_status = translate_text(image_status,language,translate_scheme)
     pull_text = f'Check for updates to {name} image'
+    pull_text = translate_text(pull_text,language,translate_scheme)
     text_color = PASS_TEXT_COLOUR
     window[f'-{name} INSTALL-'].update(text=pull_text)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
