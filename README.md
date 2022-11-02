@@ -13,8 +13,14 @@ The first line in this screenshot indicates docker is not running on this machin
 
 Assuming you have docker ready to go, you can now pull the images for running RAMPART and PIRANHA from dockerhub by pressing the buttons provided. This requires an internet connection, the downloads at the time of writing are 200MB and 800MB respectively, so they shouldn't take too long even on a relatively slow connection.
 
-From the startup screen you can also access the options menu, shown below, by pressing the buttton labelled options. There are currenly two options available to modify. You can change the number of threads piranha will use for analysis, more threads will generally lead to faster results but increases the demand on your cpu. The default is half the number of threads available. You can also change the language from here, currently the options are french and english.
+From the startup screen you can also access the options menu by pressing the buttton labelled options. There are currenly two options available to modify. You can change the number of threads piranha will use for analysis, more threads will generally lead to faster results but increases the demand on your cpu. The default is half the number of threads available. You can also change the language from here, currently the options are french and english.
 
 Pressing the continue button will take you to the window to setup/edit your run, shown below:
 
-T
+There are three fields to fill here, you can browse your OS file system for each them or simply copy in a path if you have it to hand. The first is samples, this is should be the csv file detailing your samples. Once you have selected your samples file you may want to view them with the provided button. This will open a window where you can select the column specifying the barcode and sample id, based on the label at the top of each column. For this reason Artifice will not work as intended if your sample csv columns lacks labels.
+
+The second field to fill is the MinKnow run folder. This should be the folder containing the demultiplexed samples outputed by MinKnow. Lastly the output folder field specifies where PIRANHA will place its' report files.
+
+Once the run has been setup pressing continue will take you to the window for actually running RAMPART and PIRANHA analysis, shown below:
+
+The first button will take you back to the previous window if you need to modify your run. Below there is an indicator for whether RAMPART is running, and what protocol is selected. There is also button for selected another protocol for RAMPART which will open a window for this purpose. Artifice comes with two protcols to choose from, the ARTIC poliovirus protocol and the default RAMPART protocol. You can also add your own protocols if needed. Next there is button for starting RAMPART, if RAMPART is currently running there is also a button for viewing it in browser. There is a similar text indicator and button for running PIRANHA analysis. If PIRANHA has finished creating a report there will also be a button it in browser. Finally there are two tabs for selecting whether to view the text output either RAMPART or PIRANHA
