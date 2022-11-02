@@ -148,10 +148,3 @@ def run_edit_window(window, font = None, version = 'ARTIFICE'):
     window.close()
 
 
-if __name__ == '__main__':
-    font = (artifice_core.consts.FONT, 18)
-
-    window = create_main_window(font=font)
-    run_main_window(window, font=font)
-
-    window.close()
