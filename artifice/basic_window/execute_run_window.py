@@ -209,6 +209,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
 
                     update_log('',filename=config['RAMPART_LOGFILE'],overwrite=True)
 
+                    window['-RAMPART TAB-'].select() 
+
             except Exception as err:
                 error_popup(err, font)
 
@@ -232,6 +234,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
                     piranha_log_thread.start()
 
                     update_log('',filename=config['PIRANHA_LOGFILE'],overwrite=True)
+
+                    window['-PIRANHA TAB-'].select()
 
             except Exception as err:
                 error_popup(err, font)
