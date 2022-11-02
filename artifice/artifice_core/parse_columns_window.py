@@ -1,7 +1,9 @@
+from optparse import Option
 import PySimpleGUI as sg
 import os.path
 import csv
 import traceback
+import sys
 
 import artifice_core.view_barcodes_window
 from artifice_core.update_log import log_event, update_log
@@ -44,15 +46,20 @@ def setup_parse_layout(samples, font = None, theme = None, samples_column = 0, b
     visible_column_map = []
     for i in range(len(samples_list[0])):
         visible_column_map.append(True)
+    
+    if sys.platform.startswith("darwin"): #on MacOS
+        option_menu_text_color = '#000000'
+    else:
+        option_menu_text_color = '#f7eacd'
 
     layout = [
         [
         sg.Text(translate_text('Choose Samples column:',language,translate_scheme),size=(25,1)),
-        sg.OptionMenu(column_headers, default_value=column_headers[int(samples_column)], key='-SAMPLES COLUMN-'),
+        sg.OptionMenu(column_headers, default_value=column_headers[int(samples_column)], text_color=option_menu_text_color, key='-SAMPLES COLUMN-'),
         ],
         [
         sg.Text(translate_text('Choose Barcodes column:',language,translate_scheme),size=(25,1)),
-        sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], key='-BARCODES COLUMN-'),
+        sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], text_color=option_menu_text_color, key='-BARCODES COLUMN-'),
         ],
         [
         AltButton(button_text=translate_text('Save',language,translate_scheme),font=font,key='-SAVE-'),
