@@ -129,7 +129,7 @@ def view_samples(run_info, values, samples_key, font, version='ARTIFICE'):
 
         samples = values[samples_key]
         parse_window, column_headers = create_parse_window(samples, font=font, samples_column=samples_column, barcodes_column=barcodes_column, version=version)
-        samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
+        samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers,font=font)
 
         if samples_barcodes_indices != None:
             samples_column, barcodes_column = samples_barcodes_indices
@@ -140,7 +140,7 @@ def view_samples(run_info, values, samples_key, font, version='ARTIFICE'):
 
     return run_info
 
-def run_parse_window(window, samples, column_headers):
+def run_parse_window(window, samples, column_headers, font = None):
     while True:
         event, values = window.read()
         if event != None:
