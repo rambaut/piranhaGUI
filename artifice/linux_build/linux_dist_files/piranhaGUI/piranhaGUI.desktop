@@ -3,5 +3,5 @@ Type=Application
 Name=piranhaGUI
 Comment=Bioinformatics GUI
 Icon=/usr/local/ARTIFICE/resources/piranha.xpm
-Exec=/usr/local/ARTIFICE/launch_script
+Exec=/usr/local/ARTIFICE/launch_script.sh
 Categories=artifice;rampart;piranha;
