@@ -11,4 +11,5 @@ mkdir -p $ART_PKG_NAME/DEBIAN
 cp ./linux_dist_files/piranhaGUI/control $ART_PKG_NAME/DEBIAN/
 mv -t ./pkg_file/ $ART_PKG_NAME 
 cd pkg_file
+chmod +x ./usr/local/ARTIFICElaunch_script.sh
 dpkg-deb --build --root-owner-group $ART_PKG_NAME
