@@ -81,7 +81,7 @@ def edit_config(key, value):
 
     with open(config_path, 'w') as file:
         safe_dump(config, file)
-
+          
 
 setup_config()
 config = retrieve_config()

@@ -145,6 +145,19 @@ def run_error_popup(window):
     window.close()
     return None
 
+#set scaling for all window elements based on screen resolution
+def scale_window(font=None):
+    layout = [[sg.Text('setting up..')]]
+    window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    resolution = window.get_screen_dimensions()[1]
+    scale = resolution/1080
+    update_log(f'scaling by {scale}')
+    sg.set_options(scaling=scale)
+    window.close()
+    artifice_core.consts.edit_config('SCALING', scale)
+    return scale
+
+
 def scale_image(filename, scale, size, output_name = ''):
     if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
         mkdir(artifice_core.consts.get_datadir() / 'resources')
