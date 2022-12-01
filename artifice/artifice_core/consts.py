@@ -4,7 +4,7 @@ import pathlib
 import sys
 import shutil
 import os.path
-from os import getenv, cpu_count, mkdir
+from os import getenv, cpu_count, mkdir, remove
 
 #returns directory where Artifice stores data, dependent on os
 def get_datadir():
@@ -34,6 +34,13 @@ def setup_config():
         return True
     else:
         shutil.copyfile('./config.yml', config_path)
+
+# reset config to defaults
+def set_config_to_default():
+    config_path = str(get_datadir() / 'config.yml')
+    if os.path.isfile(config_path):
+        remove(config_path)
+    shutil.copyfile('./config.yml', config_path)
 
 # returns a dict with config value taken from the config file
 def retrieve_config():
