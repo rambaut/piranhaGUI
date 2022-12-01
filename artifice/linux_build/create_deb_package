@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ART_PKG_NAME=piranhagui_1.3.5
+ART_PKG_NAME=piranhagui_1.3.6
 mkdir $ART_PKG_NAME
 mkdir -p $ART_PKG_NAME/usr/local/ARTIFICE
 mkdir -p $ART_PKG_NAME/usr/share/applications
