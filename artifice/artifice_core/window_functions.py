@@ -105,6 +105,7 @@ def error_popup(err, font):
         log = logfile.read()
 
     translate_scheme = get_translate_scheme()
+    config = artifice_core.consts.retrieve_config()
     try:
         language = config['LANGUAGE']
     except:
