@@ -130,6 +130,40 @@ def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'R
     else:
         return False, client
 
+# Checks dockerhub repo to see if there has been an update to image, returns True if so
+def check_for_image_updates(client, image_tag):
+    if client == None:
+        client = docker.from_env()
+    
+    try:
+        image = client.images.get(image_tag)
+        local_digest = image.attrs['RepoDigests'][0]
+        print(local_digest)
+        trunc_local_digest = local_digest.split('sha256:')[-1]
+
+        api_url =  f'https://hub.docker.com/v2/repositories/{image_tag}/tags'
+
+        response = requests.get(api_url)
+        tags = response.json()
+
+        #search results for latest tag
+        for tag in tags['results']:
+            if tag['name'] == 'latest': 
+                latest_digest = tag['digest']
+        
+        trunc_latest_digest = latest_digest.split('sha256:')[-1]
+
+        if trunc_local_digest != trunc_latest_digest:
+            update_log(f'updated version of image: {image_tag} found')
+            return True
+        else:
+            update_log(f'confirmed image: {image_tag} is up to date')
+            return False
+    
+    except:
+        return False
+
+
 # Checks if docker is installed
 def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/', popup = True):
     try:
