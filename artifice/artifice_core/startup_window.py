@@ -59,9 +59,15 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     got_piranha_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.PIRANHA_IMAGE, font=font, popup=False)
 
     if got_piranha_image:
-        piranha_image_status = translate_text('PIRANHA image installed',language,translate_scheme)
-        piranha_pull_text = translate_text('Check for updates to PIRANHA image',language,translate_scheme)
-        piranha_text_color = PASS_TEXT_COLOUR
+        piranaha_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.PIRANHA_IMAGE)
+        if piranaha_update_available:
+            piranha_image_status = translate_text('Update available for PIRANHA image',language,translate_scheme)
+            piranha_pull_text = translate_text('Install update to PIRANHA image',language,translate_scheme)
+            piranha_text_color = FAIL_TEXT_COLOUR
+        else:
+            piranha_image_status = translate_text('PIRANHA image installed',language,translate_scheme)
+            piranha_pull_text = translate_text('Check for updates to PIRANHA image',language,translate_scheme)
+            piranha_text_color = PASS_TEXT_COLOUR
     else:
         piranha_image_status = translate_text('PIRANHA image not installed',language,translate_scheme)
         piranha_pull_text = translate_text('Install PIRANHA image',language,translate_scheme)
