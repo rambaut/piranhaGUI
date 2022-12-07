@@ -10,6 +10,10 @@ RAMPART image not installed,Image RAMPART n’est pas installé
 Install RAMPART image,Installer image RAMPART
 PIRANHA image not installed,Image PIRANHA n’est pas installé
 Install PIRANHA image,Installer image PIRANHA
+Update available for RAMPART image,Une mise à jour pour RAMPART est disponible
+Install update to RAMPART image,Mettez à jour la image RAMPART
+Update available for PIRANHA image,Une mise à jour pour PIRANHA est disponible
+Install update to PIRANHA image,Mettez à jour la image PIRANHA
 An internet connection and a Docker install is required to install RAMPART and PIRANHA images,Une connexion internet et un installation Docker est nécessaire pour installer les images RAMPART et PIRANHA
 Open Docker Site in Browser,Ouvrez le site Docker dans le navigateur
 Launch ARTIFICE,Lancez ARTIFICE
@@ -18,6 +22,7 @@ Options,Paramétres
 ~OPTIONS WINDOW~,
 Select language:,Sélectionnez la langue
 Threads to use for analysis:,Threads à utiliser pour analyse
+Reset config to default,Réinitialisez la configuration par défaut
 Save,Enregistrez
 ~EDIT RUN WINDOW~,
 Samples:,Énchantillons:
@@ -66,4 +71,5 @@ Description:,La Description:
 Add Protocol,Ajouter un Protocole
 Selected Protocol,Protocole Sélectionné
 Select Another Protocol,Sélectionnez un Autre Protocole
+Remove Protocol,Retirez cet Protocole
 ""
