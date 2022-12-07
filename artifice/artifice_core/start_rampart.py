@@ -138,7 +138,6 @@ def check_for_image_updates(client, image_tag):
     try:
         image = client.images.get(image_tag)
         local_digest = image.attrs['RepoDigests'][0]
-        print(local_digest)
         trunc_local_digest = local_digest.split('sha256:')[-1]
 
         api_url =  f'https://hub.docker.com/v2/repositories/{image_tag}/tags'
