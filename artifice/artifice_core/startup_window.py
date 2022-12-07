@@ -220,7 +220,7 @@ def install_image(name, image_tag, window, font, language, translate_scheme, cli
     pull_text = f'Check for updates to {name} image'
     pull_text = translate_text(pull_text,language,translate_scheme)
     text_color = PASS_TEXT_COLOUR
-    window[f'-{name} INSTALL-'].update(text=pull_text)
+    window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
         
