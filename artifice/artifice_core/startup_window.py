@@ -87,6 +87,13 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         [sg.Image(source = main_logo_scaled)],
     ]
 
+    if is_piranhaGUI and not got_piranha_image:
+        show_piranha_button = True
+    elif is_piranhaGUI and piranaha_update_available:
+        show_piranha_button = True
+    else:
+        show_piranha_button = False
+
     install_buttons_size = (480,36)
     info_column = [
     [sg.Text(translate_text(image_info_text,language,translate_scheme))],
@@ -101,7 +108,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
 
     [
     sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color, visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
-    AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font, visible=is_piranhaGUI,key='-PIRANHA INSTALL-'),
+    AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font, visible=show_piranha_button,key='-PIRANHA INSTALL-'),
     ],
     [
     AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
