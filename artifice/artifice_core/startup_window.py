@@ -50,6 +50,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     rampart_update_available = False
     if got_rampart_image:
         rampart_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.RAMPART_IMAGE)
+        rampart_update_available = True
         if rampart_update_available:
             rampart_image_status = translate_text('Update available for RAMPART image', language, translate_scheme)
             rampart_pull_text = translate_text('Install update to RAMPART image', language, translate_scheme)
@@ -68,6 +69,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     piranaha_update_available = False
     if got_piranha_image:
         piranaha_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.PIRANHA_IMAGE)
+        piranaha_update_available = True
         if piranaha_update_available:
             piranha_image_status = translate_text('Update available for PIRANHA image',language,translate_scheme)
             piranha_pull_text = translate_text('Install update to PIRANHA image',language,translate_scheme)
@@ -111,16 +113,16 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     info_column = [
     [sg.Text(translate_text(image_info_text,language,translate_scheme))],
     [
-    sg.Text(docker_status,size=(30,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
+    sg.Text(docker_status,size=(35,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
     AltButton(button_text=translate_text('Open Docker Site in Browser',language,translate_scheme),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
     ],
     [
-    sg.Text(rampart_image_status,size=(30,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
+    sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
     AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,font=font,key='-RAMPART INSTALL-'),
     ],
 
     [
-    sg.Text(piranha_image_status,size=(30,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
+    sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
     ],
     [
