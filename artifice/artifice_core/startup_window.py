@@ -50,7 +50,6 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     rampart_update_available = False
     if got_rampart_image:
         rampart_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.RAMPART_IMAGE)
-        rampart_update_available = True
         if rampart_update_available:
             rampart_image_status = translate_text('Update available for RAMPART image', language, translate_scheme)
             rampart_pull_text = translate_text('Install update to RAMPART image', language, translate_scheme)
@@ -69,7 +68,6 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     piranaha_update_available = False
     if got_piranha_image:
         piranaha_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.PIRANHA_IMAGE)
-        piranaha_update_available = True
         if piranaha_update_available:
             piranha_image_status = translate_text('Update available for PIRANHA image',language,translate_scheme)
             piranha_pull_text = translate_text('Install update to PIRANHA image',language,translate_scheme)
