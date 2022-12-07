@@ -125,6 +125,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
     ],
+    [sg.VPush()],
     [
     AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
     sg.Push(),
@@ -138,7 +139,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     layout = [
         [
         sg.Column(logo_column, visible=is_piranhaGUI),
-        sg.Column(info_column),
+        sg.Column(info_column, expand_y=True),
         ],
     ]
     return layout
