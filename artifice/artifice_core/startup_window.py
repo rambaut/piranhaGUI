@@ -190,10 +190,18 @@ def create_alt_docker_config():
             file.write(replace_data)
         
 
-def install_image(name, image_tag, window, font, language, translate_scheme, client):
+def install_image(name, image_repo, window, font, language, translate_scheme, client):
     client = docker.from_env()
     install_popup = create_install_popup(name, font)
-   
+    old_images = client.images.list('polionanopore/piranha')
+
+    #remove any old tags
+    for image in old_images:
+        for tag in image.tags:
+            client.images.remove(tag)
+    image_tag = f'{image_repo}:latest'
+    print(image_tag)
+    #client.images.remove
     
     try:
         client.images.pull(image_tag)
