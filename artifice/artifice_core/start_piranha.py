@@ -31,10 +31,12 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, threads
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 
-    environment = [f'THREADS={threads}']
+    env_str = f'THREADS={threads}'# --verbose --runname testing123'
+    environment = [env_str]
     log_environment = str(environment)
     update_log(f'environment variables: {log_environment}')
 
+    #entrypoint = f'/bin/bash source /venv/bin/activate && piranha -b /data/run_data/analysis/barcodes.csv -i /data/run_data/basecalled --outdir /data/run_data/output/piranha_output -t ${threads}'
     container = client.containers.run(image=image, detach=True, name=container_name, volumes=volumes, environment=environment)
 
 

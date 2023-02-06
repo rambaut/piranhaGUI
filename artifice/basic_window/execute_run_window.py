@@ -74,6 +74,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
+    AltButton(button_text='testing',size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
@@ -268,6 +269,13 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
                 rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, font=font, scale=scale, version=version)
                 if rampart_protocol != None:
                     window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
+
+            except Exception as err:
+                error_popup(err, font)
+
+        elif event == '-PIRANHA OPTIONS-':
+            try:
+                pass
 
             except Exception as err:
                 error_popup(err, font)
