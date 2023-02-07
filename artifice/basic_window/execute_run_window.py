@@ -12,6 +12,7 @@ from webbrowser import open_new_tab
 import artifice_core.start_rampart
 import artifice_core.consts
 import artifice_core.select_protocol_window
+import artifice_core.piranha_options_window
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
@@ -275,7 +276,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
 
         elif event == '-PIRANHA OPTIONS-':
             try:
-                pass
+                piranha_options_window = artifice_core.piranha_options_window.create_piranha_options_window(font=font, scale=scale, version=version)
+                options = artifice_core.piranha_options_window.run_piranha_options_window(piranha_options_window, font=font, version=version)
 
             except Exception as err:
                 error_popup(err, font)
