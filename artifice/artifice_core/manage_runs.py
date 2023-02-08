@@ -83,7 +83,10 @@ def get_run_info(values, run_info, element_dict):
     """
     for element in element_dict:
         if element in values:
-            run_info[element_dict[element]] = values[element].strip()
+            if type(values[element]) == str:
+                run_info[element_dict[element]] = values[element].strip()
+            else:
+                run_info[element_dict[element]] = values[element]
 
     return run_info
 

@@ -277,8 +277,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         elif event == '-PIRANHA OPTIONS-':
             try:
                 piranha_options_window = artifice_core.piranha_options_window.create_piranha_options_window(font=font, scale=scale, version=version)
-                options = artifice_core.piranha_options_window.run_piranha_options_window(piranha_options_window, font=font, version=version)
-
+                run_info = artifice_core.piranha_options_window.run_piranha_options_window(piranha_options_window, run_info, font=font, version=version)
+  
             except Exception as err:
                 error_popup(err, font)
 

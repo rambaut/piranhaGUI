@@ -4,6 +4,7 @@ import artifice_core.consts
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.manage_runs import save_run, save_changes, load_run
 
 def make_theme():
     Artifice_Theme = {'BACKGROUND': "#072429",
@@ -31,7 +32,7 @@ def setup_layout(theme='Dark', font = None):
 
     button_size=(120,36)
     layout = [
-    [sg.Checkbox('verbose', default=False)],
+    [sg.Checkbox('verbose', default=False,key='-VERBOSE-')],
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
@@ -48,11 +49,16 @@ def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font
         window.close()
 
     AltButton.intialise_buttons(new_window)
-    
+
     return new_window
 
-def run_piranha_options_window(window, font = None, version = 'ARTIFICE'):
+def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
+    selected_run_title = run_info['title']
+
+    element_dict = {'-VERBOSE-':'verbose'}
+    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
+    
     
     while True:
         event, values = window.read()
@@ -66,8 +72,9 @@ def run_piranha_options_window(window, font = None, version = 'ARTIFICE'):
        
         elif event == '-CONFIRM-':
             try:
+                run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 window.close()
-                return
+                return run_info
             except Exception as err:
                 error_popup(err, font)
 
