@@ -20,7 +20,7 @@ def launch_piranha(run_info, font, docker_client):
     return piranha_container
 
 # starts a container with the piranha docker image
-def start_piranha(run_path, basecalled_path, output_path, client, image, threads = artifice_core.consts.THREADS, container = None):
+def start_piranha(run_path, basecalled_path, output_path, client, image, threads = artifice_core.consts.THREADS, container = None, options_str = ''):
     if client == None:
         client = docker.from_env()
 
@@ -33,7 +33,7 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, threads
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 
-    env_str = f'THREADS={threads}'# --verbose --runname testing123'
+    env_str = f'THREADS={threads} {options_str}'
     environment = [env_str]
     log_environment = str(environment)
     update_log(f'environment variables: {log_environment}')

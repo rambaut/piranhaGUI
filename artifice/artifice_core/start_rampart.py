@@ -264,7 +264,7 @@ def get_options(run_info):
     options_str = ''
     for element in run_info:
         if element.startswith('-'):
-            if run_info[element].type() == bool and run_info[element]:
+            if type(run_info[element]) == bool and run_info[element]:
                 options_str += str(element)
             else:
                 if run_info[element] != '':
