@@ -10,6 +10,8 @@ def launch_piranha(run_info, font, docker_client):
     runs_dir = artifice_core.consts.RUNS_DIR
     artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,font=font,output=True)
 
+    options_str = artifice_core.start_rampart.get_options(run_info)
+
     run_path = runs_dir / run_info['title']
     basecalled_path = run_info['basecalledPath']
     output_path = run_info['outputPath']

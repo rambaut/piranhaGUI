@@ -56,7 +56,7 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
     config = artifice_core.consts.retrieve_config()
     selected_run_title = run_info['title']
 
-    element_dict = {'-VERBOSE-':'verbose'}
+    element_dict = {'-VERBOSE-':'--verbose'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
     
     
@@ -68,7 +68,7 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
-            return
+            return run_info
        
         elif event == '-CONFIRM-':
             try:

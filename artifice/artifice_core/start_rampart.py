@@ -258,3 +258,16 @@ if __name__ == '__main__':
     basecalled_path = sys.argv[1]
 
     start_rampart(path)
+
+# takes the optional arguments in run_info and converts them to a string to be passed to the command line
+def get_options(run_info):
+    options_str = ''
+    for element in run_info:
+        if element.startswith('-'):
+            if run_info[element].type() == bool and run_info[element]:
+                options_str += str(element)
+            else:
+                if run_info[element] != '':
+                    options_str += f'{element} {run_info[element]}'
+    
+    return options_str
