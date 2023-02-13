@@ -29,10 +29,47 @@ def setup_layout(theme='Dark', font = None):
     except:
         language = 'English'
 
-
     button_size=(120,36)
+
+    input_options_tab = [
+        [
+        sg.Text(translate_text('Reference Sequences:',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-REFERENCE SEQUENCES-',),
+        AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip='Custom reference sequences file.',font=font,size=button_size),
+        ],
+        [
+        sg.Text(translate_text('Positive Control:',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip='Sample name of positive control. Default: `positive`', key='-POSITIVE CONTROL-',),
+        ],
+        [
+        sg.Text(translate_text('Negative Control:',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip='Sample name of negative control. Default: `negative`', key='-NEGATIVE CONTROL-',),
+        ],
+    ]
+
+    analysis_options_tab = [
+        [
+        sg.Text(translate_text('Negative Control:',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip='Sample name of negative control. Default: `negative`', key='-NEGATIVE CONTROL-',),
+        ],
+    ]
+
+    output_options_tab = [
+        [sg.Checkbox('verbose', default=False,key='-VERBOSE-')],
+    ]
+
+    misc_options_tab = [
+        [sg.Checkbox('verbose', default=False, tooltip='test', key='-VERBOSE-')],
+    ]
+
     layout = [
-    [sg.Checkbox('verbose', default=False,key='-VERBOSE-')],
+    [sg.TabGroup([[
+        sg.Tab(translate_text('Input Options',language,translate_scheme),input_options_tab,key='-INPUT OPTIONS TAB-'),
+        sg.Tab(translate_text('Analysis Options',language,translate_scheme),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
+        sg.Tab(translate_text('Output Options',language,translate_scheme),output_options_tab,key='-OUTPUT OPTIONS TAB-'),
+        sg.Tab(translate_text('Misc Options',language,translate_scheme),misc_options_tab,key='-MISC OPTIONS TAB-')
+    ]])],
+
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
