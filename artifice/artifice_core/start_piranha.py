@@ -15,7 +15,7 @@ def launch_piranha(run_info, font, docker_client):
     run_path = runs_dir / run_info['title']
     basecalled_path = run_info['basecalledPath']
     output_path = run_info['outputPath']
-    piranha_container = start_piranha(run_path, basecalled_path, output_path, docker_client, config['PIRANHA_IMAGE'], threads=config['THREADS'], container=None)
+    piranha_container = start_piranha(run_path, basecalled_path, output_path, docker_client, config['PIRANHA_IMAGE'], threads=config['THREADS'], container=None, options_str=options_str)
 
     return piranha_container
 
