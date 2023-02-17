@@ -35,28 +35,98 @@ def setup_layout(theme='Dark', font = None):
         [
         sg.Text(translate_text('Reference Sequences:',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-REFERENCE SEQUENCES-',),
-        AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip='Custom reference sequences file.',font=font,size=button_size),
+        AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip=translate_text('Custom reference sequences file.',language,translate_scheme),font=font,size=button_size),
         ],
+
         [
         sg.Text(translate_text('Positive Control:',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip='Sample name of positive control. Default: `positive`', key='-POSITIVE CONTROL-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Sample name of positive control. Default: `positive`',language,translate_scheme), key='-POSITIVE CONTROL-',),
         ],
         [
         sg.Text(translate_text('Negative Control:',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip='Sample name of negative control. Default: `negative`', key='-NEGATIVE CONTROL-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Sample name of negative control. Default: `negative`',language,translate_scheme), key='-NEGATIVE CONTROL-',),
         ],
     ]
 
     analysis_options_tab = [
         [
-        sg.Text(translate_text('Negative Control:',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip='Sample name of negative control. Default: `negative`', key='-NEGATIVE CONTROL-',),
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme), key='-SAMPLE TYPE-',),
+        ],
+        [
+        sg.Text(translate_text('Analysis Mode:',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify analysis mode to run. Options: `vp1`. Default: `vp1`',language,translate_scheme), key='-ANALYSIS MODE-',),
+        ],
+        [
+        sg.Text(translate_text('Medaka Model',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Medaka model to run analysis using. Default: r941_min_hac_variant_g507',language,translate_scheme), key='-MEDAKA MODEL-',),
+        ],
+        [
+        sg.Text(translate_text('Minimum Mapping Quality',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Minimum mapping quality. Default: 50',language,translate_scheme), key='-MIN MAP QUALITY-',),
+        ],
+        [
+        sg.Text(translate_text('Minimum Read Length',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Minimum read length. Default: 1000',language,translate_scheme), key='-MIN READ LENGTH-',),
+        ],
+        [
+        sg.Text(translate_text('Maximum Read Length',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Maximum read length. Default: 1300',language,translate_scheme), key='-MAX READ LENGTH-',),
+        ],
+        [
+        sg.Text(translate_text('Minimum Read Depth',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Minimum read depth required for consensus generation. Default: 50',language,translate_scheme), key='-MIN READ DEPTH-',),
+        ],
+        [
+        sg.Text(translate_text('Minimum Read Percentage',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Minimum percentage of sample required for consensus generation. Default: 10',language,translate_scheme), key='-MIN READ PCENT-',),
+        ],
+        [
+        sg.Text(translate_text('Primer Length',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Length of primer sequences to trim off start and end of reads. Default: 30',language,translate_scheme), key='-PRIMER LENGTH-',),
         ],
     ]
+    
 
     output_options_tab = [
-        [sg.Checkbox('verbose', default=False,key='-VERBOSE-')],
+        [
+        sg.Text(translate_text('Publish Directory',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Output publish directory. Default: `analysis-2022-XX-YY`',language,translate_scheme), key='-PUBLISH DIR-',),
+        ],
+        [
+        sg.Text(translate_text('Output Prefix',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text(' Prefix of output directory & report name: Default: `analysis`',language,translate_scheme), key='-OUTPUT PREFIX',),
+        ],
+        [sg.Checkbox(translate_text('no-temp',language,translate_scheme), default=False, tooltip=translate_text('Output all intermediate files. For development/ debugging purposes',language,translate_scheme), key='-NO TEMP-')],
+        [sg.Checkbox(translate_text('all metadata to header',language,translate_scheme), default=False, tooltip=translate_text('Output all intermediate files. For development/ debugging purposes',language,translate_scheme), key='-NO TEMP-')],
+        
     ]
+
+    """
+  --datestamp DATESTAMP
+                        Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp
+  --overwrite           Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists
+  -temp TEMPDIR, --tempdir TEMPDIR
+                        Specify where you want the temp stuff to go. Default: `$TMPDIR`
+  --no-temp             Output all intermediate files. For development/ debugging purposes
+  --all-metadata-to-header
+                        Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.
+  --language LANGUAGE   Output report language. Options: English, French. Default: English
+
+  Misc options:
+  --runname RUNNAME     Run name to appear in report. Default: Nanopore sequencing
+  --username USERNAME   Username to appear in report. Default: no user name
+  --institute INSTITUTE
+                        Institute name to appear in report. Default: no institute name
+  --orientation ORIENTATION
+                        Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.
+  -t THREADS, --threads THREADS
+                        Number of threads. Default: 1
+  --verbose             Print lots of stuff to screen
+  -v, --version         show program's version number and exit
+  -h, --help
+
+                        """
 
     misc_options_tab = [
         [sg.Checkbox('verbose', default=False, tooltip='test', key='-VERBOSE-')],
