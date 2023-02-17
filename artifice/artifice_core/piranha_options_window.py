@@ -95,10 +95,10 @@ def setup_layout(theme='Dark', font = None):
         ],
         [
         sg.Text(translate_text('Output Prefix',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text(' Prefix of output directory & report name: Default: `analysis`',language,translate_scheme), key='-OUTPUT PREFIX',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text(' Prefix of output directory & report name: Default: `analysis`',language,translate_scheme), key='-OUTPUT PREFIX-',),
         ],
         [sg.Checkbox(translate_text('no-temp',language,translate_scheme), default=False, tooltip=translate_text('Output all intermediate files. For development/ debugging purposes',language,translate_scheme), key='-NO TEMP-')],
-        [sg.Checkbox(translate_text('all metadata to header',language,translate_scheme), default=False, tooltip=translate_text('Output all intermediate files. For development/ debugging purposes',language,translate_scheme), key='-NO TEMP-')],
+        [sg.Checkbox(translate_text('all metadata to header',language,translate_scheme), default=False, tooltip=translate_text('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.',language,translate_scheme), key='-ALL META-')],
         
     ]
 
@@ -108,10 +108,6 @@ def setup_layout(theme='Dark', font = None):
   --overwrite           Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists
   -temp TEMPDIR, --tempdir TEMPDIR
                         Specify where you want the temp stuff to go. Default: `$TMPDIR`
-  --no-temp             Output all intermediate files. For development/ debugging purposes
-  --all-metadata-to-header
-                        Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.
-  --language LANGUAGE   Output report language. Options: English, French. Default: English
 
   Misc options:
   --runname RUNNAME     Run name to appear in report. Default: Nanopore sequencing
@@ -129,6 +125,10 @@ def setup_layout(theme='Dark', font = None):
                         """
 
     misc_options_tab = [
+        [
+        sg.Text(translate_text('Run Name',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Run name to appear in report. Default: Nanopore sequencing',language,translate_scheme), key='-RUN NAME-',),
+        ],
         [sg.Checkbox('verbose', default=False, tooltip='test', key='-VERBOSE-')],
     ]
 
