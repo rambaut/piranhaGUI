@@ -37,7 +37,6 @@ def setup_layout(theme='Dark', font = None):
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-REFERENCE SEQUENCES-',),
         AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip=translate_text('Custom reference sequences file.',language,translate_scheme),font=font,size=button_size),
         ],
-
         [
         sg.Text(translate_text('Positive Control:',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Sample name of positive control. Default: `positive`',language,translate_scheme), key='-POSITIVE CONTROL-',),
@@ -95,42 +94,38 @@ def setup_layout(theme='Dark', font = None):
         ],
         [
         sg.Text(translate_text('Output Prefix',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text(' Prefix of output directory & report name: Default: `analysis`',language,translate_scheme), key='-OUTPUT PREFIX-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Prefix of output directory & report name: Default: `analysis`',language,translate_scheme), key='-OUTPUT PREFIX-',),
         ],
-        [sg.Checkbox(translate_text('no-temp',language,translate_scheme), default=False, tooltip=translate_text('Output all intermediate files. For development/ debugging purposes',language,translate_scheme), key='-NO TEMP-')],
-        [sg.Checkbox(translate_text('all metadata to header',language,translate_scheme), default=False, tooltip=translate_text('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.',language,translate_scheme), key='-ALL META-')],
-        
+        [sg.Checkbox(translate_text('All Metadata to Header',language,translate_scheme), default=False, tooltip=translate_text('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.',language,translate_scheme), key='-ALL META-')],
+        [sg.Checkbox(translate_text('Date Stamp',language,translate_scheme), default=False, tooltip=translate_text('Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp',language,translate_scheme), key='-DATE STAMP-')],
+        [sg.Checkbox(translate_text('Overwrite Output',language,translate_scheme), default=False, tooltip=translate_text('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists',language,translate_scheme), key='-OVERWRITE-')],   
     ]
 
-    """
-  --datestamp DATESTAMP
-                        Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp
-  --overwrite           Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists
-  -temp TEMPDIR, --tempdir TEMPDIR
-                        Specify where you want the temp stuff to go. Default: `$TMPDIR`
-
-  Misc options:
-  --runname RUNNAME     Run name to appear in report. Default: Nanopore sequencing
-  --username USERNAME   Username to appear in report. Default: no user name
-  --institute INSTITUTE
-                        Institute name to appear in report. Default: no institute name
-  --orientation ORIENTATION
-                        Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.
-  -t THREADS, --threads THREADS
-                        Number of threads. Default: 1
-  --verbose             Print lots of stuff to screen
-  -v, --version         show program's version number and exit
-  -h, --help
-
-                        """
-
     misc_options_tab = [
+        """
         [
         sg.Text(translate_text('Run Name',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Run name to appear in report. Default: Nanopore sequencing',language,translate_scheme), key='-RUN NAME-',),
         ],
-        [sg.Checkbox('verbose', default=False, tooltip='test', key='-VERBOSE-')],
+        """
+        [
+        sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
+        ],
+        [
+        sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
+        ],
+        [sg.Checkbox('verbose', default=False, tooltip=translate_text('Print lots of stuff to screen'), key='-VERBOSE-')],
     ]
+
+
+    """
+  -temp TEMPDIR, --tempdir TEMPDIR
+                        Specify where you want the temp stuff to go. Default: `$TMPDIR`
+  --no-temp             Output all intermediate files. For development/ debugging purposes
+
+                        """
 
     layout = [
     [sg.TabGroup([[
