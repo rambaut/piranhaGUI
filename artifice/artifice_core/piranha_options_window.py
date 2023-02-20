@@ -46,11 +46,13 @@ def setup_layout(theme='Dark', font = None):
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Sample name of negative control. Default: `negative`',language,translate_scheme), key='-NEGATIVE CONTROL-',),
         ],
     ]
+    sample_types_list = ['stool', 'environmental']
 
     analysis_options_tab = [
         [
         sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme), key='-SAMPLE TYPE-',),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],size=(14,1),key='-SAMPLE TYPE-'),
+        #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme), key='-SAMPLE TYPE-',),
         ],
         [
         sg.Text(translate_text('Analysis Mode:',language,translate_scheme),size=(14,1)),
@@ -102,12 +104,6 @@ def setup_layout(theme='Dark', font = None):
     ]
 
     misc_options_tab = [
-        """
-        [
-        sg.Text(translate_text('Run Name',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Run name to appear in report. Default: Nanopore sequencing',language,translate_scheme), key='-RUN NAME-',),
-        ],
-        """
         [
         sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
@@ -116,10 +112,16 @@ def setup_layout(theme='Dark', font = None):
         sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
         ],
-        [sg.Checkbox('verbose', default=False, tooltip=translate_text('Print lots of stuff to screen'), key='-VERBOSE-')],
+        [sg.Checkbox('verbose', default=False, tooltip=translate_text('Print lots of stuff to screen',language,translate_scheme), key='-VERBOSE-')],
     ]
 
 
+    """
+        [
+        sg.Text(translate_text('Run Name',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Run name to appear in report. Default: Nanopore sequencing',language,translate_scheme), key='-RUN NAME-',),
+        ],
+        """
     """
   -temp TEMPDIR, --tempdir TEMPDIR
                         Specify where you want the temp stuff to go. Default: `$TMPDIR`
