@@ -158,7 +158,25 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
     config = artifice_core.consts.retrieve_config()
     selected_run_title = run_info['title']
 
-    element_dict = {'-VERBOSE-':'--verbose'}
+    element_dict = {'-POSITIVE CONTROL-':'-pc',
+                    '-NEGATIVE CONTROL-':'-nc',
+                    '-SAMPLE TYPE-':'-s',
+                    '-ANALYSIS MODE-':'m',
+                    '-MEDAKA MODEL-':'--medaka-model',
+                    '-MIN MAP QUALITY-':'-q',
+                    '-MIN READ LENGTH-':'-n',
+                    '-MAX READ LENGTH-':'-x',
+                    '-MIN READ DEPTH-':'-d',
+                    '-MIN READ PCENT-':'-p',
+                    '-PRIMER LENGTH-':'--primer-length',
+                    '-PUBLISH DIR-':'-pub',
+                    '-OUTPUT PREFIX-':'-pre',
+                    '-ALL META-':'--all-metadata-to-header',
+                    '-DATE STAMP-':'--datestamp',
+                    '-OVERWRITE-':'--overwrite',
+                    '-USER NAME-':'--username',
+                    '-INSTITUTE NAME-':'--institute',
+                    '-VERBOSE-':'--verbose'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
     
     
