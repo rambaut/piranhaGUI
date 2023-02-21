@@ -30,8 +30,12 @@ def setup_layout(theme='Dark', font = None):
         language = 'English'
 
     button_size=(120,36)
+    sample_types_list = ['stool', 'environmental']
+
 
     input_options_tab = [
+        #option menu is sized incorrectly inside tab unless a copy is created in the inital tab first. This appears to be a bug in pySimpleGUI, I'm not sure why this fix works. It's not visible so should have no effect otherwise
+        #[sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],visible=False,key='-SAMPLE TYPE-'),], 
         [
         sg.Text(translate_text('Reference Sequences:',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False, key='-REFERENCE SEQUENCES-',),
@@ -46,12 +50,12 @@ def setup_layout(theme='Dark', font = None):
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Sample name of negative control. Default: `negative`',language,translate_scheme), key='-NEGATIVE CONTROL-',),
         ],
     ]
-    sample_types_list = ['stool', 'environmental']
-
+    
     analysis_options_tab = [
         [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],size=(14,1),key='-SAMPLE TYPE-'),
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(1,1)),
+        sg.Push(),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],key='-SAMPLE TYPE-'),
         #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme), key='-SAMPLE TYPE-',),
         ],
         [
@@ -135,8 +139,7 @@ def setup_layout(theme='Dark', font = None):
         sg.Tab(translate_text('Analysis Options',language,translate_scheme),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
         sg.Tab(translate_text('Output Options',language,translate_scheme),output_options_tab,key='-OUTPUT OPTIONS TAB-'),
         sg.Tab(translate_text('Misc Options',language,translate_scheme),misc_options_tab,key='-MISC OPTIONS TAB-')
-    ]])],
-
+    ],])],
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
@@ -162,7 +165,7 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
 
     element_dict = {'-POSITIVE CONTROL-':'-pc',
                     '-NEGATIVE CONTROL-':'-nc',
-                    '-SAMPLE TYPE-':'-s',
+                    '-SAMPLE TYPE-':'-s', 
                     '-ANALYSIS MODE-':'m',
                     '-MEDAKA MODEL-':'--medaka-model',
                     '-MIN MAP QUALITY-':'-q',
@@ -181,12 +184,12 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
                     '-VERBOSE-':'--verbose'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
     
-    
+    #window['-SAMPLE TYPE-'].update(size=(100,100))
     while True:
         event, values = window.read()
 
         if event != None:
-            log_event(f'{event} [ window]')
+            log_event(f'{event} [piranha options window]')
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
