@@ -54,9 +54,7 @@ def setup_layout(theme='Dark', font = None):
     analysis_options_tab = [
         [
         sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        #sg.Push(),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],key='-SAMPLE TYPE-'),
-        #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme), key='-SAMPLE TYPE-',),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color='#000000',key='-SAMPLE TYPE-'),
         ],
         [
         sg.Text(translate_text('Analysis Mode:',language,translate_scheme),size=(14,1)),
@@ -107,6 +105,7 @@ def setup_layout(theme='Dark', font = None):
         [sg.Checkbox(translate_text('Overwrite Output',language,translate_scheme), default=False, tooltip=translate_text('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists',language,translate_scheme), key='-OVERWRITE-')],   
     ]
 
+    orientations_list = ['horizontal', 'vertical']
     misc_options_tab = [
         [
         sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
@@ -115,6 +114,10 @@ def setup_layout(theme='Dark', font = None):
         [
         sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
+        ],
+        [
+        sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
+        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color='#000000',key='-ORIENTATION-'),
         ],
         [sg.Checkbox('verbose', default=False, tooltip=translate_text('Print lots of stuff to screen',language,translate_scheme), key='-VERBOSE-')],
     ]
@@ -127,19 +130,37 @@ def setup_layout(theme='Dark', font = None):
         ],
         """
     """
+     --orientation ORIENTATION
+                        Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.
   -temp TEMPDIR, --tempdir TEMPDIR
                         Specify where you want the temp stuff to go. Default: `$TMPDIR`
   --no-temp             Output all intermediate files. For development/ debugging purposes
 
                         """
-
-    layout = [
-    [sg.TabGroup([[
+    basic_tab = [
+        [sg.Text('test')]
+        ]
+    advanced_tab = [
+        [sg.TabGroup([
+        [
         sg.Tab(translate_text('Input Options',language,translate_scheme),input_options_tab,key='-INPUT OPTIONS TAB-'),
         sg.Tab(translate_text('Analysis Options',language,translate_scheme),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
         sg.Tab(translate_text('Output Options',language,translate_scheme),output_options_tab,key='-OUTPUT OPTIONS TAB-'),
         sg.Tab(translate_text('Misc Options',language,translate_scheme),misc_options_tab,key='-MISC OPTIONS TAB-')
-    ],])],
+        ]
+            ],)
+        ]
+    ]
+    
+
+    layout = [
+    [sg.TabGroup([
+        [
+        sg.Tab(translate_text('Basic',language,translate_scheme),basic_tab,key='-BASIC OPTIONS TAB-'),
+        sg.Tab(translate_text('Advanced',language,translate_scheme),advanced_tab,key='-ADVANCED OPTIONS TAB-'),
+    ]
+    ])],
+    
     [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
@@ -181,8 +202,9 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
                     '-OVERWRITE-':'--overwrite',
                     '-USER NAME-':'--username',
                     '-INSTITUTE NAME-':'--institute',
+                    '-ORIENTATION-':'--orientation',
                     '-VERBOSE-':'--verbose'}
-    #run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
+    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
     
     window['-SAMPLE TYPE-'].update(size=(100,100))
     while True:
