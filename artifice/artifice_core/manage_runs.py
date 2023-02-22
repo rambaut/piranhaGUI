@@ -116,7 +116,7 @@ def get_runs(runs_dir = artifice_core.consts.RUNS_DIR, archived_json = artifice_
     return runs
     
 # loads run info into window elemnts
-def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button = True):
+def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_DIR, update_archive_button = True, clear_previous = True):
     update_log(f'loading run: "{title}"...')
     filepath = runs_dir / title / 'run_info.json'
 
@@ -126,9 +126,11 @@ def load_run(window, title, element_dict, runs_dir = artifice_core.consts.RUNS_D
     for element in element_dict:
         #print(f'{element}:{run_info[element_dict[element]]}')
         try:
-            window[element].update(run_info[element_dict[element]])
+            if element_dict[element] in run_info:
+                window[element].update(run_info[element_dict[element]])
         except:
-            window[element].update('')
+            if clear_previous:
+                window[element].update('')
 
     if 'archived' not in run_info:
         run_info['archived'] = False

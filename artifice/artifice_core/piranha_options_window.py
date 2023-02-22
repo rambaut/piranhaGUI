@@ -53,8 +53,8 @@ def setup_layout(theme='Dark', font = None):
     
     analysis_options_tab = [
         [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(1,1)),
-        sg.Push(),
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
+        #sg.Push(),
         sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],key='-SAMPLE TYPE-'),
         #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme), key='-SAMPLE TYPE-',),
         ],
@@ -182,9 +182,9 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
                     '-USER NAME-':'--username',
                     '-INSTITUTE NAME-':'--institute',
                     '-VERBOSE-':'--verbose'}
-    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
+    #run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
     
-    #window['-SAMPLE TYPE-'].update(size=(100,100))
+    window['-SAMPLE TYPE-'].update(size=(100,100))
     while True:
         event, values = window.read()
 
