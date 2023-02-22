@@ -107,18 +107,6 @@ def setup_layout(theme='Dark', font = None):
 
     orientations_list = ['horizontal', 'vertical']
     misc_options_tab = [
-        [
-        sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
-        ],
-        [
-        sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
-        ],
-        [
-        sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color='#000000',key='-ORIENTATION-'),
-        ],
         [sg.Checkbox('verbose', default=False, tooltip=translate_text('Print lots of stuff to screen',language,translate_scheme), key='-VERBOSE-')],
     ]
 
@@ -138,7 +126,18 @@ def setup_layout(theme='Dark', font = None):
 
                         """
     basic_tab = [
-        [sg.Text('test')]
+        [
+        sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
+        ],
+        [
+        sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
+        ],
+        [
+        sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
+        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color='#000000',key='-ORIENTATION-'),
+        ],  
         ]
     advanced_tab = [
         [sg.TabGroup([
