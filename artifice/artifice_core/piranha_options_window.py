@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import sys
 
 import artifice_core.consts
 from artifice_core.alt_button import AltButton, AltFolderBrowse
@@ -31,6 +32,10 @@ def setup_layout(theme='Dark', font = None):
 
     button_size=(120,36)
     sample_types_list = ['stool', 'environmental']
+    if sys.platform.startswith("darwin"):
+        option_menu_text_color = '#000000'
+    else:
+        option_menu_text_color = sg.theme_text_color()
 
 
     input_options_tab = [
@@ -54,7 +59,7 @@ def setup_layout(theme='Dark', font = None):
     analysis_options_tab = [
         [
         sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color='#000000',key='-SAMPLE TYPE-'),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,key='-SAMPLE TYPE-'),
         ],
         [
         sg.Text(translate_text('Analysis Mode:',language,translate_scheme),size=(14,1)),
@@ -136,7 +141,7 @@ def setup_layout(theme='Dark', font = None):
         ],
         [
         sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color='#000000',key='-ORIENTATION-'),
+        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,key='-ORIENTATION-'),
         ],  
         ]
     advanced_tab = [
