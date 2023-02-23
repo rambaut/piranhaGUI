@@ -31,42 +31,68 @@ def setup_layout(theme='Dark', font = None):
         language = 'English'
 
     button_size=(120,36)
+
     sample_types_list = ['stool', 'environmental']
+    orientations_list = ['horizontal', 'vertical']
     if sys.platform.startswith("darwin"):
         option_menu_text_color = '#000000'
     else:
         option_menu_text_color = sg.theme_text_color()
 
-    basic_tab = [
+    tooltips = {
+        '-USER NAME-':translate_text('Username to appear in report. Default: no user name',language,translate_scheme),
+        '-INSTITUTE NAME-':translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme),
+        '-ORIENTATION-':translate_text('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.',language,translate_scheme),
+        '-SAMPLE TYPE-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-REFERENCE SEQUENCES-':translate_text('Custom reference sequences file.',language,translate_scheme),
+        '-POSITIVE CONTROL-':translate_text('Sample name of positive control. Default: `positive`',language,translate_scheme),
+        '-NEGATIVE CONTROL-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-ANALYSIS MODE-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-MEDAKA MODEL-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-MIN MAP QUALITY-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-MIN READ LENGTH-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-MAX READ LENGTH-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-MIN READ DEPTH-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-MIN READ PCENT-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-PRIMER LENGTH-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-PUBLISH DIR-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-OUTPUT PREFIX-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-ALL META-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-DATE STAMP-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-OVERWRITE-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
+        '-VERBOSE-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme)
+    }
+
+    basic_tab = [   
         [
-        sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
+        sg.Text(translate_text('User Name',language,translate_scheme),tooltip=tooltips['-USER NAME-'],size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
         ],
         [
-        sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
+        sg.Text(translate_text('Institute',language,translate_scheme),tooltip=tooltips['-INSTITUTE NAME-'],size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
         ],
         [
-        sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,key='-ORIENTATION-'),
+        sg.Text(translate_text('Orientation:',language,translate_scheme),tooltip=tooltips['-ORIENTATION-'],size=(14,1)),
+        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
         ],
         [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,key='-SAMPLE TYPE-'),
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),tooltip=tooltips['-SAMPLE TYPE-'],size=(14,1)),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
         ],  
         ]
-        
+
     input_options_tab = [
-        #option menu is sized incorrectly inside tab unless a copy is created in the inital tab first. This appears to be a bug in pySimpleGUI, I'm not sure why this fix works. It's not visible so should have no effect otherwise
-        #[sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],visible=False,key='-SAMPLE TYPE-'),], 
+        """
         [
         sg.Text(translate_text('Reference Sequences:',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False, key='-REFERENCE SEQUENCES-',),
-        AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip=translate_text('Custom reference sequences file.',language,translate_scheme),font=font,size=button_size),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-REFERENCE SEQUENCES-'], key='-REFERENCE SEQUENCES-',),
+        AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip=tooltips['-REFERENCE SEQUENCES-'],font=font,size=button_size),
         ],
+        """
         [
         sg.Text(translate_text('Positive Control:',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Sample name of positive control. Default: `positive`',language,translate_scheme), key='-POSITIVE CONTROL-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
         ],
         [
         sg.Text(translate_text('Negative Control:',language,translate_scheme),size=(14,1)),
@@ -124,7 +150,6 @@ def setup_layout(theme='Dark', font = None):
         [sg.Checkbox(translate_text('Overwrite Output',language,translate_scheme), default=False, tooltip=translate_text('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists',language,translate_scheme), key='-OVERWRITE-')],   
     ]
 
-    orientations_list = ['horizontal', 'vertical']
     misc_options_tab = [
         [sg.Checkbox('verbose', default=False, tooltip=translate_text('Print lots of stuff to screen',language,translate_scheme), key='-VERBOSE-')],
     ]
