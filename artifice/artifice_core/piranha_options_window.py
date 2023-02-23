@@ -58,10 +58,6 @@ def setup_layout(theme='Dark', font = None):
     
     analysis_options_tab = [
         [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,key='-SAMPLE TYPE-'),
-        ],
-        [
         sg.Text(translate_text('Analysis Mode:',language,translate_scheme),size=(14,1)),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Specify analysis mode to run. Options: `vp1`. Default: `vp1`',language,translate_scheme), key='-ANALYSIS MODE-',),
         ],
@@ -142,6 +138,10 @@ def setup_layout(theme='Dark', font = None):
         [
         sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
         sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,key='-ORIENTATION-'),
+        ],
+        [
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,key='-SAMPLE TYPE-'),
         ],  
         ]
     advanced_tab = [
