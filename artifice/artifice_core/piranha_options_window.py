@@ -37,7 +37,25 @@ def setup_layout(theme='Dark', font = None):
     else:
         option_menu_text_color = sg.theme_text_color()
 
-
+    basic_tab = [
+        [
+        sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
+        ],
+        [
+        sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
+        ],
+        [
+        sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
+        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,key='-ORIENTATION-'),
+        ],
+        [
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
+        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,key='-SAMPLE TYPE-'),
+        ],  
+        ]
+        
     input_options_tab = [
         #option menu is sized incorrectly inside tab unless a copy is created in the inital tab first. This appears to be a bug in pySimpleGUI, I'm not sure why this fix works. It's not visible so should have no effect otherwise
         #[sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],visible=False,key='-SAMPLE TYPE-'),], 
@@ -126,24 +144,7 @@ def setup_layout(theme='Dark', font = None):
   --no-temp             Output all intermediate files. For development/ debugging purposes
 
                         """
-    basic_tab = [
-        [
-        sg.Text(translate_text('User Name',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Username to appear in report. Default: no user name',language,translate_scheme), key='-USER NAME-',),
-        ],
-        [
-        sg.Text(translate_text('Institute',language,translate_scheme),size=(14,1)),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme), key='-INSTITUTE NAME-',),
-        ],
-        [
-        sg.Text(translate_text('Orientation:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,key='-ORIENTATION-'),
-        ],
-        [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),size=(14,1)),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,key='-SAMPLE TYPE-'),
-        ],  
-        ]
+    
     advanced_tab = [
         [sg.TabGroup([
         [
