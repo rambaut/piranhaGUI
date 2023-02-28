@@ -111,18 +111,12 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         language = 'English'
 
     rampart_protocol = config['PROTOCOL']
-    selected_run_title = 'TEMP_RUN'
 
     docker_client = docker.from_env()
     rampart_container = None
     rampart_log_queue = queue.Queue()
     piranha_container = None
     piranha_log_queue = queue.Queue()
-
-
-    element_dict = {'-SAMPLES-':'samples',
-                    '-MINKNOW-':'basecalledPath',
-                    '-OUTDIR-':'outputPath'}
 
     if rampart_running:
         container = get_pre_log(docker_client, rampart_log_queue, 'rampart')
