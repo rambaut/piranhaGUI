@@ -65,19 +65,23 @@ def setup_layout(theme='Dark', font = None):
 
     basic_tab = [   
         [
-        sg.Text(translate_text('User Name',language,translate_scheme),tooltip=tooltips['-USER NAME-'],size=(14,1)),
+        sg.Text(translate_text('User Name:',language,translate_scheme),tooltip=tooltips['-USER NAME-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
         ],
         [
-        sg.Text(translate_text('Institute',language,translate_scheme),tooltip=tooltips['-INSTITUTE NAME-'],size=(14,1)),
+        sg.Text(translate_text('Institute:',language,translate_scheme),tooltip=tooltips['-INSTITUTE NAME-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
         ],
         [
-        sg.Text(translate_text('Orientation:',language,translate_scheme),tooltip=tooltips['-ORIENTATION-'],size=(14,1)),
+        sg.Text(translate_text('Orientation:',language,translate_scheme),tooltip=tooltips['-ORIENTATION-']),
+        sg.Push(),
         sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
         ],
         [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),tooltip=tooltips['-SAMPLE TYPE-'],size=(14,1)),
+        sg.Text(translate_text('Sample Type:',language,translate_scheme),tooltip=tooltips['-SAMPLE TYPE-'],),
+        sg.Push(),
         sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
         ],  
         ]
@@ -86,52 +90,62 @@ def setup_layout(theme='Dark', font = None):
         
         #Commented out for now
         #[
-        #sg.Text(translate_text('Reference Sequences:',language,translate_scheme),size=(14,1)),
+        #sg.Text(translate_text('Reference Sequences:',language,translate_scheme))),
         #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-REFERENCE SEQUENCES-'], key='-REFERENCE SEQUENCES-',),
         #AltFolderBrowse(button_text=translate_text('Browse',language,translate_scheme),tooltip=tooltips['-REFERENCE SEQUENCES-'],font=font,size=button_size),
         #],
         
         [
-        sg.Text(translate_text('Positive Control:',language,translate_scheme),tooltip=tooltips['-POSITIVE CONTROL-'],size=(14,1)),
+        sg.Text(translate_text('Positive Control:',language,translate_scheme),tooltip=tooltips['-POSITIVE CONTROL-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
         ],
         [
-        sg.Text(translate_text('Negative Control:',language,translate_scheme),tooltip=tooltips['-NEGATIVE CONTROL-'],size=(14,1)),
+        sg.Text(translate_text('Negative Control:',language,translate_scheme),tooltip=tooltips['-NEGATIVE CONTROL-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
         ],
     ]
     
     analysis_options_tab = [
         [
-        sg.Text(translate_text('Analysis Mode:',language,translate_scheme),tooltip=tooltips['-ANALYSIS MODE-'],size=(14,1)),
+        sg.Text(translate_text('Analysis Mode:',language,translate_scheme),tooltip=tooltips['-ANALYSIS MODE-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
         ],
         [
-        sg.Text(translate_text('Medaka Model',language,translate_scheme),tooltip=tooltips['-MEDAKA MODEL-'],size=(14,1)),
+        sg.Text(translate_text('Medaka Model:',language,translate_scheme),tooltip=tooltips['-MEDAKA MODEL-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
         ],
         [
-        sg.Text(translate_text('Minimum Mapping Quality',language,translate_scheme),tooltip=tooltips['-MIN MAP QUALITY-'],size=(14,1)),
+        sg.Text(translate_text('Minimum Mapping Quality:',language,translate_scheme),tooltip=tooltips['-MIN MAP QUALITY-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN MAP QUALITY-'], key='-MIN MAP QUALITY-',),
         ],
         [
-        sg.Text(translate_text('Minimum Read Length',language,translate_scheme),tooltip=tooltips['-MAX READ LENGTH-'],size=(14,1)),
+        sg.Text(translate_text('Minimum Read Length:',language,translate_scheme),tooltip=tooltips['-MAX READ LENGTH-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MAX READ LENGTH-'], key='-MIN READ LENGTH-',),
         ],
         [
-        sg.Text(translate_text('Maximum Read Length',language,translate_scheme),tooltip=tooltips['-MAX READ LENGTH-'],size=(14,1)),
+        sg.Text(translate_text('Maximum Read Length:',language,translate_scheme),tooltip=tooltips['-MAX READ LENGTH-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MAX READ LENGTH-'], key='-MAX READ LENGTH-',),
         ],
         [
-        sg.Text(translate_text('Minimum Read Depth',language,translate_scheme),tooltip=tooltips['-MIN READ DEPTH-'],size=(14,1)),
+        sg.Text(translate_text('Minimum Read Depth:',language,translate_scheme),tooltip=tooltips['-MIN READ DEPTH-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN READ DEPTH-'], key='-MIN READ DEPTH-',),
         ],
         [
-        sg.Text(translate_text('Minimum Read Percentage',language,translate_scheme),tooltip=tooltips['-MIN READ PCENT-'],size=(14,1)),
+        sg.Text(translate_text('Minimum Read Percentage:',language,translate_scheme),tooltip=tooltips['-MIN READ PCENT-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN READ PCENT-'], key='-MIN READ PCENT-',),
         ],
         [
-        sg.Text(translate_text('Primer Length',language,translate_scheme),tooltip=tooltips['-PRIMER LENGTH-'],size=(14,1)),
+        sg.Text(translate_text('Primer Length:',language,translate_scheme),tooltip=tooltips['-PRIMER LENGTH-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-PRIMER LENGTH-'], key='-PRIMER LENGTH-',),
         ],
     ]
@@ -139,11 +153,13 @@ def setup_layout(theme='Dark', font = None):
 
     output_options_tab = [
         [
-        sg.Text(translate_text('Publish Directory',language,translate_scheme),tooltip=tooltips['-PUBLISH DIR-'],size=(14,1)),
+        sg.Text(translate_text('Publish Directory:',language,translate_scheme),tooltip=tooltips['-PUBLISH DIR-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-PUBLISH DIR-'], key='-PUBLISH DIR-',),
         ],
         [
-        sg.Text(translate_text('Output Prefix',language,translate_scheme),tooltip=tooltips['-OUTPUT PREFIX-'],size=(14,1)),
+        sg.Text(translate_text('Output Prefix:',language,translate_scheme),tooltip=tooltips['-OUTPUT PREFIX-']),
+        sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
         ],
         [sg.Checkbox(translate_text('All Metadata to Header',language,translate_scheme), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')],
