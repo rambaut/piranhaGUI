@@ -264,10 +264,11 @@ def get_options(run_info):
     options_str = ''
     for element in run_info:
         if element.startswith('-'):
-            if type(run_info[element]) == bool and run_info[element]:
-                options_str += str(element)
+            if type(run_info[element]) == bool:
+                if run_info[element]:
+                    options_str += f'{element} '
             else:
                 if run_info[element] != '':
-                    options_str += f'{element} {run_info[element]}'
+                    options_str += f'{element} {run_info[element]} '
     
     return options_str
