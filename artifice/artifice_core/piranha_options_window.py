@@ -83,7 +83,8 @@ def setup_layout(theme='Dark', font = None):
         sg.Text(translate_text('Sample Type:',language,translate_scheme),tooltip=tooltips['-SAMPLE TYPE-'],),
         sg.Push(),
         sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
-        ],  
+        ],
+        [sg.Checkbox(translate_text('Overwrite Output',language,translate_scheme), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')],  
         ]
 
     input_options_tab = [
@@ -108,16 +109,17 @@ def setup_layout(theme='Dark', font = None):
     ]
     
     analysis_options_tab = [
-        [
-        sg.Text(translate_text('Analysis Mode:',language,translate_scheme),tooltip=tooltips['-ANALYSIS MODE-']),
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
-        ],
-        [
-        sg.Text(translate_text('Medaka Model:',language,translate_scheme),tooltip=tooltips['-MEDAKA MODEL-']),
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
-        ],
+        #Commented out for now
+        #[
+        #sg.Text(translate_text('Analysis Mode:',language,translate_scheme),tooltip=tooltips['-ANALYSIS MODE-']),
+        #sg.Push(),
+        #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
+        #],
+        #[
+        #sg.Text(translate_text('Medaka Model:',language,translate_scheme),tooltip=tooltips['-MEDAKA MODEL-']),
+        #sg.Push(),
+        #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
+        #],
         [
         sg.Text(translate_text('Minimum Mapping Quality:',language,translate_scheme),tooltip=tooltips['-MIN MAP QUALITY-']),
         sg.Push(),
@@ -163,8 +165,7 @@ def setup_layout(theme='Dark', font = None):
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
         ],
         [sg.Checkbox(translate_text('All Metadata to Header',language,translate_scheme), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')],
-        [sg.Checkbox(translate_text('Date Stamp',language,translate_scheme), default=False, tooltip=tooltips['-DATE STAMP-'], key='-DATE STAMP-')],
-        [sg.Checkbox(translate_text('Overwrite Output',language,translate_scheme), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')],   
+        [sg.Checkbox(translate_text('Date Stamp',language,translate_scheme), default=False, tooltip=tooltips['-DATE STAMP-'], key='-DATE STAMP-')], 
     ]
 
     misc_options_tab = [
@@ -234,8 +235,8 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
     element_dict = {'-POSITIVE CONTROL-':'-pc',
                     '-NEGATIVE CONTROL-':'-nc',
                     '-SAMPLE TYPE-':'-s', 
-                    '-ANALYSIS MODE-':'m',
-                    '-MEDAKA MODEL-':'--medaka-model',
+                    #'-ANALYSIS MODE-':'m',
+                    #'-MEDAKA MODEL-':'--medaka-model',
                     '-MIN MAP QUALITY-':'-q',
                     '-MIN READ LENGTH-':'-n',
                     '-MAX READ LENGTH-':'-x',
