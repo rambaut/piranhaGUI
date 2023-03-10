@@ -68,7 +68,7 @@ def stop_docker(client = None, container_name='rampart', container = None):
 
     try:
         container.stop()
-        #container.remove()
+        container.remove()
     except:
         if container == None:
             if client == None:
@@ -275,7 +275,7 @@ def get_options(run_info):
                         value = run_info[element].replace(' ', '_')
 
                         options_str += f'{element} {value} ' #\"{run_info[element]}\"
-                        #options_str = str(element)+r" '"+str(run_info[element])+r"' "
+                        #options_str = str(element)+r' "'+str(run_info[element])+r'" '
 
                     else:
                         options_str += f'{element} {run_info[element]} '
