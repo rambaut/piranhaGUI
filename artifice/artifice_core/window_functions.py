@@ -26,7 +26,7 @@ def print_container_log(log_queue, window, output_key, logfile,):
             if sys.platform.startswith("darwin"): #macOS
                 window[output_key].print(output, font='Menlo', end='')
             else:
-                window[output_key].print(output, font='Menlo', end='')
+                window[output_key].print(output, font='Coruier New', end='')
             update_log(output, filename=logfile, add_newline=False)
             if output == '###CONTAINER STOPPED###\n':
                 return True
