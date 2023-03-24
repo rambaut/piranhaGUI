@@ -274,6 +274,7 @@ def get_options(run_info):
                         q = '"'
                         value = run_info[element].replace(' ', '_')
 
+                        #options_str += f'{element} "{run_info[element]}" '
                         options_str += f'{element} {value} ' #\"{run_info[element]}\"
                         #options_str = str(element)+r' "'+str(run_info[element])+r'" '
 

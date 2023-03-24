@@ -35,6 +35,7 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, threads
 
     env_str = f'THREADS={threads} {options_str}'
     environment = [env_str]
+    #environment = {'THREADS':f'{threads} {options_str}'}
     log_environment = str(environment)
     update_log(f'environment variables: {log_environment}')
 
