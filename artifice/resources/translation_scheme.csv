@@ -43,6 +43,7 @@ Stop PIRANHA,Arrêz PIRANHA
 PIRANHA is running,PIRANHA est en cours d'exécution
 Edit run,Éditez la course
 Display RAMPART,Affichez RAMPART
+Select Another Protocol,Sélectionnez un Autre Protocole
 Display PIRANHA,Affichez PIRANHA
 Start Analysis,Démarrez Analyse
 Analysis is not running,L'analyse n'est pas en cours d'exécution
@@ -66,10 +67,58 @@ Choose Barcodes column:,Choisissez la colonne codes-barres
 barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
 specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
 specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
+~Select Protocol Window~
 Directory:,L'Annuaire:
 Description:,La Description:
 Add Protocol,Ajouter un Protocole
 Selected Protocol,Protocole Sélectionné
-Select Another Protocol,Sélectionnez un Autre Protocole
 Remove Protocol,Retirez cet Protocole
+~PIRANHA OPTIONS WINDOW~
+Username to appear in report. Default: no user name,Nom d'utilisateur qui apparaît dans le rapport. Défaut: Pas de nom d'utilisateur
+Institute name to appear in report. Default: no institute name,Nom d'institut qui apparaît dans le rapport. Défaut: Pas de nom d'institut
+"Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.","Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`"  
+"Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'énchantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
+"Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists","Écraser répetoire de sortie. Défaut: Ajouter un nombre qui s'incrémente"
+
+Custom reference sequences file.,
+Sample name of positive control. Default: `positive`
+Sample name of negative control. Default: `negative`
+Specify analysis mode to run. Options: `vp1`. Default: `vp1`
+Medaka model to run analysis using. Default: r941_min_hac_variant_g507
+Minimum mapping quality. Default: 50
+Minimum read length. Default: 1000
+Maximum read length. Default: 1300
+Minimum read depth required for consensus generation. Default: 50
+Minimum percentage of sample required for consensus generation. Default: 10
+Length of primer sequences to trim off start and end of reads. Default: 30
+Output publish directory. Default: `analysis-2022-XX-YY`
+Prefix of output directory & report name: Default: `analysis`
+"Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these."
+Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp
+Print lots of stuff to screen
+
+User Name:,Nom d'utilisateur
+Institute:,Institut
+Orientation:,Orientation
+Sample Type:,Type d'énchantillons
+Overwrite Output,Écraser Sortie   
+
+Positive Control:
+Negative Control:
+Minimum Mapping Quality:
+Minimum Read Length:
+Maximum Read Length:
+Minimum Read Depth:
+Minimum Read Percentage:
+Primer Length:
+Publish Directory:
+Output Prefix:
+All Metadata to Header
+Date Stamp
+Input Options
+Analysis Options
+Output Options
+Misc Options
+Basic
+Advanced
 ""
