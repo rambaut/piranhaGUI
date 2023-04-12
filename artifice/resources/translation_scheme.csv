@@ -80,10 +80,10 @@ Institute name to appear in report. Default: no institute name,Nom d'institut qu
 "Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'énchantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
 "Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists","Écraser répetoire de sortie. Défaut: Ajouter un nombre qui s'incrémente"
 
-Custom reference sequences file.,
-Sample name of positive control. Default: `positive`
-Sample name of negative control. Default: `negative`
-Specify analysis mode to run. Options: `vp1`. Default: `vp1`
+Custom reference sequences file.,Séquences de référence personnalisées
+Sample name of positive control. Default: `positive`,Nom de l'énchantillons du contrôle positif. Défaut: `postive`
+Sample name of negative control. Default: `negative`,Nom de l'énchantillons du contrôle négatif . Défaut: `negative`
+Specify analysis mode to run. Options: `vp1`. Default: `vp1`,
 Medaka model to run analysis using. Default: r941_min_hac_variant_g507
 Minimum mapping quality. Default: 50
 Minimum read length. Default: 1000
