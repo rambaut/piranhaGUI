@@ -83,7 +83,7 @@ Institute name to appear in report. Default: no institute name,Nom d'institut qu
 Custom reference sequences file.,Séquences de référence personnalisées
 Sample name of positive control. Default: `positive`,Nom de l'énchantillons du contrôle positif. Défaut: `postive`
 Sample name of negative control. Default: `negative`,Nom de l'énchantillons du contrôle négatif . Défaut: `negative`
-Specify analysis mode to run. Options: `vp1`. Default: `vp1`,
+Specify analysis mode to run. Options: `vp1`. Default: `vp1`
 Medaka model to run analysis using. Default: r941_min_hac_variant_g507
 Minimum mapping quality. Default: 50
 Minimum read length. Default: 1000
