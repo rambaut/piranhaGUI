@@ -53,6 +53,7 @@ Open Report,Ouvrez Rapport
 RAMPART is not installed,RAMPART n’est pas installé
 PIRANHA is not installed,PIRANHA n’est pas installé
 Analysis is not installed,Analyse n'est installé pas
+Analysis Options,Options D'analyse
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
 ANALYSIS OUTPUT,SORTIE ANALYSE
@@ -105,22 +106,21 @@ Orientation:,Orientation
 Sample Type:,Type d'énchantillons
 Overwrite Output,Écraser Sortie   
 
-Positive Control:
-Negative Control:
-Minimum Mapping Quality:
-Minimum Read Length:
-Maximum Read Length:
-Minimum Read Depth:
-Minimum Read Percentage:
-Primer Length:
-Publish Directory:
-Output Prefix:
-All Metadata to Header
-Date Stamp
-Input Options
-Analysis Options
-Output Options
-Misc Options
-Basic
-Advanced
+Positive Control:,Contrôle Positif:
+Negative Control:,Contrôle Négatif:
+Minimum Mapping Quality:,Qualité de Mappage Minimale:
+Minimum Read Length:,Longeur de Lecture Minimale:
+Maximum Read Length:,Longeur de Lecture Maximale:
+Minimum Read Depth:,Profondeur de Lecture Minimale:
+Minimum Read Percentage:,Pourcentage de Lecture Minimale:
+Primer Length:,Longeur des amorces:
+Publish Directory:,Répertoire de Publication:
+Output Prefix:,Préfixe de Sortie:
+All Metadata to Header,Toutes les Métadatonnées à les En-Tétes
+Date Stamp,Horodatage
+Input Options,Options D'entrée
+Output Options,Options de Sortie
+Misc Options,Options Diverses
+Basic,Options de Base
+Advanced,Options Avancées
 ""
