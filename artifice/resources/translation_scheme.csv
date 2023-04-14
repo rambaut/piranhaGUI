@@ -80,14 +80,11 @@ Institute name to appear in report. Default: no institute name,Nom d'institut qu
 "Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.","Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`"  
 "Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'énchantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
 "Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists","Écraser répetoire de sortie. Défaut: Ajouter un nombre qui s'incrémente"
-
 Custom reference sequences file.,Séquences de référence personnalisées
 Sample name of positive control. Default: `positive`,Nom de l'énchantillons du contrôle positif. Défaut: `postive`
 Sample name of negative control. Default: `negative`,Nom de l'énchantillons du contrôle négatif . Défaut: `negative`
-
 Specify analysis mode to run. Options: `vp1`. Default: `vp1`
 Medaka model to run analysis using. Default: r941_min_hac_variant_g507
-
 Minimum mapping quality. Default: 50,Qualité de mappage minimale. Défaut: 50
 Minimum read length. Default: 1000,Longeur de lecture minimale. Défaut: 1000
 Maximum read length. Default: 1300,Longeur de lecture maximale. Défaut: 1300
@@ -99,13 +96,11 @@ Prefix of output directory & report name: Default: `analysis`.,Préfixe du répe
 "Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.",Parsez tous les champes du fichier d'entrée barcodes.csv(codes-barres.csv) et incluez dans les en-tétes de sortie fasta. Sachez que les espaces dans les métadatonnées perturberont l'ID de l'enregistrement, évitez-les.
 Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp,Ajoutez l'horodatage au nom du répertoire lors de l'utilisation de <-o/--outdir>. Défaut: <-o/--outdir> sans horodatage
 Print lots of stuff to screen,Affichez beucoup sur la console
-
 User Name:,Nom d'utilisateur
 Institute:,Institut
 Orientation:,Orientation
 Sample Type:,Type d'énchantillons
 Overwrite Output,Écraser Sortie   
-
 Positive Control:,Contrôle Positif:
 Negative Control:,Contrôle Négatif:
 Minimum Mapping Quality:,Qualité de Mappage Minimale:
