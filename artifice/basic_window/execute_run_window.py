@@ -51,11 +51,11 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     piranha_status = translate_text(piranha_status,language,translate_scheme)
 
     rampart_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-RAMPART OUTPUT-'),],
+    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
     ]
 
     piranha_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-PIRANHA OUTPUT-'),],
+    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
     ]
 
     button_size=(220,36)
@@ -78,7 +78,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     AltButton(button_text=translate_text('Analysis Options',language,translate_scheme),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
+    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]],expand_x=True)],
     ]
 
 
