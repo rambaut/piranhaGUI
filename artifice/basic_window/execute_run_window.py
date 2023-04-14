@@ -75,7 +75,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text='Analysis Options',size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
+    AltButton(button_text=translate_text('Analysis Options',language,translate_scheme),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
