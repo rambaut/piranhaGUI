@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=piranhaGUI
-AppVersion=1.3.5
+AppVersion=1.4.0
 WizardStyle=modern
 DefaultDirName={autopf}\piranhaGUI
 DefaultGroupName=pirahnaGUI
@@ -12,7 +12,7 @@ UninstallDisplayIcon={app}\.exe
 Compression=lzma2
 SolidCompression=yes
 OutputDir=.\installer
-OutputBaseFilename=PiranhaGUIv1.3.5_installer_windows
+OutputBaseFilename=PiranhaGUIv1.4.0_installer_windows
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon";

@@ -5,7 +5,7 @@ from os import cpu_count
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image, scale_window
 
 # Options window to allow user to modify certain config values
 
@@ -33,6 +33,9 @@ def setup_options_layout(theme = 'Dark', font = None, version='ARTIFICE'):
         [
         sg.Text(translate_text('Select language:',language,translate_scheme),size=(30,1)),
         sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
+        ],
+        [
+        AltButton(button_text=translate_text('Reset config to default',language,translate_scheme), font=font,key='-RESET CONFIG-'),
         ],
         [
         AltButton(button_text=translate_text('Save',language,translate_scheme), font=font,key='-SAVE-'),
@@ -70,6 +73,9 @@ def run_options_window(window, font):
             window.close()
             return True
             break
+        elif event == '-RESET CONFIG-':
+            artifice_core.consts.set_config_to_default()
+            scale_window()
         elif event == '-SAVE-':
             try:
                 if values['-THREADS SELECT-'] != config['THREADS']:

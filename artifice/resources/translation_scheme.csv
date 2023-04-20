@@ -10,6 +10,10 @@ RAMPART image not installed,Image RAMPART n’est pas installé
 Install RAMPART image,Installer image RAMPART
 PIRANHA image not installed,Image PIRANHA n’est pas installé
 Install PIRANHA image,Installer image PIRANHA
+Update available for RAMPART image,Une mise à jour pour RAMPART est disponible
+Install update to RAMPART image,Mettez à jour la image RAMPART
+Update available for PIRANHA image,Une mise à jour pour PIRANHA est disponible
+Install update to PIRANHA image,Mettez à jour la image PIRANHA
 An internet connection and a Docker install is required to install RAMPART and PIRANHA images,Une connexion internet et un installation Docker est nécessaire pour installer les images RAMPART et PIRANHA
 Open Docker Site in Browser,Ouvrez le site Docker dans le navigateur
 Launch ARTIFICE,Lancez ARTIFICE
@@ -18,6 +22,7 @@ Options,Paramétres
 ~OPTIONS WINDOW~,
 Select language:,Sélectionnez la langue
 Threads to use for analysis:,Threads à utiliser pour analyse
+Reset config to default,Réinitialisez la configuration par défaut
 Save,Enregistrez
 ~EDIT RUN WINDOW~,
 Samples:,Énchantillons:
@@ -38,6 +43,7 @@ Stop PIRANHA,Arrêz PIRANHA
 PIRANHA is running,PIRANHA est en cours d'exécution
 Edit run,Éditez la course
 Display RAMPART,Affichez RAMPART
+Select Another Protocol,Sélectionnez un Autre Protocole
 Display PIRANHA,Affichez PIRANHA
 Start Analysis,Démarrez Analyse
 Analysis is not running,L'analyse n'est pas en cours d'exécution
@@ -47,6 +53,7 @@ Open Report,Ouvrez Rapport
 RAMPART is not installed,RAMPART n’est pas installé
 PIRANHA is not installed,PIRANHA n’est pas installé
 Analysis is not installed,Analyse n'est installé pas
+Analysis Options,Options D'analyse
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
 ANALYSIS OUTPUT,SORTIE ANALYSE
@@ -61,9 +68,54 @@ Choose Barcodes column:,Choisissez la colonne codes-barres
 barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
 specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
 specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
+~Select Protocol Window~
 Directory:,L'Annuaire:
 Description:,La Description:
 Add Protocol,Ajouter un Protocole
 Selected Protocol,Protocole Sélectionné
-Select Another Protocol,Sélectionnez un Autre Protocole
+Remove Protocol,Retirez cet Protocole
+~PIRANHA OPTIONS WINDOW~
+Username to appear in report. Default: no user name,Nom d'utilisateur qui apparaît dans le rapport. Défaut: Pas de nom d'utilisateur
+Institute name to appear in report. Default: no institute name,Nom d'institut qui apparaît dans le rapport. Défaut: Pas de nom d'institut
+"Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.","Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`"  
+"Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'énchantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
+"Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists","Écraser répetoire de sortie. Défaut: Ajouter un nombre qui s'incrémente"
+Custom reference sequences file.,Séquences de référence personnalisées
+Sample name of positive control. Default: `positive`,Nom de l'énchantillons du contrôle positif. Défaut: `postive`
+Sample name of negative control. Default: `negative`,Nom de l'énchantillons du contrôle négatif . Défaut: `negative`
+Specify analysis mode to run. Options: `vp1`. Default: `vp1`
+Medaka model to run analysis using. Default: r941_min_hac_variant_g507
+Minimum mapping quality. Default: 50,Qualité de mappage minimale. Défaut: 50
+Minimum read length. Default: 1000,Longeur de lecture minimale. Défaut: 1000
+Maximum read length. Default: 1300,Longeur de lecture maximale. Défaut: 1300
+Minimum read depth required for consensus generation. Default: 50,Profondeur de lecture minimale requise pour la génération d'un consensus. Défaut: 50
+Minimum percentage of sample required for consensus generation. Default: 10,Pourcentage minimale d'énchantillon requis pour la génération d'un consensus. Défaut: 10
+Length of primer sequences to trim off start and end of reads. Default: 30,Longeur des séquences d'amorces pour couper le début et la fin des lectures. Défaut: 30
+Output publish directory. Default: `analysis-2022-XX-YY`,Répertoire de publication de sortie. Défaut: `analysis-2022-XX-YY`
+Prefix of output directory & report name: Default: `analysis`.,Préfixe du répertoire de sortie et nom du rapport. Défaut: `analysis`
+"Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.",Parsez tous les champes du fichier d'entrée barcodes.csv(codes-barres.csv) et incluez dans les en-tétes de sortie fasta. Sachez que les espaces dans les métadatonnées perturberont l'ID de l'enregistrement, évitez-les.
+Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp,Ajoutez l'horodatage au nom du répertoire lors de l'utilisation de <-o/--outdir>. Défaut: <-o/--outdir> sans horodatage
+Print lots of stuff to screen,Affichez beucoup sur la console
+User Name:,Nom d'utilisateur
+Institute:,Institut
+Orientation:,Orientation
+Sample Type:,Type d'énchantillons
+Overwrite Output,Écraser Sortie   
+Positive Control:,Contrôle Positif:
+Negative Control:,Contrôle Négatif:
+Minimum Mapping Quality:,Qualité de Mappage Minimale:
+Minimum Read Length:,Longeur de Lecture Minimale:
+Maximum Read Length:,Longeur de Lecture Maximale:
+Minimum Read Depth:,Profondeur de Lecture Minimale:
+Minimum Read Percentage:,Pourcentage de Lecture Minimale:
+Primer Length:,Longeur des amorces:
+Publish Directory:,Répertoire de Publication:
+Output Prefix:,Préfixe de Sortie:
+All Metadata to Header,Toutes les Métadatonnées à les En-Tétes
+Date Stamp,Horodatage
+Input Options,Options D'entrée
+Output Options,Options de Sortie
+Misc Options,Options Diverses
+Basic,Options de Base
+Advanced,Options Avancées
 ""

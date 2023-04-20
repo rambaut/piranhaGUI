@@ -13,6 +13,7 @@ import basic_window.edit_run_window
 import basic_window.execute_run_window
 import artifice_core.startup_window
 from artifice_core.manage_protocols import add_protocol
+from artifice_core.window_functions import scale_window
 
 #create artifice theme
 def make_theme(version):
@@ -80,19 +81,6 @@ def setup_builtin_protocols():
     except:
         pass
 
-
-
-#set scaling for all window elements based on screen resolution
-def scale_window(font=None):
-    layout = [[sg.Text('setting up..')]]
-    window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
-    resolution = window.get_screen_dimensions()[1]
-    scale = resolution/1080
-    update_log(f'scaling by {scale}')
-    sg.set_options(scaling=scale)
-    window.close()
-    artifice_core.consts.edit_config('SCALING', scale)
-    return scale
 
 if __name__ == '__main__':
     advanced = False

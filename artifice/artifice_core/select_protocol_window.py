@@ -60,7 +60,7 @@ def setup_layout(theme='Dark', font = None):
     except:
         pass
 
-    button_size=(120,36)
+    button_size=(140,36)
 
     protocols = listdir(config['PROTOCOLS_DIR'])
     if config['PROTOCOL'] in protocols:

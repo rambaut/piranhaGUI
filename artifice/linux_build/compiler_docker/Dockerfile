@@ -1,7 +1,7 @@
 # start with ubuntu
 FROM ubuntu:20.04
 
-WORKDIR data
+WORKDIR /data
 
 ENV DEBIAN_FRONTEND=noninteractive
 # pull artifice

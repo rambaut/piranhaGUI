@@ -12,6 +12,7 @@ from webbrowser import open_new_tab
 import artifice_core.start_rampart
 import artifice_core.consts
 import artifice_core.select_protocol_window
+import artifice_core.piranha_options_window
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
@@ -50,11 +51,11 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     piranha_status = translate_text(piranha_status,language,translate_scheme)
 
     rampart_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-RAMPART OUTPUT-'),],
+    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
     ]
 
     piranha_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT, key='-PIRANHA OUTPUT-'),],
+    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
     ]
 
     button_size=(220,36)
@@ -74,9 +75,10 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
+    AltButton(button_text=translate_text('Analysis Options',language,translate_scheme),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]])],
+    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]],expand_x=True)],
     ]
 
 
@@ -109,18 +111,12 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
         language = 'English'
 
     rampart_protocol = config['PROTOCOL']
-    selected_run_title = 'TEMP_RUN'
 
     docker_client = docker.from_env()
     rampart_container = None
     rampart_log_queue = queue.Queue()
     piranha_container = None
     piranha_log_queue = queue.Queue()
-
-
-    element_dict = {'-SAMPLES-':'samples',
-                    '-MINKNOW-':'basecalledPath',
-                    '-OUTDIR-':'outputPath'}
 
     if rampart_running:
         container = get_pre_log(docker_client, rampart_log_queue, 'rampart')
@@ -269,6 +265,14 @@ def run_main_window(window, run_info, version = 'ARTIFICE', font = None, rampart
                 if rampart_protocol != None:
                     window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
 
+            except Exception as err:
+                error_popup(err, font)
+
+        elif event == '-PIRANHA OPTIONS-':
+            try:
+                piranha_options_window = artifice_core.piranha_options_window.create_piranha_options_window(font=font, scale=scale, version=version)
+                run_info = artifice_core.piranha_options_window.run_piranha_options_window(piranha_options_window, run_info, font=font, version=version)
+  
             except Exception as err:
                 error_popup(err, font)
 
