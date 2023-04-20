@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mkdir /usr/local/ARTIFICE
-docker run -d --name="compile_art" --volume=/usr/local/ARTIFICE/:/data/artifice/artifice/linux_build/pkg_file artifice_linux_compiler #~/ARTIFICE/ubuntu_release:/data/artifice/artifice/linux_build/dist compile_artifice #/Users/corey/ARTIFICE/deb_test:/data/artifice/artifice/linux_build/pkg_file artifice_linux_compiler #
+#mkdir /usr/local/ARTIFICE
+docker run -d --name="compile_art" --volume=/home/corey/art_deb_pkg/:/data/artifice/artifice/linux_build/pkg_file artifice_linux_compiler #~/ARTIFICE/ubuntu_release:/data/artifice/artifice/linux_build/dist compile_artifice #/Users/corey/ARTIFICE/deb_test:/data/artifice/artifice/linux_build/pkg_file artifice_linux_compiler #
 docker wait compile_art
 docker rm compile_art
 #sudo cp ./linux_dist_files/piranhaGUI/piranhaGUI.desktop /usr/share/applications
