@@ -15,7 +15,8 @@ RUN git clone https://github.com/CorwinAnsley/artifice
 
 # ~REMOVE LATER~ switch branch
 #RUN git pull origin piranhaGUIdev
-RUN cd /data/artifice && git checkout dev
+RUN cd /data/artifice 
+#RUN git checkout dev
 
 RUN python3 -m pip install --user virtualenv
 
