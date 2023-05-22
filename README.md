@@ -16,7 +16,7 @@ On startup you should see the following window:
 
 <img src="./docs/Artifice_Startup_Screenshot.png">
 
-The first line in this screenshot indicates docker is not running on this machine. If you see the same message the easiest way to resolve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and restart Artifice. The text should have updated to indicate you have docker correctly installed.
+- The first of red text in this screenshot indicates docker is not running on this machine. If you see the same message the easiest way to resolve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and restart Artifice. The text should have updated to indicate you have docker correctly installed.
 
 Assuming you have docker ready to go, you can now pull the images for running RAMPART and PIRANHA from dockerhub by pressing the buttons provided. This requires an internet connection, the downloads at the time of writing are 200MB and 800MB respectively, so they shouldn't take too long even on a relatively slow connection.
 
