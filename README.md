@@ -11,6 +11,7 @@ There is also a zipped mac .app package bundle available to download.
 ## Usage
 As a GUI tool piranhaGUI is intended to be intituitive to use but a guide is provided below nonetheless. If you find some element of the software's design particularly confusing, feel free to create an [issue](https://github.com/polio-nanopore/piranhaGUI/issues) on this repository.
 
+### Startup
 On startup you should see the following window:
 
 <img src="./docs/Artifice_Startup_Screenshot.png">
@@ -21,6 +22,7 @@ On startup you should see the following window:
 
 - From the startup screen you can also access the options menu by pressing the buttton labelled options. There are currenly two options available to modify. You can change the number of threads piranha will use for analysis, more threads will generally lead to faster results but increases the demand on your cpu, possibly slowing down other tasks. The default is half the number of threads available. You can also change the language from here, currently the options are french and english.
 
+### Setting up run
 Pressing the continue button will take you to the window to setup/edit your run, shown below:
 
 <img src="./docs/Artifice_Edit_Run_Screenshot.png" width="650">
@@ -30,6 +32,7 @@ Pressing the continue button will take you to the window to setup/edit your run,
 - The second field to fill is the MinKnow run folder. This should be the folder containing the demultiplexed samples outputed by MinKnow. 
 - Lastly the output folder field specifies where PIRANHA will place its' report files.
 
+### Running Analysis
 Once the run has been setup pressing continue will take you to the window for actually running RAMPART and PIRANHA analysis, shown below:
 
 <img src="./docs/Artifice_Execute_Screenshot.png">
