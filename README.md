@@ -15,11 +15,7 @@ On startup you should see the following window:
 
 <img src="./docs/Artifice_Startup_Screenshot.png">
 
-<<<<<<< HEAD
 - The first line of red text in this screenshot shows that docker is not running on this machine. If you see the same message the easiest way to solve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and (once docker has lauched) restart piranhaGUI. The text should have updated to show that you have docker correctly installed. You will need start docker each time before you use piranhaGUI.
-=======
-- The first of red text in this screenshot indicates docker is not running on this machine. If you see the same message the easiest way to resolve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and restart Artifice. The text should have updated to indicate you have docker correctly installed.
->>>>>>> 86ecd2d7747f6753e5c2d4bbbf51579e48bcbabf
 
 - Once you have docker ready to go, you can now pull the images for running RAMPART and PIRANHA from dockerhub by pressing the buttons provided. This requires an internet connection, the downloads at the time of writing are 200MB and 800MB respectively.
 
