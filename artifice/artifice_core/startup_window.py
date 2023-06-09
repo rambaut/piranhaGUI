@@ -76,6 +76,20 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         show_rampart_button = True
     else:
         show_rampart_button = False
+    
+    if 'SHOW_RAMPART' in config:
+        SHOW_RAMPART = config['SHOW_RAMPART']
+    else:
+        if is_piranhaGUI:
+            SHOW_RAMPART = False
+        else:
+            SHOW_RAMPART = True
+        
+        artifice_core.consts.edit_config('SHOW_RAMPART', SHOW_RAMPART)
+    
+    show_rampart_text = SHOW_RAMPART
+    if SHOW_RAMPART == False:
+        show_rampart_button = False
 
     install_buttons_size = (480,36)
     info_column = [
@@ -85,7 +99,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     AltButton(button_text=translate_text('Open Docker Site in Browser',language,translate_scheme),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
     ],
     [
-    sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,key='-RAMPART IMAGE STATUS-'),
+    sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
     AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,font=font,key='-RAMPART INSTALL-'),
     ],
 
