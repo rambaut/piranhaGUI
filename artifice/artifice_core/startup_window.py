@@ -45,10 +45,23 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     else:
         docker_status = translate_text('Docker not installed/not running',language,translate_scheme)
         docker_text_color = FAIL_TEXT_COLOUR
-
+    
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, rampart_pull_text, rampart_text_color = set_image_status('RAMPART',language,translate_scheme,artifice_core.consts.RAMPART_IMAGE,font,check_for_updates=False,docker_client=docker_client)
 
     got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',language,translate_scheme,artifice_core.consts.PIRANHA_IMAGE,font,docker_client=docker_client)
+
+    if is_piranhaGUI:
+        if not got_piranha_image:
+            image_file_path = './resources/piranha.tar'
+            if os.path.exists(image_file_path):
+                try:
+                    with open(image_file_path, 'rb') as image_file:
+                        docker_client.images.load(image_file)
+                except Exception as err:
+                    update_log(err)
+                    update_log('unable to load PIRANHA image from file')
+
+                got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',language,translate_scheme,artifice_core.consts.PIRANHA_IMAGE,font,docker_client=docker_client)
 
     # Resize PNG file to appropiate size
     poseqco_scaled = scale_image('poseqco_logo_cropped.png',scale,(150,68))
