@@ -56,6 +56,10 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
         got_rampart_image = False
         rampart_running = False
 
+    button_size=(220,36)
+    rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
+    piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
+    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + str(config["PROTOCOL"])
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
@@ -64,11 +68,12 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     piranha_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
     ]
-
-    button_size=(220,36)
-    rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
-    piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
-    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + str(config["PROTOCOL"])
+    
+    output_tabs = []
+    if is_piranhaGUI:
+        output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-'))
+    if SHOW_RAMPART:
+        output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
 
     layout = [
     [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
@@ -85,7 +90,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     AltButton(button_text=translate_text('Analysis Options',language,translate_scheme),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,visible=SHOW_RAMPART,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]],expand_x=True)],
+    [sg.TabGroup([output_tabs],expand_x=True)],
     ]
 
 
