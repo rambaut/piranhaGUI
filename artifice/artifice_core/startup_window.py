@@ -135,6 +135,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         sg.Column(info_column, expand_y=True),
         ],
     ]
+    
     return layout
 
 def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
