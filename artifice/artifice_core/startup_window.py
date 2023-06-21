@@ -52,6 +52,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
 
     if is_piranhaGUI:
         if not got_piranha_image:
+            # attempt to install piranha image from file
             image_file_path = './resources/piranha.tar'
             if os.path.exists(image_file_path):
                 try:
@@ -61,6 +62,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
                     update_log(err)
                     update_log('unable to load PIRANHA image from file')
 
+                os.remove(image_file_path) # delete image file now that we're done with it
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',language,translate_scheme,artifice_core.consts.PIRANHA_IMAGE,font,docker_client=docker_client)
 
     # Resize PNG file to appropiate size
@@ -135,7 +137,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         sg.Column(info_column, expand_y=True),
         ],
     ]
-    
+
     return layout
 
 def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
