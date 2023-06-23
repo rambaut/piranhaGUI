@@ -35,7 +35,7 @@ def setup_options_layout(theme = 'Dark', font = None, version='ARTIFICE'):
         sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
         ],
         [
-        sg.Checkbox(translate_text('Enable/Disable Rampart',language,translate_scheme),visible=is_piranhaGUI,default=config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
+        sg.Checkbox(translate_text('Enable/Disable RAMPART',language,translate_scheme),visible=is_piranhaGUI,default=config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
         ],
         [
         AltButton(button_text=translate_text('Reset config to default',language,translate_scheme), font=font,key='-RESET CONFIG-'),
