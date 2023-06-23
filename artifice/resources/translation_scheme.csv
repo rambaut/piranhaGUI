@@ -93,7 +93,7 @@ Minimum read depth required for consensus generation. Default: 50,Profondeur de 
 Minimum percentage of sample required for consensus generation. Default: 10,Pourcentage minimale d'énchantillon requis pour la génération d'un consensus. Défaut: 10
 Length of primer sequences to trim off start and end of reads. Default: 30,Longeur des séquences d'amorces pour couper le début et la fin des lectures. Défaut: 30
 Output publish directory. Default: `analysis-2022-XX-YY`,Répertoire de publication de sortie. Défaut: `analysis-2022-XX-YY`
-Prefix of output directory & report name: Default: `analysis`.,Préfixe du répertoire de sortie et nom du rapport. Défaut: `analysis`
+Prefix of output directory & report name: Default: `analysis`,Préfixe du répertoire de sortie et nom du rapport. Défaut: `analysis`
 "Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.",Parsez tous les champes du fichier d'entrée barcodes.csv(codes-barres.csv) et incluez dans les en-tétes de sortie fasta. Sachez que les espaces dans les métadatonnées perturberont l'ID de l'enregistrement, évitez-les.
 Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp,Ajoutez l'horodatage au nom du répertoire lors de l'utilisation de <-o/--outdir>. Défaut: <-o/--outdir> sans horodatage
 Print lots of stuff to screen,Affichez beucoup sur la console
@@ -120,4 +120,3 @@ Misc Options,Options Diverses
 Basic,Options de Base
 Advanced,Options Avancées
 ""
-Prefix of output directory & report name: Default: `analysis`
