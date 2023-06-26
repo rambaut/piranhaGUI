@@ -53,7 +53,9 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     if is_piranhaGUI:
         if not got_piranha_image:
             # attempt to install piranha image from file
-            image_file_path = './resources/piranha.tar'
+
+            image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
+            #image_file_path = './resources/piranha.tar'
             if os.path.exists(image_file_path):
                 try:
                     with open(image_file_path, 'rb') as image_file:
