@@ -60,11 +60,11 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
                 try:
                     with open(image_file_path, 'rb') as image_file:
                         docker_client.images.load(image_file)
+                        os.remove(image_file_path) # delete image file now that we're done with it
                 except Exception as err:
                     update_log(err)
                     update_log('unable to load PIRANHA image from file')
 
-                os.remove(image_file_path) # delete image file now that we're done with it
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',language,translate_scheme,artifice_core.consts.PIRANHA_IMAGE,font,docker_client=docker_client)
 
     # Resize PNG file to appropiate size
