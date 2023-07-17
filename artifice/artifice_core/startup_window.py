@@ -53,12 +53,15 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     if is_piranhaGUI:
         if not got_piranha_image:
             # attempt to install piranha image from file
-
-            image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
-            #image_file_path = './resources/piranha.tar'
+            if sys.platform.startswith('win') or if sys.platform.startswith("darwin"):
+                image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
+            else:
+                image_file_path = '/usr/local/ARTIFICE/piranha.tar'
+            #image_file_path = '/usr/local/ARTIFICE/piranha.tar'
             if os.path.exists(image_file_path):
                 try:
-                    with open(image_file_path, 'rb') as image_file:
+                    filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
+                    with open(image_file_path, 'r') as image_file:
                         docker_client.images.load(image_file)
                         os.remove(image_file_path) # delete image file now that we're done with it
                 except Exception as err:
