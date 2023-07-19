@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import os.path
 from os import makedirs, mkdir
+import sys
 import json
 import traceback
 from datetime import datetime
@@ -16,8 +17,8 @@ from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window
 
 #create artifice theme
-def make_theme(version):
-    if version == 'piranhaGUI': # poseqco color scheme
+def make_themes(version):
+    #if version == 'piranhaGUI': # poseqco color scheme
         # Artifice_Theme = {'BACKGROUND': "#FBECA6",
         #            'TEXT': '#000000',
         #            'INPUT': '#FFAE59',
@@ -28,18 +29,7 @@ def make_theme(version):
         #            'BORDER': 1,
         #            'SLIDER_DEPTH': 0,
         #            'PROGRESS_DEPTH': 0}
-        Artifice_Theme = {'BACKGROUND': "#f7eacd",
-                'TEXT': '#1e5b67',
-                'INPUT': '#072429',
-                'TEXT_INPUT': '#f7eacd',
-                'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
-                'PROGRESS': ('#000000', '#000000'),
-                'BORDER': 0,
-                'SLIDER_DEPTH': 0,
-                'PROGRESS_DEPTH': 0}
-
-    else: # artic color scheme
+    #else:  artic color scheme
         # Artifice_Theme = {'BACKGROUND': "#072429",
         #            'TEXT': '#f7eacd',
         #            'INPUT': '#1e5b67',
@@ -49,19 +39,45 @@ def make_theme(version):
         #            'PROGRESS': ('#000000', '#000000'),
         #            'BORDER': 1,
         #            'SLIDER_DEPTH': 0,
-        #            'PROGRESS_DEPTH': 0}
-        Artifice_Theme = {'BACKGROUND': "#f7eacd",
-                'TEXT': '#1e5b67',
-                'INPUT': '#072429',
-                'TEXT_INPUT': '#f7eacd',
-                'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
-                'PROGRESS': ('#000000', '#000000'),
-                'BORDER': 0,
-                'SLIDER_DEPTH': 0,
-                'PROGRESS_DEPTH': 0}
+                #    'PROGRESS_DEPTH': 0}
 
-    sg.theme_add_new('Artifice', Artifice_Theme)
+    Piranha_Theme = {'BACKGROUND': "#f7eacd",
+            'TEXT': '#1e5b67',
+            'INPUT': '#072429',
+            'TEXT_INPUT': '#f7eacd',
+            'SCROLL': '#707070',
+            'BUTTON': ('#f7eacd', '#1e5b67'),
+            'PROGRESS': ('#000000', '#000000'),
+            'BORDER': 0,
+            'SLIDER_DEPTH': 0,
+            'PROGRESS_DEPTH': 0}
+
+    Piranha_Panel_Theme = {'BACKGROUND': "#F5F1DF",
+            'TEXT': '#1e5b67',
+            'INPUT': '#072429',
+            'TEXT_INPUT': '#f7eacd',
+            'SCROLL': '#707070',
+            'BUTTON': ('#f7eacd', '#1e5b67'),
+            'PROGRESS': ('#000000', '#000000'),
+            'BORDER': 0,
+            'SLIDER_DEPTH': 0,
+            'PROGRESS_DEPTH': 0}
+
+    ARTIC_Theme = {'BACKGROUND': "#1e5b67",
+            'TEXT': '#f7eacd',
+            'INPUT': '#072429',
+            'TEXT_INPUT': '#f7eacd',
+            'SCROLL': '#707070',
+            'BUTTON': ('#f7eacd', '#d97168'),
+            'PROGRESS': ('#000000', '#000000'),
+            'BORDER': 0,
+            'SLIDER_DEPTH': 0,
+            'PROGRESS_DEPTH': 0}
+
+    sg.theme_add_new('PANEL', Piranha_Panel_Theme)
+    sg.theme_add_new('CONTENT', Piranha_Theme)
+    sg.theme_add_new('HEADER', ARTIC_Theme)
+    sg.theme_add_new('Artifice', Piranha_Theme)
 
 #make sure a directory exists to save runs
 def check_runs_dir(runs_dir):
@@ -111,12 +127,13 @@ if __name__ == '__main__':
 
     font = (artifice_core.consts.FONT, 18)
 
+    print(font)
+
     scale = scale_window()
     version = artifice_core.consts.VERSION
-    make_theme(version)
+    make_themes(version)
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
-    make_theme('artifice')
 
     if advanced != None: # if button pressed to launch artifice
         try:
@@ -143,6 +160,7 @@ if __name__ == '__main__':
             exit_time = datetime.today()
             update_log(traceback.format_exc())
             update_log(f'\nExited unexpectedly at {exit_time}\n')
+            print(traceback.format_exc(), file=sys.stderr)
         else:
             window.close()
 

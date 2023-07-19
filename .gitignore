@@ -136,3 +136,4 @@ artifice/resources/poseqco_scaled.png
 
 # macOS .DS_Store
 .DS_Store
+.vscode/launch.json
