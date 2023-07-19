@@ -2,12 +2,9 @@
 
 PiranhaGUI is a piece of software designed to provide a graphical user interface for running [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
 ## Installation
-PiranhaGUI may be installed on windows simply with an installer, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.\
-There is also a debian/ubuntu compatible .deb package available. It can installed using ubuntu inbuilt application installer GUI, or by running 
-```
-sudo apt install /path/to/file/piranhaGUI_1.4.0.deb 
-```
-There is also a zipped mac .app package bundle available to download.
+PiranhaGUI may be installed on Mac, Windows or Linux, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.
+Installation instructions are on this page.
+
 ## Usage
 As a GUI tool piranhaGUI is intended to be intituitive to use but a guide is provided below nonetheless. If you find some element of the software's design particularly confusing, feel free to create an [issue](https://github.com/polio-nanopore/piranhaGUI/issues) on this repository.
 
