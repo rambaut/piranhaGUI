@@ -11,20 +11,6 @@ from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
-
-    sg.theme_add_new('Artifice', Artifice_Theme)
-
 def setup_layout(theme='Dark', font = None, version = 'ARTIFICE',):
     sg.theme(theme)
     config = artifice_core.consts.retrieve_config()

@@ -18,20 +18,6 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
 from artifice_core.alt_button import AltButton
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
-
-    sg.theme_add_new('Artifice', Artifice_Theme)
-
 def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     sg.theme(theme)
     config = artifice_core.consts.retrieve_config()

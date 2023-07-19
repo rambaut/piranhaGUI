@@ -18,28 +18,48 @@ from artifice_core.window_functions import scale_window
 #create artifice theme
 def make_theme(version):
     if version == 'piranhaGUI': # poseqco color scheme
-        Artifice_Theme = {'BACKGROUND': "#FBECA6",
-                   'TEXT': '#000000',
-                   'INPUT': '#FFAE59',
-                   'TEXT_INPUT': '#000000',
-                   'SCROLL': '#707070',
-                   'BUTTON': ('#FEAE63', '#FF4600'),
-                   'PROGRESS': ('#000000', '#000000'),
-                   'BORDER': 1,
-                   'SLIDER_DEPTH': 0,
-                   'PROGRESS_DEPTH': 0}
+        # Artifice_Theme = {'BACKGROUND': "#FBECA6",
+        #            'TEXT': '#000000',
+        #            'INPUT': '#FFAE59',
+        #            'TEXT_INPUT': '#000000',
+        #            'SCROLL': '#707070',
+        #            'BUTTON': ('#FEAE63', '#FF4600'),
+        #            'PROGRESS': ('#000000', '#000000'),
+        #            'BORDER': 1,
+        #            'SLIDER_DEPTH': 0,
+        #            'PROGRESS_DEPTH': 0}
+        Artifice_Theme = {'BACKGROUND': "#f7eacd",
+                'TEXT': '#1e5b67',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'PROGRESS': ('#000000', '#000000'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0}
 
     else: # artic color scheme
-        Artifice_Theme = {'BACKGROUND': "#072429",
-                   'TEXT': '#f7eacd',
-                   'INPUT': '#1e5b67',
-                   'TEXT_INPUT': '#f7eacd',
-                   'SCROLL': '#707070',
-                   'BUTTON': ('#f7eacd', '#d97168'),
-                   'PROGRESS': ('#000000', '#000000'),
-                   'BORDER': 1,
-                   'SLIDER_DEPTH': 0,
-                   'PROGRESS_DEPTH': 0}
+        # Artifice_Theme = {'BACKGROUND': "#072429",
+        #            'TEXT': '#f7eacd',
+        #            'INPUT': '#1e5b67',
+        #            'TEXT_INPUT': '#f7eacd',
+        #            'SCROLL': '#707070',
+        #            'BUTTON': ('#f7eacd', '#d97168'),
+        #            'PROGRESS': ('#000000', '#000000'),
+        #            'BORDER': 1,
+        #            'SLIDER_DEPTH': 0,
+        #            'PROGRESS_DEPTH': 0}
+        Artifice_Theme = {'BACKGROUND': "#f7eacd",
+                'TEXT': '#1e5b67',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'PROGRESS': ('#000000', '#000000'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0}
 
     sg.theme_add_new('Artifice', Artifice_Theme)
 
