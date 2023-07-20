@@ -53,7 +53,7 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     if is_piranhaGUI:
         if not got_piranha_image:
             # attempt to install piranha image from file
-            if sys.platform.startswith('win') or if sys.platform.startswith("darwin"):
+            if sys.platform.startswith('win') or sys.platform.startswith("darwin"):
                 image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
             else:
                 image_file_path = '/usr/local/ARTIFICE/piranha.tar'
