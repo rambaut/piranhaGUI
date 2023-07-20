@@ -90,29 +90,31 @@ def setup_panel(translator, font = None):
         show_rampart_button = False
 
     install_buttons_size = (480,36)
-    layout = [
-    [
-    sg.Text(docker_status,size=(35,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
-    AltButton(button_text=translator('Open Docker Site in Browser'),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
-    ],
-    [
-    sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
-    AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,font=font,key='-RAMPART INSTALL-'),
-    ],
-
-    [
-    sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
-    AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
-    ],
-    [sg.Text(translator(image_info_text), font=14)],
-    [sg.VPush()],
-    [
+    layout = []
+    layout.append([
+        sg.Sizer(1,56), 
+        sg.Text(docker_status,size=(35,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
+        AltButton(button_text=translator('Open Docker Site in Browser'),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
+        ])
+    if SHOW_RAMPART:
+        layout.append([
+            sg.Sizer(1,56), 
+            sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
+            AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,font=font,key='-RAMPART INSTALL-'),
+            ])
+    layout.append([
+        sg.Sizer(1,56), 
+        sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
+        AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+        ])
+    layout.append([sg.Text(translator(image_info_text), font=14)])
+    layout.append([
         # Continue button is now in the outer frame
-    # AltButton(button_text=translator('Continue'),font=font,key='-LAUNCH-'),
-    sg.Push(),
-    AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-')
-    ],
-    ]
+        # AltButton(button_text=translator('Continue'),font=font,key='-LAUNCH-'),
+        sg.Push(),
+        AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-'),
+        #sg.Push(),
+        ])
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,16))
 
@@ -139,6 +141,7 @@ def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None,
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
         
     new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
+    new_window.TKroot.minsize(512,380)
 
     if window != None:
         window.close()
