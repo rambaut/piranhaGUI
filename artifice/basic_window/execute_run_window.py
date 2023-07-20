@@ -70,10 +70,10 @@ def setup_panel(config, translator, font = None):
     AltButton(button_text=translator('Analysis Options'),font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translator('Open Report'), font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([output_tabs],expand_x=True)],
+    [sg.TabGroup([output_tabs],expand_x=True, expand_y=True)],
     ]
 
-    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True)
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True, expand_y=True)
 
     return panel, rampart_running, piranha_running
 
@@ -99,7 +99,7 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
 
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window(version, layout, font=font, resizable=True, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()

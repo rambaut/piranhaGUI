@@ -20,36 +20,39 @@ def setup_panel(translator, font = None):
 
     column1 = [
             [
-                sg.Text(translator('Samples:'), pad=(0,9)),
+                sg.Sizer(1,56), sg.Text(translator('Samples:'), pad=(0,12), expand_y=True),
             ],
             [
-                sg.Text(translator('MinKnow run:'), pad=(0,9)),
+                sg.Sizer(1,56), sg.Text(translator('MinKnow run:'), pad=(0,12), expand_y=True),
             ],
             [
-                sg.Text(translator('Output Folder:'), pad=(0,9)),
+                sg.Sizer(1,56), sg.Text(translator('Output Folder:'), pad=(0,12), expand_y=True),
             ]]
     column2 = [
             [
-                # sg.In(size=35, enable_events=True,expand_y=False, key='-SAMPLES-',font=16, pad=(0,12), disabled_readonly_background_color=None, disabled_readonly_text_color=None,readonly=True, justification="Right"),
-                sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=('Andale Mono', 16), pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
+                sg.Sizer(1,56),
+                sg.In(size=35, enable_events=True,expand_y=True, key='-SAMPLES-',font=16, pad=(0,12), disabled_readonly_background_color='#393938', disabled_readonly_text_color='#F5F1DF',readonly=True, justification="right"),
+                #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),),size=button_size,font=font),
                 AltButton(button_text=translator('View'),size=button_size,font=font,key='-VIEW SAMPLES-'),
             ],
             [
-                # sg.In(size=35, enable_events=True,expand_y=False, key='-MINKNOW-',font=16, pad=(0,12)),
-                sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=('Andale Mono', 16), pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
+                sg.Sizer(1,56),
+                sg.In(size=35, enable_events=True,expand_y=True, key='-MINKNOW-',font=16, pad=(0,12), disabled_readonly_background_color='#393938', disabled_readonly_text_color='#F5F1DF',readonly=True, justification="right"),
+                #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select'),font=font,size=button_size),
             ],
             [
-                # sg.In(size=35, enable_events=True,expand_y=False,visible=is_piranhaGUI, key='-OUTDIR-',font=16, pad=(0,12)),
-                sg.Text(size=35, enable_events=True, expand_y=True, key='-OUTDIR-',font=('Andale Mono', 16), pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
+                sg.Sizer(1,56),
+                sg.In(size=35, enable_events=True,expand_y=True, key='-OUTDIR-',font=16, pad=(0,12), disabled_readonly_background_color='#393938', disabled_readonly_text_color='#F5F1DF',readonly=True, justification="right"),
+                #sg.Text(size=35, enable_events=True, expand_y=True, key='-OUTDIR-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select'),font=font,size=button_size,),
             ]]
 
     panel = sg.Frame("", [[sg.Column([
             [
-                sg.Column(column1, vertical_alignment='Top', element_justification='Right', pad=(16,0)),
-                sg.Column(column2, vertical_alignment='Top'),
+                sg.Column(column1, element_justification='Right'),
+                sg.Column(column2),
             ]], pad=(16,16))]], border_width=0, relief="solid", pad=(0,16))
 
     return panel

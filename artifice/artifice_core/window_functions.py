@@ -288,5 +288,5 @@ def setup_content(panel, translator, button_text=None, button_key=None):
             [sg.Push(), AltButton(button_text=translator(button_text),key=button_key)]
             )
 
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], expand_x=True, border_width=0)
+    return sg.Frame("", [[sg.Column(layout, pad=(0, 0), expand_x=True, expand_y=True)]], expand_x=True, expand_y=True, border_width=0)
 
