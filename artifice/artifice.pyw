@@ -4,6 +4,7 @@ from os import makedirs, mkdir
 import sys
 import json
 import traceback
+import time
 from datetime import datetime
 from shutil import copytree
 
@@ -15,7 +16,7 @@ import basic_window.execute_run_window
 import basic_window.about_window
 import artifice_core.startup_window
 from artifice_core.manage_protocols import add_protocol
-from artifice_core.window_functions import scale_window
+from artifice_core.window_functions import scale_window, scale_image
 
 #create artifice theme
 def make_themes(version):
@@ -118,6 +119,29 @@ def setup_builtin_protocols():
     except:
         pass
 
+def create_setup_window(scale, version):
+    sg.theme('Artifice')
+    is_piranhaGUI = version.startswith('piranhaGUI')
+
+     # Resize PNG file to appropiate size
+    if is_piranhaGUI:
+        main_logo_scaled = scale_image('piranha.png',scale,(150,150))
+    else:
+        main_logo_scaled = scale_image('a_logo.png',scale,(100,120))
+
+    if version == 'piranhaGUI':
+        icon_scaled = scale_image('piranha.png',scale,(64,64))
+    else:
+        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+    
+    layout = [
+        [sg.Image(source = main_logo_scaled)],
+        [sg.Text('setting up..', justification = 'center')]
+        ]
+    
+    window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
+
+    return window
 
 if __name__ == '__main__':
     advanced = False
@@ -132,10 +156,14 @@ if __name__ == '__main__':
 
     scale = scale_window()
     version = artifice_core.consts.VERSION
+
     make_themes(version)
 
     #about = basic_window.about_window.create_about_window(font=font, scale=scale, version=version) #create the about window
+    window = create_setup_window(scale, version)
+    
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
+
     advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
 
     # basic_window.about_window.run_about_window(about, font=font, version=version)

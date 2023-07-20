@@ -30,6 +30,17 @@ def setup_panel(config, translator, font = None):
     piranha_button_text = translator(piranha_button_text)
     piranha_status = translator(piranha_status)
 
+
+    SHOW_RAMPART = config['SHOW_RAMPART']
+    if SHOW_RAMPART == False:
+        got_rampart_image = False
+        rampart_running = False
+
+    button_size=(220,36)
+    rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
+    piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
+    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + str(config["PROTOCOL"])
+
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
     ]
@@ -37,6 +48,18 @@ def setup_panel(config, translator, font = None):
     piranha_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
     ]
+#<<<<<<< main
+    XXX
+    output_tabs = []
+    if is_piranhaGUI:
+        output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-'))
+    if SHOW_RAMPART:
+        output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
+
+    layout = [
+    [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
+    [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
+#=======
 
     button_size=(220,36)
     rampart_tab_title = translator('RAMPART OUTPUT')
@@ -46,6 +69,7 @@ def setup_panel(config, translator, font = None):
     layout = [
     [AltButton(button_text=translator('Edit run'),size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),
+#>>>>>>> main
     sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
     AltButton(button_text=translator('Select Another Protocol'),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
@@ -58,7 +82,7 @@ def setup_panel(config, translator, font = None):
     AltButton(button_text=translator('Analysis Options'),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
     AltButton(button_text=translator('Open Report'),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
-    [sg.TabGroup([[sg.Tab(rampart_tab_title,rampart_tab,key='-RAMPART TAB-'),sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-')]],expand_x=True)],
+    [sg.TabGroup([output_tabs],expand_x=True)],
     ]
 
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True)
