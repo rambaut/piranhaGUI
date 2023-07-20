@@ -14,6 +14,7 @@ from time import sleep
 
 import artifice_core.start_rampart
 import artifice_core.consts
+import artifice_core.window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from artifice_core.alt_button import AltButton
@@ -24,30 +25,22 @@ PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
 
 #create layout
-def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
-    sg.theme(theme)
+def setup_panel(translator, font = None):
+    sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
     docker_client = None
 
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-
-    is_piranhaGUI = version.startswith('piranhaGUI')
-
-
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
-        docker_status = translate_text('Docker installed',language,translate_scheme)
+        docker_status = translator('Docker installed')
         docker_text_color =  PASS_TEXT_COLOUR
     else:
-        docker_status = translate_text('Docker not installed/not running',language,translate_scheme)
+        docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
     
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, rampart_pull_text, rampart_text_color = set_image_status('RAMPART',language,translate_scheme,artifice_core.consts.RAMPART_IMAGE,font,check_for_updates=False,docker_client=docker_client)
 
+#<<<<<<< main
     got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',language,translate_scheme,artifice_core.consts.PIRANHA_IMAGE,font,docker_client=docker_client)
 
     if is_piranhaGUI:
@@ -85,6 +78,47 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
         show_piranha_button = True
 
     elif is_piranhaGUI and piranha_update_available:
+#=======
+    got_rampart_image, docker_client = artifice_core.start_rampart.check_for_image(None, artifice_core.consts.RAMPART_IMAGE, font=font, popup=False)
+
+    rampart_update_available = False
+    if got_rampart_image:
+        # ready to go if it needs to check for rampart image updates, commented out for now to improve startup time
+        # rampart_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.RAMPART_IMAGE)
+        rampart_update_available = False
+        if rampart_update_available:
+            rampart_image_status = translator('Update available for RAMPART image')
+            rampart_pull_text = translator('Install update to RAMPART image')
+            rampart_text_color = FAIL_TEXT_COLOUR
+        else:
+            rampart_image_status = translator('RAMPART image installed')
+            rampart_pull_text = translator('Check for updates to RAMPART image')
+            rampart_text_color = PASS_TEXT_COLOUR
+    else:
+        rampart_image_status = translator('RAMPART image not installed')
+        rampart_pull_text = translator('Install RAMPART image')
+        rampart_text_color = FAIL_TEXT_COLOUR
+
+    got_piranha_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.PIRANHA_IMAGE, font=font, popup=False)
+
+    piranaha_update_available = False
+    if got_piranha_image:
+        piranaha_update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, artifice_core.consts.PIRANHA_IMAGE)
+        if piranaha_update_available:
+            piranha_image_status = translator('Update available for PIRANHA image')
+            piranha_pull_text = translator('Install update to PIRANHA image')
+            piranha_text_color = FAIL_TEXT_COLOUR
+        else:
+            piranha_image_status = translator('PIRANHA image installed')
+            piranha_pull_text = translator('Check for updates to PIRANHA image')
+            piranha_text_color = PASS_TEXT_COLOUR
+    else:
+        piranha_image_status = translator('PIRANHA image not installed')
+        piranha_pull_text = translator('Install PIRANHA image')
+        piranha_text_color = FAIL_TEXT_COLOUR
+
+    if piranaha_update_available or not got_piranha_image:
+#>>>>>>> main
         show_piranha_button = True
     else:
         show_piranha_button = False
@@ -108,12 +142,14 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     if SHOW_RAMPART == False:
         show_rampart_button = False
 
+    image_info_text = 'An internet connection and a Docker install is required to install RAMPART and PIRANHA images'
+
     install_buttons_size = (480,36)
-    info_column = [
-    [sg.Text(translate_text(image_info_text,language,translate_scheme))],
+    layout = [
+    [sg.Text(translator(image_info_text))],
     [
     sg.Text(docker_status,size=(35,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
-    AltButton(button_text=translate_text('Open Docker Site in Browser',language,translate_scheme),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
+    AltButton(button_text=translator('Open Docker Site in Browser'),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
     ],
     [
     sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
@@ -121,17 +157,18 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     ],
 
     [
-    sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
+    sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,key='-PIRANHA IMAGE STATUS-'),
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
     ],
     [sg.VPush()],
     [
-    AltButton(button_text=translate_text('Continue',language,translate_scheme),font=font,key='-LAUNCH-'),
-    sg.Push(),
-    AltButton(button_text=translate_text('Options',language,translate_scheme),font=font,key='-OPTIONS-')
+    # AltButton(button_text=translator('Continue'),font=font,key='-LAUNCH-'),
+    # sg.Push(),
+    AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-')
     ],
     ]
 
+#<<<<<<< main
 
     layout = [
         [
@@ -141,10 +178,27 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
     ]
 
     return layout
+#=======
+    return sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
+#>>>>>>> main
 
 def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating startup window')
-    layout = setup_layout(theme=theme, font=font, version=version, scale=scale)
+
+    config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+    panel = setup_panel(translator, font = font)
+
+    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Continue', button_key='-LAUNCH-')
+
+    layout = artifice_core.window_functions.setup_header_footer(content)
+
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
     else:

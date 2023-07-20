@@ -6,7 +6,7 @@ RAMPART_IMAGE: 'coreyansley/artifice_polio_rampart'
 RAMPART_LOGFILE: 'RAMPART_log.txt'
 PIRANHA_IMAGE: 'polionanopore/piranha'
 PIRANHA_LOGFILE: 'PIRANHA_log.txt'
-FONT: 'Arial'
+FONT: 'Helvetica Neue Light'
 LOGFILE: 'log.txt'
 THREADS: null
 FIRST_TIME_SETUP: true
