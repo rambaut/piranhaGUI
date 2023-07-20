@@ -37,9 +37,9 @@ def setup_panel(config, translator, font = None):
         rampart_running = False
 
     button_size=(220,36)
-    rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
-    piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
-    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + str(config["PROTOCOL"])
+    rampart_tab_title = translator('RAMPART OUTPUT')
+    piranha_tab_title = translator('PIRANHA OUTPUT')
+    selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
@@ -48,8 +48,7 @@ def setup_panel(config, translator, font = None):
     piranha_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
     ]
-#<<<<<<< main
-    XXX
+
     output_tabs = []
     if is_piranhaGUI:
         output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-'))
@@ -57,19 +56,8 @@ def setup_panel(config, translator, font = None):
         output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
 
     layout = [
-    [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
-    [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
-#=======
-
-    button_size=(220,36)
-    rampart_tab_title = translator('RAMPART OUTPUT')
-    piranha_tab_title = translator('PIRANHA OUTPUT')
-    selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
-
-    layout = [
     [AltButton(button_text=translator('Edit run'),size=button_size,font=font,key='-EDIT-'),],
-    [sg.Text(rampart_status, key='-RAMPART STATUS-'),sg.Push(),
-#>>>>>>> main
+    [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
     sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
     AltButton(button_text=translator('Select Another Protocol'),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
