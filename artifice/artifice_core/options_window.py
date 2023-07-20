@@ -3,15 +3,17 @@ import traceback
 from os import cpu_count
 
 import artifice_core.consts
+import artifice_core.window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image, scale_window
 
 # Options window to allow user to modify certain config values
 
-def setup_options_layout(theme = 'Dark', font = None, version='ARTIFICE'):
+def setup_panel(font = None):
+    sg.theme("PANEL")
+
     config = artifice_core.consts.retrieve_config()
-    sg.theme(theme)
 
     threads_list = range(1, cpu_count()+1)
 
@@ -23,40 +25,54 @@ def setup_options_layout(theme = 'Dark', font = None, version='ARTIFICE'):
 
     languages = translate_scheme[0]
 
-    is_piranhaGUI = version.startswith('piranhaGUI')
-
     layout = [
         [
-        sg.Text(translate_text('Threads to use for analysis:',language,translate_scheme),visible=is_piranhaGUI,size=(30,1)),
-        sg.OptionMenu(threads_list, default_value=config['THREADS'],visible=is_piranhaGUI, key='-THREADS SELECT-'),
+        sg.Text(translate_text('Threads to use for analysis:',language,translate_scheme),size=(30,1)),
+        sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
         ],
         [
         sg.Text(translate_text('Select language:',language,translate_scheme),size=(30,1)),
         sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
         ],
         [
-        sg.Checkbox(translate_text('Enable/Disable RAMPART',language,translate_scheme),visible=is_piranhaGUI,default=config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
+        sg.Checkbox(translate_text('Enable/Disable RAMPART',language,translate_scheme),default=config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
         ],
         [
         AltButton(button_text=translate_text('Reset config to default',language,translate_scheme), font=font,key='-RESET CONFIG-'),
         ],
-        [
-        AltButton(button_text=translate_text('Save',language,translate_scheme), font=font,key='-SAVE-'),
-        ],
+        # [
+        # AltButton(button_text=translate_text('Save',language,translate_scheme), font=font,key='-SAVE-'),
+        # ],
     ]
 
-    return layout
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
+
+    return panel
 
 def create_options_window(theme = 'Artifice', font = None, window = None, scale = 1, version='ARTIFICE'):
     update_log(f'opening options window')
-    layout = setup_options_layout(theme=theme, font=font, version=version)
+
+    config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+    panel = setup_panel()
+
+    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Save', button_key='-SAVE-')
+
+    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
 
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
     
-    new_window = sg.Window(version, layout, font=font, resizable=False, finalize=True,icon=icon_scaled)
+    new_window = sg.Window(version, layout, font=font, resizable=False, finalize=True,icon=icon_scaled,
+                                                      margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()

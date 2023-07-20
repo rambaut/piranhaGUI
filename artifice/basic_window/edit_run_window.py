@@ -49,7 +49,7 @@ def setup_panel(translator, font = None):
                 AltFolderBrowse(button_text=translator('Select'),font=font,size=button_size,),
             ]]
 
-    panel = sg.Frame("", [[sg.Column([
+    panel = sg.Frame("Sequencing Run:", [[sg.Column([
             [
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2),
@@ -80,7 +80,8 @@ def create_edit_window(version = 'ARTIFICE', font = None, window = None, scale =
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
    
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, 
+                           margins=(0,0), element_padding=(0,0))
     
     new_window.TKroot.minsize(512,320)
 

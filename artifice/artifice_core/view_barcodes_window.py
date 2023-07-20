@@ -12,8 +12,6 @@ from artifice_core.update_log import log_event, update_log
 def setup_panel(translator, samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme("PANEL")
 
-    button_size=(72, 18)
-
     samples_list, column_headers = artifice_core.parse_columns_window.samples_to_list(samples, has_headers=has_headers)
 
     visible_column_map = []
@@ -126,9 +124,9 @@ def create_barcodes_window(samples, theme = 'Artifice', font = None, window = No
 
     panel, column_headers = setup_panel(translator, font = font)
 
-    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Close', button_key='-BARCODES OK-')
+    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Close', button_key='-BARCODES OK-')
 
-    layout = artifice_core.window_functions.setup_header_footer(content)
+    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
 
     new_window = sg.Window('Artifice', layout, font=font, resizable=True, margins=(0,0), element_padding=(0,0))
     if window != None:

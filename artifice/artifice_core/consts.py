@@ -82,6 +82,11 @@ def edit_config(key, value):
     with open(config_path, 'w') as file:
         safe_dump(config, file)
           
+def get_theme(key):
+    if THEMES[key] != None:
+        return THEMES[key]
+    else:
+        return THEMES['DEFAULT']
 
 setup_config()
 config = retrieve_config()
@@ -94,15 +99,25 @@ RAMPART_IMAGE = config['RAMPART_IMAGE']
 RAMPART_LOGFILE = config['RAMPART_LOGFILE']
 PIRANHA_IMAGE = config['PIRANHA_IMAGE']
 PIRANHA_LOGFILE = config['PIRANHA_LOGFILE']
-FONT = config['FONT']
 LOGFILE = config['LOGFILE']
 #FIRST_TIME_SETUP = config['FIRST_TIME_SETUP']
-CONSOLE_FONT = config['CONSOLE_FONT']
 THREADS = config['THREADS']
 VERSION = config['VERSION']
+SCALING = config['SCALING']
 
 # styling constants
 BUTTON_SIZE = (120,24)
+BUTTON_FONT_FAMILY = 'Helvetica'
+BUTTON_FONT_SIZE = 12
+BUTTON_FONT = (BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE)
+DEFAULT_FONT_FAMILY = 'Helvetica'
+DEFAULT_FONT_SIZE = 14
+DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
+MONOTYPE_FONT_FAMILY = 'Consolas'
+MONOTYPE_FONT_SIZE = 14
+CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, MONOTYPE_FONT_SIZE)
+
+THEMES = { }
 
 if __name__ == '__main__':
     #home = pathlib.Path.home()

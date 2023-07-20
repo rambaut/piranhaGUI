@@ -212,9 +212,9 @@ def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font
 
     panel = setup_panel(translator, font = font)
 
-    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Continue', button_key='-CONFIRM-')
+    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Continue', button_key='-CONFIRM-')
 
-    layout = artifice_core.window_functions.setup_header_footer(content)
+    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
 
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
     new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
