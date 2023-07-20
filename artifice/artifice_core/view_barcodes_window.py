@@ -2,13 +2,17 @@ import PySimpleGUI as sg
 import os.path
 import csv
 import traceback
+from artifice_core.window_functions import get_translate_scheme, translate_text
+import artifice_core.window_functions
 
 import artifice_core.parse_columns_window
 import artifice_core.consts
 from artifice_core.update_log import log_event, update_log
 
-def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_column = 1, has_headers = True):
-    sg.theme(theme)
+def setup_panel(translator, samples_column = 0, barcodes_column = 1, has_headers = True):
+    sg.theme("PANEL")
+
+    button_size=(72, 18)
 
     samples_list, column_headers = artifice_core.parse_columns_window.samples_to_list(samples, has_headers=has_headers)
 
@@ -25,16 +29,14 @@ def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_
             ),
             ],
             [
-            sg.Button(button_text='Ok',key='-BARCODES OK-', size=(10,1)),
-            ],
-            [
             sg.Sizer(h_pixels=500)
             ],
             ],
         )],
     ]
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 
-    return layout, column_headers
+    return panel, column_headers
 
 def make_barcodes_list(run_info):
     if 'samples_column' in run_info:
@@ -113,8 +115,22 @@ def check_barcodes(run_info, font = None):
 
 def create_barcodes_window(samples, theme = 'Artifice', font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
-    layout, column_headers = setup_barcodes_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
+
+    config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+    panel, column_headers = setup_panel(translator, font = font)
+
+    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Close', button_key='-BARCODES OK-')
+
+    layout = artifice_core.window_functions.setup_header_footer(content)
+
+    new_window = sg.Window('Artifice', layout, font=font, resizable=True, margins=(0,0), element_padding=(0,0))
     if window != None:
         window.close()
 

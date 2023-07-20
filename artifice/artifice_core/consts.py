@@ -101,6 +101,9 @@ CONSOLE_FONT = config['CONSOLE_FONT']
 THREADS = config['THREADS']
 VERSION = config['VERSION']
 
+# styling constants
+BUTTON_SIZE = (120,24)
+
 if __name__ == '__main__':
     #home = pathlib.Path.home()
     print(RUNS_DIR)

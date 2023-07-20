@@ -16,7 +16,7 @@ from artifice_core.window_functions import error_popup, translate_text, get_tran
 def setup_panel(translator, font = None):
     sg.theme("PANEL")
 
-    button_size=(96, 18)
+    button_size=(72, 18)
 
     column1 = [
             [
@@ -122,6 +122,9 @@ def run_edit_window(window, font = None, version = 'ARTIFICE'):
 
         elif event == '-VIEW SAMPLES-':
             try:
+                if '-SAMPLES-' not in values:
+                    error_popup("Samples not found in values", font)
+
                 run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', font, version=version)
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:

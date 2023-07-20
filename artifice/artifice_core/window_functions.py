@@ -259,7 +259,6 @@ def setup_header_footer(content, large=False):
 def setup_content(panel, translator, button_text=None, button_key=None):
     sg.theme("CONTENT")
 
-    button_size=(120,24)
     layout = [
         [ 
             sg.Column(
@@ -286,9 +285,8 @@ def setup_content(panel, translator, button_text=None, button_key=None):
     ]
     if button_text != None:
         layout.append(
-            [sg.Column([[AltButton(button_text=translator(button_text),size=button_size,key=button_key)]], justification="right")]
+            [sg.Push(), AltButton(button_text=translator(button_text),key=button_key)]
             )
 
-
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], border_width=0)
+    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], expand_x=True, border_width=0)
 

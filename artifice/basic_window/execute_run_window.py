@@ -36,7 +36,7 @@ def setup_panel(config, translator, font = None):
         got_rampart_image = False
         rampart_running = False
 
-    button_size=(220,36)
+    #button_size=(220,36)
     rampart_tab_title = translator('RAMPART OUTPUT')
     piranha_tab_title = translator('PIRANHA OUTPUT')
     selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
@@ -56,19 +56,19 @@ def setup_panel(config, translator, font = None):
         output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
 
     layout = [
-    [AltButton(button_text=translator('Edit run'),size=button_size,font=font,key='-EDIT-'),],
+    [AltButton(button_text=translator('Edit run'),font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
     sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-    AltButton(button_text=translator('Select Another Protocol'),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
+    AltButton(button_text=translator('Select Another Protocol'),font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
-    AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
-    AltButton(button_text=translator('Display RAMPART'),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
+    AltButton(button_text=rampart_button_text, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
+    AltButton(button_text=translator('Display RAMPART'),font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
-    AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translator('Analysis Options'),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
-    AltButton(button_text=translator('Open Report'),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=piranha_button_text,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
+    AltButton(button_text=translator('Analysis Options'),font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
+    AltButton(button_text=translator('Open Report'), font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([output_tabs],expand_x=True)],
     ]
@@ -99,7 +99,7 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
 
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
+    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()

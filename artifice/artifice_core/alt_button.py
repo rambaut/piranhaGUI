@@ -15,7 +15,7 @@ class AltButton(sg.Button):
         self.ButtonText = button_text
         self.ButtonColor = sg.button_color_to_tuple(button_color)
 
-        self.Size = size if size != (None, None) else s
+        self.Size = size if size != (None, None) else s if s != (None, None) else artifice_core.consts.BUTTON_SIZE
         config = artifice_core.consts.retrieve_config()
         scaling=config['SCALING']
         if self.Size == (None, None):

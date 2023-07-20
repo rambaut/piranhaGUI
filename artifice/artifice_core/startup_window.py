@@ -91,7 +91,6 @@ def setup_panel(translator, font = None):
 
     install_buttons_size = (480,36)
     layout = [
-    [sg.Text(translator(image_info_text))],
     [
     sg.Text(docker_status,size=(35,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
     AltButton(button_text=translator('Open Docker Site in Browser'),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
@@ -105,15 +104,17 @@ def setup_panel(translator, font = None):
     sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
     AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
     ],
+    [sg.Text(translator(image_info_text), font=14)],
     [sg.VPush()],
     [
-    AltButton(button_text=translator('Continue'),font=font,key='-LAUNCH-'),
+        # Continue button is now in the outer frame
+    # AltButton(button_text=translator('Continue'),font=font,key='-LAUNCH-'),
     sg.Push(),
     AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-')
     ],
     ]
 
-    return sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
+    return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,16))
 
 def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating startup window')
@@ -137,7 +138,7 @@ def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None,
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
         
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=icon_scaled)
+    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()
