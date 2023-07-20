@@ -256,7 +256,7 @@ def setup_header_footer(content, large=False):
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
-def setup_content(panel, translator, button_text=None, button_key=None):
+def setup_content(panel, translator, button_text=None, button_key=None, top_left_button_text=None, top_left_button_key=None, top_right_button_text=None, top_right_button_key=None):
     sg.theme("CONTENT")
 
     layout = [
@@ -276,13 +276,18 @@ def setup_content(panel, translator, button_text=None, button_key=None):
                 [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
                 [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
                 element_justification="right", expand_x=True, pad=(8,0))
-        ],
-        # [sg.HorizontalSeparator()],
-        [
-            panel,
-        ],
-        # [sg.HorizontalSeparator()],
-    ]
+        ]]
+    
+    if top_left_button_text != None:
+        layout.append(
+            [
+                AltButton(button_text=translator(top_left_button_text),key=top_left_button_key), 
+                sg.Push(), 
+               AltButton(button_text=translator(top_right_button_text),key=top_right_button_key)
+            ])
+
+    layout.append([panel])
+
     if button_text != None:
         layout.append(
             [sg.Push(), AltButton(button_text=translator(button_text),key=button_key)]

@@ -42,11 +42,11 @@ def setup_panel(config, translator, font = None):
     selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
     rampart_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
+    [sg.Multiline(write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, expand_y=True, key='-RAMPART OUTPUT-'),],
     ]
 
     piranha_tab = [
-    [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
+    [sg.Multiline(write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-'),],
     ]
 
     output_tabs = []
@@ -100,7 +100,10 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, wi
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
 
     new_window = sg.Window(version, layout, font=font, resizable=True, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
-    new_window.TKroot.minsize(1024,640)
+    #new_window.TKroot.minsize(1024,640)
+    #new_window.TKroot.minsize(640,480)
+    new_window.set_min_size(size=(800,600))
+    new_window.set_title(artifice_core.consts.VERSION)
 
     if window != None:
         window.close()

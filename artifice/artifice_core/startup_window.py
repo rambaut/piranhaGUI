@@ -17,6 +17,7 @@ import artifice_core.consts
 import artifice_core.window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
+from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
@@ -89,32 +90,38 @@ def setup_panel(translator, font = None):
     if SHOW_RAMPART == False:
         show_rampart_button = False
 
-    install_buttons_size = (480,36)
+    install_buttons_size = (320,24)
     layout = []
+    # layout.append([
+    #     AltButton(button_text=translator('About'),font=font,key='-ABOUT-'),
+    #     sg.Push(),
+    #     AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-'),
+    #     ])
     layout.append([
-        sg.Sizer(1,56), 
-        sg.Text(docker_status,size=(35,1),text_color=docker_text_color, key='-DOCKER STATUS-'),
+        sg.Sizer(15,56), 
+        sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-'),
         AltButton(button_text=translator('Open Docker Site in Browser'),font=font,size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
+        sg.Push()
         ])
     if SHOW_RAMPART:
         layout.append([
-            sg.Sizer(1,56), 
-            sg.Text(rampart_image_status,size=(35,1),text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
+            sg.Sizer(16,56), 
+            sg.Text(rampart_image_status,text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
             AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,font=font,key='-RAMPART INSTALL-'),
+            sg.Push()
             ])
     layout.append([
-        sg.Sizer(1,56), 
-        sg.Text(piranha_image_status,size=(35,1),text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
+        sg.Sizer(15,56), 
+        sg.Text(piranha_image_status,text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
         AltButton(button_text=piranha_pull_text,size=install_buttons_size,font=font,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+        sg.Push()
         ])
-    layout.append([sg.Text(translator(image_info_text), font=14)])
     layout.append([
-        # Continue button is now in the outer frame
-        # AltButton(button_text=translator('Continue'),font=font,key='-LAUNCH-'),
+        sg.Sizer(0,32), 
         sg.Push(),
-        AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-'),
-        #sg.Push(),
-        ])
+        sg.Text(translator(image_info_text), font=14),
+        sg.Push()]
+        )
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,16))
 
@@ -131,7 +138,11 @@ def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', font = None,
 
     panel = setup_panel(translator, font = font)
 
-    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Continue', button_key='-LAUNCH-')
+    content = artifice_core.window_functions.setup_content(panel, translator, 
+                                                           button_text='Continue', button_key='-LAUNCH-',
+                                                           top_left_button_text='About', top_left_button_key='-ABOUT-',
+                                                           top_right_button_text='Options', top_right_button_key='-OPTIONS-'
+                                                           )
 
     layout = artifice_core.window_functions.setup_header_footer(content)
 
@@ -290,6 +301,20 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
                 install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,language, translate_scheme,client)
                 client = docker.from_env()
             except Exception as err:
+                error_popup(err, font)
+
+        elif event == '-ABOUT-':
+            try:
+                about_window = create_about_window(font=font, scale=scale, version=version)
+                run_about_window(about_window, font)
+                about_window.close()
+                window = create_startup_window(window=window,version=version,scale=scale,font=font)
+
+            except Exception as err:
+                """
+                update_log(traceback.format_exc())
+                sg.popup_error(err)
+                """
                 error_popup(err, font)
 
         elif event == '-OPTIONS-':
