@@ -11,6 +11,7 @@ from os import system, mkdir
 from webbrowser import open_new_tab
 from PIL import Image
 from time import sleep
+from shutil import unpack_archive
 
 import artifice_core.start_rampart
 import artifice_core.consts
@@ -52,13 +53,22 @@ def setup_layout(theme='Dark', version='ARTIFICE', font = None, scale = 1):
 
     if is_piranhaGUI:
         if not got_piranha_image:
+            print('u')
             # attempt to install piranha image from file
             if sys.platform.startswith('win') or sys.platform.startswith("darwin"):
                 image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
             else:
                 image_file_path = '/usr/local/ARTIFICE/piranha.tar'
-            #image_file_path = '/usr/local/ARTIFICE/piranha.tar'
+
+            # attempt to uncompress in case piranha imahe file is compressed
+            #zipped_file = f'{image_file_path}.zip'
+            #if os.path.exists(zipped_file): 
+            #    unpack_archive(zipped_file, artifice_core.consts.get_datadir())
+
+            #image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
+            
             if os.path.exists(image_file_path):
+                update_log(f'loading {image_file_path}')
                 try:
                     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
                     with open(image_file_path, 'r') as image_file:
