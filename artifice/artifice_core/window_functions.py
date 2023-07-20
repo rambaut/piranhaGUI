@@ -220,3 +220,75 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
         print(return_string)
 
     return return_string
+
+# Creates a layout for a window that embeds a content frame into an ARTIC header and footer
+def setup_header_footer(content, large=False):
+    sg.theme("HEADER")
+    if large:
+        layout = [
+        [
+            sg.Image(scale_image("artic-small.png", 1, (64,64)), pad=(8,2)),
+            sg.Column([[
+                sg.Text('Powered by ARTIFICE', font=('Helvetica Neue Light', 14), pad=(8,2)),],[
+                sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 24), pad=(8,2))
+            ]],)
+        ],
+        [
+            content
+        ],
+        [
+            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=('Helvetica Neue Light', 12), pad=(8,2)),
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=('Helvetica Neue Light', 12), pad=(8,2), expand_x=True, justification='right'),
+        ]]
+    else:
+        layout = [
+        [
+            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2)),
+            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
+        ],
+        [
+            content
+        ],
+        [
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=('Helvetica Neue Light', 12), pad=(8,2)),
+        ]]
+
+    return layout
+
+# Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
+def setup_content(panel, translator, button_text=None, button_key=None):
+    sg.theme("CONTENT")
+
+    button_size=(120,24)
+    layout = [
+        [ 
+            sg.Column(
+                [[sg.Image(scale_image("piranha.png", 1, (64,64)))]],
+                pad=(8,0)
+            ),
+            sg.Column(
+                [
+                    [sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 32))],
+                    [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=('Helvetica Neue Light', 12))],
+                    [sg.Text("analysis pipeline and reporting tool", font=('Helvetica Neue Light', 12))],             
+                ]
+            ),
+            sg.Column(
+                [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
+                [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
+                element_justification="right", expand_x=True, pad=(8,0))
+        ],
+        # [sg.HorizontalSeparator()],
+        [
+            panel,
+        ],
+        # [sg.HorizontalSeparator()],
+    ]
+    if button_text != None:
+        layout.append(
+            [sg.Column([[AltButton(button_text=translator(button_text),size=button_size,key=button_key)]], justification="right")]
+            )
+
+
+    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], border_width=0)
+

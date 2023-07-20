@@ -89,7 +89,8 @@ class AltButton(sg.Button):
         scl_fctr = 4 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)
-        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
+        #draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
+        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=32, fill=fill)
         button_image = button_image.resize(self.Size, resample=Image.ANTIALIAS) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()

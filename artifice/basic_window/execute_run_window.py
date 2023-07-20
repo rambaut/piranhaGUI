@@ -18,37 +18,17 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
 from artifice_core.alt_button import AltButton
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
+def setup_panel(config, translator, font = None):
+    sg.theme("PANEL")
 
-    sg.theme_add_new('Artifice', Artifice_Theme)
-
-def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
-    sg.theme(theme)
-    config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-
-    is_piranhaGUI = version.startswith('piranhaGUI')
+    is_piranhaGUI = True
 
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
-    rampart_button_text = translate_text(rampart_button_text,language,translate_scheme)
-    rampart_status = translate_text(rampart_status,language,translate_scheme)
+    rampart_button_text = translator(rampart_button_text)
+    rampart_status = translator(rampart_status)
     piranha_running, piranha_button_text, piranha_status, got_piranha_image = setup_check_container('Analysis')
-    piranha_button_text = translate_text(piranha_button_text,language,translate_scheme)
-    piranha_status = translate_text(piranha_status,language,translate_scheme)
+    piranha_button_text = translator(piranha_button_text)
+    piranha_status = translator(piranha_status)
 
 
     SHOW_RAMPART = config['SHOW_RAMPART']
@@ -57,9 +37,9 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
         rampart_running = False
 
     button_size=(220,36)
-    rampart_tab_title = translate_text('RAMPART OUTPUT',language,translate_scheme)
-    piranha_tab_title = translate_text('PIRANHA OUTPUT',language,translate_scheme)
-    selected_protocol_text = translate_text('Selected Protocol',language,translate_scheme) + ": " + str(config["PROTOCOL"])
+    rampart_tab_title = translator('RAMPART OUTPUT')
+    piranha_tab_title = translator('PIRANHA OUTPUT')
+    selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
     rampart_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-RAMPART OUTPUT-'),],
@@ -68,7 +48,7 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
     piranha_tab = [
     [sg.Multiline(size=(100,20),write_only=True, font=artifice_core.consts.CONSOLE_FONT,expand_x=True, key='-PIRANHA OUTPUT-'),],
     ]
-    
+
     output_tabs = []
     if is_piranhaGUI:
         output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-'))
@@ -76,30 +56,44 @@ def setup_layout(theme='Dark', font = None, version = 'ARTIFICE'):
         output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
 
     layout = [
-    [AltButton(button_text=translate_text('Edit run',language,translate_scheme),size=button_size,font=font,key='-EDIT-'),],
+    [AltButton(button_text=translator('Edit run'),size=button_size,font=font,key='-EDIT-'),],
     [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
     sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-    AltButton(button_text=translate_text('Select Another Protocol',language,translate_scheme),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
+    AltButton(button_text=translator('Select Another Protocol'),size=button_size,font=font, visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
     AltButton(button_text=rampart_button_text,size=button_size, visible=got_rampart_image, font=font,key='-START/STOP RAMPART-'),
-    AltButton(button_text=translate_text('Display RAMPART',language,translate_scheme),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
+    AltButton(button_text=translator('Display RAMPART'),size=button_size,font=font,visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
     AltButton(button_text=piranha_button_text,size=button_size,font=font, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translate_text('Analysis Options',language,translate_scheme),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
-    AltButton(button_text=translate_text('Open Report',language,translate_scheme),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
+    AltButton(button_text=translator('Analysis Options'),size=button_size,font=font,visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
+    AltButton(button_text=translator('Open Report'),size=button_size, font=font, visible=False, key='-VIEW PIRANHA-'),
     ],
     [sg.TabGroup([output_tabs],expand_x=True)],
     ]
 
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True)
 
-    return layout, rampart_running, piranha_running
+    return panel, rampart_running, piranha_running
 
 def create_main_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating main window')
-    #make_theme()
-    layout, rampart_running, piranha_running = setup_layout(theme=theme, version=version, font=font)
+
+    config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+    panel, rampart_running, piranha_running = setup_panel(config, translator, font = font)
+
+    content = artifice_core.window_functions.setup_content(panel, translator)
+
+    layout = artifice_core.window_functions.setup_header_footer(content)
+
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
     else:
