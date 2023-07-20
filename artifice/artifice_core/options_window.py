@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import traceback
 from os import cpu_count
 
-import artifice_core.consts
+import artifice_core.consts as consts
 import artifice_core.window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
@@ -10,10 +10,10 @@ from artifice_core.window_functions import error_popup, translate_text, get_tran
 
 # Options window to allow user to modify certain config values
 
-def setup_panel(font = None):
+def setup_panel():
     sg.theme("PANEL")
 
-    config = artifice_core.consts.retrieve_config()
+    config = consts.retrieve_config()
 
     threads_list = range(1, cpu_count()+1)
 
@@ -49,7 +49,7 @@ def setup_panel(font = None):
 
     return panel
 
-def create_options_window(theme = 'Artifice', font = None, window = None, scale = 1, version='ARTIFICE'):
+def create_options_window(theme = 'Artifice', window = None, version='ARTIFICE'):
     update_log(f'opening options window')
 
     config = artifice_core.consts.retrieve_config()
@@ -67,11 +67,11 @@ def create_options_window(theme = 'Artifice', font = None, window = None, scale 
     layout = artifice_core.window_functions.setup_header_footer(content, small=True)
 
     if version == 'piranhaGUI':
-        icon_scaled = scale_image('piranha.png',scale,(64,64))
+        icon_scaled = scale_image('piranha.png',1,(64,64))
     else:
-        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+        icon_scaled = scale_image('placeholder_artifice2.ico',1,(64,64))
     
-    new_window = sg.Window(version, layout, font=font, resizable=False, finalize=True,icon=icon_scaled,
+    new_window = sg.Window(version, layout, resizable=False, finalize=True,icon=icon_scaled,
                                                       margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -81,7 +81,7 @@ def create_options_window(theme = 'Artifice', font = None, window = None, scale 
 
     return new_window
 
-def run_options_window(window, font):
+def run_options_window(window):
     while True:
         config = artifice_core.consts.retrieve_config()
         event, values = window.read()
@@ -107,7 +107,7 @@ def run_options_window(window, font):
                 return True
                 break
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
     window.close()
     return None

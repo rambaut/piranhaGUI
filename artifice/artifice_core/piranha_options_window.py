@@ -7,7 +7,7 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 from artifice_core.manage_runs import save_run, save_changes, load_run
 
-def setup_panel(translator, font = None):
+def setup_panel(translator):
     sg.theme("PANEL")
 
     config = artifice_core.consts.retrieve_config()
@@ -17,10 +17,10 @@ def setup_panel(translator, font = None):
 
     sample_types_list = ['stool', 'environmental']
     orientations_list = ['horizontal', 'vertical']
-    if sys.platform.startswith("darwin"):
-        option_menu_text_color = '#000000'
-    else:
-        option_menu_text_color = sg.theme_text_color()
+    # if sys.platform.startswith("darwin"):
+    #     option_menu_text_color = '#000000'
+    # else:
+    #     option_menu_text_color = sg.theme_text_color()
 
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
@@ -46,29 +46,39 @@ def setup_panel(translator, font = None):
         '-VERBOSE-':translator('Print lots of stuff to screen')
     }
 
-    basic_tab = [   
-        [
-        sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
-        ],
-        [
-        sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
-        ],
-        [
-        sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
-        sg.Push(),
-        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
-        ],
-        [
-        sg.Text(translator('Sample Type:'),tooltip=tooltips['-SAMPLE TYPE-'],),
-        sg.Push(),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
-        ],
-        [sg.Checkbox(translator('Overwrite Output'), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')],  
-        ]
+    basic_tab = [[
+        sg.Column([ 
+            [
+            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Sample Type:'),tooltip=tooltips['-SAMPLE TYPE-'],),
+            ],
+            [sg.Sizer(16,32),]
+        ],element_justification='right',pad=(0,16)),
+        sg.Column([ 
+            [
+            sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+            ],
+            [
+            sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+            ],
+            [
+            sg.Sizer(16,32),sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
+            ],
+            [
+            sg.Sizer(16,32),sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+            ],
+            [sg.Sizer(16,32),sg.Checkbox(translator('Overwrite Output'), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')],  
+        ],pad=(0,16))
+
+    ]]
 
     input_options_tab = [
         
@@ -199,7 +209,7 @@ def setup_panel(translator, font = None):
 
     return panel
 
-def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
+def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', window = None):
     update_log('creating add protocol window')
 
     config = artifice_core.consts.retrieve_config()
@@ -210,14 +220,14 @@ def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font
         language = 'English'
     translator = lambda text : translate_text(text, language, translate_scheme)
 
-    panel = setup_panel(translator, font = font)
+    panel = setup_panel(translator)
 
     content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Continue', button_key='-CONFIRM-')
 
     layout = artifice_core.window_functions.setup_header_footer(content, small=True)
 
-    piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
+    piranha_scaled = scale_image('piranha.png',1,(64,64))
+    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()
@@ -226,7 +236,7 @@ def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font
 
     return new_window
 
-def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFICE'):
+def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
     selected_run_title = run_info['title']
 
@@ -269,6 +279,6 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
                 window.close()
                 return run_info
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
     window.close()

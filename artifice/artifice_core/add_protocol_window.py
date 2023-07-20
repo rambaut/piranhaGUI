@@ -22,7 +22,7 @@ def setup_panel(translator):
 
     return panel
 
-def create_add_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
+def create_add_protocol_window(version = 'ARTIFICE', window = None):
     update_log('creating add protocol window')
 
     config = artifice_core.consts.retrieve_config()
@@ -40,7 +40,7 @@ def create_add_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = 
     layout = artifice_core.window_functions.setup_header_footer(content, small=True)
 
     piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -50,8 +50,7 @@ def create_add_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = 
 
     return new_window
 
-def run_add_protocol_window(window, font = None, version = 'ARTIFICE'):
-    config = artifice_core.consts.retrieve_config()
+def run_add_protocol_window(window, version = 'ARTIFICE'):
     
     while True:
         event, values = window.read()
@@ -69,6 +68,6 @@ def run_add_protocol_window(window, font = None, version = 'ARTIFICE'):
                 window.close()
                 return values['-PROTOCOL DIR-']
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
     window.close()

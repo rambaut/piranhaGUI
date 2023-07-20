@@ -18,8 +18,7 @@ class AltButton(sg.Button):
         self.ButtonColor = sg.button_color_to_tuple(button_color)
 
         self.Size = size if size != (None, None) else s if s != (None, None) else consts.BUTTON_SIZE
-        config = consts.retrieve_config()
-        scaling=config['SCALING']
+        scaling=consts.SCALING
         if self.Size == (None, None):
             self.Size = self.get_string_size()
             self.Size = (int(self.Size[0]+self.Size[1]*3*scaling), int(self.Size[1]*1.75*scaling))
