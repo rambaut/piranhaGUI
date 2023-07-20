@@ -12,6 +12,7 @@ from artifice_core.update_log import update_log
 import advanced_window.main_window
 import basic_window.edit_run_window
 import basic_window.execute_run_window
+import basic_window.about_window
 import artifice_core.startup_window
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window
@@ -132,9 +133,13 @@ if __name__ == '__main__':
     scale = scale_window()
     version = artifice_core.consts.VERSION
     make_themes(version)
+
+    #about = basic_window.about_window.create_about_window(font=font, scale=scale, version=version) #create the about window
     window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
     advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
 
+    # basic_window.about_window.run_about_window(about, font=font, version=version)
+    
     if advanced != None: # if button pressed to launch artifice
         try:
             if advanced:

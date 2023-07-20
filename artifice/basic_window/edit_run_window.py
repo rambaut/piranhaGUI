@@ -5,67 +5,16 @@ import docker
 import artifice_core.parse_columns_window
 import artifice_core.consts
 import artifice_core.start_rampart
+import artifice_core.window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
-def setup_header_footer(frame, font = None, version = 'ARTIFICE'):
-    sg.theme("HEADER")
-    layout = [
-    [
-        sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2)),
-        sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
-    ],
-    [
-        frame
-    ],
-    [
-        sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=('Helvetica Neue Light', 12), pad=(8,2)),
-    ]]
-
-    return layout
-
-def setup_content(translator, font=None):
-    sg.theme("CONTENT")
-
-    button_size=(120,24)
-    layout = [
-        [ 
-            sg.Column(
-                [[sg.Image(scale_image("piranha.png", 1, (64,64)))]],
-                pad=(8,0)
-            ),
-            sg.Column(
-                [
-                    [sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 32))],
-                    [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=('Helvetica Neue Light', 12))],
-                    [sg.Text("analysis pipeline and reporting tool", font=('Helvetica Neue Light', 12))],             
-                ]
-            ),
-            sg.Column(
-                [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
-                [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
-                element_justification="right", expand_x=True, pad=(8,0))
-        ],
-        # [sg.HorizontalSeparator()],
-        [
-            setup_panel(translator, font),
-        ],
-        # [sg.HorizontalSeparator()],
-        [
-            sg.Column([[AltButton(button_text=translator('Confirm'),size=button_size,font=font,key='-CONFIRM-')]], justification="right"),
-        ],
-    ]
-
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], border_width=0)
-
 
 def setup_panel(translator, font = None):
     sg.theme("PANEL")
-
-    is_piranhaGUI = True
 
     button_size=(96, 18)
 
@@ -77,24 +26,24 @@ def setup_panel(translator, font = None):
                 sg.Text(translator('MinKnow run:'), pad=(0,9)),
             ],
             [
-                sg.Text(translator('Output Folder:'),visible=is_piranhaGUI, pad=(0,9)),
+                sg.Text(translator('Output Folder:'), pad=(0,9)),
             ]]
     column2 = [
             [
                 # sg.In(size=35, enable_events=True,expand_y=False, key='-SAMPLES-',font=16, pad=(0,12), disabled_readonly_background_color=None, disabled_readonly_text_color=None,readonly=True, justification="Right"),
-                sg.Text(size=35, enable_events=True,expand_y=False, key='-SAMPLES-',font=16, pad=(0,12), justification="Right"),
+                sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=('Andale Mono', 16), pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),),size=button_size,font=font),
                 AltButton(button_text=translator('View'),size=button_size,font=font,key='-VIEW SAMPLES-'),
             ],
             [
                 # sg.In(size=35, enable_events=True,expand_y=False, key='-MINKNOW-',font=16, pad=(0,12)),
-                sg.Text(size=35, enable_events=True,expand_y=False, key='-MINKNOW-',font=16, pad=(0,12), justification="Right"),
+                sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=('Andale Mono', 16), pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select'),font=font,size=button_size),
             ],
             [
                 # sg.In(size=35, enable_events=True,expand_y=False,visible=is_piranhaGUI, key='-OUTDIR-',font=16, pad=(0,12)),
-                sg.Text(size=35, enable_events=True,expand_y=False,visible=is_piranhaGUI, key='-OUTDIR-',font=16, pad=(0,12), justification="Right", border_width=2),
-                AltFolderBrowse(button_text=translator('Select'),font=font,visible=is_piranhaGUI,size=button_size,),
+                sg.Text(size=35, enable_events=True, expand_y=True, key='-OUTDIR-',font=('Andale Mono', 16), pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
+                AltFolderBrowse(button_text=translator('Select'),font=font,size=button_size,),
             ]]
 
     panel = sg.Frame("", [[sg.Column([
@@ -102,8 +51,6 @@ def setup_panel(translator, font = None):
                 sg.Column(column1, vertical_alignment='Top', element_justification='Right', pad=(16,0)),
                 sg.Column(column2, vertical_alignment='Top'),
             ]], pad=(16,16))]], border_width=0, relief="solid", pad=(0,16))
-
-    sg.theme("CONTENT")
 
     return panel
 
@@ -118,9 +65,12 @@ def create_edit_window(version = 'ARTIFICE', font = None, window = None, scale =
         language = 'English'
     translator = lambda text : translate_text(text, language, translate_scheme)
 
-    content = setup_content(translator, font)
+    panel = setup_panel(translator, font = font)
 
-    layout = setup_header_footer(content, font=font, version=version)
+    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Continue', button_key='-CONFIRM-')
+
+    layout = artifice_core.window_functions.setup_header_footer(content)
+
 
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))

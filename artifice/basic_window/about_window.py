@@ -9,64 +9,26 @@ from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
-def setup_header_footer_large(frame, font = None, version = 'ARTIFICE'):
-    sg.theme("HEADER")
-    layout = [
-    [
-        sg.Image(scale_image("artic-small.png", 1, (64,64)), pad=(8,2)),
-        sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
-    ],
-    [
-        frame
-    ],
-    [
-        sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=('Helvetica Neue Light', 12), pad=(8,2)),
-        sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=('Helvetica Neue Light', 12), pad=(8,2)),
-    ]]
-
-    return layout
-
-def setup_content(translator, font=None):
-    sg.theme("CONTENT")
-
-    button_size=(120,24)
-    layout = [
-        [ 
-            sg.Column(
-                [[sg.Image(scale_image("piranha.png", 1, (64,64)))]],
-                pad=(8,0)
-            ),
-            sg.Column(
-                [
-                    [sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 32))],
-                    [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=('Helvetica Neue Light', 12))],
-                    [sg.Text("analysis pipeline and reporting tool", font=('Helvetica Neue Light', 12))],             
-                ]
-            ),
-            sg.Column(
-                [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
-                [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
-                element_justification="right", expand_x=True, pad=(8,0))
-        ],
-        # [sg.HorizontalSeparator()],
-        [
-            setup_panel(translator, font),
-        ],
-        # [sg.HorizontalSeparator()],
-        [
-            sg.Column([[AltButton(button_text=translator('Close'),size=button_size,font=font,key='Exit')]], justification="right"),
-        ],
-    ]
-
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], border_width=0)
-
-
 def setup_panel(translator, font = None):
     sg.theme("PANEL")
+    column = [
+                [sg.Text('Piranha', font=('Helvetica Neue Light', 18), expand_x=True)],
+                [sg.Text('Áine O’Toole, Rachel Colquhoun, Corey Ansley, Zoe Vance & Andrew Rambaut', font=('Helvetica Neue Light', 14))],
+                [sg.Text('\nPiranhaGUI', font=('Helvetica Neue Light', 18), expand_x=True)],
+                [sg.Text('Corey Ansley & Andrew Rambaut', font=('Helvetica Neue Light', 14))],
+                [sg.Text('\nPolio Direct Detection by Nanopore Sequencing (DDNS)', font=('Helvetica Neue Light', 18))],
+                [sg.Text('Alexander G. Shaw, Manasi Majumdar, Catherine Troman, Áine O’Toole, Blossom Benny, '+
+                        'Dilip Abraham, Ira Praharaj, Gagandeep Kang, Salmaan Sharif, Muhammad Masroor Alam, '+
+                        'Shahzad Shaukat, Mehar Angez, Adnan Khurshid, Nayab Mahmood, Yasir Arshad, Lubna Rehman, '+
+                        'Ghulam Mujtaba, Ribqa Akthar, Muhammad Salman, Dimitra Klapsa, Yara Hajarha, Humayun Asghar, '+
+                        'Ananda Bandyopadhyay, Andrew Rambaut, Javier Martin, Nicholas Grassly', size=(96, None), font=('Helvetica Neue Light', 14))],
+            ]
+    
 
-    panel = sg.Frame("", sg.Text("About text", border_width=0, relief="solid", pad=(0,16)))
-
-    sg.theme("CONTENT")
+    panel = sg.Frame("Credits", [[
+        sg.Column([[
+                sg.Column(column, size=(None, 256), vertical_alignment='Top', expand_x=True, scrollable=True, vertical_scroll_only=True)
+            ]], pad=(16,0), expand_x=True)]], border_width=0, relief="solid", pad=(0,16), expand_x=True)
 
     return panel
 
@@ -81,9 +43,11 @@ def create_about_window(version = 'ARTIFICE', font = None, window = None, scale 
         language = 'English'
     translator = lambda text : translate_text(text, language, translate_scheme)
 
-    content = setup_content(translator, font)
+    panel = setup_panel(translator, font = font)
 
-    layout = setup_header_footer_large(content, font=font, version=version)
+    content = artifice_core.window_functions.setup_content(panel, translator, button_text='Close', button_key='Exit')
+
+    layout = artifice_core.window_functions.setup_header_footer(content, large=True)
 
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
