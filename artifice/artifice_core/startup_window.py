@@ -234,7 +234,10 @@ def install_image(name, image_repo, window, font, language, translate_scheme, cl
     for image in old_images:
         for tag in image.tags:
             client.images.remove(tag)
-    image_tag = f'{image_repo}:latest'
+    if ":" in image_repo:
+        image_tag = image_repo
+    else:
+        image_tag = f'{image_repo}:latest'
     print(image_tag)
     #client.images.remove
     
