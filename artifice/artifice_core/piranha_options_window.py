@@ -7,85 +7,78 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 from artifice_core.manage_runs import save_run, save_changes, load_run
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
+def setup_panel(translator):
+    sg.theme("PANEL")
 
-    sg.theme_add_new('Artifice', Artifice_Theme)
-
-def setup_layout(theme='Dark', font = None):
-    sg.theme(theme)
     config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
+
 
     button_size=(120,36)
 
     sample_types_list = ['stool', 'environmental']
     orientations_list = ['horizontal', 'vertical']
-    if sys.platform.startswith("darwin"):
-        option_menu_text_color = '#000000'
-    else:
-        option_menu_text_color = sg.theme_text_color()
+    # if sys.platform.startswith("darwin"):
+    #     option_menu_text_color = '#000000'
+    # else:
+    #     option_menu_text_color = sg.theme_text_color()
 
     tooltips = {
-        '-USER NAME-':translate_text('Username to appear in report. Default: no user name',language,translate_scheme),
-        '-INSTITUTE NAME-':translate_text('Institute name to appear in report. Default: no institute name',language,translate_scheme),
-        '-ORIENTATION-':translate_text('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.',language,translate_scheme),
-        '-SAMPLE TYPE-':translate_text('Specify sample type. Options: `stool`, `environmental`. Default: `stool`',language,translate_scheme),
-        '-REFERENCE SEQUENCES-':translate_text('Custom reference sequences file.',language,translate_scheme),
-        '-POSITIVE CONTROL-':translate_text('Sample name of positive control. Default: `positive`',language,translate_scheme),
-        '-NEGATIVE CONTROL-':translate_text('Sample name of negative control. Default: `negative`',language,translate_scheme),
-        '-ANALYSIS MODE-':translate_text('Specify analysis mode to run. Options: `vp1`. Default: `vp1`',language,translate_scheme),
-        '-MEDAKA MODEL-':translate_text('Medaka model to run analysis using. Default: r941_min_hac_variant_g507',language,translate_scheme),
-        '-MIN MAP QUALITY-':translate_text('Minimum mapping quality. Default: 50',language,translate_scheme),
-        '-MIN READ LENGTH-':translate_text('Minimum read length. Default: 1000',language,translate_scheme),
-        '-MAX READ LENGTH-':translate_text('Maximum read length. Default: 1300',language,translate_scheme),
-        '-MIN READ DEPTH-':translate_text('Minimum read depth required for consensus generation. Default: 50',language,translate_scheme),
-        '-MIN READ PCENT-':translate_text('Minimum percentage of sample required for consensus generation. Default: 10',language,translate_scheme),
-        '-PRIMER LENGTH-':translate_text('Length of primer sequences to trim off start and end of reads. Default: 30',language,translate_scheme),
-        '-PUBLISH DIR-':translate_text('Output publish directory. Default: `analysis-2022-XX-YY`',language,translate_scheme),
-        '-OUTPUT PREFIX-':translate_text('Prefix of output directory & report name: Default: `analysis`',language,translate_scheme),
-        '-ALL META-':translate_text('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.',language,translate_scheme),
-        '-DATE STAMP-':translate_text('Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp',language,translate_scheme),
-        '-OVERWRITE-':translate_text('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists',language,translate_scheme),
-        '-VERBOSE-':translate_text('Print lots of stuff to screen',language,translate_scheme)
+        '-USER NAME-':translator('Username to appear in report. Default: no user name'),
+        '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
+        '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.'),
+        '-SAMPLE TYPE-':translator('Specify sample type. Options: `stool`, `environmental`. Default: `stool`'),
+        '-REFERENCE SEQUENCES-':translator('Custom reference sequences file.'),
+        '-POSITIVE CONTROL-':translator('Sample name of positive control. Default: `positive`'),
+        '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
+        '-ANALYSIS MODE-':translator('Specify analysis mode to run. Options: `vp1`. Default: `vp1`'),
+        '-MEDAKA MODEL-':translator('Medaka model to run analysis using. Default: r941_min_hac_variant_g507'),
+        '-MIN MAP QUALITY-':translator('Minimum mapping quality. Default: 50'),
+        '-MIN READ LENGTH-':translator('Minimum read length. Default: 1000'),
+        '-MAX READ LENGTH-':translator('Maximum read length. Default: 1300'),
+        '-MIN READ DEPTH-':translator('Minimum read depth required for consensus generation. Default: 50'),
+        '-MIN READ PCENT-':translator('Minimum percentage of sample required for consensus generation. Default: 10'),
+        '-PRIMER LENGTH-':translator('Length of primer sequences to trim off start and end of reads. Default: 30'),
+        '-PUBLISH DIR-':translator('Output publish directory. Default: `analysis-2022-XX-YY`'),
+        '-OUTPUT PREFIX-':translator('Prefix of output directory & report name: Default: `analysis`'),
+        '-ALL META-':translator('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.'),
+        '-DATE STAMP-':translator('Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp'),
+        '-OVERWRITE-':translator('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists'),
+        '-VERBOSE-':translator('Print lots of stuff to screen')
     }
 
-    basic_tab = [   
-        [
-        sg.Text(translate_text('User Name:',language,translate_scheme),tooltip=tooltips['-USER NAME-']),
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
-        ],
-        [
-        sg.Text(translate_text('Institute:',language,translate_scheme),tooltip=tooltips['-INSTITUTE NAME-']),
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
-        ],
-        [
-        sg.Text(translate_text('Orientation:',language,translate_scheme),tooltip=tooltips['-ORIENTATION-']),
-        sg.Push(),
-        sg.OptionMenu(orientations_list, default_value=orientations_list[0],text_color=option_menu_text_color,tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
-        ],
-        [
-        sg.Text(translate_text('Sample Type:',language,translate_scheme),tooltip=tooltips['-SAMPLE TYPE-'],),
-        sg.Push(),
-        sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],text_color=option_menu_text_color,tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
-        ],
-        [sg.Checkbox(translate_text('Overwrite Output',language,translate_scheme), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')],  
-        ]
+    basic_tab = [[
+        sg.Column([ 
+            [
+            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Sample Type:'),tooltip=tooltips['-SAMPLE TYPE-'],),
+            ],
+            [sg.Sizer(16,32),]
+        ],element_justification='right',pad=(0,16)),
+        sg.Column([ 
+            [
+            sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+            ],
+            [
+            sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+            ],
+            [
+            sg.Sizer(16,32),sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
+            ],
+            [
+            sg.Sizer(16,32),sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+            ],
+            [sg.Sizer(16,32),sg.Checkbox(translator('Overwrite Output'), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')],  
+        ],pad=(0,16))
+
+    ]]
 
     input_options_tab = [
         
@@ -97,12 +90,12 @@ def setup_layout(theme='Dark', font = None):
         #],
         
         [
-        sg.Text(translate_text('Positive Control:',language,translate_scheme),tooltip=tooltips['-POSITIVE CONTROL-']),
+        sg.Text(translator('Positive Control:'),tooltip=tooltips['-POSITIVE CONTROL-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
         ],
         [
-        sg.Text(translate_text('Negative Control:',language,translate_scheme),tooltip=tooltips['-NEGATIVE CONTROL-']),
+        sg.Text(translator('Negative Control:'),tooltip=tooltips['-NEGATIVE CONTROL-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
         ],
@@ -111,42 +104,42 @@ def setup_layout(theme='Dark', font = None):
     analysis_options_tab = [
         #Commented out for now
         #[
-        #sg.Text(translate_text('Analysis Mode:',language,translate_scheme),tooltip=tooltips['-ANALYSIS MODE-']),
+        #sg.Text(translator('Analysis Mode:'),tooltip=tooltips['-ANALYSIS MODE-']),
         #sg.Push(),
         #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
         #],
         #[
-        #sg.Text(translate_text('Medaka Model:',language,translate_scheme),tooltip=tooltips['-MEDAKA MODEL-']),
+        #sg.Text(translator('Medaka Model:'),tooltip=tooltips['-MEDAKA MODEL-']),
         #sg.Push(),
         #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
         #],
         [
-        sg.Text(translate_text('Minimum Mapping Quality:',language,translate_scheme),tooltip=tooltips['-MIN MAP QUALITY-']),
+        sg.Text(translator('Minimum Mapping Quality:'),tooltip=tooltips['-MIN MAP QUALITY-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN MAP QUALITY-'], key='-MIN MAP QUALITY-',),
         ],
         [
-        sg.Text(translate_text('Minimum Read Length:',language,translate_scheme),tooltip=tooltips['-MAX READ LENGTH-']),
+        sg.Text(translator('Minimum Read Length:'),tooltip=tooltips['-MAX READ LENGTH-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MAX READ LENGTH-'], key='-MIN READ LENGTH-',),
         ],
         [
-        sg.Text(translate_text('Maximum Read Length:',language,translate_scheme),tooltip=tooltips['-MAX READ LENGTH-']),
+        sg.Text(translator('Maximum Read Length:'),tooltip=tooltips['-MAX READ LENGTH-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MAX READ LENGTH-'], key='-MAX READ LENGTH-',),
         ],
         [
-        sg.Text(translate_text('Minimum Read Depth:',language,translate_scheme),tooltip=tooltips['-MIN READ DEPTH-']),
+        sg.Text(translator('Minimum Read Depth:'),tooltip=tooltips['-MIN READ DEPTH-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN READ DEPTH-'], key='-MIN READ DEPTH-',),
         ],
         [
-        sg.Text(translate_text('Minimum Read Percentage:',language,translate_scheme),tooltip=tooltips['-MIN READ PCENT-']),
+        sg.Text(translator('Minimum Read Percentage:'),tooltip=tooltips['-MIN READ PCENT-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN READ PCENT-'], key='-MIN READ PCENT-',),
         ],
         [
-        sg.Text(translate_text('Primer Length:',language,translate_scheme),tooltip=tooltips['-PRIMER LENGTH-']),
+        sg.Text(translator('Primer Length:'),tooltip=tooltips['-PRIMER LENGTH-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-PRIMER LENGTH-'], key='-PRIMER LENGTH-',),
         ],
@@ -155,17 +148,17 @@ def setup_layout(theme='Dark', font = None):
 
     output_options_tab = [
         [
-        sg.Text(translate_text('Publish Directory:',language,translate_scheme),tooltip=tooltips['-PUBLISH DIR-']),
+        sg.Text(translator('Publish Directory:'),tooltip=tooltips['-PUBLISH DIR-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-PUBLISH DIR-'], key='-PUBLISH DIR-',),
         ],
         [
-        sg.Text(translate_text('Output Prefix:',language,translate_scheme),tooltip=tooltips['-OUTPUT PREFIX-']),
+        sg.Text(translator('Output Prefix:'),tooltip=tooltips['-OUTPUT PREFIX-']),
         sg.Push(),
         sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
         ],
-        [sg.Checkbox(translate_text('All Metadata to Header',language,translate_scheme), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')],
-        [sg.Checkbox(translate_text('Date Stamp',language,translate_scheme), default=False, tooltip=tooltips['-DATE STAMP-'], key='-DATE STAMP-')], 
+        [sg.Checkbox(translator('All Metadata to Header'), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')],
+        [sg.Checkbox(translator('Date Stamp'), default=False, tooltip=tooltips['-DATE STAMP-'], key='-DATE STAMP-')], 
     ]
 
     misc_options_tab = [
@@ -191,10 +184,10 @@ def setup_layout(theme='Dark', font = None):
     advanced_tab = [
         [sg.TabGroup([
         [
-        sg.Tab(translate_text('Input Options',language,translate_scheme),input_options_tab,key='-INPUT OPTIONS TAB-'),
-        sg.Tab(translate_text('Analysis Options',language,translate_scheme),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
-        sg.Tab(translate_text('Output Options',language,translate_scheme),output_options_tab,key='-OUTPUT OPTIONS TAB-'),
-        sg.Tab(translate_text('Misc Options',language,translate_scheme),misc_options_tab,key='-MISC OPTIONS TAB-')
+        sg.Tab(translator('Input Options'),input_options_tab,key='-INPUT OPTIONS TAB-'),
+        sg.Tab(translator('Analysis Options'),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
+        sg.Tab(translator('Output Options'),output_options_tab,key='-OUTPUT OPTIONS TAB-'),
+        sg.Tab(translator('Misc Options'),misc_options_tab,key='-MISC OPTIONS TAB-')
         ]
             ],)
         ]
@@ -204,22 +197,37 @@ def setup_layout(theme='Dark', font = None):
     layout = [
     [sg.TabGroup([
         [
-        sg.Tab(translate_text('Basic',language,translate_scheme),basic_tab,key='-BASIC OPTIONS TAB-'),
-        sg.Tab(translate_text('Advanced',language,translate_scheme),advanced_tab,key='-ADVANCED OPTIONS TAB-'),
+        sg.Tab(translator('Basic'),basic_tab,key='-BASIC OPTIONS TAB-'),
+        sg.Tab(translator('Advanced'),advanced_tab,key='-ADVANCED OPTIONS TAB-'),
     ]
     ])],
     
-    [AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
+    #[AltButton(button_text=translator('Confirm'),size=button_size,font=font,key='-CONFIRM-'),],
     ]
 
-    return layout
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 
-def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
+    return panel
+
+def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', window = None):
     update_log('creating add protocol window')
-    make_theme()
-    layout = setup_layout(theme=theme, font=font)
-    piranha_scaled = scale_image('piranha.png',scale,(64,64))
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled)
+
+    config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+    panel = setup_panel(translator)
+
+    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Continue', button_key='-CONFIRM-')
+
+    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
+
+    piranha_scaled = scale_image('piranha.png',1,(64,64))
+    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()
@@ -228,7 +236,7 @@ def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', font
 
     return new_window
 
-def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFICE'):
+def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
     config = artifice_core.consts.retrieve_config()
     selected_run_title = run_info['title']
 
@@ -271,6 +279,6 @@ def run_piranha_options_window(window, run_info, font = None, version = 'ARTIFIC
                 window.close()
                 return run_info
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
     window.close()

@@ -17,20 +17,6 @@ from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
-
-    sg.theme_add_new('Artifice', Artifice_Theme)
-
 # makes sure builtin protocols are installed
 def setup_config():
     config_path = str(artifice_core.consts.get_datadir() / 'builtin_protocols')
@@ -39,11 +25,10 @@ def setup_config():
     else:
         copytree('builtin_protocols', config_path)
 
-def setup_layout(theme='Dark', font = None):
-    sg.theme(theme)
+def setup_panel(translator, font = None):
+    sg.theme("PANEL")
+
     config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    language = config['LANGUAGE']
 
     try:
         mkdir(config['PROTOCOLS_DIR'])
@@ -79,27 +64,27 @@ def setup_layout(theme='Dark', font = None):
     protocol_dir, protocol_desc = get_protocol_info(config['PROTOCOLS_DIR'], config['PROTOCOL'])
 
     protocol_info_column = [
-    [sg.Text(translate_text('Directory:',language,translate_scheme),size=(14,1)),],
+    [sg.Text(translator('Directory:'),size=(14,1)),],
     [sg.Text(protocol_dir,font=(None,12),size=(80,1),key='-PROTOCOL DIR-'),],
     [sg.VPush()],
-    [sg.Text(translate_text('Description:',language,translate_scheme),size=(14,1)),],
+    [sg.Text(translator('Description:'),size=(14,1)),],
     [sg.Text(protocol_desc,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
     [sg.VPush()],
     [
-        AltButton(button_text=translate_text('Add Protocol',language,translate_scheme),size=button_size,font=font,key='-ADD PROTOCOL-'),
+        AltButton(button_text=translator('Add Protocol'),size=button_size,font=font,key='-ADD PROTOCOL-'),
         sg.Push(),
-        AltButton(button_text=translate_text('Remove Protocol',language,translate_scheme),size=button_size,font=font,key='-REMOVE PROTOCOL-'),
-        sg.Push(),
-        AltButton(button_text=translate_text('Confirm',language,translate_scheme),size=button_size,font=font,key='-CONFIRM-'),],
-    ]
-    layout = [
-        [sg.Column(view_protocol_column),
-         sg.Column(protocol_info_column, expand_y=True)],
-    
-    ]
+        AltButton(button_text=translator('Remove Protocol'),size=button_size,font=font,key='-REMOVE PROTOCOL-'),
+        # sg.Push(),
+        # AltButton(button_text=translator('Confirm'),size=button_size,font=font,key='-CONFIRM-'),
+    ]]
 
+    panel = sg.Frame("", [[sg.Column([
+            [
+                sg.Column(view_protocol_column),
+                sg.Column(protocol_info_column, expand_y=True),
+            ]], pad=(16,16))]], border_width=0, relief="solid", pad=(0,16))
 
-    return layout
+    return panel
 
 def get_protocol_dir(art_protocol_path):
     try:
@@ -128,14 +113,27 @@ def get_protocol_details(protocol_dir, key):
 def create_protocol_window(theme = 'Artifice', version = 'ARTIFICE', font = None, window = None, scale = 1):
     update_log('creating protocol window')
     #make_theme()
-    layout = setup_layout(theme=theme, font=font)
+    config = artifice_core.consts.retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+    panel = setup_panel(translator, font = font)
+
+    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Confirm', button_key='-CONFIRM-')
+
+    layout = artifice_core.window_functions.setup_header_footer(content, small=True,)
 
     if version == 'piranhaGUI':
         icon_scaled = scale_image('piranha.png',scale,(64,64))
     else:
         icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
 
-    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
+    new_window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, 
+                           finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()

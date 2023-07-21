@@ -11,7 +11,7 @@ from PIL import Image
 from io import BytesIO
 
 import artifice_core.start_rampart
-import artifice_core.consts
+import artifice_core.consts as consts
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
@@ -23,10 +23,7 @@ def print_container_log(log_queue, window, output_key, logfile,):
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
-            if sys.platform.startswith("darwin"): #macOS
-                window[output_key].print(output, font='Menlo', end='')
-            else:
-                window[output_key].print(output, font='Coruier New', end='')
+            window[output_key].print(output, font=consts.CONSOLE_FONT, end='')
             update_log(output, filename=logfile, add_newline=False)
             if output == '###CONTAINER STOPPED###\n':
                 return True
@@ -37,10 +34,10 @@ def print_container_log(log_queue, window, output_key, logfile,):
     return False
 
 # asks the user whether they would like to stop the running container(s) when they close the window
-def check_stop_on_close(names: list, window, client, container, font = None):
+def check_stop_on_close(names: list, window, client, container):
     to_stop = []
     for name in names:
-        chk_stop = alt_popup_yes_no(f'Do you wish to stop {name} while closing?', font=font)
+        chk_stop = alt_popup_yes_no(f'Do you wish to stop {name} while closing?')
         if chk_stop == 'Yes':
             to_stop.append(name)
         else:
@@ -72,7 +69,7 @@ def setup_check_container(tool_name):
     elif tool_name == 'PIRANHA' or 'Analysis':
         image_tag = artifice_core.consts.PIRANHA_IMAGE
 
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(None, image_tag, font=None, popup=False)
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(None, image_tag, popup=False)
 
     if not got_image:
         status = f'{tool_name} is not installed'
@@ -96,9 +93,9 @@ def setup_check_container(tool_name):
     return running, button_text, status, True
 
 # creates a popup stating the exception raised with option of showing the logs
-def error_popup(err, font):
+def error_popup(err):
     update_log(traceback.format_exc())
-    sg.theme('Artifice')
+    sg.theme('DEFAULT')
     #log = ''
     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
     with open(filepath, 'r') as logfile:
@@ -116,18 +113,17 @@ def error_popup(err, font):
 
     layout = [
             [sg.Text(error_message,)],
-            [AltButton(button_text=translate_text('Show logs',language,translate_scheme),font=font,key='-SHOW LOG-')],
+            [AltButton(button_text=translate_text('Show logs',language,translate_scheme),key='-SHOW LOG-')],
             [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
-            [AltButton(button_text=translate_text('OK',language,translate_scheme),font=font,key='-EXIT-')],
+            [AltButton(button_text=translate_text('OK',language,translate_scheme),key='-EXIT-')],
 
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     error_popup = sg.Window(translate_text('ERROR',language,translate_scheme), layout, disable_close=False, finalize=True,
-                                font=font, resizable=False, no_titlebar=False,)
+                                resizable=False, no_titlebar=False,)
     AltButton.intialise_buttons(error_popup)
 
     run_error_popup(error_popup)
-    #sg.popup_error(AltButton(button_text='Launch ARTIFICE',font=('Arial',18),key='-LAUNCH-'))
 
 def run_error_popup(window):
     while True:
@@ -147,19 +143,17 @@ def run_error_popup(window):
     return None
 
 #set scaling for all window elements based on screen resolution
-def scale_window(font=None):
-    layout = [[sg.Text('setting up..')]]
-    window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
-    resolution = window.get_screen_dimensions()[1]
-    scale = resolution/1080
+def scale_window():
+    screen = sg.Window.get_screen_size()
+    resolution = screen[1]
+    scale = resolution/1024
     update_log(f'scaling by {scale}')
     sg.set_options(scaling=scale)
-    window.close()
     artifice_core.consts.edit_config('SCALING', scale)
     return scale
 
 
-def scale_image(filename, scale, size, output_name = ''):
+def scale_image(filename, scale, size):
     if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
         mkdir(artifice_core.consts.get_datadir() / 'resources')
 
@@ -220,3 +214,111 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
         print(return_string)
 
     return return_string
+
+# Creates a layout for a window that embeds a content frame into an ARTIC header and footer
+def setup_header_footer(content, large=False, small=False):
+    sg.theme("HEADER")
+    if large:
+        layout = [
+        [
+            sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2)),
+            sg.Column([[
+                sg.Text('Powered by ARTIFICE', font=(consts.DEFAULT_FONT_FAMILY, 14), pad=(8,2)),],[
+                sg.Text('ARTICnetwork: http://artic.network', font=(consts.DEFAULT_FONT_FAMILY, 24), pad=(8,2))
+            ]],)
+        ],
+        [
+            content
+        ],
+        [
+            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=(consts.DEFAULT_FONT_FAMILY, 12), pad=(8,2)),
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=(consts.DEFAULT_FONT_FAMILY, 12), pad=(8,2), expand_x=True, justification='right'),
+        ]]
+    elif small:
+        layout = [
+        [
+            sg.Sizer(16,16)
+            # sg.Image(scale_image("artic-small.png", 1, (24,24)), pad=(8,0)),
+            # sg.Push(),
+            # sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
+        ],
+        [
+            content
+        ],
+        [
+            sg.Sizer(16,16)
+        ]]
+    else:
+        layout = [
+        [
+            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2)),
+            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=(consts.DEFAULT_FONT_FAMILY, 14), pad=(8,2)),
+        ],
+        [
+            content
+        ],
+        [
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=(consts.DEFAULT_FONT_FAMILY, 12), pad=(8,2)),
+        ]]
+
+
+    return layout
+
+# Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
+def setup_content(panel, translator, small=False, button_text=None, button_key=None, top_left_button_text=None, top_left_button_key=None, top_right_button_text=None, top_right_button_key=None):
+    sg.theme("CONTENT")
+
+    if small:
+        layout = [
+            [ 
+                sg.Column(
+                    [[sg.Image(scale_image("piranha.png", 1, (32,32)))]],
+                    pad=(8,0)
+                ),
+                sg.Column(
+                    [
+                        [sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 18))],
+                    ]
+                ),
+                # sg.Column(
+                #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
+                #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
+                #     element_justification="right", expand_x=True, pad=(8,0))
+            ]]
+    else:
+        layout = [
+            [ 
+                sg.Column(
+                    [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)))]],
+                    pad=(8,0)
+                ),
+                sg.Column(
+                    [
+                        [sg.Text("Piranha v1.4.3", font=(consts.DEFAULT_FONT_FAMILY, 32))],
+                        [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=(consts.DEFAULT_FONT_FAMILY, 12))],
+                        [sg.Text("analysis pipeline and reporting tool", font=(consts.DEFAULT_FONT_FAMILY, 12))],             
+                    ]
+                ),
+                sg.Column(
+                    [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
+                    [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=(consts.DEFAULT_FONT_FAMILY, 12))]],
+                    element_justification="right", expand_x=True, pad=(8,0))
+            ]]
+    
+    if top_left_button_text != None:
+        layout.append(
+            [
+                AltButton(button_text=translator(top_left_button_text),key=top_left_button_key), 
+                sg.Push(), 
+               AltButton(button_text=translator(top_right_button_text),key=top_right_button_key)
+            ])
+
+    layout.append([panel])
+
+    if button_text != None:
+        layout.append(
+            [sg.Push(), AltButton(button_text=translator(button_text),key=button_key)]
+            )
+
+    return sg.Frame("", [[sg.Column(layout, pad=(0, 0), expand_x=True, expand_y=True)]], expand_x=True, expand_y=True, border_width=0)
+

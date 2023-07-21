@@ -20,20 +20,6 @@ from artifice_core.manage_runs import save_run, update_run_list, get_runs, save_
 from advanced_window.infotab import infotab_event
 from advanced_window.rampart_tab import rampart_tab_event
 
-def make_theme():
-    Artifice_Theme = {'BACKGROUND': "#072429",
-               'TEXT': '#f7eacd',
-               'INPUT': '#1e5b67',
-               'TEXT_INPUT': '#f7eacd',
-               'SCROLL': '#707070',
-               'BUTTON': ('#f7eacd', '#d97168'),
-               'PROGRESS': ('#000000', '#000000'),
-               'BORDER': 1,
-               'SLIDER_DEPTH': 0,
-               'PROGRESS_DEPTH': 0}
-
-    sg.theme_add_new('Artifice', Artifice_Theme)
-
 #defines the layout of the window
 def setup_layout(theme='Dark', font = None):
     sg.theme(theme)

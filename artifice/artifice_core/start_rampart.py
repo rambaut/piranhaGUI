@@ -102,7 +102,7 @@ def queue_log(log, queue):
             queue.put(log_output)
 
 #check image exists for given tag
-def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'RAMPART'):
+def check_for_image(client, image_tag, popup = True, tool_name = 'RAMPART'):
     if client == None:
         client = docker.from_env()
 
@@ -111,7 +111,7 @@ def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'R
         update_log(f'confirmed image: {image_tag} is installed')
         #print(image.id)
         if popup:
-            build_ok = sg.popup_ok_cancel(f'{tool_name} docker image installed, check for updates?', font=font)
+            build_ok = sg.popup_ok_cancel(f'{tool_name} docker image installed, check for updates?')
             if build_ok != 'OK':
                 return True, client
         else:
@@ -119,7 +119,7 @@ def check_for_image(client, image_tag, font = None, popup = True, tool_name = 'R
 
     except:
         if popup:
-            build_ok = sg.popup_ok_cancel(f'{tool_name} docker image not installed yet. Install it? (This may take some time)', font=font)
+            build_ok = sg.popup_ok_cancel(f'{tool_name} docker image not installed yet. Install it? (This may take some time)')
         else:
             return False, client
 
@@ -164,20 +164,20 @@ def check_for_image_updates(client, image_tag):
 
 
 # Checks if docker is installed
-def check_for_docker(font = None, docker_url = 'https://docs.docker.com/get-docker/', popup = True):
+def check_for_docker(docker_url = 'https://docs.docker.com/get-docker/', popup = True):
     try:
         info = docker.from_env().info()
         return True
     except:
         if popup:
-            open_site = sg.popup_ok_cancel('Docker client not found. Please install docker and restart artifice. Press OK below to open docker site in browser', font = font)
+            open_site = sg.popup_ok_cancel('Docker client not found. Please install docker and restart artifice. Press OK below to open docker site in browser')
             if open_site == 'OK':
                 open_new_tab(docker_url)
 
         return False
 
 #makes sure run is valid for running rampart/piranha and creates run_configuration json
-def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None, output = False):
+def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, output = False):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     title = run_info['title']
@@ -204,10 +204,10 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, font = None,
     with open(config_path, 'w') as file:
         config_json = json.dump(run_configuration, file)
 
-    artifice_core.view_barcodes_window.check_barcodes(run_info,font=font)
+    artifice_core.view_barcodes_window.check_barcodes(run_info)
 
-def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, font = None, container = None, protocol_path = None):
-    prepare_run(run_info,runs_dir=runs_dir,font=font)
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, container = None, protocol_path = None):
+    prepare_run(run_info,runs_dir=runs_dir)
 
     basecalled_path = run_info['basecalledPath']
     run_path = runs_dir / run_info['title']

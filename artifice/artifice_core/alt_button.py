@@ -4,20 +4,21 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 from io import BytesIO
 from tkinter import ttk
 
-import artifice_core.consts
+from artifice_core import consts
 
 # Alternative to standard PySimpleGUI button, with curved edges. Highlights on mouseover
 # intialise_buttons function must be called
 class AltButton(sg.Button):
 
     def __init__(self, button_text='', size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
-        self.Font = kwargs['font'] if 'font' in kwargs else ('Arial', '18')
+        theme = consts.get_theme(sg.theme())
+        
+        self.Font = kwargs['font'] if 'font' in kwargs else consts.BUTTON_FONT if consts.BUTTON_FONT else consts ('Arial', '18')
         self.ButtonText = button_text
         self.ButtonColor = sg.button_color_to_tuple(button_color)
 
-        self.Size = size if size != (None, None) else s
-        config = artifice_core.consts.retrieve_config()
-        scaling=config['SCALING']
+        self.Size = size if size != (None, None) else s if s != (None, None) else consts.BUTTON_SIZE
+        scaling=consts.SCALING
         if self.Size == (None, None):
             self.Size = self.get_string_size()
             self.Size = (int(self.Size[0]+self.Size[1]*3*scaling), int(self.Size[1]*1.75*scaling))
@@ -26,10 +27,8 @@ class AltButton(sg.Button):
 
         if mouseover_colors != (None, None):
             self.MouseOverColors = sg.button_color_to_tuple(mouseover_colors)
-        elif button_color != None:
-            self.MouseOverColors = (self.ButtonColor[1], self.ButtonColor[0])
         else:
-            self.MouseOverColors = (sg.theme_button_color()[1], sg.theme_button_color()[0])
+            self.MouseOverColors = sg.button_color_to_tuple(theme['BUTTON_HOVER'])
 
         self.RegImage = self.create_button_image(fill=self.MouseOverColors[0])
         self.HighlightImage = self.create_button_image(fill=self.MouseOverColors[1])
@@ -89,7 +88,8 @@ class AltButton(sg.Button):
         scl_fctr = 4 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)
-        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
+        #draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
+        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=32, fill=fill)
         button_image = button_image.resize(self.Size, resample=Image.ANTIALIAS) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()

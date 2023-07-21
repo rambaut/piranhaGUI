@@ -1,48 +1,76 @@
 import PySimpleGUI as sg
 import os.path
 from os import makedirs, mkdir
+import sys
 import json
 import traceback
 import time
 from datetime import datetime
 from shutil import copytree
 
-import artifice_core.consts
+from artifice_core import consts
 from artifice_core.update_log import update_log
 import advanced_window.main_window
 import basic_window.edit_run_window
 import basic_window.execute_run_window
+import basic_window.about_window
 import artifice_core.startup_window
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
 
 #create artifice theme
-def make_theme(version):
-    if version == 'piranhaGUI': # poseqco color scheme
-        Artifice_Theme = {'BACKGROUND': "#FBECA6",
-                   'TEXT': '#000000',
-                   'INPUT': '#FFAE59',
-                   'TEXT_INPUT': '#000000',
-                   'SCROLL': '#707070',
-                   'BUTTON': ('#FEAE63', '#FF4600'),
-                   'PROGRESS': ('#000000', '#000000'),
-                   'BORDER': 1,
-                   'SLIDER_DEPTH': 0,
-                   'PROGRESS_DEPTH': 0}
+def make_themes(version):
 
-    else: # artic color scheme
-        Artifice_Theme = {'BACKGROUND': "#072429",
-                   'TEXT': '#f7eacd',
-                   'INPUT': '#1e5b67',
-                   'TEXT_INPUT': '#f7eacd',
-                   'SCROLL': '#707070',
-                   'BUTTON': ('#f7eacd', '#d97168'),
-                   'PROGRESS': ('#000000', '#000000'),
-                   'BORDER': 1,
-                   'SLIDER_DEPTH': 0,
-                   'PROGRESS_DEPTH': 0}
+    consts.THEMES = {
+        'DEFAULT': {'BACKGROUND': "#f7eacd",
+                'TEXT': '#1e5b67',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'PROGRESS': ('#000000', '#000000'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0},
+        'CONTENT': {'BACKGROUND': "#f7eacd",
+                'TEXT': '#1e5b67',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'PROGRESS': ('#000000', '#000000'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0},
+        'PANEL': {'BACKGROUND': "#F5F1DF",
+                'TEXT': '#1e5b67',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'PROGRESS': ('#000000', '#000000'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0},
+        'HEADER': {'BACKGROUND': "#1e5b67",
+                'TEXT': '#f7eacd',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#d97168'),
+                'BUTTON_HOVER': ('#f7eacd', '#d97168'),
+                'PROGRESS': ('#000000', '#000000'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0}
+    }
 
-    sg.theme_add_new('Artifice', Artifice_Theme)
+    for key, value in consts.THEMES.items():
+        sg.theme_add_new(key, value)
+
 
 #make sure a directory exists to save runs
 def check_runs_dir(runs_dir):
@@ -82,8 +110,8 @@ def setup_builtin_protocols():
     except:
         pass
 
-def create_setup_window(scale, version):
-    sg.theme('Artifice')
+def create_setup_window(version):
+    sg.theme('CONTENT')
     is_piranhaGUI = version.startswith('piranhaGUI')
 
      # Resize PNG file to appropiate size
@@ -102,7 +130,7 @@ def create_setup_window(scale, version):
         [sg.Text('setting up..', justification = 'center')]
         ]
     
-    window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
+    window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
 
     return window
 
@@ -113,33 +141,31 @@ if __name__ == '__main__':
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
-    font = (artifice_core.consts.FONT, 18)
-
     scale = scale_window()
     version = artifice_core.consts.VERSION
-    make_theme(version)
-    window = create_setup_window(scale, version)
+    make_themes(version)
 
+    window = create_setup_window(version)
     
-    window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version, window=window) #create the startup window to check/install docker and images
-    advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
-    make_theme('artifice')
+    window = artifice_core.startup_window.create_startup_window(version=version) #create the startup window to check/install docker and images
 
+    advanced = artifice_core.startup_window.run_startup_window(window, version=version)
+    
     if advanced != None: # if button pressed to launch artifice
         try:
             if advanced:
-                window, rampart_running = advanced_window.main_window.create_main_window(font=font)
-                advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+                window, rampart_running = advanced_window.main_window.create_main_window()
+                advanced_window.main_window.run_main_window(window, rampart_running=rampart_running)
             else:
                 while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window(font=font, scale=scale, version=version)
-                    run_info = basic_window.edit_run_window.run_edit_window(window, font=font, version=version)
+                    window = basic_window.edit_run_window.create_edit_window(version=version)
+                    run_info = basic_window.edit_run_window.run_edit_window(window, version=version)
                     if run_info == None:
                         break
 
                     update_log(f'\nrun details confirmed, creating main window\n')
-                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(font=font, scale=scale, version=version)
-                    edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running, piranha_running=piranha_running, scale=scale, version=version)
+                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(version=version)
+                    edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running, version=version)
                     if edit != True:
                         break
             exit_time = datetime.today()
@@ -150,6 +176,7 @@ if __name__ == '__main__':
             exit_time = datetime.today()
             update_log(traceback.format_exc())
             update_log(f'\nExited unexpectedly at {exit_time}\n')
+            print(traceback.format_exc(), file=sys.stderr)
         else:
             window.close()
 
