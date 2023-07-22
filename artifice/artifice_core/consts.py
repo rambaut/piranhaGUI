@@ -42,6 +42,17 @@ def set_config_to_default():
         remove(config_path)
     shutil.copyfile('./config.yml', config_path)
 
+def get_config_value(key, config):
+    try:
+        value = config[key]
+    except:
+        with open('./config.yml') as file:
+            default_config = safe_load(file)
+            value = default_config
+            edit_config(key, value)
+    
+    return value
+                  
 # returns a dict with config value taken from the config file
 def retrieve_config():
     config_path = str(get_datadir() / 'config.yml')
@@ -118,16 +129,16 @@ MONOTYPE_FONT_SIZE = 18
 CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, MONOTYPE_FONT_SIZE)
 
 # piranhna options
-VALUE_POSITIVE = config['VALUE_POSITIVE']
-VALUE_NEGATIVE = config['VALUE_NEGATIVE']
-VALUE_SAMPLE_TYPE = config['VALUE_SAMPLE_TYPE']
-VALUE_MIN_MAP_QUALITY = ['VALUE_MIN_MAP_QUALITY']
-VALUE_MIN_READ_LENGTH = ['VALUE_MIN_READ_LENGTH']
-VALUE_MAX_READ_LENGTH = ['VALUE_MIN_READ_LENGTH']
-VALUE_MIN_READS = ['VALUE_MIN_READS']
-VALUE_MIN_PCENT = ['VALUE_MIN_PCENT']
-VALUE_PRIMER_LENGTH = ['VALUE_PRIMER_LENGTH']
-VALUE_OUTPUT_PREFIX = ['VALUE_OUTPUT_PREFIX']
+VALUE_POSITIVE =  get_config_value('VALUE_POSITIVE', config)
+VALUE_NEGATIVE = get_config_value('VALUE_NEGATIVE', config)
+VALUE_SAMPLE_TYPE = get_config_value('VALUE_SAMPLE_TYPE', config)
+VALUE_MIN_MAP_QUALITY = get_config_value('VALUE_MIN_MAP_QUALITY', config)
+VALUE_MIN_READ_LENGTH = get_config_value('VALUE_MIN_READ_LENGTH', config)
+VALUE_MAX_READ_LENGTH = get_config_value('VALUE_MIN_READ_LENGTH', config)
+VALUE_MIN_READS = get_config_value('VALUE_MIN_READS', config)
+VALUE_MIN_PCENT = get_config_value('VALUE_MIN_PCENT', config)
+VALUE_PRIMER_LENGTH = get_config_value('VALUE_PRIMER_LENGTH', config)
+VALUE_OUTPUT_PREFIX = get_config_value('VALUE_OUTPUT_PREFIX', config)
 
 
 THEMES = { }
