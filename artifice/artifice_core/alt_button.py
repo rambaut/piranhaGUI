@@ -39,7 +39,7 @@ class AltButton(sg.Button):
         kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
         kwargs['border_width'] = 0
 
-        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, **kwargs)
+        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, font=consts.BUTTON_FONT, **kwargs)
 
     # set text color of button whether it is a ttk (on Mac) or tk button
     def set_text_color(self, color):

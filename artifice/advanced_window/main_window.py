@@ -9,7 +9,7 @@ import traceback
 from time import sleep
 import re
 
-import artifice_core.consts
+import artifice_core.consts as consts
 import artifice_core.selection_window
 import artifice_core.parse_columns_window
 import artifice_core.start_rampart
@@ -21,8 +21,9 @@ from advanced_window.infotab import infotab_event
 from advanced_window.rampart_tab import rampart_tab_event
 
 #defines the layout of the window
-def setup_layout(theme='Dark', font = None):
-    sg.theme(theme)
+def setup_layout():
+    sg.theme('PANEL')
+
     runs = get_runs()
 
     select_run_column = [
@@ -185,9 +186,13 @@ def create_run(font=None):
 
 def create_main_window(theme = 'Artifice', font = None, window = None):
     update_log('creating main window')
-    make_theme()
+    
+    #Not been upgraded to new layout...
     layout, rampart_running = setup_layout(theme=theme, font=font)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
+    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, 
+                           enable_close_attempted_event=True, finalize=True, font=consts.DEFAULT_FONT,
+                            margins=(0,0), element_padding=(0,0))
+
 
     if window != None:
         window.close()

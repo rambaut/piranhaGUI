@@ -15,6 +15,7 @@ import basic_window.edit_run_window
 import basic_window.execute_run_window
 import basic_window.about_window
 import artifice_core.startup_window
+import artifice_core.window_functions as window_functions
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
 
@@ -137,13 +138,15 @@ def create_setup_window(version):
 if __name__ == '__main__':
     advanced = False
     startup_time = datetime.today()
-    check_runs_dir(artifice_core.consts.RUNS_DIR)
+    check_runs_dir(consts.RUNS_DIR)
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
     scale = scale_window()
-    version = artifice_core.consts.VERSION
+    version = consts.VERSION
     make_themes(version)
+
+    window_functions.setup_translator()
 
     window = create_setup_window(version)
     

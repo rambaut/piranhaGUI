@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 
-import artifice_core.consts
+import artifice_core.consts as consts
+import artifice_core.window_functions as window_functions
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
@@ -25,7 +26,7 @@ def setup_panel(translator):
 def create_add_protocol_window(version = 'ARTIFICE', window = None):
     update_log('creating add protocol window')
 
-    config = artifice_core.consts.retrieve_config()
+    config = consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
         language = config['LANGUAGE']
@@ -35,13 +36,12 @@ def create_add_protocol_window(version = 'ARTIFICE', window = None):
 
     panel = setup_panel(translator)
 
-    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, translator, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
-    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
+    layout = window_functions.setup_header_footer(content, small=True)
 
-    piranha_scaled = scale_image('piranha.png',scale,(64,64))
     new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
-                           finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
+                           finalize=True,icon=consts.ICON, font=consts.DEFAULT_FONT, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()

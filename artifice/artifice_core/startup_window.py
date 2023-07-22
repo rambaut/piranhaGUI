@@ -13,14 +13,14 @@ from PIL import Image
 from time import sleep
 
 import artifice_core.start_rampart
-import artifice_core.consts
-import artifice_core.window_functions
+import artifice_core.consts as consts
+import artifice_core.window_functions as window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import error_popup, translator
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
@@ -84,13 +84,14 @@ def setup_panel(translator):
         else:
             SHOW_RAMPART = True
         
-        artifice_core.consts.edit_config('SHOW_RAMPART', SHOW_RAMPART)
+        consts.edit_config('SHOW_RAMPART', SHOW_RAMPART)
     
     show_rampart_text = SHOW_RAMPART
     if SHOW_RAMPART == False:
         show_rampart_button = False
 
     install_buttons_size = (320,24)
+    font = consts.DEFAULT_FONT
     layout = []
     # layout.append([
     #     AltButton(button_text=translator('About'),font=font,key='-ABOUT-'),
@@ -99,61 +100,49 @@ def setup_panel(translator):
     #     ])
     layout.append([
         sg.Sizer(15,56), 
-        sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-'),
+        sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-',font=font),
         AltButton(button_text=translator('Open Docker Site in Browser'),size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
         sg.Push()
         ])
     if SHOW_RAMPART:
         layout.append([
             sg.Sizer(16,56), 
-            sg.Text(rampart_image_status,text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
+            sg.Text(rampart_image_status,text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-',font=font),
             AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,key='-RAMPART INSTALL-'),
             sg.Push()
             ])
     layout.append([
         sg.Sizer(15,56), 
-        sg.Text(piranha_image_status,text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
+        sg.Text(piranha_image_status,text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-',font=font),
         AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
         sg.Push()
         ])
     layout.append([
         sg.Sizer(0,32), 
         sg.Push(),
-        sg.Text(translator(image_info_text), font=14),
+        sg.Text(translator(image_info_text), font=font),
         sg.Push()]
         )
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,16))
 
-def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', window = None):
+def create_startup_window(version = 'ARTIFICE', window = None):
     update_log('creating startup window')
 
-    config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+    panel = setup_panel(window_functions.translator)
 
-    panel = setup_panel(translator)
-
-    content = artifice_core.window_functions.setup_content(panel, translator, 
+    content = window_functions.setup_content(panel, window_functions.translator, 
                                                            button_text='Continue', button_key='-LAUNCH-',
                                                            top_left_button_text='About', top_left_button_key='-ABOUT-',
                                                            top_right_button_text='Options', top_right_button_key='-OPTIONS-'
                                                            )
 
-    layout = artifice_core.window_functions.setup_header_footer(content)
-
-    scale = artifice_core.consts.SCALING
-    if version == 'piranhaGUI':
-        icon_scaled = scale_image('piranha.png',scale,(64,64))
-    else:
-        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+    layout = window_functions.setup_header_footer(content)
         
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,use_custom_titlebar=False,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
-    new_window.TKroot.minsize(512,380)
+    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
+                           finalize=True,use_custom_titlebar=False,icon=consts.ICON,font=consts.DEFAULT_FONT,
+                           margins=(0,0), element_padding=(0,0))
+    new_window.set_min_size(size=(512,380))
 
     if window != None:
         window.close()
@@ -163,11 +152,11 @@ def create_startup_window(theme = 'Artifice', version = 'ARTIFICE', window = Non
     return new_window
 
 # popup to show user while pulling image
-def create_install_popup(name, font):
+def create_install_popup(name):
     sg.theme('CONTENT')
     inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     install_popup = sg.Window('', [[inst_frame]], disable_close=True, finalize=True,
-                                font=font, resizable=False, no_titlebar=True,)
+                                resizable=False, no_titlebar=True,)
     install_popup.read(timeout=100)
     return install_popup
 
@@ -179,7 +168,7 @@ def create_alt_docker_config():
             file_data = file.read()
         replace_data = file_data.replace('credsStore','credStore')
 
-        docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
+        docker_data_dir = consts.get_datadir() / 'docker'
         try:
             mkdir(docker_data_dir)
         except FileExistsError:
@@ -212,9 +201,9 @@ def set_image_status(name, translator, image, check_for_updates = True, docker_c
 
     return got_image, docker_client, update_available, image_status, pull_text, text_color
 
-def install_image(name, image_repo, window, font, language, translate_scheme, client):
+def install_image(name, image_repo, window, client):
     client = docker.from_env()
-    install_popup = create_install_popup(name, font)
+    install_popup = create_install_popup(name)
     old_images = client.images.list('polionanopore/piranha')
 
     #remove any old tags
@@ -231,7 +220,7 @@ def install_image(name, image_repo, window, font, language, translate_scheme, cl
         update_log(err)
         update_log('Credential initaliasion error (likely MacOS), attempting fix...')
         create_alt_docker_config()
-        docker_data_dir = artifice_core.consts.get_datadir() / 'docker'
+        docker_data_dir = consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
         update_log(f'pulling {name} image using alternate config')
 
@@ -245,33 +234,23 @@ def install_image(name, image_repo, window, font, language, translate_scheme, cl
     try:
         client.images.get(image_tag)
     except:
-        err_text = translate_text('docker was unable to pull image',language,translate_scheme)
+        err_text = window_functions.translator('docker was unable to pull image')
         raise Exception(err_text)
 
     image_status = f'{name} image installed'
-    image_status = translate_text(image_status,language,translate_scheme)
+    image_status = window_functions.translator(image_status)
     pull_text = f'Check for updates to {name} image'
-    pull_text = translate_text(pull_text,language,translate_scheme)
+    pull_text = window_functions.translator(pull_text)
     text_color = PASS_TEXT_COLOUR
     window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
         
 
-def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
+def run_startup_window(window, version='ARTIFICE'):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
     #print(client.configs())
     client = docker.from_env()
-
-    config = artifice_core.consts.retrieve_config()
-    
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    
-    translate_scheme = get_translate_scheme()
-
 
     while True:
         event, values = window.read()
@@ -288,44 +267,44 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
             try:
                 open_new_tab('https://docs.docker.com/get-docker/')
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART',artifice_core.consts.RAMPART_IMAGE,window,font,language,translate_scheme,client)
+                install_image('RAMPART', consts.RAMPART_IMAGE,window,language,client)
                 client = docker.from_env()
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA',artifice_core.consts.PIRANHA_IMAGE,window,font,language, translate_scheme,client)
+                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,language,client)
                 client = docker.from_env()
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
         elif event == '-ABOUT-':
             try:
-                about_window = create_about_window(font=font, scale=scale, version=version)
-                run_about_window(about_window, font)
+                about_window = create_about_window(version=version)
+                run_about_window(about_window)
                 about_window.close()
-                window = create_startup_window(window=window,version=version,scale=scale,font=font)
+                window = create_startup_window(window=window,version=version)
 
             except Exception as err:
                 """
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
                 """
-                error_popup(err, font)
+                error_popup(err)
 
         elif event == '-OPTIONS-':
             try:
-                options_window = create_options_window(font=font, scale=scale, version=version)
-                run_options_window(options_window, font)
+                options_window = create_options_window(version=version)
+                run_options_window(options_window)
                 options_window.close()
-                window = create_startup_window(window=window,version=version,scale=scale,font=font)
+                window = create_startup_window(window=window,version=version)
 
-                config = artifice_core.consts.retrieve_config()
+                config = consts.retrieve_config()
                 try:
                     language = config['LANGUAGE']
                 except:
@@ -335,7 +314,7 @@ def run_startup_window(window, font=None, scale=1, version='ARTIFICE'):
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
                 """
-                error_popup(err, font)
+                error_popup(err)
 
 
         elif event == '-LAUNCH-':

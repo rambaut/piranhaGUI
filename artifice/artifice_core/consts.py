@@ -2,9 +2,12 @@ from yaml import safe_load, safe_dump
 from pathlib import Path
 import pathlib
 import sys
+import csv
 import shutil
 import os.path
+
 from os import getenv, cpu_count, mkdir, remove
+from artifice_core.window_functions import scale_image, get_translate_scheme, translate_text
 
 #returns directory where Artifice stores data, dependent on os
 def get_datadir():
@@ -87,6 +90,20 @@ def get_theme(key):
         return THEMES[key]
     else:
         return THEMES['DEFAULT']
+    
+def setup_translator():
+    global translator
+
+    retrieve_config()
+    translate_scheme = get_translate_scheme()
+    try:
+        language = config['LANGUAGE']
+    except:
+        language = 'English'
+        
+    translator = lambda text : translate_text(text, language, translate_scheme)
+
+translator = None
 
 setup_config()
 config = retrieve_config()
@@ -105,17 +122,28 @@ THREADS = config['THREADS']
 VERSION = config['VERSION']
 SCALING = config['SCALING']
 
+ICON_FILE = 'piranha.png'
+ICON = scale_image(ICON_FILE, SCALING, (64,64))
+
 # styling constants
 BUTTON_SIZE = (120,24)
-BUTTON_FONT_FAMILY = 'Helvetica'
+BUTTON_FONT_FAMILY = 'Helvetica Neue Light'
 BUTTON_FONT_SIZE = 18
 BUTTON_FONT = (BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE)
-DEFAULT_FONT_FAMILY = 'Helvetica'
+
+DEFAULT_FONT_FAMILY = 'Helvetica Neue Light'
 DEFAULT_FONT_SIZE = 18
 DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
 MONOTYPE_FONT_FAMILY = 'Consolas'
-MONOTYPE_FONT_SIZE = 18
-CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, MONOTYPE_FONT_SIZE)
+CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, 18)
+CONSOLE_FONT_SIZE = 18
+
+HEADER_TITLE_FONT = ('Helvetica Neue Thin', 24)
+HEADER_FONT = (DEFAULT_FONT_FAMILY, 18)
+FOOTER_FONT = (DEFAULT_FONT_FAMILY, 14)
+
+TITLE_FONT = ('Helvetica Neue Thin', 24)
+SUBTITLE_FONT = (DEFAULT_FONT_FAMILY, 18)
 
 THEMES = { }
 

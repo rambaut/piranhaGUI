@@ -2,10 +2,9 @@ import PySimpleGUI as sg
 import queue
 import threading
 import traceback
-import csv
 import base64
 import os.path
-import sys
+import csv
 from os import mkdir
 from PIL import Image
 from io import BytesIO
@@ -101,25 +100,19 @@ def error_popup(err):
     with open(filepath, 'r') as logfile:
         log = logfile.read()
 
-    translate_scheme = get_translate_scheme()
-    config = artifice_core.consts.retrieve_config()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
 
-    er_tr = translate_text('Error',language,translate_scheme)
+    er_tr = consts.translator('Error')
     error_message = f'{er_tr}: {err}'
 
     layout = [
             [sg.Text(error_message,)],
-            [AltButton(button_text=translate_text('Show logs',language,translate_scheme),key='-SHOW LOG-')],
+            [AltButton(button_text=consts.translator('Show logs'),key='-SHOW LOG-')],
             [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
-            [AltButton(button_text=translate_text('OK',language,translate_scheme),key='-EXIT-')],
+            [AltButton(button_text=consts.translator('OK'),key='-EXIT-')],
 
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
-    error_popup = sg.Window(translate_text('ERROR',language,translate_scheme), layout, disable_close=False, finalize=True,
+    error_popup = sg.Window(consts.translator('ERROR'), layout, disable_close=False, finalize=True,
                                 resizable=False, no_titlebar=False,)
     AltButton.intialise_buttons(error_popup)
 
@@ -154,10 +147,10 @@ def scale_window():
 
 
 def scale_image(filename, scale, size):
-    if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
-        mkdir(artifice_core.consts.get_datadir() / 'resources')
+    if not os.path.isdir(consts.get_datadir() / 'resources'):
+        mkdir(consts.get_datadir() / 'resources')
 
-    processed_image = str(artifice_core.consts.get_datadir() / 'resources' / filename)
+    processed_image = str(consts.get_datadir() / 'resources' / filename)
     image_file = f'./resources/{filename}'
     size = (int(size[0]*scale), int(size[1]*scale))
     im = Image.open(image_file)
@@ -167,7 +160,6 @@ def scale_image(filename, scale, size):
     buffered = BytesIO()
     im.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue())
-
 
 def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
     with open(filepath, newline = '', encoding='utf-8') as csvfile:
@@ -223,16 +215,16 @@ def setup_header_footer(content, large=False, small=False):
         [
             sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2)),
             sg.Column([[
-                sg.Text('Powered by ARTIFICE', font=(consts.DEFAULT_FONT_FAMILY, 14), pad=(8,2)),],[
-                sg.Text('ARTICnetwork: http://artic.network', font=(consts.DEFAULT_FONT_FAMILY, 24), pad=(8,2))
+                sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),],[
+                sg.Text('ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, pad=(8,2))
             ]],)
         ],
         [
             content
         ],
         [
-            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=(consts.DEFAULT_FONT_FAMILY, 12), pad=(8,2)),
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=(consts.DEFAULT_FONT_FAMILY, 12), pad=(8,2), expand_x=True, justification='right'),
+            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'),
         ]]
     elif small:
         layout = [
@@ -252,13 +244,13 @@ def setup_header_footer(content, large=False, small=False):
         layout = [
         [
             sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2)),
-            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=(consts.DEFAULT_FONT_FAMILY, 14), pad=(8,2)),
+            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, pad=(8,2)),
         ],
         [
             content
         ],
         [
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=(consts.DEFAULT_FONT_FAMILY, 12), pad=(8,2)),
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2)),
         ]]
 
 
@@ -294,14 +286,14 @@ def setup_content(panel, translator, small=False, button_text=None, button_key=N
                 ),
                 sg.Column(
                     [
-                        [sg.Text("Piranha v1.4.3", font=(consts.DEFAULT_FONT_FAMILY, 32))],
-                        [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=(consts.DEFAULT_FONT_FAMILY, 12))],
-                        [sg.Text("analysis pipeline and reporting tool", font=(consts.DEFAULT_FONT_FAMILY, 12))],             
+                        [sg.Text("Piranha v1.4.3", font=consts.TITLE_FONT)],
+                        [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
+                        [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
                     ]
                 ),
                 sg.Column(
                     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
-                    [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=(consts.DEFAULT_FONT_FAMILY, 12))]],
+                    [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))
             ]]
     

@@ -1,7 +1,7 @@
-import artifice_core.consts
+import artifice_core.consts as consts
 
 #update the log with a new line
-def update_log(line, filename = artifice_core.consts.LOGFILE, overwrite = False, add_newline = True):
+def update_log(line, filename, overwrite = False, add_newline = True):
     #make sure line can be converted to string
     try:
         line = str(line)
@@ -13,7 +13,7 @@ def update_log(line, filename = artifice_core.consts.LOGFILE, overwrite = False,
     else:
         mode = 'a'
 
-    filepath = str(artifice_core.consts.get_datadir() / filename)
+    filepath = str(consts.get_datadir() / filename)
 
     #limits the length of the line to 200 characters :- DISUSED
     #if len(line) > 200:
@@ -26,5 +26,5 @@ def update_log(line, filename = artifice_core.consts.LOGFILE, overwrite = False,
             f.write(line)
 
 # lazy function to log a PySimpleGUI event 
-def log_event(input, filename = artifice_core.consts.LOGFILE):
+def log_event(input, filename = consts.LOGFILE):
     update_log(f'\nEVENT: {input}', filename)
