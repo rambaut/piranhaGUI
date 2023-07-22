@@ -3,6 +3,7 @@ import traceback
 import re
 import docker
 import multiprocessing
+from os import cpu_count
 import threading
 import queue
 import os.path
@@ -57,22 +58,34 @@ def setup_panel(config):
     if SHOW_RAMPART:
         output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
 
+    threads_list = [i for i in range(1, cpu_count()+1)]
+    print(threads_list)
+
     layout = [
     [AltButton(button_text=translator('Edit run'),key='-EDIT-'),],
-    [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
-    sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-    AltButton(button_text=translator('Select Another Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')],
     [
-    AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
-    AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
+        sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
+        sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
+        AltButton(button_text=translator('Select Another Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
+    ],
+    [
+        AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
+        AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
     ],
     [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
     [
-    AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translator('Analysis Options'),visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
-    AltButton(button_text=translator('Open Report'), visible=False, key='-VIEW PIRANHA-'),
+        AltButton(button_text=translator('Analysis Options'),visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
+        AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
+        sg.Text(translator('Threads to use for analysis:')),
+        #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
+        # sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
+        sg.Spin( values=threads_list, initial_value=consts.config['THREADS'],  key='-THREADS SELECT-'),
     ],
     [sg.TabGroup([output_tabs],expand_x=True, expand_y=True)],
+    [
+        sg.Push(),
+        AltButton(button_text=translator('Open Report'), visible=False, key='-VIEW PIRANHA-'),
+    ],
     ]
 
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True, expand_y=True)
@@ -218,6 +231,9 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                     window['-PIRANHA STATUS-'].update(translator('Analysis is not running'))
 
                 else:
+                    if values['-THREADS SELECT-'] != config['THREADS']:
+                        consts.edit_config('THREADS', values['-THREADS SELECT-'])
+                        
                     piranha_container = launch_piranha(run_info, docker_client)
                     piranha_running = True
                     window['-START/STOP PIRANHA-'].update(text=translator('Stop Analysis'))
@@ -273,7 +289,6 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
   
             except Exception as err:
                 error_popup(err)
-
         elif event == '-EDIT-':
             #rampart_log_queue.task_done()
             #piranha_log_queue.task_done()

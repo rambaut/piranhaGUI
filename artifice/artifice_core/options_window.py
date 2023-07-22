@@ -1,6 +1,5 @@
 import PySimpleGUI as sg
 import traceback
-from os import cpu_count
 
 import artifice_core.consts as consts
 from artifice_core.language import translator, get_translate_scheme
@@ -14,8 +13,6 @@ from artifice_core.window_functions import error_popup, scale_window
 def setup_panel():
     sg.theme("PANEL")
 
-    threads_list = range(1, cpu_count()+1)
-
     translate_scheme = get_translate_scheme()
     try:
         language = consts.config['LANGUAGE']
@@ -25,11 +22,6 @@ def setup_panel():
     languages = translate_scheme[0]
 
     layout = [
-        [
-        sg.Text(translator('Threads to use for analysis:'),size=(30,1)),
-        #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
-        sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
-        ],
         [
         sg.Text(translator('Select language:'),size=(30,1)),
         #sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
@@ -85,8 +77,6 @@ def run_options_window(window):
             scale_window()
         elif event == '-SAVE-':
             try:
-                if values['-THREADS SELECT-'] != config['THREADS']:
-                    consts.edit_config('THREADS', values['-THREADS SELECT-'])
                 if values['-LANGUAGE SELECT-'] != config['LANGUAGE']:
                     consts.edit_config('LANGUAGE', values['-LANGUAGE SELECT-'])
                 if values['-SHOW RAMPART-'] != config['SHOW_RAMPART']:
