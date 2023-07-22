@@ -2,11 +2,12 @@ import PySimpleGUI as sg
 
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
+from artifice_core.language import translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import error_popup
 
-def setup_panel(translator):
+def setup_panel():
     sg.theme("PANEL")
 
     button_size=(120,36)
@@ -26,17 +27,9 @@ def setup_panel(translator):
 def create_add_protocol_window(version = 'ARTIFICE', window = None):
     update_log('creating add protocol window')
 
-    config = consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+    panel = setup_panel()
 
-    panel = setup_panel(translator)
-
-    content = window_functions.setup_content(panel, translator, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 

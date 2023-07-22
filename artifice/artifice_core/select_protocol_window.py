@@ -7,6 +7,7 @@ from os import listdir, mkdir
 from pathlib import Path
 from shutil import rmtree, copytree
 
+from artifice_core.language import translator
 import artifice_core.parse_columns_window
 import artifice_core.consts as consts
 import artifice_core.start_rampart
@@ -16,7 +17,7 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import error_popup
 
 # makes sure builtin protocols are installed
 def setup_config():
@@ -26,7 +27,7 @@ def setup_config():
     else:
         copytree('builtin_protocols', config_path)
 
-def setup_panel(translator, font = None):
+def setup_panel():
     sg.theme("PANEL")
 
     config = consts.retrieve_config()
@@ -72,11 +73,11 @@ def setup_panel(translator, font = None):
     [sg.Text(protocol_desc,font=(None,12),size=(80,1),key='-PROTOCOL DESC-'),],
     [sg.VPush()],
     [
-        AltButton(button_text=translator('Add Protocol'),font=font,key='-ADD PROTOCOL-'),
+        AltButton(button_text=translator('Add Protocol'),key='-ADD PROTOCOL-'),
         sg.Push(),
-        AltButton(button_text=translator('Remove Protocol'),font=font,key='-REMOVE PROTOCOL-'),
+        AltButton(button_text=translator('Remove Protocol'),key='-REMOVE PROTOCOL-'),
         # sg.Push(),
-        # AltButton(button_text=translator('Confirm'),size=button_size,font=font,key='-CONFIRM-'),
+        # AltButton(button_text=translator('Confirm'),size=button_size,key='-CONFIRM-'),
     ]]
 
     panel = sg.Frame("", [[sg.Column([
@@ -114,17 +115,9 @@ def get_protocol_details(protocol_dir, key):
 def create_protocol_window(version = 'ARTIFICE', window = None):
     update_log('creating protocol window')
 
-    config = consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+    panel = setup_panel()
 
-    panel = setup_panel(translator)
-
-    content = window_functions.setup_content(panel, translator, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True,)
 
@@ -192,14 +185,9 @@ def select_protocol(config, values, window):
     window['-PROTOCOL DESC-'].update(protocol_desc)
     
 
-def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
-    config = artifice_core.consts.retrieve_config()
+def run_protocol_window(window, version = 'ARTIFICE'):
+    config = consts.retrieve_config()
     
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
     
     while True:
         event, values = window.read()
@@ -215,40 +203,40 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
             try:
                 select_protocol(config,values,window)
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
     
         elif event == '-ADD PROTOCOL-':
             try:
-                add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(font=font, scale=scale, version=version)
-                added_protocol_dir = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window, font=font, version=version)
+                add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(version=version)
+                added_protocol_dir = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window, version=version)
                 print(added_protocol_dir)
                 if added_protocol_dir != None:
                     protocol_name = get_protocol_details(added_protocol_dir, "name")
                     if protocol_name == "":
-                        raise Exception(translate_text('Error parsing protocol',language,translate_scheme))
+                        raise Exception(translator('Error parsing protocol'))
 
                     try:
                         add_protocol(protocol_name, added_protocol_dir, config)
                     except FileExistsError:
-                        raise Exception(translate_text('a protocol with that name already exists, please change the name in protocol.json and try again',language,translate_scheme))
+                        raise Exception(translator('a protocol with that name already exists, please change the name in protocol.json and try again'))
                     
                     update_protocols_list(protocol_name, window, config)
                     
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
         elif event == '-REMOVE PROTOCOL-':
             try:
                 protocol = values['-PROTOCOL LIST-'][0]
                 remove_protocol(protocol, config)
                 if protocol == config['PROTOCOL']:
-                    artifice_core.consts.edit_config('PROTOCOL', 'None')
+                    consts.edit_config('PROTOCOL', 'None')
                 
                 update_protocols_list(None, window, config)
                 select_protocol(config,values,window)
                 
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
 
         elif event == '-CONFIRM-':
@@ -257,11 +245,11 @@ def run_protocol_window(window, font = None, version = 'ARTIFICE', scale = 1):
                     protocol = values['-PROTOCOL LIST-'][0]
                 else:
                     protocol = None
-                artifice_core.consts.edit_config('PROTOCOL', protocol)
+                consts.edit_config('PROTOCOL', protocol)
                 update_log(f'selected protocol: {protocol}')
                 window.close()
                 return protocol
             except Exception as err:
-                error_popup(err, font)
+                error_popup(err)
 
     window.close()

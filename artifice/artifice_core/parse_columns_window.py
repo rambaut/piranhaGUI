@@ -8,9 +8,10 @@ import sys
 import artifice_core.consts as consts
 import artifice_core.view_barcodes_window
 import artifice_core.window_functions as window_functions
+from artifice_core.language import translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import error_popup
 
 # return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
@@ -34,7 +35,7 @@ def samples_to_list(filepath, has_headers = True, trim = True):
 
     return samples_list, column_headers
 
-def setup_panel(translator, samples, samples_column = 0, barcodes_column = 1, has_headers = True):
+def setup_panel(samples, samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme('PANEL')
 
     samples_list, column_headers = samples_to_list(samples, has_headers=has_headers)
@@ -100,17 +101,9 @@ def check_spaces(samples, column):
 
 def create_parse_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True, version='ARTIFICE'):
 
-    config = consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+    panel, column_headers = setup_panel(samples, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
 
-    panel, column_headers = setup_panel(translator, samples, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
-
-    content = window_functions.setup_content(panel, translator, small=True, button_text='Continue', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, small=True, button_text='Continue', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 

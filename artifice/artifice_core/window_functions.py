@@ -11,6 +11,7 @@ from io import BytesIO
 
 import artifice_core.start_rampart
 import artifice_core.consts as consts
+from artifice_core.language import translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
@@ -101,18 +102,18 @@ def error_popup(err):
         log = logfile.read()
 
 
-    er_tr = consts.translator('Error')
+    er_tr = translator('Error')
     error_message = f'{er_tr}: {err}'
 
     layout = [
             [sg.Text(error_message,)],
-            [AltButton(button_text=consts.translator('Show logs'),key='-SHOW LOG-')],
+            [AltButton(button_text=translator('Show logs'),key='-SHOW LOG-')],
             [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
-            [AltButton(button_text=consts.translator('OK'),key='-EXIT-')],
+            [AltButton(button_text=translator('OK'),key='-EXIT-')],
 
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
-    error_popup = sg.Window(consts.translator('ERROR'), layout, disable_close=False, finalize=True,
+    error_popup = sg.Window(translator('ERROR'), layout, disable_close=False, finalize=True,
                                 resizable=False, no_titlebar=False,)
     AltButton.intialise_buttons(error_popup)
 
@@ -142,15 +143,14 @@ def scale_window():
     scale = resolution/1024
     update_log(f'scaling by {scale}')
     sg.set_options(scaling=scale)
-    artifice_core.consts.edit_config('SCALING', scale)
+    consts.edit_config('SCALING', scale)
     return scale
-
 
 def scale_image(filename, scale, size):
     if not os.path.isdir(consts.get_datadir() / 'resources'):
         mkdir(consts.get_datadir() / 'resources')
 
-    processed_image = str(consts.get_datadir() / 'resources' / filename)
+    #processed_image = str(consts.get_datadir() / 'resources' / filename)
     image_file = f'./resources/{filename}'
     size = (int(size[0]*scale), int(size[1]*scale))
     im = Image.open(image_file)
@@ -160,52 +160,6 @@ def scale_image(filename, scale, size):
     buffered = BytesIO()
     im.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue())
-
-def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
-    with open(filepath, newline = '', encoding='utf-8') as csvfile:
-        csvreader = csv.reader(csvfile)
-        scheme_list = list(csvreader)
-
-    return scheme_list
-
-# Takes text (in english) and returns version in given language if translation in scheme
-def translate_text(string: str, language: str, scheme_list = None, append_scheme = False, vb = False):
-    if scheme_list == None or append_scheme:
-        scheme_list = get_translate_scheme()
-
-    languages = scheme_list[0]
-    lang_pos = 0
-    for lang in languages:
-        if lang == language:
-            lang_pos = languages.index(language)
-
-    return_string = string # if no translation exists, the given string is returned back
-    string_in_scheme = False
-    for row in scheme_list:
-        if string == row[0]:
-            string_in_scheme = True
-            try:
-                if row[lang_pos] != '':
-                    return_string = row[lang_pos]
-                    break
-                else:
-                    break
-            except:
-                break
-
-    if append_scheme:
-        if not string_in_scheme:
-            scheme_list.append([string,])
-            with open('./resources/translation_scheme.csv', 'w', newline='', encoding='utf-8') as csvfile:
-                csvwriter = csv.writer(csvfile)
-                for row in scheme_list:
-                    csvwriter.writerow(row)
-
-    if vb: # for debugging
-        print(language)
-        print(return_string)
-
-    return return_string
 
 # Creates a layout for a window that embeds a content frame into an ARTIC header and footer
 def setup_header_footer(content, large=False, small=False):
@@ -257,7 +211,7 @@ def setup_header_footer(content, large=False, small=False):
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
-def setup_content(panel, translator, small=False, button_text=None, button_key=None, top_left_button_text=None, top_left_button_key=None, top_right_button_text=None, top_right_button_key=None):
+def setup_content(panel, small=False, button_text=None, button_key=None, top_left_button_text=None, top_left_button_key=None, top_right_button_text=None, top_right_button_key=None):
     sg.theme("CONTENT")
 
     if small:

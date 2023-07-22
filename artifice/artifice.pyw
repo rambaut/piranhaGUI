@@ -10,6 +10,7 @@ from shutil import copytree
 
 from artifice_core import consts
 from artifice_core.update_log import update_log
+import artifice_core.language as language
 import advanced_window.main_window
 import basic_window.edit_run_window
 import basic_window.execute_run_window
@@ -29,7 +30,7 @@ def make_themes(version):
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
                 'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#000000', '#000000'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
@@ -40,7 +41,7 @@ def make_themes(version):
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
                 'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#000000', '#000000'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
@@ -51,7 +52,7 @@ def make_themes(version):
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
                 'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#000000', '#000000'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
@@ -142,11 +143,13 @@ if __name__ == '__main__':
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
+    language.translator = language.setup_translator()
+
     scale = scale_window()
+    consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
+
     version = consts.VERSION
     make_themes(version)
-
-    window_functions.setup_translator()
 
     window = create_setup_window(version)
     

@@ -2,21 +2,22 @@ import PySimpleGUI as sg
 import traceback
 import docker
 
+from artifice_core.language import translator
 import artifice_core.parse_columns_window
 import artifice_core.consts as consts
 import artifice_core.start_rampart
 import artifice_core.window_functions as window_functions
+from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
 
 
 def setup_panel(translator):
     sg.theme("PANEL")
 
-    button_size=(72, 18)
+    button_size=(96, 32)
 
     column1 = [
             [
@@ -89,11 +90,6 @@ def run_edit_window(window, version = 'ARTIFICE'):
     selected_run_title = 'TEMP_RUN'
     docker_client = docker.from_env()
 
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
 
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath',
@@ -142,7 +138,7 @@ def run_edit_window(window, version = 'ARTIFICE'):
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
-                    alt_popup_ok(translate_text('Warning: there are spaces in samples', language, translate_scheme))
+                    alt_popup_ok(translator('Warning: there are spaces in samples'))
                 window.close()
                 return run_info
             except Exception as err:

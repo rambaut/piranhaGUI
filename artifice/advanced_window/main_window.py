@@ -188,9 +188,9 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
     update_log('creating main window')
     
     #Not been upgraded to new layout...
-    layout, rampart_running = setup_layout(theme=theme, font=font)
-    new_window = sg.Window('ARTIFICE', layout, font=font, resizable=False, 
-                           enable_close_attempted_event=True, finalize=True, font=consts.DEFAULT_FONT,
+    layout, rampart_running = setup_layout(theme=theme)
+    new_window = sg.Window('ARTIFICE', layout, resizable=False, 
+                           enable_close_attempted_event=True, finalize=True, icon=consts.ICON, font=consts.DEFAULT_FONT,
                             margins=(0,0), element_padding=(0,0))
 
 

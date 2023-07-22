@@ -1,7 +1,7 @@
 import artifice_core.consts as consts
 
 #update the log with a new line
-def update_log(line, filename, overwrite = False, add_newline = True):
+def update_log(line, filename = consts.LOGFILE, overwrite = False, add_newline = True):
     #make sure line can be converted to string
     try:
         line = str(line)

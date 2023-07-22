@@ -15,6 +15,7 @@ from time import sleep
 import artifice_core.start_rampart
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
+from artifice_core.language import translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from basic_window.about_window import create_about_window, run_about_window
@@ -25,7 +26,7 @@ from artifice_core.window_functions import error_popup, translator
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
 
-def setup_panel(translator):
+def setup_panel():
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
     docker_client = None
@@ -61,7 +62,7 @@ def setup_panel(translator):
 
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',translator,artifice_core.consts.PIRANHA_IMAGE,docker_client=docker_client)
 
-    image_info_text = 'An internet connection and a Docker install is required to install RAMPART and PIRANHA images'
+    image_info_text = translator('An internet connection and a Docker install is required to install RAMPART and PIRANHA images')
 
     if is_piranhaGUI and not got_piranha_image:
         show_piranha_button = True
@@ -90,8 +91,7 @@ def setup_panel(translator):
     if SHOW_RAMPART == False:
         show_rampart_button = False
 
-    install_buttons_size = (320,24)
-    font = consts.DEFAULT_FONT
+    install_buttons_size = (196,32)
     layout = []
     # layout.append([
     #     AltButton(button_text=translator('About'),font=font,key='-ABOUT-'),
@@ -100,27 +100,27 @@ def setup_panel(translator):
     #     ])
     layout.append([
         sg.Sizer(15,56), 
-        sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-',font=font),
+        sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-'),
         AltButton(button_text=translator('Open Docker Site in Browser'),size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
         sg.Push()
         ])
     if SHOW_RAMPART:
         layout.append([
             sg.Sizer(16,56), 
-            sg.Text(rampart_image_status,text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-',font=font),
+            sg.Text(rampart_image_status,text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
             AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,key='-RAMPART INSTALL-'),
             sg.Push()
             ])
     layout.append([
         sg.Sizer(15,56), 
-        sg.Text(piranha_image_status,text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-',font=font),
+        sg.Text(piranha_image_status,text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
         AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
         sg.Push()
         ])
     layout.append([
         sg.Sizer(0,32), 
         sg.Push(),
-        sg.Text(translator(image_info_text), font=font),
+        sg.Text(image_info_text, font=(None, 12)),
         sg.Push()]
         )
 
@@ -129,13 +129,11 @@ def setup_panel(translator):
 def create_startup_window(version = 'ARTIFICE', window = None):
     update_log('creating startup window')
 
-    panel = setup_panel(window_functions.translator)
+    panel = setup_panel()
 
-    content = window_functions.setup_content(panel, window_functions.translator, 
-                                                           button_text='Continue', button_key='-LAUNCH-',
-                                                           top_left_button_text='About', top_left_button_key='-ABOUT-',
-                                                           top_right_button_text='Options', top_right_button_key='-OPTIONS-'
-                                                           )
+    content = window_functions.setup_content(panel, button_text='Continue', button_key='-LAUNCH-',
+                                             top_left_button_text='About', top_left_button_key='-ABOUT-', 
+                                             top_right_button_text='Options', top_right_button_key='-OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
         
@@ -271,14 +269,14 @@ def run_startup_window(window, version='ARTIFICE'):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART', consts.RAMPART_IMAGE,window,language,client)
+                install_image('RAMPART', consts.RAMPART_IMAGE,window,client)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,language,client)
+                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err)

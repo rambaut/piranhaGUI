@@ -3,23 +3,22 @@ import traceback
 from os import cpu_count
 
 import artifice_core.consts as consts
+from artifice_core.language import translator, get_translate_scheme
 import artifice_core.window_functions as window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image, scale_window
+from artifice_core.window_functions import error_popup, scale_window
 
 # Options window to allow user to modify certain config values
 
 def setup_panel():
     sg.theme("PANEL")
 
-    config = consts.retrieve_config()
-
     threads_list = range(1, cpu_count()+1)
 
     translate_scheme = get_translate_scheme()
     try:
-        language = config['LANGUAGE']
+        language = consts.config['LANGUAGE']
     except:
         language = 'English'
 
@@ -27,19 +26,20 @@ def setup_panel():
 
     layout = [
         [
-        sg.Text(translate_text('Threads to use for analysis:',language,translate_scheme),size=(30,1)),
+        sg.Text(translator('Threads to use for analysis:'),size=(30,1)),
         #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
-        sg.InputCombo(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
+        sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
         ],
         [
-        sg.Text(translate_text('Select language:',language,translate_scheme),size=(30,1)),
-        sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
+        sg.Text(translator('Select language:'),size=(30,1)),
+        #sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
+        sg.InputCombo(languages, default_value=language, key='-LANGUAGE SELECT-'),
         ],
         [
-        sg.Checkbox(translate_text('Enable/Disable RAMPART',language,translate_scheme),default=config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
+        sg.Checkbox(translator('Enable/Disable RAMPART'),default=consts.config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
         ],
         [
-        AltButton(button_text=translate_text('Reset config to default',language,translate_scheme),key='-RESET CONFIG-'),
+        AltButton(button_text=translator('Reset config to default'),key='-RESET CONFIG-'),
         ],
         # [
         # AltButton(button_text=translate_text('Save',language,translate_scheme),key='-SAVE-'),
@@ -53,17 +53,9 @@ def setup_panel():
 def create_options_window(window = None, version='ARTIFICE'):
     update_log(f'opening options window')
 
-    config = consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
-
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, translator, small=True, button_text='Save', button_key='-SAVE-')
+    content = window_functions.setup_content(panel, small=True, button_text='Save', button_key='-SAVE-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
