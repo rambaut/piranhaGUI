@@ -48,7 +48,7 @@ def get_config_value(key, config):
     except:
         with open('./config.yml') as file:
             default_config = safe_load(file)
-            value = default_config
+            value = default_config[key]
             edit_config(key, value)
     
     return value
