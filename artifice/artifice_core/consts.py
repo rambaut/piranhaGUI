@@ -102,19 +102,19 @@ def get_theme(key):
 setup_config()
 config = retrieve_config()
 
-RAMPART_PORT_1 = config['RAMPART_PORT_1']
-RAMPART_PORT_2 = config['RAMPART_PORT_2']
-ARCHIVED_RUNS = config['ARCHIVED_RUNS']
-RUNS_DIR = config['RUNS_DIR']
-RAMPART_IMAGE = config['RAMPART_IMAGE']
-RAMPART_LOGFILE = config['RAMPART_LOGFILE']
-PIRANHA_IMAGE = config['PIRANHA_IMAGE']
-PIRANHA_LOGFILE = config['PIRANHA_LOGFILE']
-LOGFILE = config['LOGFILE']
-#FIRST_TIME_SETUP = config['FIRST_TIME_SETUP']
-THREADS = config['THREADS']
-VERSION = config['VERSION']
-SCALING = config['SCALING']
+RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1')
+RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2')
+ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS')
+RUNS_DIR = get_config_value('RUNS_DIR')
+RAMPART_IMAGE = get_config_value('RAMPART_IMAGE')
+RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE')
+PIRANHA_IMAGE = get_config_value('PIRANHA_IMAGE')
+PIRANHA_LOGFILE = get_config_value('PIRANHA_LOGFILE')
+LOGFILE = get_config_value('LOGFILE')
+#FIRST_TIME_SETUP = get_config_value('FIRST_TIME_SETUP']
+THREADS = get_config_value('THREADS')
+VERSION = get_config_value('VERSION')
+SCALING = get_config_value('SCALING')
 
 # styling constants
 BUTTON_SIZE = (120,24)
