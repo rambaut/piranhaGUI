@@ -51,28 +51,29 @@ def setup_panel(samples, samples_column = 0, barcodes_column = 1, has_headers = 
 
     layout = [
         [
-        sg.Text(translator('Choose Samples column:'),size=(25,1)),
-        sg.OptionMenu(column_headers, default_value=column_headers[int(samples_column)], text_color=option_menu_text_color, key='-SAMPLES COLUMN-'),
+            sg.Text(translator('Choose Samples column:'),size=(25,1)),
+            sg.OptionMenu(column_headers, default_value=column_headers[int(samples_column)], 
+                          text_color=option_menu_text_color, key='-SAMPLES COLUMN-'),
         ],
         [
-        sg.Text(translator('Choose Barcodes column:'),size=(25,1)),
-        sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], text_color=option_menu_text_color, key='-BARCODES COLUMN-'),
+            sg.Text(translator('Choose Barcodes column:'),size=(25,1)),
+            sg.OptionMenu(column_headers, default_value=column_headers[int(barcodes_column)], 
+                          text_color=option_menu_text_color, key='-BARCODES COLUMN-'),
         ],
         [
-        AltButton(button_text=translator('Save'),key='-SAVE-'),
+            AltButton(button_text=translator('Save'),key='-SAVE-'),
         ],
         [
-        sg.Table(
-        values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
-        expand_x=True,expand_y=True,num_rows=25,vertical_scroll_only=False,
-        ),
+            sg.Table(values=samples_list, headings=column_headers, visible_column_map=visible_column_map,
+                     key='-TABLE-',expand_x=True,expand_y=True,num_rows=25,vertical_scroll_only=False),
         ],
         #[
         #sg.Button(button_text='Save',key='-SAVE-'),
         #],
     ]
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True, expand_y=True)
 
-    return layout, column_headers
+    return panel, column_headers
 
 # returns True if there are duplicate entries in given column
 def check_for_duplicate_entries(samples, column):
@@ -103,7 +104,7 @@ def create_parse_window(samples, window = None, samples_column = 0, barcodes_col
 
     panel, column_headers = setup_panel(samples, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
 
-    content = window_functions.setup_content(panel, small=True, button_text='Continue', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, small=True, button_text='Close', button_key='-CLOSE-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
@@ -152,7 +153,7 @@ def run_parse_window(window, samples, column_headers, font = None):
         if event != None:
             log_event(f'{event} [parse columns window]')
 
-        if event == 'Exit' or event == sg.WIN_CLOSED:
+        if event == 'Exit' or event == sg.WIN_CLOSED or event == '-CLOSE-':
             break
         elif event == '-SAVE-':
 

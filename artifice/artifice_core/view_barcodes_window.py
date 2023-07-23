@@ -18,20 +18,17 @@ def setup_panel(samples_column = 0, barcodes_column = 1, has_headers = True):
     for i in range(len(samples_list[0])):
         visible_column_map.append(True)
 
-    layout = [
-        [sg.Column([
-            [
-            sg.Table(
-            values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
-            expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,col_widths=[20,10]#def_col_width=50,max_col_width=30
-            ),
+    layout = [[
+        sg.Column([[
+                sg.Table(values=samples_list, headings=column_headers, visible_column_map=visible_column_map, 
+                        key='-TABLE-', expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,
+                        col_widths=[20,10]#def_col_width=50,max_col_width=30
+                ),
             ],
             [
-            sg.Sizer(h_pixels=500)
-            ],
-            ],
-        )],
-    ]
+             sg.Sizer(h_pixels=500)
+            ]],
+        )]]
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 
     return panel, column_headers
@@ -114,9 +111,7 @@ def check_barcodes(run_info, font = None):
 def create_barcodes_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
 
-    config = consts.retrieve_config()
-
-    panel, column_headers = setup_panel()
+    panel, column_headers = setup_panel(samples_column, barcodes_column, has_headers)
 
     content = window_functions.setup_content(panel, translator, small=True, button_text='Close', button_key='-BARCODES OK-')
 
