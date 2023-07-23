@@ -1,15 +1,15 @@
 import PySimpleGUI as sg
 import os.path
 import csv
-import traceback
-from artifice_core.window_functions import get_translate_scheme, translate_text
-import artifice_core.window_functions
+
+from artifice_core.language import translator
+import artifice_core.window_functions as window_functions
 
 import artifice_core.parse_columns_window
-import artifice_core.consts
+import artifice_core.consts as consts
 from artifice_core.update_log import log_event, update_log
 
-def setup_panel(translator, samples_column = 0, barcodes_column = 1, has_headers = True):
+def setup_panel(samples_column = 0, barcodes_column = 1, has_headers = True):
     sg.theme("PANEL")
 
     samples_list, column_headers = artifice_core.parse_columns_window.samples_to_list(samples, has_headers=has_headers)
@@ -64,10 +64,10 @@ def save_barcodes(run_info):
     update_log(f'saving barcodes file for run: "{title}"')
     
     # make sure run dir exists
-    if not os.path.exists(artifice_core.consts.RUNS_DIR / title):
-         os.mkdir(artifice_core.consts.RUNS_DIR / title)
+    if not os.path.exists(consts.RUNS_DIR / title):
+         os.mkdir(consts.RUNS_DIR / title)
 
-    with open(artifice_core.consts.RUNS_DIR / title / 'barcodes.csv', 'w+', newline='') as csvfile:
+    with open(consts.RUNS_DIR / title / 'barcodes.csv', 'w+', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
@@ -80,7 +80,7 @@ def check_barcodes(run_info, font = None):
     title = run_info['title']
     update_log(f'checking barcodes for run: "{title}" still match chosen samples...')
 
-    barcodes_file = artifice_core.consts.RUNS_DIR / title / 'barcodes.csv'
+    barcodes_file = consts.RUNS_DIR / title / 'barcodes.csv'
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
         old_barcodes = artifice_core.parse_columns_window.samples_to_list(barcodes_file, has_headers=False)[0]
@@ -111,24 +111,18 @@ def check_barcodes(run_info, font = None):
 
     return False
 
-def create_barcodes_window(samples, theme = 'Artifice', font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def create_barcodes_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
 
-    config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+    config = consts.retrieve_config()
 
-    panel, column_headers = setup_panel(translator, font = font)
+    panel, column_headers = setup_panel()
 
-    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Close', button_key='-BARCODES OK-')
+    content = window_functions.setup_content(panel, translator, small=True, button_text='Close', button_key='-BARCODES OK-')
 
-    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
+    layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window('Artifice', layout, resizable=True, font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
     if window != None:
         window.close()
 

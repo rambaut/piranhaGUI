@@ -2,8 +2,10 @@ from yaml import safe_load, safe_dump
 from pathlib import Path
 import pathlib
 import sys
+import csv
 import shutil
 import os.path
+
 from os import getenv, cpu_count, mkdir, remove
 
 #returns directory where Artifice stores data, dependent on os
@@ -98,35 +100,47 @@ def get_theme(key):
         return THEMES[key]
     else:
         return THEMES['DEFAULT']
-
+    
 setup_config()
 config = retrieve_config()
 
-RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1')
-RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2')
-ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS')
-RUNS_DIR = get_config_value('RUNS_DIR')
-RAMPART_IMAGE = get_config_value('RAMPART_IMAGE')
-RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE')
-PIRANHA_IMAGE = get_config_value('PIRANHA_IMAGE')
-PIRANHA_LOGFILE = get_config_value('PIRANHA_LOGFILE')
-LOGFILE = get_config_value('LOGFILE')
-#FIRST_TIME_SETUP = get_config_value('FIRST_TIME_SETUP']
-THREADS = get_config_value('THREADS')
-VERSION = get_config_value('VERSION')
-SCALING = get_config_value('SCALING')
+RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1', config)
+RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2', config)
+ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS', config)
+RUNS_DIR = get_config_value('RUNS_DIR', config)
+RAMPART_IMAGE = get_config_value('RAMPART_IMAGE', config)
+RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE', config)
+SHOW_RAMPART = get_config_value('SHOW_RAMPART', config)
+PIRANHA_IMAGE = get_config_value('PIRANHA_IMAGE', config)
+PIRANHA_LOGFILE = get_config_value('PIRANHA_LOGFILE', config)
+LOGFILE = get_config_value('LOGFILE', config)
+#FIRST_TIME_SETUP = get_config_value('FIRST_TIME_SETUP', config)
+THREADS = get_config_value('THREADS', config)
+VERSION = get_config_value('VERSION', config)
+SCALING = get_config_value('SCALING', config)
+
+ICON_FILENAME = 'piranha.png'
+ICON = None
 
 # styling constants
-BUTTON_SIZE = (120,24)
-BUTTON_FONT_FAMILY = 'Helvetica'
-BUTTON_FONT_SIZE = 18
+BUTTON_SIZE = (128,32)
+BUTTON_FONT_FAMILY = 'Helvetica Neue Light'
+BUTTON_FONT_SIZE = 14
 BUTTON_FONT = (BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE)
-DEFAULT_FONT_FAMILY = 'Helvetica'
-DEFAULT_FONT_SIZE = 18
+
+DEFAULT_FONT_FAMILY = 'Helvetica Neue Light'
+DEFAULT_FONT_SIZE = 16
 DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
 MONOTYPE_FONT_FAMILY = 'Consolas'
-MONOTYPE_FONT_SIZE = 18
-CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, MONOTYPE_FONT_SIZE)
+CONSOLE_FONT_SIZE = 16
+CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, CONSOLE_FONT_SIZE)
+
+HEADER_TITLE_FONT = ('Helvetica Neue Thin', 24)
+HEADER_FONT = (DEFAULT_FONT_FAMILY, 18)
+FOOTER_FONT = (DEFAULT_FONT_FAMILY, 14)
+
+TITLE_FONT = ('Helvetica Neue Thin', 24)
+SUBTITLE_FONT = (DEFAULT_FONT_FAMILY, 18)
 
 # piranhna options
 VALUE_POSITIVE =  get_config_value('VALUE_POSITIVE', config)

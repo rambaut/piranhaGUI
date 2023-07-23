@@ -10,11 +10,13 @@ from shutil import copytree
 
 from artifice_core import consts
 from artifice_core.update_log import update_log
+import artifice_core.language as language
 import advanced_window.main_window
 import basic_window.edit_run_window
 import basic_window.execute_run_window
 import basic_window.about_window
 import artifice_core.startup_window
+import artifice_core.window_functions as window_functions
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
 
@@ -28,7 +30,7 @@ def make_themes(version):
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
                 'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#000000', '#000000'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
@@ -39,22 +41,22 @@ def make_themes(version):
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
                 'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#CCC591', '#234F57'),
-                'PROGRESS': ('#000000', '#000000'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
+                'PROGRESS': ('#f7eacd', '#d97168'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
-                'PROGRESS_DEPTH': 0},
+                'PROGRESS_DEPTH': 2},
         'PANEL': {'BACKGROUND': "#F5F1DF",
                 'TEXT': '#1e5b67',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
                 'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#CCC591', '#234F57'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#000000', '#000000'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
-                'PROGRESS_DEPTH': 0},
+                'PROGRESS_DEPTH': 2},
         'HEADER': {'BACKGROUND': "#1e5b67",
                 'TEXT': '#f7eacd',
                 'INPUT': '#072429',
@@ -137,12 +139,16 @@ def create_setup_window(version):
 if __name__ == '__main__':
     advanced = False
     startup_time = datetime.today()
-    check_runs_dir(artifice_core.consts.RUNS_DIR)
+    check_runs_dir(consts.RUNS_DIR)
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
+    language.translator = language.setup_translator()
+
     scale = scale_window()
-    version = artifice_core.consts.VERSION
+    consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
+
+    version = consts.VERSION
     make_themes(version)
 
     window = create_setup_window(version)

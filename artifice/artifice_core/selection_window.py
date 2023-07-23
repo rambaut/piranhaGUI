@@ -3,11 +3,12 @@ import os.path
 import traceback
 
 from artifice_core.update_log import log_event, update_log
+import artifice_core.consts as consts
 
 #Window for user to select samples csv and possibling MinKnow
 
-def setup_selection_layout(theme = 'Dark'):
-    sg.theme(theme)
+def setup_selection_layout():
+    sg.theme('PANEL')
 
     layout = [
         [
@@ -30,10 +31,10 @@ def setup_selection_layout(theme = 'Dark'):
 
     return layout
 
-def create_select_window(theme = 'Artifice', font = None, window = None):
+def create_select_window(window = None):
     update_log(f'opening selection window')
-    layout = setup_selection_layout(theme=theme)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=False)
+    layout = setup_selection_layout()
+    new_window = sg.Window('Artifice', layout, icon=consts.ICON, font=consts.DEFAULT_FONT, resizable=False)
 
     if window != None:
         window.close()

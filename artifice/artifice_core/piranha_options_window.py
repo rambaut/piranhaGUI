@@ -1,16 +1,18 @@
 import PySimpleGUI as sg
 import sys
 
-import artifice_core.consts
+import artifice_core.consts as consts
+import artifice_core.window_functions as window_functions
+from artifice_core.language import translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
-from artifice_core.window_functions import error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import error_popup
 from artifice_core.manage_runs import save_run, save_changes, load_run
 
-def setup_panel(translator):
+def setup_panel():
     sg.theme("PANEL")
 
-    config = artifice_core.consts.retrieve_config()
+    config = consts.retrieve_config()
 
 
     button_size=(120,36)
@@ -209,25 +211,17 @@ def setup_panel(translator):
 
     return panel
 
-def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', window = None):
+def create_piranha_options_window(version = 'ARTIFICE', window = None):
     update_log('creating add protocol window')
 
-    config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+    panel = setup_panel()
 
-    panel = setup_panel(translator)
+    content = window_functions.setup_content(panel, small=True, button_text='Continue', button_key='-CONFIRM-')
 
-    content = artifice_core.window_functions.setup_content(panel, translator, small=True, button_text='Continue', button_key='-CONFIRM-')
+    layout = window_functions.setup_header_footer(content, small=True)
 
-    layout = artifice_core.window_functions.setup_header_footer(content, small=True)
-
-    piranha_scaled = scale_image('piranha.png',1,(64,64))
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,icon=piranha_scaled, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+                           font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
 
     if window != None:
         window.close()
@@ -237,7 +231,7 @@ def create_piranha_options_window(theme = 'Artifice', version = 'ARTIFICE', wind
     return new_window
 
 def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
-    config = artifice_core.consts.retrieve_config()
+    config = consts.retrieve_config()
     selected_run_title = run_info['title']
 
     element_dict = {'-POSITIVE CONTROL-':'-pc',

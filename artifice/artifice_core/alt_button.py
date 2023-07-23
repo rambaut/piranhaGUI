@@ -10,12 +10,21 @@ from artifice_core import consts
 # intialise_buttons function must be called
 class AltButton(sg.Button):
 
-    def __init__(self, button_text='', size=(None, None), s=(None,None), button_color=None, mouseover_colors=(None, None), **kwargs):
+    def __init__(self, button_text='', size=(None, None), s=(None,None), button_colors=(None, None), mouseover_colors=(None, None), **kwargs):
         theme = consts.get_theme(sg.theme())
-        
-        self.Font = kwargs['font'] if 'font' in kwargs else consts.BUTTON_FONT if consts.BUTTON_FONT else consts ('Arial', '18')
+    
+        self.Font = kwargs['font'] if 'font' in kwargs else consts.BUTTON_FONT if consts.BUTTON_FONT else consts ('Helvetica', '18')
         self.ButtonText = button_text
-        self.ButtonColor = sg.button_color_to_tuple(button_color)
+        self.ButtonColor = sg.button_color_to_tuple(theme['BUTTON'])
+        self.MouseOverColors = sg.button_color_to_tuple(theme['BUTTON_HOVER'])
+
+        if button_colors != (None, None):
+            self.ButtonColor = sg.button_color_to_tuple(button_colors)
+
+        if mouseover_colors != (None, None):
+            self.MouseOverColors = sg.button_color_to_tuple(mouseover_colors)
+
+        self.AltColors = (self.ButtonColor[1],self.ButtonColor[0])
 
         self.Size = size if size != (None, None) else s if s != (None, None) else consts.BUTTON_SIZE
         scaling=consts.SCALING
@@ -25,14 +34,8 @@ class AltButton(sg.Button):
         else:
             self.Size = (int(self.Size[0]*scaling), int(self.Size[1]*scaling))
 
-        if mouseover_colors != (None, None):
-            self.MouseOverColors = sg.button_color_to_tuple(mouseover_colors)
-        else:
-            self.MouseOverColors = sg.button_color_to_tuple(theme['BUTTON_HOVER'])
-
-        self.RegImage = self.create_button_image(fill=self.MouseOverColors[0])
+        self.RegImage = self.create_button_image(fill=self.ButtonColor[1])
         self.HighlightImage = self.create_button_image(fill=self.MouseOverColors[1])
-        self.AltColors = (self.MouseOverColors[0], self.MouseOverColors[1])
         self.MouseOverColors = (self.MouseOverColors[0], sg.theme_background_color())
 
         kwargs['image_data'] = self.RegImage

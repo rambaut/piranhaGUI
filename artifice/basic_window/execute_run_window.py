@@ -3,23 +3,28 @@ import traceback
 import re
 import docker
 import multiprocessing
+from os import cpu_count
 import threading
 import queue
 import os.path
 import sys
 from webbrowser import open_new_tab
 
+from artifice_core.language import translator
 import artifice_core.start_rampart
 import artifice_core.consts as consts
 import artifice_core.select_protocol_window
 import artifice_core.piranha_options_window
+import artifice_core.window_functions as window_functions
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
-from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup, translate_text, get_translate_scheme, scale_image
+from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
 from artifice_core.alt_button import AltButton
 
-def setup_panel(config, translator):
+def setup_panel(config):
     sg.theme("PANEL")
+
+    theme = consts.THEMES[sg.theme()]
 
     is_piranhaGUI = True
 
@@ -41,68 +46,97 @@ def setup_panel(config, translator):
     piranha_tab_title = translator('PIRANHA OUTPUT')
     selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
-    rampart_tab = [
-    [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-'),],
-    ]
+    rampart_tab = [[
+        sg.Column([
+            [sg.Sizer(2,2)],
+            [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')]], 
+                  expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+    ]]
 
-    piranha_tab = [
-    [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-'),],
-    ]
+    piranha_tab = [[
+        sg.Column([
+            [sg.Sizer(2,2)],
+            [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-')]], 
+                  expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+    ]]
 
     output_tabs = []
     if is_piranhaGUI:
-        output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-'))
+        output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,
+                                    background_color = theme['BUTTON'][1],
+                                    visible=is_piranhaGUI,key='-PIRANHA TAB-'))
     if SHOW_RAMPART:
-        output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
+        output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
+                                        background_color = theme['BUTTON'][1],
+                                        visible=False,key='-RAMPART TAB-'))
 
-    layout = [
-    [AltButton(button_text=translator('Edit run'),key='-EDIT-'),],
-    [sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
-    sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-    AltButton(button_text=translator('Select Another Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')],
-    [
-    AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
-    AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
-    ],
-    [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
-    [
-    AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-    AltButton(button_text=translator('Analysis Options'),visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
-    AltButton(button_text=translator('Open Report'), visible=False, key='-VIEW PIRANHA-'),
-    ],
-    [sg.TabGroup([output_tabs],expand_x=True, expand_y=True)],
-    ]
+    threads_list = [i for i in range(1, cpu_count()+1)]
+    print(threads_list)
 
-    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True, expand_y=True)
+    layout = []
+    if SHOW_RAMPART:
+        layout.append([
+            sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
+            sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
+            AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
+        ])
+        layout.append([
+            AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
+            AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
+        ])
+        layout.append([sg.Sizer(16,16)])
+        layout.append([sg.HorizontalSeparator()])
+
+    if is_piranhaGUI:
+        layout.append(
+            [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-')])
+    if got_piranha_image:
+        layout.append([
+            AltButton(button_text=translator('Analysis Options'),key='-PIRANHA OPTIONS-'),
+            sg.Text(translator('Analysis Threads:')),
+            #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
+            # sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
+            sg.Spin(values=threads_list, initial_value=consts.config['THREADS'], key='-THREADS SELECT-',
+                    size=(2,1), background_color=theme['BACKGROUND'], text_color=theme['TEXT'],
+                    tooltip='Number of threads to use to speed up analysis'),
+        ])
+        layout.append([
+            AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
+            sg.ProgressBar(max_value=100, visible=got_piranha_image, expand_x=True),
+            AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
+        ])
+        layout.append([sg.Sizer(16,16)])
+
+    layout.append([sg.TabGroup([output_tabs], 
+                               title_color=theme['BUTTON_HOVER'][0], tab_background_color = theme['BUTTON_HOVER'][1],
+                               selected_title_color=theme['BUTTON'][0], selected_background_color = theme['BUTTON'][1],
+                               expand_x=True, expand_y=True)])
+    
+    panel = sg.Frame("",  
+                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,0)) ]], border_width=0, relief="solid", 
+                     pad=(0,16), expand_x=True, expand_y=True)
 
     return panel, rampart_running, piranha_running
 
-def create_main_window(theme = 'Artifice', version = 'ARTIFICE', window = None):
+def create_main_window(version = 'ARTIFICE', window = None):
     update_log('creating main window')
 
     config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-    translator = lambda text : translate_text(text, language, translate_scheme)
+  
+    panel, rampart_running, piranha_running = setup_panel(config)
 
-    panel, rampart_running, piranha_running = setup_panel(config, translator)
+    content = window_functions.setup_content(panel, 
+                                             button_text=translator('Open Report'), button_key='-VIEW PIRANHA-',
+                                             top_left_button_text=translator('Edit run'), top_left_button_key='-EDIT-')
 
-    content = artifice_core.window_functions.setup_content(panel, translator)
+    layout = window_functions.setup_header_footer(content)
 
-    layout = artifice_core.window_functions.setup_header_footer(content)
 
-    if version == 'piranhaGUI':
-        icon_scaled = scale_image('piranha.png',consts.SCALING,(64,64))
-    else:
-        icon_scaled = scale_image('placeholder_artifice2.ico',consts.SCALING,(64,64))
-
-    new_window = sg.Window(version, layout, resizable=True, enable_close_attempted_event=True, finalize=True,icon=icon_scaled, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window(version, layout, resizable=True, enable_close_attempted_event=True, finalize=True,
+                           font=consts.DEFAULT_FONT,icon=consts.ICON, margins=(0,0), element_padding=(0,0))
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
-    new_window.set_min_size(size=(800,600))
+    new_window.set_min_size(size=(800,800))
     new_window.set_title(artifice_core.consts.VERSION)
 
     if window != None:
@@ -114,12 +148,7 @@ def create_main_window(theme = 'Artifice', version = 'ARTIFICE', window = None):
 
 def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = False, piranha_running = False):
     config = artifice_core.consts.retrieve_config()
-    translate_scheme = get_translate_scheme()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
-
+   
     rampart_protocol = config['PROTOCOL']
 
     docker_client = docker.from_env()
@@ -148,8 +177,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                 if piranha_finished:
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
-                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start Analysis',language,translate_scheme))
-                    window['-PIRANHA STATUS-'].update(translate_text('Analysis is not running',language,translate_scheme))
+                    window['-START/STOP PIRANHA-'].update(text=translator('Start Analysis'))
+                    window['-PIRANHA STATUS-'].update(translator('Analysis is not running'))
                     window['-VIEW PIRANHA-'].update(visible=True)
                     try:
                         output_path = run_info['outputPath']
@@ -168,8 +197,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                 rampart_running = False
                 artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
                 window['-VIEW RAMPART-'].update(visible=False)
-                window['-START/STOP RAMPART-'].update(text=translate_text('Start RAMPART',language,translate_scheme))
-                window['-RAMPART STATUS-'].update(translate_text('RAMPART is not running',language,translate_scheme))
+                window['-START/STOP RAMPART-'].update(text=translator('Start RAMPART'))
+                window['-RAMPART STATUS-'].update(translator('RAMPART is not running'))
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             running_tools = []
@@ -193,8 +222,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
                     print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'])
                     window['-VIEW RAMPART-'].update(visible=False)
-                    window['-START/STOP RAMPART-'].update(text=translate_text('Start RAMPART',language,translate_scheme))
-                    window['-RAMPART STATUS-'].update(translate_text('RAMPART is not running',language,translate_scheme))
+                    window['-START/STOP RAMPART-'].update(text=translator('Start RAMPART'))
+                    window['-RAMPART STATUS-'].update(translator('RAMPART is not running'))
                 else:
                     art_protocol_path = config['PROTOCOLS_DIR'] / rampart_protocol
                     protocol_path = artifice_core.select_protocol_window.get_protocol_dir(art_protocol_path)
@@ -206,8 +235,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                             )
                     rampart_running = True
                     window['-VIEW RAMPART-'].update(visible=True)
-                    window['-START/STOP RAMPART-'].update(text=translate_text('Stop RAMPART',language,translate_scheme))
-                    window['-RAMPART STATUS-'].update(translate_text('RAMPART is running',language,translate_scheme))
+                    window['-START/STOP RAMPART-'].update(text=translator('Stop RAMPART'))
+                    window['-RAMPART STATUS-'].update(translator('RAMPART is running'))
 
                     rampart_log = rampart_container.logs(stream=True)
                     rampart_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(rampart_log, rampart_log_queue), daemon=True)
@@ -226,14 +255,17 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container_name='piranha', container=piranha_container)
                     print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'])
-                    window['-START/STOP PIRANHA-'].update(text=translate_text('Start Analysis',language,translate_scheme))
-                    window['-PIRANHA STATUS-'].update(translate_text('Analysis is not running',language,translate_scheme))
+                    window['-START/STOP PIRANHA-'].update(text=translator('Start Analysis'))
+                    window['-PIRANHA STATUS-'].update(translator('Analysis is not running'))
 
                 else:
+                    if values['-THREADS SELECT-'] != config['THREADS']:
+                        consts.edit_config('THREADS', values['-THREADS SELECT-'])
+                        
                     piranha_container = launch_piranha(run_info, docker_client)
                     piranha_running = True
-                    window['-START/STOP PIRANHA-'].update(text=translate_text('Stop Analysis',language,translate_scheme))
-                    window['-PIRANHA STATUS-'].update(translate_text('Analysis is running',language,translate_scheme))
+                    window['-START/STOP PIRANHA-'].update(text=translator('Stop Analysis'))
+                    window['-PIRANHA STATUS-'].update(translator('Analysis is running'))
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)
@@ -285,7 +317,6 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
   
             except Exception as err:
                 error_popup(err)
-
         elif event == '-EDIT-':
             #rampart_log_queue.task_done()
             #piranha_log_queue.task_done()
