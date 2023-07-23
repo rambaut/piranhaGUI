@@ -265,7 +265,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
     if len(top_buttons) > 0:
         top_layout.append(top_buttons)
 
-    layout.append([sg.Column(top_layout, pad=(16,0))])
+    layout.append([sg.Column(top_layout, pad=(8,0))])
 
     layout.append([panel])
 
@@ -278,7 +278,8 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
         bottom_buttons.append(AltButton(button_text=translator(button_text),key=button_key))
 
     if len(bottom_buttons) > 0:
-        layout.append([sg.Column([bottom_buttons], pad=(16,0), expand_x=True)])
+        layout.append([sg.Column([bottom_buttons], pad=(8,0), expand_x=True)])
 
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0), expand_x=True, expand_y=True)]], expand_x=True, expand_y=True, border_width=0)
+    return sg.Frame("", [[sg.Column(layout, pad=(0, 0), expand_x=True, expand_y=True)]], 
+                    expand_x=True, expand_y=True, border_width=0)
 

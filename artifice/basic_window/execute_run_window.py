@@ -88,22 +88,25 @@ def setup_panel(config):
         layout.append([sg.HorizontalSeparator()])
 
     if is_piranhaGUI:
-        layout.append(
-            [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-')])
-    if got_piranha_image:
         layout.append([
-            AltButton(button_text=translator('Analysis Options'),key='-PIRANHA OPTIONS-'),
+            AltButton(button_text=translator('Piranha Options'),key='-PIRANHA OPTIONS-'),
+            sg.Sizer(16,16),
             sg.Text(translator('Analysis Threads:')),
             #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
             # sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
             sg.Spin(values=threads_list, initial_value=consts.config['THREADS'], key='-THREADS SELECT-',
                     size=(2,1), background_color=theme['BACKGROUND'], text_color=theme['TEXT'],
                     tooltip='Number of threads to use to speed up analysis'),
-        ])
+    ])
+        
+    if got_piranha_image:
         layout.append([
             AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-            sg.ProgressBar(max_value=100, visible=got_piranha_image, expand_x=True),
-            AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
+            # hiding this until we have a way to handle progress
+            #sg.ProgressBar(max_value=100, visible=got_piranha_image, expand_x=True),
+            #AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
+            sg.Sizer(16,16),
+            sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),
         ])
         layout.append([sg.Sizer(16,16)])
 
@@ -113,8 +116,8 @@ def setup_panel(config):
                                expand_x=True, expand_y=True)])
     
     panel = sg.Frame("",  
-                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,0)) ]], border_width=0, relief="solid", 
-                     pad=(0,16), expand_x=True, expand_y=True)
+                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,8)) ]], border_width=0, relief="solid", 
+                     pad=(0,8), expand_x=True, expand_y=True)
 
     return panel, rampart_running, piranha_running
 

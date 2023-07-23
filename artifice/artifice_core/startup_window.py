@@ -154,7 +154,7 @@ def setup_panel():
         sg.Push()]
         )
 
-    return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,16))
+    return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8))
 
 def create_startup_window(version = 'ARTIFICE', window = None):
     update_log('creating startup window')
