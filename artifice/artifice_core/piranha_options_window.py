@@ -92,7 +92,7 @@ def setup_panel(translator):
         [
         sg.Text(translator('Positive Control:'),tooltip=tooltips['-POSITIVE CONTROL-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=artifice_core.consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
         ],
         [
         sg.Text(translator('Negative Control:'),tooltip=tooltips['-NEGATIVE CONTROL-']),
