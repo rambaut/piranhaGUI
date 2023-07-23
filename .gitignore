@@ -145,3 +145,8 @@ artifice/resources/piranha.tar
 .DS_Store
 .vscode/launch.json
 artifice.code-workspace
+launch.json
+include/*
+man/*
+ssl/*
+
