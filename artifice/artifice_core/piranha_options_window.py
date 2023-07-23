@@ -28,9 +28,9 @@ def setup_panel():
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
         '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.'),
-        '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: {artifice_core.consts.VALUE_SAMPLE_TYPE}'),
+        '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: {consts.VALUE_SAMPLE_TYPE}'),
         '-REFERENCE SEQUENCES-':translator('Custom reference sequences file.'),
-        '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: `positive`'),
+        '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: {consts.VALUE_POSITIVE}'),
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
         '-ANALYSIS MODE-':translator('Specify analysis mode to run. Options: `vp1`. Default: `vp1`'),
         '-MEDAKA MODEL-':translator('Medaka model to run analysis using. Default: r941_min_hac_variant_g507'),
@@ -94,12 +94,12 @@ def setup_panel():
         [
         sg.Text(translator('Positive Control:'),tooltip=tooltips['-POSITIVE CONTROL-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=artifice_core.consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
         ],
         [
         sg.Text(translator('Negative Control:'),tooltip=tooltips['-NEGATIVE CONTROL-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_NEGATIVE,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
         ],
     ]
     
@@ -118,32 +118,32 @@ def setup_panel():
         [
         sg.Text(translator('Minimum Mapping Quality:'),tooltip=tooltips['-MIN MAP QUALITY-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN MAP QUALITY-'], key='-MIN MAP QUALITY-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_MAP_QUALITY, tooltip=tooltips['-MIN MAP QUALITY-'], key='-MIN MAP QUALITY-',),
         ],
         [
-        sg.Text(translator('Minimum Read Length:'),tooltip=tooltips['-MAX READ LENGTH-']),
+        sg.Text(translator('Minimum Read Length:'),tooltip=tooltips['-MIN READ LENGTH-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MAX READ LENGTH-'], key='-MIN READ LENGTH-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_READ_LENGTH, tooltip=tooltips['-MIN READ LENGTH-'], key='-MIN READ LENGTH-',),
         ],
         [
         sg.Text(translator('Maximum Read Length:'),tooltip=tooltips['-MAX READ LENGTH-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MAX READ LENGTH-'], key='-MAX READ LENGTH-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MAX_READ_LENGTH,tooltip=tooltips['-MAX READ LENGTH-'], key='-MAX READ LENGTH-',),
         ],
         [
         sg.Text(translator('Minimum Read Depth:'),tooltip=tooltips['-MIN READ DEPTH-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN READ DEPTH-'], key='-MIN READ DEPTH-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_READS,tooltip=tooltips['-MIN READ DEPTH-'], key='-MIN READ DEPTH-',),
         ],
         [
         sg.Text(translator('Minimum Read Percentage:'),tooltip=tooltips['-MIN READ PCENT-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MIN READ PCENT-'], key='-MIN READ PCENT-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_PCENT,tooltip=tooltips['-MIN READ PCENT-'], key='-MIN READ PCENT-',),
         ],
         [
         sg.Text(translator('Primer Length:'),tooltip=tooltips['-PRIMER LENGTH-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-PRIMER LENGTH-'], key='-PRIMER LENGTH-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_PRIMER_LENGTH,tooltip=tooltips['-PRIMER LENGTH-'], key='-PRIMER LENGTH-',),
         ],
     ]
     
@@ -157,7 +157,7 @@ def setup_panel():
         [
         sg.Text(translator('Output Prefix:'),tooltip=tooltips['-OUTPUT PREFIX-']),
         sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_OUTPUT_PREFIX,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
         ],
         [sg.Checkbox(translator('All Metadata to Header'), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')],
         [sg.Checkbox(translator('Date Stamp'), default=False, tooltip=tooltips['-DATE STAMP-'], key='-DATE STAMP-')], 
