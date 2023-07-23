@@ -36,7 +36,7 @@ def setup_panel():
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
     if docker_installed:
-        docker_status = translator('Docker installed')
+        docker_status = translator('Docker software installed')
         docker_text_color =  PASS_TEXT_COLOUR
     else:
         docker_status = translator('Docker not installed/not running')
@@ -77,23 +77,16 @@ def setup_panel():
                     update_log(err)
                     update_log('unable to load PIRANHA image from file')
 
-                got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',translator,artifice_core.consts.PIRANHA_IMAGE,docker_client=docker_client)
+                got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
+                    piranha_pull_text, piranha_text_color = \
+                        set_image_status('PIRANHA',translator,consts.PIRANHA_IMAGE,docker_client=docker_client)
 
-    image_info_text = translator('An internet connection and a Docker install is required to install RAMPART and PIRANHA images')
+    image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
-    if is_piranhaGUI and not got_piranha_image:
-        show_piranha_button = True
+    show_piranha_button = is_piranhaGUI and (not got_piranha_image or piranha_update_available)
 
-    elif is_piranhaGUI and piranha_update_available:
-        show_piranha_button = True
-    else:
-        show_piranha_button = False
+    show_rampart_button = rampart_update_available or not got_rampart_image
 
-    if rampart_update_available or not got_rampart_image:
-        show_rampart_button = True
-    else:
-        show_rampart_button = False
-    
     if 'SHOW_RAMPART' in config:
         SHOW_RAMPART = config['SHOW_RAMPART']
     else:
@@ -106,9 +99,9 @@ def setup_panel():
     
     show_rampart_text = SHOW_RAMPART
     if SHOW_RAMPART == False:
-        show_rampart_button = False
+        show_rampart_button = True
 
-    install_buttons_size = (196,32)
+    install_buttons_size = (396,32)
     layout = []
     # layout.append([
     #     AltButton(button_text=translator('About'),font=font,key='-ABOUT-'),
@@ -116,24 +109,44 @@ def setup_panel():
     #     AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-'),
     #     ])
     layout.append([
-        sg.Sizer(15,56), 
-        sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-'),
-        AltButton(button_text=translator('Open Docker Site in Browser'),size=install_buttons_size,key='-DOCKER INSTALL-', visible=not docker_installed),
-        sg.Push()
+            sg.Sizer(16,56), 
+            sg.Column([[
+                sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-',
+                        size=(32,1), font=consts.TITLE_FONT),
+                AltButton(button_text=translator('Open Docker Site in Browser'),key='-DOCKER INSTALL-', 
+                        size=install_buttons_size,visible=not docker_installed),
+            ],[
+                sg.Sizer(32,0), 
+                sg.Text(translator('Docker is free software used to install and run the analysis pipelines.'),font=(None, 14)),
+            ]])
         ])
+    
     if SHOW_RAMPART:
         layout.append([
             sg.Sizer(16,56), 
-            sg.Text(rampart_image_status,text_color=rampart_text_color,visible=show_rampart_text,key='-RAMPART IMAGE STATUS-'),
-            AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,key='-RAMPART INSTALL-'),
-            sg.Push()
+            sg.Column([[
+                sg.Text(rampart_image_status, key='-RAMPART IMAGE STATUS-',
+                        size=(32,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
+                AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,
+                          key='-RAMPART INSTALL-'),
+            ],[
+                sg.Sizer(32,0), 
+                sg.Text(translator('RAMPART is optional software used monitor Nanopore sequencing in real-time.'),font=(None, 14)),
+            ]])
             ])
+        
     layout.append([
-        sg.Sizer(15,56), 
-        sg.Text(piranha_image_status,text_color=piranha_text_color,visible=is_piranhaGUI,key='-PIRANHA IMAGE STATUS-'),
-        AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
-        sg.Push()
-        ])
+        sg.Sizer(16,56), 
+        sg.Column([[
+            sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
+                    size=(32,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+            AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+        ],[
+            sg.Sizer(32,0), 
+            sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=(None, 14)),
+        ]])
+    ])
+
     layout.append([
         sg.Sizer(0,32), 
         sg.Push(),
@@ -190,7 +203,7 @@ def create_alt_docker_config():
             print('y')
 
         alt_config_filepath = docker_data_dir / 'config.json'
-        update_log('creating alternate fixed docker config')
+        update_log('creating alternate fixed Docker config')
         with open(alt_config_filepath, mode='w') as file:
             file.write(replace_data)
 
@@ -202,16 +215,16 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         if check_for_updates:
             update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
-            image_status = translator(f'Update available for {name} image')
-            pull_text = translator(f'Install update to {name} image')
+            image_status = translator(f'Update available for {name} software')
+            pull_text = translator(f'Install update to {name} software')
             text_color = FAIL_TEXT_COLOUR
         else:
-            image_status = translator(f'{name} image installed')
-            pull_text = translator(f'Check for updates to {name} image')
+            image_status = translator(f'{name} software installed')
+            pull_text = translator(f'Check for updates to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
-        image_status = translator(f'{name} image not installed')
-        pull_text = translator(f'Install {name} image')
+        image_status = translator(f'{name} software not installed')
+        pull_text = translator(f'Install {name} software')
         text_color = FAIL_TEXT_COLOUR
 
     return got_image, docker_client, update_available, image_status, pull_text, text_color
@@ -236,7 +249,7 @@ def install_image(name, image_repo, window, client):
         client.images.pull(image_tag)
     except docker.credentials.errors.InitializationError as err:
         update_log(err)
-        update_log('Credential initaliasion error (likely MacOS), attempting fix...')
+        update_log('Credential initialisation error (likely MacOS), attempting fix...')
         create_alt_docker_config()
         docker_data_dir = consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
@@ -252,12 +265,12 @@ def install_image(name, image_repo, window, client):
     try:
         client.images.get(image_tag)
     except:
-        err_text = window_functions.translator('docker was unable to pull image')
+        err_text = window_functions.translator('Docker was unable to download software')
         raise Exception(err_text)
 
-    image_status = f'{name} image installed'
+    image_status = f'{name} software installed'
     image_status = window_functions.translator(image_status)
-    pull_text = f'Check for updates to {name} image'
+    pull_text = f'Check for updates to {name} software'
     pull_text = window_functions.translator(pull_text)
     text_color = PASS_TEXT_COLOUR
     window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)

@@ -143,8 +143,8 @@ artifice/resources/piranha.tar
 
 # macOS .DS_Store
 .DS_Store
-.vscode/launch.json
-artifice.code-workspace
+.vscode/*
+*.code-workspace
 launch.json
 include/*
 man/*
