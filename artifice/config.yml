@@ -2,6 +2,7 @@ RAMPART_PORT_1: 1100
 RAMPART_PORT_2: 1200
 ARCHIVED_RUNS: 'archived_runs'
 RUNS_DIR: 'runs'
+SHOW_RAMPART: true
 RAMPART_IMAGE: 'coreyansley/artifice_polio_rampart'
 RAMPART_LOGFILE: 'RAMPART_log.txt'
 PIRANHA_IMAGE: 'polionanopore/piranha'
@@ -11,4 +12,4 @@ THREADS: null
 FIRST_TIME_SETUP: true
 LANGUAGE: 'English'
 VERSION: 'piranhaGUI'
-SCALING: 2
+SCALING: 1

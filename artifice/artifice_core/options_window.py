@@ -21,23 +21,30 @@ def setup_panel():
 
     languages = translate_scheme[0]
 
-    layout = [
-        [
-        sg.Text(translator('Select language:'),size=(30,1)),
-        #sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
-        sg.InputCombo(languages, default_value=language, readonly=True, key='-LANGUAGE SELECT-'),
-        ],
-        [
-        sg.Checkbox(translator('Enable RAMPART'),default=consts.config['SHOW_RAMPART'],key='-SHOW RAMPART-')
-        ],
-        # [
-        # AltButton(button_text=translator('Reset default'),key='-RESET CONFIG-'),
-        # ],
-        # [
-        # AltButton(button_text=translate_text('Save',language,translate_scheme),key='-SAVE-'),
-        # ],
-    ]
+    column1 = [[
+            sg.Sizer(0,48),
+            sg.Push(),
+            sg.Text(translator('Select language for user-interface: ')),
+        ],[
+            sg.Sizer(0,48),
+            sg.Push(),
+            sg.Text(translator('Use of RAMPART for real-time monitoring of sequencing: ')),
+        ]
+        ]
 
+    column2 = [[
+            sg.Sizer(0,48),
+            sg.InputCombo(languages, default_value=language, readonly=True, key='-LANGUAGE SELECT-'),
+        ],[
+            sg.Sizer(0,48),
+            sg.Checkbox(translator('Enabled'),default=consts.config['SHOW_RAMPART'],key='-SHOW RAMPART-')
+        ]]
+
+    layout = [[
+        sg.Column([[
+            sg.Column(column1), 
+            sg.Column(column2)
+        ]],pad=(16,0))]]
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 
     return panel
