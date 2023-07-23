@@ -41,9 +41,13 @@ def setup_panel():
         docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
     
-    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, rampart_pull_text, rampart_text_color = set_image_status('RAMPART',translator,artifice_core.consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
+    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+        rampart_pull_text, rampart_text_color = \
+            set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
 
-    got_piranha_image, docker_client, piranha_update_available, piranha_image_status, piranha_pull_text, piranha_text_color = set_image_status('PIRANHA',translator,artifice_core.consts.PIRANHA_IMAGE,docker_client=docker_client)
+    got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
+        piranha_pull_text, piranha_text_color = \
+            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
 
     if is_piranhaGUI:
         if not got_piranha_image:
@@ -178,7 +182,7 @@ def create_alt_docker_config():
             file.write(replace_data)
 
 # set up image status text and button after checking if image is installed/up to date
-def set_image_status(name, translator, image, check_for_updates = True, docker_client = None):
+def set_image_status(name, image, check_for_updates = True, docker_client = None):
     got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
     update_available = False
     if got_image:

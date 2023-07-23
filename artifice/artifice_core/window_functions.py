@@ -211,12 +211,15 @@ def setup_header_footer(content, large=False, small=False):
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
-def setup_content(panel, small=False, button_text=None, button_key=None, top_left_button_text=None, top_left_button_key=None, top_right_button_text=None, top_right_button_key=None):
+def setup_content(panel, small=False, button_text=None, button_key=None, 
+                  top_left_button_text=None, top_left_button_key=None, 
+                  top_right_button_text=None, top_right_button_key=None,
+                  bottom_left_button_text=None, bottom_left_button_key=None):
     sg.theme("CONTENT")
 
+    layout = []
     if small:
-        layout = [
-            [ 
+        top_layout = [[ 
                 sg.Column(
                     [[sg.Image(scale_image("piranha.png", 1, (32,32)))]],
                     pad=(8,0)
@@ -232,7 +235,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None, top_lef
                 #     element_justification="right", expand_x=True, pad=(8,0))
             ]]
     else:
-        layout = [
+        top_layout = [
             [ 
                 sg.Column(
                     [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)))]],
@@ -250,21 +253,32 @@ def setup_content(panel, small=False, button_text=None, button_key=None, top_lef
                     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))
             ]]
-    
+
+    top_buttons = []
     if top_left_button_text != None:
-        layout.append(
-            [
-                AltButton(button_text=translator(top_left_button_text),key=top_left_button_key), 
-                sg.Push(), 
-               AltButton(button_text=translator(top_right_button_text),key=top_right_button_key)
-            ])
+        top_buttons.append(AltButton(button_text=translator(top_left_button_text),key=top_left_button_key))
+
+    if top_right_button_text != None:
+        top_buttons.append(sg.Push())
+        top_buttons.append(AltButton(button_text=translator(top_right_button_text),key=top_right_button_key))
+
+    if len(top_buttons) > 0:
+        top_layout.append(top_buttons)
+
+    layout.append([sg.Column(top_layout, pad=(16,0))])
 
     layout.append([panel])
 
+    bottom_buttons = []
+    if bottom_left_button_text != None:
+        bottom_buttons.append(AltButton(button_text=translator(bottom_left_button_text),key=bottom_left_button_key))
+
     if button_text != None:
-        layout.append(
-            [sg.Push(), AltButton(button_text=translator(button_text),key=button_key)]
-            )
+        bottom_buttons.append(sg.Push())
+        bottom_buttons.append(AltButton(button_text=translator(button_text),key=button_key))
+
+    if len(bottom_buttons) > 0:
+        layout.append([sg.Column([bottom_buttons], pad=(16,0), expand_x=True)])
 
     return sg.Frame("", [[sg.Column(layout, pad=(0, 0), expand_x=True, expand_y=True)]], expand_x=True, expand_y=True, border_width=0)
 

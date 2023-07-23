@@ -17,8 +17,6 @@ from artifice_core.alt_popup import alt_popup_ok
 def setup_panel(translator):
     sg.theme("PANEL")
 
-    button_size=(96, 32)
-
     column1 = [
             [
                 sg.Sizer(1,56), sg.Text(translator('Samples:'), pad=(0,12), expand_y=True),
@@ -34,20 +32,20 @@ def setup_panel(translator):
                 sg.Sizer(1,56),
                 sg.In(size=35, enable_events=True,expand_y=True, key='-SAMPLES-',font=16, pad=(0,12), disabled_readonly_background_color='#393938', disabled_readonly_text_color='#F5F1DF',readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
-                AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),),size=button_size),
-                AltButton(button_text=translator('View'),size=button_size,key='-VIEW SAMPLES-'),
+                AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),)),
+                AltButton(button_text=translator('View'),key='-VIEW SAMPLES-'),
             ],
             [
                 sg.Sizer(1,56),
                 sg.In(size=35, enable_events=True,expand_y=True, key='-MINKNOW-',font=16, pad=(0,12), disabled_readonly_background_color='#393938', disabled_readonly_text_color='#F5F1DF',readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
-                AltFolderBrowse(button_text=translator('Select'),size=button_size),
+                AltFolderBrowse(button_text=translator('Select')),
             ],
             [
                 sg.Sizer(1,56),
                 sg.In(size=35, enable_events=True,expand_y=True, key='-OUTDIR-',font=16, pad=(0,12), disabled_readonly_background_color='#393938', disabled_readonly_text_color='#F5F1DF',readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-OUTDIR-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
-                AltFolderBrowse(button_text=translator('Select'),size=button_size,),
+                AltFolderBrowse(button_text=translator('Select'),),
             ]]
 
     panel = sg.Frame("Sequencing Run:", [[sg.Column([

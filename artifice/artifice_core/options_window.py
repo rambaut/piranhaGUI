@@ -25,14 +25,14 @@ def setup_panel():
         [
         sg.Text(translator('Select language:'),size=(30,1)),
         #sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
-        sg.InputCombo(languages, default_value=language, key='-LANGUAGE SELECT-'),
+        sg.InputCombo(languages, default_value=language, readonly=True, key='-LANGUAGE SELECT-'),
         ],
         [
-        sg.Checkbox(translator('Enable/Disable RAMPART'),default=consts.config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
+        sg.Checkbox(translator('Enable RAMPART'),default=consts.config['SHOW_RAMPART'],key='-SHOW RAMPART-')
         ],
-        [
-        AltButton(button_text=translator('Reset config to default'),key='-RESET CONFIG-'),
-        ],
+        # [
+        # AltButton(button_text=translator('Reset default'),key='-RESET CONFIG-'),
+        # ],
         # [
         # AltButton(button_text=translate_text('Save',language,translate_scheme),key='-SAVE-'),
         # ],
@@ -47,7 +47,8 @@ def create_options_window(window = None, version='ARTIFICE'):
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Save', button_key='-SAVE-')
+    content = window_functions.setup_content(panel, small=True, button_text='Save', button_key='-SAVE-',
+                                             bottom_left_button_text='Reset', bottom_left_button_key='-RESET CONFIG-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 

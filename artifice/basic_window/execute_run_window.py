@@ -24,6 +24,8 @@ from artifice_core.alt_button import AltButton
 def setup_panel(config):
     sg.theme("PANEL")
 
+    theme = consts.THEMES[sg.theme()]
+
     is_piranhaGUI = True
 
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
@@ -44,51 +46,75 @@ def setup_panel(config):
     piranha_tab_title = translator('PIRANHA OUTPUT')
     selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
-    rampart_tab = [
-    [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-'),],
-    ]
+    rampart_tab = [[
+        sg.Column([
+            [sg.Sizer(2,2)],
+            [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')]], 
+                  expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+    ]]
 
-    piranha_tab = [
-    [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-'),],
-    ]
+    piranha_tab = [[
+        sg.Column([
+            [sg.Sizer(2,2)],
+            [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-')]], 
+                  expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+    ]]
 
     output_tabs = []
     if is_piranhaGUI:
-        output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,visible=is_piranhaGUI,key='-PIRANHA TAB-'))
+        output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,
+                                    background_color = theme['BUTTON'][1],
+                                    visible=is_piranhaGUI,key='-PIRANHA TAB-'))
     if SHOW_RAMPART:
-        output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,visible=False,key='-RAMPART TAB-'))
+        output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
+                                        background_color = theme['BUTTON'][1],
+                                        visible=False,key='-RAMPART TAB-'))
 
     threads_list = [i for i in range(1, cpu_count()+1)]
     print(threads_list)
 
-    layout = [
-    [AltButton(button_text=translator('Edit run'),key='-EDIT-'),],
-    [
-        sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
-        sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-        AltButton(button_text=translator('Select Another Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
-    ],
-    [
-        AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
-        AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
-    ],
-    [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),],
-    [
-        AltButton(button_text=translator('Analysis Options'),visible=got_piranha_image,key='-PIRANHA OPTIONS-'),
-        AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-        sg.Text(translator('Threads to use for analysis:')),
-        #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
-        # sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
-        sg.Spin( values=threads_list, initial_value=consts.config['THREADS'],  key='-THREADS SELECT-'),
-    ],
-    [sg.TabGroup([output_tabs],expand_x=True, expand_y=True)],
-    [
-        sg.Push(),
-        AltButton(button_text=translator('Open Report'), visible=False, key='-VIEW PIRANHA-'),
-    ],
-    ]
+    layout = []
+    if SHOW_RAMPART:
+        layout.append([
+            sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
+            sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
+            AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
+        ])
+        layout.append([
+            AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
+            AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
+        ])
+        layout.append([sg.Sizer(16,16)])
+        layout.append([sg.HorizontalSeparator()])
 
-    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16), expand_x=True, expand_y=True)
+    if is_piranhaGUI:
+        layout.append(
+            [sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-')])
+    if got_piranha_image:
+        layout.append([
+            AltButton(button_text=translator('Analysis Options'),key='-PIRANHA OPTIONS-'),
+            sg.Text(translator('Analysis Threads:')),
+            #sg.OptionMenu(threads_list, default_value=config['THREADS'], key='-THREADS SELECT-'),
+            # sg.InputCombo(threads_list, default_value=consts.config['THREADS'], key='-THREADS SELECT-'),
+            sg.Spin(values=threads_list, initial_value=consts.config['THREADS'], key='-THREADS SELECT-',
+                    size=(2,1), background_color=theme['BACKGROUND'], text_color=theme['TEXT'],
+                    tooltip='Number of threads to use to speed up analysis'),
+        ])
+        layout.append([
+            AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
+            sg.ProgressBar(max_value=100, visible=got_piranha_image, expand_x=True),
+            AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
+        ])
+        layout.append([sg.Sizer(16,16)])
+
+    layout.append([sg.TabGroup([output_tabs], 
+                               title_color=theme['BUTTON_HOVER'][0], tab_background_color = theme['BUTTON_HOVER'][1],
+                               selected_title_color=theme['BUTTON'][0], selected_background_color = theme['BUTTON'][1],
+                               expand_x=True, expand_y=True)])
+    
+    panel = sg.Frame("",  
+                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,0)) ]], border_width=0, relief="solid", 
+                     pad=(0,16), expand_x=True, expand_y=True)
 
     return panel, rampart_running, piranha_running
 
@@ -99,7 +125,9 @@ def create_main_window(version = 'ARTIFICE', window = None):
   
     panel, rampart_running, piranha_running = setup_panel(config)
 
-    content = window_functions.setup_content(panel)
+    content = window_functions.setup_content(panel, 
+                                             button_text=translator('Open Report'), button_key='-VIEW PIRANHA-',
+                                             top_left_button_text=translator('Edit run'), top_left_button_key='-EDIT-')
 
     layout = window_functions.setup_header_footer(content)
 
@@ -108,7 +136,7 @@ def create_main_window(version = 'ARTIFICE', window = None):
                            font=consts.DEFAULT_FONT,icon=consts.ICON, margins=(0,0), element_padding=(0,0))
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
-    new_window.set_min_size(size=(800,600))
+    new_window.set_min_size(size=(800,800))
     new_window.set_title(artifice_core.consts.VERSION)
 
     if window != None:
