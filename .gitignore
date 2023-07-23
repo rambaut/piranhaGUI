@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -17,6 +16,10 @@ eggs/
 .eggs/
 lib/
 lib64/
+headers/
+bin/
+conda-meta/
+share/
 parts/
 sdist/
 var/
@@ -141,6 +144,4 @@ artifice/resources/piranha.tar
 # macOS .DS_Store
 .DS_Store
 .vscode/launch.json
-=======
-*
->>>>>>> Stashed changes
+artifice.code-workspace
