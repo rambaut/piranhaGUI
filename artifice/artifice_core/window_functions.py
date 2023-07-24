@@ -183,8 +183,8 @@ def setup_header_footer(content, large=False, small=False):
     elif small:
         layout = [
         [
-            sg.Sizer(16,16)
-            # sg.Image(scale_image("artic-small.png", 1, (24,24)), pad=(8,0)),
+            sg.Sizer(16,16),
+            # sg.Image(scale_image("artic-small.png", 1, (16,16)), pad=(8,0)),
             # sg.Push(),
             # sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
         ],
@@ -207,7 +207,6 @@ def setup_header_footer(content, large=False, small=False):
             sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2)),
         ]]
 
-
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
@@ -219,28 +218,23 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
 
     layout = []
     if small:
-        top_layout = [[ 
-                sg.Column(
-                    [[sg.Image(scale_image("piranha.png", 1, (32,32)))]],
-                    pad=(8,0)
-                ),
-                sg.Column(
-                    [
-                        [sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 18))],
-                    ]
-                ),
-                # sg.Column(
+        layout.append([
+                sg.Sizer(16,40),
+                sg.Image(scale_image("piranha.png", 1, (32,32))),
+                sg.Sizer(16,40),
+                sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 18))
+
                 #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
                 #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
                 #     element_justification="right", expand_x=True, pad=(8,0))
-            ]]
+            ])
     else:
-        top_layout = [
-            [ 
+        layout.append([
+                sg.Sizer(16,72),
                 sg.Column(
                     [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)))]],
-                    pad=(8,0)
                 ),
+                sg.Sizer(16,72),
                 sg.Column(
                     [
                         [sg.Text("Piranha v1.4.3", font=consts.TITLE_FONT)],
@@ -248,13 +242,15 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                         [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
                     ]
                 ),
+                sg.Sizer(16,72),
                 sg.Column(
                     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
                     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))
-            ]]
+            ])
 
     top_buttons = []
+    top_buttons.append(sg.Sizer(16,4))
     if top_left_button_text != None:
         top_buttons.append(AltButton(button_text=translator(top_left_button_text),key=top_left_button_key))
 
@@ -262,14 +258,16 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
         top_buttons.append(sg.Push())
         top_buttons.append(AltButton(button_text=translator(top_right_button_text),key=top_right_button_key))
 
-    if len(top_buttons) > 0:
-        top_layout.append(top_buttons)
+    top_buttons.append(sg.Sizer(16,4))
 
-    layout.append([sg.Column(top_layout, pad=(8,0))])
+    layout.append(top_buttons)
 
     layout.append([panel])
 
     bottom_buttons = []
+
+    bottom_buttons.append(sg.Sizer(16,4))
+
     if bottom_left_button_text != None:
         bottom_buttons.append(AltButton(button_text=translator(bottom_left_button_text),key=bottom_left_button_key))
 
@@ -277,9 +275,9 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
         bottom_buttons.append(sg.Push())
         bottom_buttons.append(AltButton(button_text=translator(button_text),key=button_key))
 
-    if len(bottom_buttons) > 0:
-        layout.append([sg.Column([bottom_buttons], pad=(8,0), expand_x=True)])
+    bottom_buttons.append(sg.Sizer(16,4))
 
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0), expand_x=True, expand_y=True)]], 
-                    expand_x=True, expand_y=True, border_width=0)
+    layout.append(bottom_buttons)
+
+    return sg.Frame("", layout, expand_x=True, expand_y=True, border_width=0)
 

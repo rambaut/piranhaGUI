@@ -121,7 +121,7 @@ def create_splash_window(version):
     
     layout = [
         [sg.Image(source = main_logo_scaled)],
-        [sg.Text(language.translator('Starting up..'), justification = 'center')]
+        [sg.Text(language.translator('Starting up..'), font=consts.TITLE_FONT, justification = 'center')]
         ]
     
     window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=False, finalize=True,

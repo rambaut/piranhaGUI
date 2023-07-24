@@ -38,7 +38,7 @@ def setup_panel():
 
     column2 = [[
             sg.Sizer(0,48),
-            sg.InputCombo(languages, default_value=language, readonly=True, key='-LANGUAGE SELECT-'),
+            sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
         ],[
             sg.Sizer(0,48),
             sg.Checkbox(translator('Enabled'),default=consts.config['SHOW_RAMPART'],key='-SHOW RAMPART-')
@@ -49,7 +49,7 @@ def setup_panel():
             sg.Column(column1), 
             sg.Column(column2)
         ]],pad=(16,0))]]
-    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,4))
 
     return panel
 

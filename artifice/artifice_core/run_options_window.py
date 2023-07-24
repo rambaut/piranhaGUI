@@ -87,7 +87,7 @@ def setup_panel():
         ],pad=(0,0))
     ]]
 
-    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,0))
 
     return panel
 
