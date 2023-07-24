@@ -17,38 +17,74 @@ from artifice_core.alt_popup import alt_popup_ok
 def setup_panel(translator):
     sg.theme("PANEL")
 
+    y1 = 24
+    y2 = 48
+
     column1 = [
             [
-                sg.Sizer(1,56), sg.Text(translator('Samples:'), pad=(0,12), expand_y=True),
+                sg.Sizer(1,y1),
             ],
             [
-                sg.Sizer(1,56), sg.Text(translator('MinKnow run:'), pad=(0,12), expand_y=True),
+                sg.Sizer(1,y2), sg.Text(translator('Samples:'), pad=(0,8), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
             ],
             [
-                sg.Sizer(1,56), sg.Text(translator('Output Folder:'), pad=(0,12), expand_y=True),
+                sg.Sizer(1,y1),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('MinKnow run:'), pad=(0,8), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y1),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Output Folder:'), pad=(0,8), expand_y=True),
             ]]
     column2 = [
+            [                
+                sg.Sizer(1,y1),
+                sg.Text(translator('Select a CSV file containing the IDs and barcodes for each sample:'),font=consts.CAPTION_FONT),
+            ],
             [
-                sg.Sizer(1,56),
+                sg.Sizer(1,y2),
                 sg.In(size=35, enable_events=True,expand_y=True, key='-SAMPLES-',font=consts.CONSOLE_FONT, 
-                    pad=(0,12), disabled_readonly_background_color='#393938',
+                    pad=(0,8), disabled_readonly_background_color='#393938',
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),)),
                 AltButton(button_text=translator('View'),key='-VIEW SAMPLES-'),
             ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [                
+                sg.Sizer(1,y1),
+                sg.Text(translator('Select the folder containing sequencing reads from MinKnow:'),font=consts.CAPTION_FONT),
+            ],
             [
-                sg.Sizer(1,56),
+                sg.Sizer(1,y2),
                 sg.In(size=35, enable_events=True,expand_y=True, key='-MINKNOW-',font=consts.CONSOLE_FONT, 
-                    pad=(0,12), disabled_readonly_background_color='#393938',
+                    pad=(0,8), disabled_readonly_background_color='#393938',
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select')),
             ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [                
+                sg.Sizer(1,y1),
+                sg.Text(translator('Select a folder for the output of Piranha analysis:'),font=consts.CAPTION_FONT),
+            ],
             [
-                sg.Sizer(1,56),
+                sg.Sizer(1,y2),
                 sg.In(size=35, enable_events=True,expand_y=True, key='-OUTDIR-',font=consts.CONSOLE_FONT, 
-                    pad=(0,12), disabled_readonly_background_color='#393938',
+                    pad=(0,8), disabled_readonly_background_color='#393938',
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-OUTDIR-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select'),),
@@ -58,7 +94,7 @@ def setup_panel(translator):
             [
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2),
-            ]], pad=(16,8))]], border_width=0, relief="solid", pad=(0,16))
+            ]], pad=(16,0))]], border_width=0, relief="solid", pad=(0,0))
 
     return panel
 

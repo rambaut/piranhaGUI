@@ -117,7 +117,7 @@ def setup_panel():
                         size=install_buttons_size,visible=not docker_installed),
             ],[
                 sg.Sizer(32,0), 
-                sg.Text(translator('Docker is free software used to install and run the analysis pipelines.'),font=(None, 14)),
+                sg.Text(translator('Docker is free software used to install and run the analysis pipelines.'),font=consts.CAPTION_FONT),
             ]])
         ])
     
@@ -131,7 +131,7 @@ def setup_panel():
                           key='-RAMPART INSTALL-'),
             ],[
                 sg.Sizer(32,0), 
-                sg.Text(translator('RAMPART is optional software used monitor Nanopore sequencing in real-time.'),font=(None, 14)),
+                sg.Text(translator('RAMPART is optional software used monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
             ]])
             ])
         
@@ -143,7 +143,7 @@ def setup_panel():
             AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
         ],[
             sg.Sizer(32,0), 
-            sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=(None, 14)),
+            sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
         ]])
     ])
 

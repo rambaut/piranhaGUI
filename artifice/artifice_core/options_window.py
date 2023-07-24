@@ -28,9 +28,13 @@ def setup_panel():
         ],[
             sg.Sizer(0,48),
             sg.Push(),
-            sg.Text(translator('Use of RAMPART for real-time monitoring of sequencing: ')),
-        ]
-        ]
+            sg.Column([[
+                sg.Text(translator('Use of RAMPART: ')),
+            ],[
+                sg.Sizer(8,0),
+                sg.Text(translator('RAMPART is optional software used monitor\nNanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
+            ]])
+        ]]
 
     column2 = [[
             sg.Sizer(0,48),

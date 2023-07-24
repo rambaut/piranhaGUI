@@ -140,7 +140,7 @@ def create_main_window(version = 'ARTIFICE', window = None):
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
     new_window.set_min_size(size=(800,800))
-    new_window.set_title(artifice_core.consts.VERSION)
+    new_window.set_title(consts.VERSION)
 
     if window != None:
         window.close()
@@ -150,7 +150,7 @@ def create_main_window(version = 'ARTIFICE', window = None):
     return new_window, rampart_running, piranha_running
 
 def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = False, piranha_running = False):
-    config = artifice_core.consts.retrieve_config()
+    config = consts.retrieve_config()
    
     rampart_protocol = config['PROTOCOL']
 
