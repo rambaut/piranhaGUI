@@ -14,8 +14,6 @@ def setup_panel():
 
     config = consts.retrieve_config()
 
-    button_size=(120,36)
-
     tooltips = {
         '-REFERENCE SEQUENCES-':translator('Custom reference sequences file.'),
         '-ANALYSIS MODE-':translator('Specify analysis mode to run. Options: `vp1`. Default: `vp1`'),
@@ -76,27 +74,39 @@ def setup_panel():
             sg.Column([
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_MAP_QUALITY, tooltip=tooltips['-MIN MAP QUALITY-'], key='-MIN MAP QUALITY-',),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_MAP_QUALITY, 
+                      border_width=1,
+                      tooltip=tooltips['-MIN MAP QUALITY-'], key='-MIN MAP QUALITY-',),
                 ],
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_READ_LENGTH, tooltip=tooltips['-MIN READ LENGTH-'], key='-MIN READ LENGTH-',),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_READ_LENGTH, 
+                      border_width=1,
+                      tooltip=tooltips['-MIN READ LENGTH-'], key='-MIN READ LENGTH-',),
                 ],
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MAX_READ_LENGTH,tooltip=tooltips['-MAX READ LENGTH-'], key='-MAX READ LENGTH-',),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MAX_READ_LENGTH,
+                      border_width=1,
+                      tooltip=tooltips['-MAX READ LENGTH-'], key='-MAX READ LENGTH-',),
                 ],
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_READS,tooltip=tooltips['-MIN READ DEPTH-'], key='-MIN READ DEPTH-',),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_READS,
+                      border_width=1,
+                      tooltip=tooltips['-MIN READ DEPTH-'], key='-MIN READ DEPTH-',),
                 ],
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_PCENT,tooltip=tooltips['-MIN READ PCENT-'], key='-MIN READ PCENT-',),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_PCENT,
+                      border_width=1,
+                      tooltip=tooltips['-MIN READ PCENT-'], key='-MIN READ PCENT-',),
                 ],
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_PRIMER_LENGTH,tooltip=tooltips['-PRIMER LENGTH-'], key='-PRIMER LENGTH-',),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_PRIMER_LENGTH,
+                      border_width=1,
+                      tooltip=tooltips['-PRIMER LENGTH-'], key='-PRIMER LENGTH-',),
                 ],
             ])
         ]]
@@ -120,10 +130,14 @@ def setup_panel():
                 ], 
             ], element_justification='right'),
             sg.Column([[
-                    sg.Sizer(16,32), sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-PUBLISH DIR-'], key='-PUBLISH DIR-',),
+                    sg.Sizer(16,32), 
+                    sg.In(size=(25,1), enable_events=True,expand_y=False, border_width=1,
+                         tooltip=tooltips['-PUBLISH DIR-'], key='-PUBLISH DIR-',),
                 ],
                 [
-                    sg.Sizer(16,32), sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_OUTPUT_PREFIX,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
+                    sg.Sizer(16,32), 
+                    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                        default_text=consts.VALUE_OUTPUT_PREFIX,tooltip=tooltips['-OUTPUT PREFIX-'], key='-OUTPUT PREFIX-',),
                 ],
                 [
                     sg.Sizer(16,32), sg.Checkbox(translator('Overwrite Output'), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')

@@ -1,3 +1,4 @@
+import PySimpleGUI as sg
 from yaml import safe_load, safe_dump
 from pathlib import Path
 import pathlib
@@ -95,7 +96,10 @@ def edit_config(key, value):
     with open(config_path, 'w') as file:
         safe_dump(config, file)
           
-def get_theme(key):
+def get_theme(key = None):
+    if key == None:
+        key = sg.theme()
+
     if THEMES[key] != None:
         return THEMES[key]
     else:

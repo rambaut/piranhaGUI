@@ -52,7 +52,10 @@ def setup_panel(config):
         sg.Column([
             [sg.Sizer(2,2)],
             [
-                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
+                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
+                            background_color = theme['CONSOLE_BACKGROUND'], 
+                            text_color=theme['CONSOLE_TEXT'],
+                            expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
             ]
         ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
     ]]
@@ -61,7 +64,12 @@ def setup_panel(config):
         sg.Column([
             [sg.Sizer(2,2)],
             [
-                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-')
+                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
+                            background_color = theme['CONSOLE_BACKGROUND'], 
+                            text_color=theme['CONSOLE_TEXT'],
+                             #text_color='#FFBF00',
+                             expand_x=True, expand_y=True, 
+                             key='-PIRANHA OUTPUT-')
             ] 
         ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
     ]]

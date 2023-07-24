@@ -59,24 +59,34 @@ def setup_panel():
         sg.Column([ 
             [sg.Sizer(256,0)],
             [
-                sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
             ],
             [
-                sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
-            ],
-            [sg.Sizer(0,8)],
-            [
-                sg.Sizer(16,32),sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
-            ],
-            [
-                sg.Sizer(16,32),sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
             ],
             [sg.Sizer(0,8)],
             [
-                sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+                sg.Sizer(16,32),
+                sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
             ],
             [
-                sg.Sizer(16,32),sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_NEGATIVE,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
+                sg.Sizer(16,32),
+                sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+            ],
+            [sg.Sizer(0,8)],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      default_text=consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+            ],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      default_text=consts.VALUE_NEGATIVE,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
             ]
         ],pad=(0,0))
     ]]
