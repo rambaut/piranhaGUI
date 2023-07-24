@@ -103,7 +103,8 @@ def create_edit_window(version = 'ARTIFICE', window = None):
 
     panel = setup_panel(window_functions.translator)
 
-    content = window_functions.setup_content(panel, window_functions.translator, button_text='Continue', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, window_functions.translator, 
+                                             bottom_left_button_text='Run Options', bottom_left_button_key='-RUN OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
 
@@ -174,6 +175,13 @@ def run_edit_window(window, version = 'ARTIFICE'):
                     update_log(traceback.format_exc())
                     sg.popup_error(err)
         """
+        elif event == '-RUN OPTIONS-':
+            try:
+                run_options_window = artifice_core.run_options_window.create_run_options_window(version=version)
+                run_info = artifice_core.run_options_window.run_run_options_window(run_options_window, run_info, version=version)
+  
+            except Exception as err:
+                error_popup(err)
         elif event == '-CONFIRM-':
             try:
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
