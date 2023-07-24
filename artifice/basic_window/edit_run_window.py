@@ -6,6 +6,7 @@ from artifice_core.language import translator
 import artifice_core.parse_columns_window
 import artifice_core.consts as consts
 import artifice_core.start_rampart
+import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
@@ -104,6 +105,7 @@ def create_edit_window(version = 'ARTIFICE', window = None):
     panel = setup_panel(window_functions.translator)
 
     content = window_functions.setup_content(panel, window_functions.translator, 
+                                             button_text='Continue', button_key='-CONFIRM-',
                                              bottom_left_button_text='Run Options', bottom_left_button_key='-RUN OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
