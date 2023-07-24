@@ -18,6 +18,7 @@ An internet connection and a Docker install is required to install RAMPART and P
 Open Docker Site in Browser,Ouvrez le site Docker dans le navigateur
 Launch ARTIFICE,Lancez ARTIFICE
 Continue,Continuez
+Close,Fermer
 Options,Paramétres
 ~OPTIONS WINDOW~,
 Select language:,Sélectionnez la langue

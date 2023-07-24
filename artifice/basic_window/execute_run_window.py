@@ -1,3 +1,4 @@
+import subprocess
 import PySimpleGUI as sg
 import traceback
 import re
@@ -9,6 +10,7 @@ import queue
 import os.path
 import sys
 from webbrowser import open_new_tab
+import webbrowser
 
 from artifice_core.language import translator
 import artifice_core.start_rampart
@@ -49,15 +51,19 @@ def setup_panel(config):
     rampart_tab = [[
         sg.Column([
             [sg.Sizer(2,2)],
-            [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')]], 
-                  expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+            [
+                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
+            ]
+        ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
     ]]
 
     piranha_tab = [[
         sg.Column([
             [sg.Sizer(2,2)],
-            [sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-')]], 
-                  expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+            [
+                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, expand_x=True, expand_y=True, key='-PIRANHA OUTPUT-')
+            ] 
+        ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
     ]]
 
     output_tabs = []
@@ -107,6 +113,10 @@ def setup_panel(config):
             #AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
             sg.Sizer(16,16),
             sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),
+            sg.Push(),
+            AltButton(button_text=translator('Open Output'),key='-VIEW OUTPUT-'),
+            sg.Sizer(8,8),
+            AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
         ])
         layout.append([sg.Sizer(16,16)])
 
@@ -129,7 +139,6 @@ def create_main_window(version = 'ARTIFICE', window = None):
     panel, rampart_running, piranha_running = setup_panel(config)
 
     content = window_functions.setup_content(panel, 
-                                             button_text=translator('Open Report'), button_key='-VIEW PIRANHA-',
                                              top_left_button_text=translator('Edit run'), top_left_button_key='-EDIT-')
 
     layout = window_functions.setup_header_footer(content)
@@ -289,6 +298,18 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                 open_new_tab(address)
             except Exception as err:
                 error_popup(err)
+        elif event == '-VIEW OUTPUT-':
+            try:
+                output_path = run_info['outputPath'] + '/'
+                if sys.platform.startswith("darwin"):
+                    #webbrowser.open('file:///{output_path}/')
+                    subprocess.call(["open", output_path])
+                else:
+                    path = os.path.realpath(output_path)
+                    os.startfile(path)
+            except Exception as err:
+                error_popup(err)
+
 
         elif event == '-VIEW PIRANHA-':
             try:
@@ -299,6 +320,7 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
                 else:
                     open_new_tab(f'{output_path}/piranha_output/report.html')
                 """
+                
                 open_new_tab(f'file:///{output_path}/piranha_output/report.html')
             except Exception as err:
                 error_popup(err)
