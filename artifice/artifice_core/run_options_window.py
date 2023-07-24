@@ -18,10 +18,6 @@ def setup_panel():
 
     sample_types_list = ['stool', 'environmental']
     orientations_list = ['horizontal', 'vertical']
-    # if sys.platform.startswith("darwin"):
-    #     option_menu_text_color = '#000000'
-    # else:
-    #     option_menu_text_color = sg.theme_text_color()
 
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),

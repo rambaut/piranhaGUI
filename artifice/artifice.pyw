@@ -114,27 +114,18 @@ def setup_builtin_protocols():
     except:
         pass
 
-def create_setup_window(version):
+def create_splash_window(version):
     sg.theme('CONTENT')
-    is_piranhaGUI = version.startswith('piranhaGUI')
-
-     # Resize PNG file to appropiate size
-    if is_piranhaGUI:
-        main_logo_scaled = scale_image('piranha.png',scale,(150,150))
-    else:
-        main_logo_scaled = scale_image('a_logo.png',scale,(100,120))
-
-    if version == 'piranhaGUI':
-        icon_scaled = scale_image('piranha.png',scale,(64,64))
-    else:
-        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+    
+    main_logo_scaled = scale_image(consts.ICON_FILENAME,scale,(150,150))
     
     layout = [
         [sg.Image(source = main_logo_scaled)],
-        [sg.Text('setting up..', justification = 'center')]
+        [sg.Text(language.translator('Starting up..'), justification = 'center')]
         ]
     
-    window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
+    window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=False, finalize=True,
+                       icon=consts.ICON)
 
     return window
 
@@ -153,12 +144,15 @@ if __name__ == '__main__':
     version = consts.VERSION
     make_themes(version)
 
-    window = create_setup_window(version)
+    splash_window = create_splash_window(version)
     
     window = artifice_core.startup_window.create_startup_window(version=version) #create the startup window to check/install docker and images
 
+    splash_window.close()
+
     advanced = artifice_core.startup_window.run_startup_window(window, version=version)
     
+
     if advanced != None: # if button pressed to launch artifice
         try:
             if advanced:
