@@ -131,7 +131,7 @@ def setup_panel():
                           key='-RAMPART INSTALL-'),
             ],[
                 sg.Sizer(32,0), 
-                sg.Text(translator('RAMPART is optional software used monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
+                sg.Text(translator('RAMPART is optional software used to monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
             ]])
             ])
         
