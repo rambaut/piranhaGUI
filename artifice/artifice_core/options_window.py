@@ -35,6 +35,9 @@ def setup_options_layout(theme = 'Dark', font = None, version='ARTIFICE'):
         sg.OptionMenu(languages, default_value=language, key='-LANGUAGE SELECT-'),
         ],
         [
+        sg.Checkbox(translate_text('Enable/Disable RAMPART',language,translate_scheme),visible=is_piranhaGUI,default=config['SHOW_RAMPART'],size=(30,1),key='-SHOW RAMPART-')
+        ],
+        [
         AltButton(button_text=translate_text('Reset config to default',language,translate_scheme), font=font,key='-RESET CONFIG-'),
         ],
         [
@@ -82,6 +85,8 @@ def run_options_window(window, font):
                     artifice_core.consts.edit_config('THREADS', values['-THREADS SELECT-'])
                 if values['-LANGUAGE SELECT-'] != config['LANGUAGE']:
                     artifice_core.consts.edit_config('LANGUAGE', values['-LANGUAGE SELECT-'])
+                if values['-SHOW RAMPART-'] != config['SHOW_RAMPART']:
+                    artifice_core.consts.edit_config('SHOW_RAMPART', values['-SHOW RAMPART-'])
                 window.close()
                 return True
                 break

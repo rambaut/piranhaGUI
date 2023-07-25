@@ -134,5 +134,9 @@ gui_test/resources
 # scaled poseqco logo
 artifice/resources/poseqco_scaled.png
 
+# piranha docker image file
+artifice/resources/piranha.tar
+
 # macOS .DS_Store
 .DS_Store
+.vscode/launch.json

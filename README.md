@@ -2,12 +2,8 @@
 
 PiranhaGUI is a piece of software designed to provide a graphical user interface for running [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
 ## Installation
-PiranhaGUI may be installed on windows simply with an installer, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.\
-There is also a debian/ubuntu compatible .deb package available. It can installed using ubuntu inbuilt application installer GUI, or by running 
-```
-sudo apt install /path/to/file/piranhaGUI_1.4.0.deb 
-```
-There is also a zipped mac .app package bundle available to download.
+PiranhaGUI may be installed on Mac, Windows or Linux, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.
+Installation instructions are on this page.
 
 ## Docker (or Docker Desktop)
 In order to run PiranhaGUI you must first install and run a commercial (but free) software package called `Docker`. This sofware is creates individual and compartmentalised environments for installing and running other software - in this case the `Piranha` analysis pipeline. On a Windows or Mac, the easiest way to install it is to download `Docker Desktop` from [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/) on your machine, install and run it. 
