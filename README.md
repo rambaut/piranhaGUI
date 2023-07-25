@@ -8,24 +8,35 @@ There is also a debian/ubuntu compatible .deb package available. It can installe
 sudo apt install /path/to/file/piranhaGUI_1.4.0.deb 
 ```
 There is also a zipped mac .app package bundle available to download.
+
+## Docker (or Docker Desktop)
+In order to run PiranhaGUI you must first install and run a commercial (but free) software package called `Docker`. This sofware is creates individual and compartmentalised environments for installing and running other software - in this case the `Piranha` analysis pipeline. On a Windows or Mac, the easiest way to install it is to download `Docker Desktop` from [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/) on your machine, install and run it. 
+
 ## Usage
 As a GUI tool piranhaGUI is intended to be intituitive to use but a guide is provided below nonetheless. If you find some element of the software's design particularly confusing, feel free to create an [issue](https://github.com/polio-nanopore/piranhaGUI/issues) on this repository.
 
+
 ### Startup
-On startup you should see the following window:
+On startup you will see a window that will tell you the status of the software packages required to run `Piranha`:
 
-<img src="./docs/Artifice_Startup_Screenshot.png">
+<img src="./docs/startup_window.png">
 
-- The first line of red text in this screenshot shows that docker is not running on this machine. If you see the same message the easiest way to solve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and (once docker has lauched) restart piranhaGUI. The text should have updated to show that you have docker correctly installed. You will need start docker each time before you use piranhaGUI.
+This is what the window is like if everything is read to run. However the first time you run it you may see one or more of the lines in red:
 
-- Once you have docker ready to go, you can now pull the images for running RAMPART and PIRANHA from dockerhub by pressing the buttons provided. This requires an internet connection, the downloads at the time of writing are 200MB and 800MB respectively.
+<img src="./docs/startup_window_not_installed.png">
 
-- From the startup screen you can also access the options menu by pressing the buttton labelled options. There are currenly two options available to modify. You can change the number of threads piranha will use for analysis, more threads will generally lead to faster results but increases the demand on your cpu, possibly slowing down other tasks. The default is half the number of threads available. You can also change the language from here, currently the options are french and english.
+In this case it is saying that the `Piranha` sofware is not yet installed. Click the button to install it. Note that this may take some time depending on the internet connection (the download at the time of writing is 800MB). It is downloaded and installed into `Docker`.
+
+- If `Docker` is not installed and running you will see red text telling you this and a button to take you to the website. If you have installed it but still get this message, check it is running.
+
+From the startup screen you can also access the options menu by pressing the buttton labelled options. There are currenly two options available to modify. You can also change the language used in the Piranha output (and in the PiranhaGUI) from here -- currently the options are French and English. You can also choose to use the optional real-time sequencing monitoring sofware, RAMPART.  
+
+<img src="./docs/options_window.png">
 
 ### Setting up run
-Pressing the continue button will take you to the window to setup/edit your run, shown below:
+Pressing the `continue` button will take you to the window to setup/edit your run, shown below:
 
-<img src="./docs/Artifice_Edit_Run_Screenshot.png" width="650">
+<img src="./docs/run_window.png">
 
 - There are three fields to fill here, you can browse your OS file system for each them or simply copy in a path if you have it to hand. 
 - The first is samples, this is should be a csv file with at least two columns, matching each to sample to the corresponding barcode on each row. The first row should contain labels for eah column. Once you have selected your samples file you may want to view them with the provided button. This will open a window where you can select the column specifying the barcode and sample id, based on the label at the top of each column. 
@@ -35,7 +46,7 @@ Pressing the continue button will take you to the window to setup/edit your run,
 ### Running Analysis
 Once the run has been setup pressing continue will take you to the window for actually running RAMPART and PIRANHA analysis, shown below:
 
-<img src="./docs/Artifice_Execute_Screenshot.png">
+<img src="./docs/analysis_window.png">
 
 - The first button will take you back to the previous window if you need to modify your run. 
 - Below there is an indicator for whether RAMPART is running, and what protocol is selected. There is also button for selected another protocol for RAMPART which will open a window for this purpose. piranhaGUI comes with two protcols to choose from, the ARTIC poliovirus protocol and the default RAMPART protocol. You can also add your own protocols if needed. 
