@@ -2,16 +2,16 @@ import PySimpleGUI as sg
 import queue
 import threading
 import traceback
-import csv
 import base64
 import os.path
-import sys
+import csv
 from os import mkdir
 from PIL import Image
 from io import BytesIO
 
 import artifice_core.start_rampart
-import artifice_core.consts
+import artifice_core.consts as consts
+from artifice_core.language import translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
@@ -23,10 +23,7 @@ def print_container_log(log_queue, window, output_key, logfile,):
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
-            if sys.platform.startswith("darwin"): #macOS
-                window[output_key].print(output, font='Menlo', end='')
-            else:
-                window[output_key].print(output, font='Coruier New', end='')
+            window[output_key].print(output, font=consts.CONSOLE_FONT, end='')
             update_log(output, filename=logfile, add_newline=False)
             if output == '###CONTAINER STOPPED###\n':
                 return True
@@ -37,10 +34,10 @@ def print_container_log(log_queue, window, output_key, logfile,):
     return False
 
 # asks the user whether they would like to stop the running container(s) when they close the window
-def check_stop_on_close(names: list, window, client, container, font = None):
+def check_stop_on_close(names: list, window, client, container):
     to_stop = []
     for name in names:
-        chk_stop = alt_popup_yes_no(f'Do you wish to stop {name} while closing?', font=font)
+        chk_stop = alt_popup_yes_no(f'Do you wish to stop {name} while closing?')
         if chk_stop == 'Yes':
             to_stop.append(name)
         else:
@@ -72,7 +69,7 @@ def setup_check_container(tool_name):
     elif tool_name == 'PIRANHA' or 'Analysis':
         image_tag = artifice_core.consts.PIRANHA_IMAGE
 
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(None, image_tag, font=None, popup=False)
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(None, image_tag, popup=False)
 
     if not got_image:
         status = f'{tool_name} is not installed'
@@ -96,44 +93,44 @@ def setup_check_container(tool_name):
     return running, button_text, status, True
 
 # creates a popup stating the exception raised with option of showing the logs
-def error_popup(err, font):
+def error_popup(err, information=None):
     update_log(traceback.format_exc())
-    sg.theme('Artifice')
+    sg.theme('DEFAULT')
     #log = ''
     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
     with open(filepath, 'r') as logfile:
         log = logfile.read()
 
-    translate_scheme = get_translate_scheme()
-    config = artifice_core.consts.retrieve_config()
-    try:
-        language = config['LANGUAGE']
-    except:
-        language = 'English'
 
-    er_tr = translate_text('Error',language,translate_scheme)
+    er_tr = translator('Error')
     error_message = f'{er_tr}: {err}'
 
+    information_message = translator(information) if information != None \
+        else translator('Please check the log file for more information')
+    
     layout = [
-            [sg.Text(error_message,)],
-            [AltButton(button_text=translate_text('Show logs',language,translate_scheme),font=font,key='-SHOW LOG-')],
-            [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
-            [AltButton(button_text=translate_text('OK',language,translate_scheme),font=font,key='-EXIT-')],
+            [sg.Text(error_message,font=consts.SUBTITLE_FONT)],
+            [sg.Text(information_message,font=consts.DEFAULT_FONT)],
+            [sg.Push(),AltButton(button_text=translator('Show log file...'),font=consts.BUTTON_FONT,
+                                 visible=True,key='-SHOW LOG-')],
+            [sg.Multiline(log, size=(80,15), autoscroll=True, disabled=True, visible=False,key='-LOG-')],
+            [sg.Push(),AltButton(button_text=translator('Hide log file'),font=consts.BUTTON_FONT,
+                                 visible=False,key='-HIDE LOG-')],
+            [sg.Sizer(16,16)],
+            [sg.Push(),AltButton(button_text=translator('OK'),font=consts.BUTTON_FONT,key='-EXIT-'),sg.Push()],
 
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
-    error_popup = sg.Window(translate_text('ERROR',language,translate_scheme), layout, disable_close=False, finalize=True,
-                                font=font, resizable=False, no_titlebar=False,)
+    error_popup = sg.Window(translator('ERROR'), layout, disable_close=False, finalize=True,
+                                resizable=False, no_titlebar=False,margins=(16,16))
     AltButton.intialise_buttons(error_popup)
 
     run_error_popup(error_popup)
-    #sg.popup_error(AltButton(button_text='Launch ARTIFICE',font=('Arial',18),key='-LAUNCH-'))
 
 def run_error_popup(window):
     while True:
         #config = artifice_core.consts.retrieve_config()
         event, values = window.read()
-
         if event == 'Exit' or event == sg.WIN_CLOSED or event == '-EXIT-':
             window.close()
             break
@@ -141,29 +138,30 @@ def run_error_popup(window):
         elif event == '-SHOW LOG-':
             window['-LOG-'].update(visible=True)
             window['-SHOW LOG-'].update(visible=False)
-
-
-    window.close()
+            # window['-HIDE LOG-'].update(visible=True)
+        # elif event == '-HIDE LOG-':
+        #     window['-LOG-'].update(visible=False)
+        #     window['-SHOW LOG-'].update(visible=True)
+        #     window['-HIDE LOG-'].update(visible=False)
+        else:     
+            window.close()
     return None
 
 #set scaling for all window elements based on screen resolution
-def scale_window(font=None):
-    layout = [[sg.Text('setting up..')]]
-    window = sg.Window('ARTIFICE', layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True)
-    resolution = window.get_screen_dimensions()[1]
-    scale = resolution/1080
+def scale_window():
+    screen = sg.Window.get_screen_size()
+    resolution = screen[1]
+    scale = resolution/1024
     update_log(f'scaling by {scale}')
     sg.set_options(scaling=scale)
-    window.close()
-    artifice_core.consts.edit_config('SCALING', scale)
+    consts.edit_config('SCALING', scale)
     return scale
 
+def scale_image(filename, scale, size):
+    if not os.path.isdir(consts.get_datadir() / 'resources'):
+        mkdir(consts.get_datadir() / 'resources')
 
-def scale_image(filename, scale, size, output_name = ''):
-    if not os.path.isdir(artifice_core.consts.get_datadir() / 'resources'):
-        mkdir(artifice_core.consts.get_datadir() / 'resources')
-
-    processed_image = str(artifice_core.consts.get_datadir() / 'resources' / filename)
+    #processed_image = str(consts.get_datadir() / 'resources' / filename)
     image_file = f'./resources/{filename}'
     size = (int(size[0]*scale), int(size[1]*scale))
     im = Image.open(image_file)
@@ -174,121 +172,130 @@ def scale_image(filename, scale, size, output_name = ''):
     im.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue())
 
-
-def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
-    with open(filepath, newline = '', encoding='utf-8') as csvfile:
-        csvreader = csv.reader(csvfile)
-        scheme_list = list(csvreader)
-
-    return scheme_list
-
-# Takes text (in english) and returns version in given language if translation in scheme
-def translate_text(string: str, language: str, scheme_list = None, append_scheme = False, vb = False):
-    if scheme_list == None or append_scheme:
-        scheme_list = get_translate_scheme()
-
-    languages = scheme_list[0]
-    lang_pos = 0
-    for lang in languages:
-        if lang == language:
-            lang_pos = languages.index(language)
-
-    return_string = string # if no translation exists, the given string is returned back
-    string_in_scheme = False
-    for row in scheme_list:
-        if string == row[0]:
-            string_in_scheme = True
-            try:
-                if row[lang_pos] != '':
-                    return_string = row[lang_pos]
-                    break
-                else:
-                    break
-            except:
-                break
-
-    if append_scheme:
-        if not string_in_scheme:
-            scheme_list.append([string,])
-            with open('./resources/translation_scheme.csv', 'w', newline='', encoding='utf-8') as csvfile:
-                csvwriter = csv.writer(csvfile)
-                for row in scheme_list:
-                    csvwriter.writerow(row)
-
-    if vb: # for debugging
-        print(language)
-        print(return_string)
-
-    return return_string
-
 # Creates a layout for a window that embeds a content frame into an ARTIC header and footer
-def setup_header_footer(content, large=False):
+def setup_header_footer(content, large=False, small=False):
     sg.theme("HEADER")
     if large:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", 1, (64,64)), pad=(8,2)),
+            sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2), 
+                     enable_events=True, key='-ARTIC LOGO-'),
             sg.Column([[
-                sg.Text('Powered by ARTIFICE', font=('Helvetica Neue Light', 14), pad=(8,2)),],[
-                sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 24), pad=(8,2))
-            ]],)
+                    sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),
+                ],[
+                    sg.Text('ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, pad=(8,2), 
+                            enable_events=True, key='-ARTIC LOGO-')
+                ]],)
         ],
         [
             content
         ],
         [
-            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=('Helvetica Neue Light', 12), pad=(8,2)),
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=('Helvetica Neue Light', 12), pad=(8,2), expand_x=True, justification='right'),
+            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'),
+        ]]
+    elif small:
+        layout = [
+        [
+            sg.Sizer(16,16),
+            # sg.Image(scale_image("artic-small.png", 1, (16,16)), pad=(8,0)),
+            # sg.Push(),
+            # sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
+        ],
+        [
+            content
+        ],
+        [
+            sg.Sizer(16,16)
         ]]
     else:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2)),
-            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
+            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2), 
+                     enable_events=True, key='-ARTIC LOGO-'),
+            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, 
+                    pad=(8,2),enable_events=True, key='-ARTIC LOGO-'),
         ],
         [
             content
         ],
         [
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=('Helvetica Neue Light', 12), pad=(8,2)),
+            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2)),
         ]]
 
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
-def setup_content(panel, translator, button_text=None, button_key=None):
+def setup_content(panel, small=False, button_text=None, button_key=None, 
+                  top_left_button_text=None, top_left_button_key=None, 
+                  top_right_button_text=None, top_right_button_key=None,
+                  bottom_left_button_text=None, bottom_left_button_key=None):
     sg.theme("CONTENT")
 
-    button_size=(120,24)
-    layout = [
-        [ 
-            sg.Column(
-                [[sg.Image(scale_image("piranha.png", 1, (64,64)))]],
-                pad=(8,0)
-            ),
-            sg.Column(
-                [
-                    [sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 32))],
-                    [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=('Helvetica Neue Light', 12))],
-                    [sg.Text("analysis pipeline and reporting tool", font=('Helvetica Neue Light', 12))],             
-                ]
-            ),
-            sg.Column(
-                [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
-                [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
-                element_justification="right", expand_x=True, pad=(8,0))
-        ],
-        # [sg.HorizontalSeparator()],
-        [
-            panel,
-        ],
-        # [sg.HorizontalSeparator()],
-    ]
+    layout = []
+    if small:
+        layout.append([
+                sg.Sizer(16,40),
+                sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
+                sg.Sizer(16,40),
+                sg.Text("Piranha v1.0.9", font=('Helvetica Neue Thin', 18))
+
+                #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
+                #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
+                #     element_justification="right", expand_x=True, pad=(8,0))
+            ])
+    else:
+        layout.append([
+                sg.Sizer(16,72),
+                sg.Column(
+                    [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)),
+                               enable_events=True, key='-PIRANHA LOGO-')]],
+                ),
+                sg.Sizer(16,72),
+                sg.Column(
+                    [
+                        [sg.Text("Piranha", font=consts.TITLE_FONT)],
+                        [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
+                        [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
+                    ]
+                ),
+                sg.Sizer(16,72),
+                sg.Column(
+                    [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)), 
+                               enable_events=True, key='-POSECO LOGO-')],
+                    [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
+                    element_justification="right", expand_x=True, pad=(8,0))
+            ])
+
+    top_buttons = []
+    top_buttons.append(sg.Sizer(16,4))
+    if top_left_button_text != None:
+        top_buttons.append(AltButton(button_text=translator(top_left_button_text),key=top_left_button_key))
+
+    if top_right_button_text != None:
+        top_buttons.append(sg.Push())
+        top_buttons.append(AltButton(button_text=translator(top_right_button_text),key=top_right_button_key))
+
+    top_buttons.append(sg.Sizer(16,4))
+
+    layout.append(top_buttons)
+
+    layout.append([panel])
+
+    bottom_buttons = []
+
+    bottom_buttons.append(sg.Sizer(16,4))
+
+    if bottom_left_button_text != None:
+        bottom_buttons.append(AltButton(button_text=translator(bottom_left_button_text),key=bottom_left_button_key))
+
     if button_text != None:
-        layout.append(
-            [sg.Column([[AltButton(button_text=translator(button_text),size=button_size,key=button_key)]], justification="right")]
-            )
+        bottom_buttons.append(sg.Push())
+        bottom_buttons.append(AltButton(button_text=translator(button_text),key=button_key))
 
+    bottom_buttons.append(sg.Sizer(16,4))
 
-    return sg.Frame("", [[sg.Column(layout, pad=(0, 0))]], border_width=0)
+    layout.append(bottom_buttons)
+
+    return sg.Frame("", layout, expand_x=True, expand_y=True, border_width=0)
 

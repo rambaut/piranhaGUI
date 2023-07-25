@@ -5,10 +5,10 @@ import artifice_core.start_rampart
 import artifice_core.consts
 from artifice_core.update_log import update_log
 
-def launch_piranha(run_info, font, docker_client):
+def launch_piranha(run_info, docker_client):
     config = artifice_core.consts.retrieve_config()
     runs_dir = artifice_core.consts.RUNS_DIR
-    artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,font=font,output=True)
+    artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,output=True)
 
     options_str = artifice_core.start_rampart.get_options(run_info)
 

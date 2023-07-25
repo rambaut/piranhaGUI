@@ -1,6 +1,6 @@
 # PiranhaGUI
 
-PiranhaGUI is a piece of software designed to provide a graphical user interface for running [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
+PiranhaGUI is a piece of software designed to provide a graphical user interface for running DDNS analysis pipeline, [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also optionally run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
 ## Installation
 PiranhaGUI may be installed on Mac, Windows or Linux, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.
 Installation instructions are on this page.
@@ -9,7 +9,7 @@ Installation instructions are on this page.
 In order to run PiranhaGUI you must first install and run a commercial (but free) software package called `Docker`. This sofware is creates individual and compartmentalised environments for installing and running other software - in this case the `Piranha` analysis pipeline. On a Windows or Mac, the easiest way to install it is to download `Docker Desktop` from [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/) on your machine, install and run it. 
 
 ## Usage
-As a GUI tool piranhaGUI is intended to be intituitive to use but a guide is provided below nonetheless. If you find some element of the software's design particularly confusing, feel free to create an [issue](https://github.com/polio-nanopore/piranhaGUI/issues) on this repository.
+Bugs and feature requests can be posted as 'issues' on [issue](https://github.com/polio-nanopore/piranhaGUI/issues).
 
 
 ### Startup
@@ -17,13 +17,11 @@ On startup you will see a window that will tell you the status of the software p
 
 <img src="./docs/startup_window.png">
 
-This is what the window is like if everything is read to run. However the first time you run it you may see one or more of the lines in red:
+This is what the window is like if everything is ready to run. However the first time you run it you may see one or more of the lines in red:
 
 <img src="./docs/startup_window_not_installed.png">
 
 In this case it is saying that the `Piranha` sofware is not yet installed. Click the button to install it. Note that this may take some time depending on the internet connection (the download at the time of writing is 800MB). It is downloaded and installed into `Docker`.
-
-- If `Docker` is not installed and running you will see red text telling you this and a button to take you to the website. If you have installed it but still get this message, check it is running.
 
 From the startup screen you can also access the options menu by pressing the buttton labelled options. There are currenly two options available to modify. You can also change the language used in the Piranha output (and in the PiranhaGUI) from here -- currently the options are French and English. You can also choose to use the optional real-time sequencing monitoring sofware, RAMPART.  
 
