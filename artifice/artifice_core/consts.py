@@ -159,6 +159,11 @@ VALUE_MIN_PCENT = get_config_value('VALUE_MIN_PCENT', config)
 VALUE_PRIMER_LENGTH = get_config_value('VALUE_PRIMER_LENGTH', config)
 VALUE_OUTPUT_PREFIX = get_config_value('VALUE_OUTPUT_PREFIX', config)
 
+# URLS
+ARTIC_URL = 'https://artic.network/'
+POSECO_URL = 'http://polionanopore.org'
+PIRANHA_URL = 'https://github.com/polio-nanopore/piranha/'
+
 config = retrieve_config()
 
 THEMES = { }

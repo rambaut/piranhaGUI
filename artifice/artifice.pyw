@@ -152,7 +152,6 @@ if __name__ == '__main__':
 
     advanced = artifice_core.startup_window.run_startup_window(window, version=version)
     
-
     if advanced != None: # if button pressed to launch artifice
         try:
             if advanced:

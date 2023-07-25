@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+import webbrowser
 
 from artifice_core.language import translator
 import artifice_core.consts as consts
@@ -63,6 +64,12 @@ def run_about_window(window, version = 'ARTIFICE'):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
             return
+        elif event == '-ARTIC LOGO-':
+            webbrowser.open(consts.ARTIC_URL)
+        elif event == '-PIRANHA LOGO-':
+            webbrowser.open(consts.PIRANHA_URL)
+        elif event == '-POSECO LOGO-':
+            webbrowser.open(consts.POSECO_URL)
 
     window.close()
 

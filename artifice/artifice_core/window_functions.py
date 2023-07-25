@@ -167,11 +167,14 @@ def setup_header_footer(content, large=False, small=False):
     if large:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2)),
+            sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2), 
+                     enable_events=True, key='-ARTIC LOGO-'),
             sg.Column([[
-                sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),],[
-                sg.Text('ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, pad=(8,2))
-            ]],)
+                    sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),
+                ],[
+                    sg.Text('ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, pad=(8,2), 
+                            enable_events=True, key='-ARTIC LOGO-')
+                ]],)
         ],
         [
             content
@@ -197,8 +200,10 @@ def setup_header_footer(content, large=False, small=False):
     else:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2)),
-            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, pad=(8,2)),
+            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2), 
+                     enable_events=True, key='-ARTIC LOGO-'),
+            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, 
+                    pad=(8,2),enable_events=True, key='-ARTIC LOGO-'),
         ],
         [
             content
@@ -220,7 +225,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
     if small:
         layout.append([
                 sg.Sizer(16,40),
-                sg.Image(scale_image("piranha.png", 1, (32,32))),
+                sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
                 sg.Sizer(16,40),
                 sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 18))
 
@@ -232,7 +237,8 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
         layout.append([
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)))]],
+                    [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)),
+                               enable_events=True, key='-PIRANHA LOGO-')]],
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
@@ -244,7 +250,8 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
+                    [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)), 
+                               enable_events=True, key='-POSECO LOGO-')],
                     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))
             ])
