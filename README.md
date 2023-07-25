@@ -1,17 +1,19 @@
 # PiranhaGUI
 
-PiranhaGUI is a piece of software designed to provide a graphical user interface for running [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
+PiranhaGUI is a piece of software designed to provide a graphical user interface for running DDNS analysis pipeline, [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also optionally run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
 ## Installation
 PiranhaGUI may be installed on Mac, Windows or Linux, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.
 Installation instructions are on this page.
 
 ## Usage
-As a GUI tool piranhaGUI is intended to be intituitive to use but a guide is provided below nonetheless. If you find some element of the software's design particularly confusing, feel free to create an [issue](https://github.com/polio-nanopore/piranhaGUI/issues) on this repository.
+Bugs and feature requests can be posted as 'issues' on [issue](https://github.com/polio-nanopore/piranhaGUI/issues).
 
 ### Startup
 On startup you should see the following window:
 
 <img src="./docs/Artifice_Startup_Screenshot.png">
+
+This window shows you whether the required software is installed and whether they can be updated to the latest version.
 
 - The first line of red text in this screenshot shows that docker is not running on this machine. If you see the same message the easiest way to solve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and (once docker has lauched) restart piranhaGUI. The text should have updated to show that you have docker correctly installed. You will need start docker each time before you use piranhaGUI.
 
