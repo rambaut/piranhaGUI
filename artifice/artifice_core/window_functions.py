@@ -238,7 +238,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 sg.Sizer(16,40),
                 sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
                 sg.Sizer(16,40),
-                sg.Text("Piranha v1.4.3", font=('Helvetica Neue Thin', 18))
+                sg.Text("Piranha v1.0.9", font=('Helvetica Neue Thin', 18))
 
                 #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
                 #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
