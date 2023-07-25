@@ -15,9 +15,9 @@ On startup you should see the following window:
 
 This window shows you whether the required software is installed and whether they can be updated to the latest version.
 
-- The first line of red text in this screenshot shows that docker is not running on this machine. If you see the same message the easiest way to solve it is to install [docker desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and (once docker has lauched) restart piranhaGUI. The text should have updated to show that you have docker correctly installed. You will need start docker each time before you use piranhaGUI.
+- The first line of red text in this screenshot shows that `Docker` is not running on this machine. `Docker` is software that is used to run analysis pipelines in self-contained environments on your computer. If you see the same message the easiest way to solve it is to install [Docker Desktop](https://docs.docker.com/get-docker/) on your machine, launch it, and (once `Docker` has lauched) restart `piranhaGUI`. The text will have updated to show that you have docker correctly installed. You will need start Docker each time before you use `piranhaGUI` (or set it to launch automatically on start-up).
 
-- Once you have docker ready to go, you can now pull the images for running RAMPART and PIRANHA from dockerhub by pressing the buttons provided. This requires an internet connection, the downloads at the time of writing are 200MB and 800MB respectively.
+- Once you have `Docker` ready to go, you can now pull the packages for running `RAMPART` (if using) and `PIRANHA` by pressing the buttons provided. This requires an internet connection, the downloads at the time of writing are 200MB and 800MB respectively.
 
 - From the startup screen you can also access the options menu by pressing the buttton labelled options. There are currenly two options available to modify. You can change the number of threads piranha will use for analysis, more threads will generally lead to faster results but increases the demand on your cpu, possibly slowing down other tasks. The default is half the number of threads available. You can also change the language from here, currently the options are french and english.
 
