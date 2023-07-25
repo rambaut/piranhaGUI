@@ -93,7 +93,7 @@ def setup_check_container(tool_name):
     return running, button_text, status, True
 
 # creates a popup stating the exception raised with option of showing the logs
-def error_popup(err):
+def error_popup(err, information=None):
     update_log(traceback.format_exc())
     sg.theme('DEFAULT')
     #log = ''
@@ -105,16 +105,24 @@ def error_popup(err):
     er_tr = translator('Error')
     error_message = f'{er_tr}: {err}'
 
+    information_message = translator(information) if information != None \
+        else translator('Please check the log file for more information')
+    
     layout = [
-            [sg.Text(error_message,)],
-            [AltButton(button_text=translator('Show logs'),key='-SHOW LOG-')],
-            [sg.Multiline(log, size=(80,15), visible=False,key='-LOG-')],
-            [AltButton(button_text=translator('OK'),key='-EXIT-')],
+            [sg.Text(error_message,font=consts.SUBTITLE_FONT)],
+            [sg.Text(information_message,font=consts.DEFAULT_FONT)],
+            [sg.Push(),AltButton(button_text=translator('Show log file...'),font=consts.BUTTON_FONT,
+                                 visible=True,key='-SHOW LOG-')],
+            [sg.Multiline(log, size=(80,15), autoscroll=True, disabled=True, visible=False,key='-LOG-')],
+            [sg.Push(),AltButton(button_text=translator('Hide log file'),font=consts.BUTTON_FONT,
+                                 visible=False,key='-HIDE LOG-')],
+            [sg.Sizer(16,16)],
+            [sg.Push(),AltButton(button_text=translator('OK'),font=consts.BUTTON_FONT,key='-EXIT-'),sg.Push()],
 
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     error_popup = sg.Window(translator('ERROR'), layout, disable_close=False, finalize=True,
-                                resizable=False, no_titlebar=False,)
+                                resizable=False, no_titlebar=False,margins=(16,16))
     AltButton.intialise_buttons(error_popup)
 
     run_error_popup(error_popup)
@@ -123,7 +131,6 @@ def run_error_popup(window):
     while True:
         #config = artifice_core.consts.retrieve_config()
         event, values = window.read()
-
         if event == 'Exit' or event == sg.WIN_CLOSED or event == '-EXIT-':
             window.close()
             break
@@ -131,9 +138,13 @@ def run_error_popup(window):
         elif event == '-SHOW LOG-':
             window['-LOG-'].update(visible=True)
             window['-SHOW LOG-'].update(visible=False)
-
-
-    window.close()
+            # window['-HIDE LOG-'].update(visible=True)
+        # elif event == '-HIDE LOG-':
+        #     window['-LOG-'].update(visible=False)
+        #     window['-SHOW LOG-'].update(visible=True)
+        #     window['-HIDE LOG-'].update(visible=False)
+        else:     
+            window.close()
     return None
 
 #set scaling for all window elements based on screen resolution
@@ -243,7 +254,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 sg.Sizer(16,72),
                 sg.Column(
                     [
-                        [sg.Text("Piranha v1.4.3", font=consts.TITLE_FONT)],
+                        [sg.Text("Piranha", font=consts.TITLE_FONT)],
                         [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
                         [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
                     ]
