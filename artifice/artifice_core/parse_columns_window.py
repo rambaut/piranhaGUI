@@ -15,8 +15,9 @@ from artifice_core.window_functions import error_popup
 
 # return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
-    if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
-        raise Exception('Excel files are not supported')
+    if not os.path.isfile(filepath):
+        if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+            raise Exception('Excel files are not supported')
 
     with open(filepath, newline = '') as csvfile:
         try:
