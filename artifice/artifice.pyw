@@ -24,14 +24,14 @@ from artifice_core.window_functions import scale_window, scale_image
 def make_themes(version):
 
     consts.THEMES = {
-        'DEFAULT': {'BACKGROUND': "#f7eacd",
-                'TEXT': '#1e5b67',
+        'DEFAULT': {'BACKGROUND': "#1e5b67",
+                'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
-                'PROGRESS': ('#000000', '#000000'),
+                'BUTTON': ('#f7eacd', '#d97168'),
+                'BUTTON_HOVER': ('#f7eacd', '#F48379'),
+                'PROGRESS': ('#f7eacd', '#d97168'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
                 'PROGRESS_DEPTH': 0},
