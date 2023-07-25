@@ -15,10 +15,16 @@ from artifice_core.window_functions import error_popup
 
 # return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
-    with open(filepath, newline = '') as csvfile:
-        csvreader = csv.reader(csvfile)
-        csv_list = list(csvreader)
+    if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+        raise Exception('Excel files are not supported')
 
+    with open(filepath, newline = '') as csvfile:
+        try:
+            csvreader = csv.reader(csvfile)
+            csv_list = list(csvreader)
+        except Exception as err:
+            raise Exception('Invalid CSV file')
+        
     if trim:
         for row in csv_list:
             for i in range(len(row)):
