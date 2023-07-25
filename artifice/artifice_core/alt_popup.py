@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import textwrap
 
 from artifice_core.alt_button import AltButton, AltDummyButton
+import artifice_core.consts as consts
 
 # function that creates popup with AltButtons, otherwise identical to PySimpleGUI popup
 # Modified lines have been marked #EDITED, it may be wise to copy popup() if it is updated in future and if using PySimpleGUI beyond v4.60
@@ -72,6 +73,12 @@ def alt_popup(*args, title=None, button_color=None, background_color=None, text_
     else:
         local_line_width = sg.MESSAGE_BOX_LINE_WIDTH #EDITED to put sg.
     _title = title if title is not None else args_to_print[0]
+
+    if not font:
+        font = consts.DEFAULT_FONT
+
+    if not icon:
+        icon = consts.ICON
 
     layout = [[]]
     max_line_total, total_lines = 0, 0

@@ -1,14 +1,16 @@
 import PySimpleGUI as sg
 import os.path
 import csv
-import traceback
+
+from artifice_core.language import translator
+import artifice_core.window_functions as window_functions
 
 import artifice_core.parse_columns_window
-import artifice_core.consts
+import artifice_core.consts as consts
 from artifice_core.update_log import log_event, update_log
 
-def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_column = 1, has_headers = True):
-    sg.theme(theme)
+def setup_panel(samples_column = 0, barcodes_column = 1, has_headers = True):
+    sg.theme("PANEL")
 
     samples_list, column_headers = artifice_core.parse_columns_window.samples_to_list(samples, has_headers=has_headers)
 
@@ -16,25 +18,20 @@ def setup_barcodes_layout(samples, theme = 'Dark', samples_column = 0, barcodes_
     for i in range(len(samples_list[0])):
         visible_column_map.append(True)
 
-    layout = [
-        [sg.Column([
-            [
-            sg.Table(
-            values=samples_list, headings=column_headers, visible_column_map=visible_column_map, key='-TABLE-',
-            expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,col_widths=[20,10]#def_col_width=50,max_col_width=30
-            ),
+    layout = [[
+        sg.Column([[
+                sg.Table(values=samples_list, headings=column_headers, visible_column_map=visible_column_map, 
+                        key='-TABLE-', expand_x=True,expand_y=True,num_rows=30,vertical_scroll_only=False,
+                        col_widths=[20,10]#def_col_width=50,max_col_width=30
+                ),
             ],
             [
-            sg.Button(button_text='Ok',key='-BARCODES OK-', size=(10,1)),
-            ],
-            [
-            sg.Sizer(h_pixels=500)
-            ],
-            ],
-        )],
-    ]
+             sg.Sizer(h_pixels=500)
+            ]],
+        )]]
+    panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 
-    return layout, column_headers
+    return panel, column_headers
 
 def make_barcodes_list(run_info):
     if 'samples_column' in run_info:
@@ -64,10 +61,10 @@ def save_barcodes(run_info):
     update_log(f'saving barcodes file for run: "{title}"')
     
     # make sure run dir exists
-    if not os.path.exists(artifice_core.consts.RUNS_DIR / title):
-         os.mkdir(artifice_core.consts.RUNS_DIR / title)
+    if not os.path.exists(consts.RUNS_DIR / title):
+         os.mkdir(consts.RUNS_DIR / title)
 
-    with open(artifice_core.consts.RUNS_DIR / title / 'barcodes.csv', 'w+', newline='') as csvfile:
+    with open(consts.RUNS_DIR / title / 'barcodes.csv', 'w+', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         for row in barcodes_list:
             csvwriter.writerow(row)
@@ -80,7 +77,7 @@ def check_barcodes(run_info, font = None):
     title = run_info['title']
     update_log(f'checking barcodes for run: "{title}" still match chosen samples...')
 
-    barcodes_file = artifice_core.consts.RUNS_DIR / title / 'barcodes.csv'
+    barcodes_file = consts.RUNS_DIR / title / 'barcodes.csv'
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
         old_barcodes = artifice_core.parse_columns_window.samples_to_list(barcodes_file, has_headers=False)[0]
@@ -111,10 +108,16 @@ def check_barcodes(run_info, font = None):
 
     return False
 
-def create_barcodes_window(samples, theme = 'Artifice', font = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def create_barcodes_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
-    layout, column_headers = setup_barcodes_layout(samples, theme=theme, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
-    new_window = sg.Window('Artifice', layout, font=font, resizable=True)
+
+    panel, column_headers = setup_panel(samples_column, barcodes_column, has_headers)
+
+    content = window_functions.setup_content(panel, translator, small=True, button_text='Close', button_key='-BARCODES OK-')
+
+    layout = window_functions.setup_header_footer(content, small=True)
+
+    new_window = sg.Window('Artifice', layout, resizable=True, font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
     if window != None:
         window.close()
 

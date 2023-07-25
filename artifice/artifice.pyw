@@ -8,78 +8,73 @@ import time
 from datetime import datetime
 from shutil import copytree
 
-import artifice_core.consts
+from artifice_core import consts
 from artifice_core.update_log import update_log
+import artifice_core.language as language
 import advanced_window.main_window
 import basic_window.edit_run_window
 import basic_window.execute_run_window
 import basic_window.about_window
 import artifice_core.startup_window
+import artifice_core.window_functions as window_functions
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
 
 #create artifice theme
 def make_themes(version):
-    #if version == 'piranhaGUI': # poseqco color scheme
-        # Artifice_Theme = {'BACKGROUND': "#FBECA6",
-        #            'TEXT': '#000000',
-        #            'INPUT': '#FFAE59',
-        #            'TEXT_INPUT': '#000000',
-        #            'SCROLL': '#707070',
-        #            'BUTTON': ('#FEAE63', '#FF4600'),
-        #            'PROGRESS': ('#000000', '#000000'),
-        #            'BORDER': 1,
-        #            'SLIDER_DEPTH': 0,
-        #            'PROGRESS_DEPTH': 0}
-    #else:  artic color scheme
-        # Artifice_Theme = {'BACKGROUND': "#072429",
-        #            'TEXT': '#f7eacd',
-        #            'INPUT': '#1e5b67',
-        #            'TEXT_INPUT': '#f7eacd',
-        #            'SCROLL': '#707070',
-        #            'BUTTON': ('#f7eacd', '#d97168'),
-        #            'PROGRESS': ('#000000', '#000000'),
-        #            'BORDER': 1,
-        #            'SLIDER_DEPTH': 0,
-                #    'PROGRESS_DEPTH': 0}
 
-    Piranha_Theme = {'BACKGROUND': "#f7eacd",
-            'TEXT': '#1e5b67',
-            'INPUT': '#072429',
-            'TEXT_INPUT': '#f7eacd',
-            'SCROLL': '#707070',
-            'BUTTON': ('#f7eacd', '#1e5b67'),
-            'PROGRESS': ('#000000', '#000000'),
-            'BORDER': 0,
-            'SLIDER_DEPTH': 0,
-            'PROGRESS_DEPTH': 0}
+    consts.THEMES = {
+        'DEFAULT': {'BACKGROUND': "#1e5b67",
+                'TEXT': '#f7eacd',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#d97168'),
+                'BUTTON_HOVER': ('#f7eacd', '#F48379'),
+                'PROGRESS': ('#f7eacd', '#d97168'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0},
+        'CONTENT': {'BACKGROUND': "#f7eacd",
+                'TEXT': '#1e5b67',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
+                'PROGRESS': ('#f7eacd', '#d97168'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 2},
+        'PANEL': {'BACKGROUND': "#F5F1DF",
+                'TEXT': '#1e5b67',
+                'INPUT': '#f7eacd',
+                'TEXT_INPUT': '#072429',
+                'CONSOLE_TEXT': '#FFBF00',
+                'CONSOLE_BACKGROUND': '#072429',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
+                'PROGRESS': ('#f7eacd', '#d97168'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 2},
+        'HEADER': {'BACKGROUND': "#1e5b67",
+                'TEXT': '#f7eacd',
+                'INPUT': '#072429',
+                'TEXT_INPUT': '#f7eacd',
+                'SCROLL': '#707070',
+                'BUTTON': ('#f7eacd', '#d97168'),
+                'BUTTON_HOVER': ('#f7eacd', '#F48379'),
+                'PROGRESS': ('#f7eacd', '#d97168'),
+                'BORDER': 0,
+                'SLIDER_DEPTH': 0,
+                'PROGRESS_DEPTH': 0}
+    }
 
-    Piranha_Panel_Theme = {'BACKGROUND': "#F5F1DF",
-            'TEXT': '#1e5b67',
-            'INPUT': '#072429',
-            'TEXT_INPUT': '#f7eacd',
-            'SCROLL': '#707070',
-            'BUTTON': ('#f7eacd', '#1e5b67'),
-            'PROGRESS': ('#000000', '#000000'),
-            'BORDER': 0,
-            'SLIDER_DEPTH': 0,
-            'PROGRESS_DEPTH': 0}
+    for key, value in consts.THEMES.items():
+        sg.theme_add_new(key, value)
 
-    ARTIC_Theme = {'BACKGROUND': "#1e5b67",
-            'TEXT': '#f7eacd',
-            'INPUT': '#072429',
-            'TEXT_INPUT': '#f7eacd',
-            'SCROLL': '#707070',
-            'BUTTON': ('#f7eacd', '#d97168'),
-            'PROGRESS': ('#000000', '#000000'),
-            'BORDER': 0,
-            'SLIDER_DEPTH': 0,
-            'PROGRESS_DEPTH': 0}
-
-    sg.theme_add_new('PANEL', Piranha_Panel_Theme)
-    sg.theme_add_new('CONTENT', Piranha_Theme)
-    sg.theme_add_new('HEADER', ARTIC_Theme)
-    sg.theme_add_new('Artifice', Piranha_Theme)
 
 #make sure a directory exists to save runs
 def check_runs_dir(runs_dir):
@@ -119,70 +114,59 @@ def setup_builtin_protocols():
     except:
         pass
 
-def create_setup_window(scale, version):
-    sg.theme('Artifice')
-    is_piranhaGUI = version.startswith('piranhaGUI')
-
-     # Resize PNG file to appropiate size
-    if is_piranhaGUI:
-        main_logo_scaled = scale_image('piranha.png',scale,(150,150))
-    else:
-        main_logo_scaled = scale_image('a_logo.png',scale,(100,120))
-
-    if version == 'piranhaGUI':
-        icon_scaled = scale_image('piranha.png',scale,(64,64))
-    else:
-        icon_scaled = scale_image('placeholder_artifice2.ico',scale,(64,64))
+def create_splash_window(version):
+    sg.theme('CONTENT')
+    
+    main_logo_scaled = scale_image(consts.ICON_FILENAME,scale,(150,150))
     
     layout = [
         [sg.Image(source = main_logo_scaled)],
-        [sg.Text('setting up..', justification = 'center')]
+        [sg.Text(language.translator('Starting up..'), font=consts.TITLE_FONT, justification = 'center')]
         ]
     
-    window = sg.Window(version, layout, font=font, resizable=False, enable_close_attempted_event=True, finalize=True,icon=icon_scaled)
+    window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=False, finalize=True,
+                       icon=consts.ICON)
 
     return window
 
 if __name__ == '__main__':
     advanced = False
     startup_time = datetime.today()
-    check_runs_dir(artifice_core.consts.RUNS_DIR)
+    check_runs_dir(consts.RUNS_DIR)
     update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
-    font = (artifice_core.consts.FONT, 18)
-
-    print(font)
+    language.translator = language.setup_translator()
 
     scale = scale_window()
-    version = artifice_core.consts.VERSION
+    consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 
+    version = consts.VERSION
     make_themes(version)
 
-    #about = basic_window.about_window.create_about_window(font=font, scale=scale, version=version) #create the about window
-    window = create_setup_window(scale, version)
+    splash_window = create_splash_window(version)
     
-    window = artifice_core.startup_window.create_startup_window(font=font, scale=scale, version=version) #create the startup window to check/install docker and images
+    window = artifice_core.startup_window.create_startup_window(version=version) #create the startup window to check/install docker and images
 
-    advanced = artifice_core.startup_window.run_startup_window(window, font=font, scale=scale, version=version)
+    splash_window.close()
 
-    # basic_window.about_window.run_about_window(about, font=font, version=version)
+    advanced = artifice_core.startup_window.run_startup_window(window, version=version)
     
     if advanced != None: # if button pressed to launch artifice
         try:
             if advanced:
-                window, rampart_running = advanced_window.main_window.create_main_window(font=font)
-                advanced_window.main_window.run_main_window(window, rampart_running=rampart_running, font=font)
+                window, rampart_running = advanced_window.main_window.create_main_window()
+                advanced_window.main_window.run_main_window(window, rampart_running=rampart_running)
             else:
                 while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window(font=font, scale=scale, version=version)
-                    run_info = basic_window.edit_run_window.run_edit_window(window, font=font, version=version)
+                    window = basic_window.edit_run_window.create_edit_window(version=version)
+                    run_info = basic_window.edit_run_window.run_edit_window(window, version=version)
                     if run_info == None:
                         break
 
                     update_log(f'\nrun details confirmed, creating main window\n')
-                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(font=font, scale=scale, version=version)
-                    edit = basic_window.execute_run_window.run_main_window(window, run_info, font=font, rampart_running=rampart_running, piranha_running=piranha_running, scale=scale, version=version)
+                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(version=version)
+                    edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running, version=version)
                     if edit != True:
                         break
             exit_time = datetime.today()
