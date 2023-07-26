@@ -2,8 +2,8 @@ import csv
 import artifice_core.consts as consts
 from os import path
 
-def get_translate_scheme(filepath = '/resources/translation_scheme.csv'):
-    filepath = path.abspath(path.join(path.dirname(__file__), filepath))
+def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
+    filepath = consts.get_resource(filepath)
     with open(filepath, newline = '', encoding='utf-8') as csvfile:
         csvreader = csv.reader(csvfile)
         scheme_list = list(csvreader)
