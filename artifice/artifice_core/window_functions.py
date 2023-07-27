@@ -164,6 +164,7 @@ def scale_image(filename, scale, size):
 
     #processed_image = str(consts.get_datadir() / 'resources' / filename)
     image_file = f'./resources/{filename}'
+    image_file = consts.get_resource(image_file)
     size = (int(size[0]*scale), int(size[1]*scale))
     im = Image.open(image_file)
     im = im.resize(size, resample=Image.BICUBIC)

@@ -25,7 +25,8 @@ def setup_config():
     if os.path.isfile(config_path):
         return True
     else:
-        copytree('builtin_protocols', config_path)
+        builtin_path = consts.get_resource('builtin_protocols')
+        copytree(builtin_path, config_path)
 
 def setup_panel():
     sg.theme("PANEL")

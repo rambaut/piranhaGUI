@@ -104,6 +104,10 @@ def get_theme(key = None):
         return THEMES[key]
     else:
         return THEMES['DEFAULT']
+
+def get_resource(filepath):
+    filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
+    return filepath
     
 setup_config()
 config = retrieve_config()

@@ -78,7 +78,8 @@ class AltButton(sg.Button):
             try:
                 font = ImageFont.truetype('Keyboard.ttf', int(self.Font[1]))
             except:
-                font = ImageFont.truetype('./resources/LiberationSans-Regular.ttf', int(self.Font[1]))
+                font_file = consts.get_resource('./resources/LiberationSans-Regular.ttf')
+                font = ImageFont.truetype(font_file, int(self.Font[1]))
 
         #size = font.getsize(self.ButtonText)
         width = sg.tkinter.font.Font(font=self.Font).measure(self.ButtonText)
