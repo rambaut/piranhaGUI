@@ -10,7 +10,7 @@ Installation instructions are on this page.
 In order to run PiranhaGUI you must first install and run a commercial (but free) software package called `Docker`. This sofware is creates individual and compartmentalised environments for installing and running other software - in this case the `Piranha` analysis pipeline. On a Windows or Mac, the easiest way to install it is to download `Docker Desktop` from [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/) on your machine, install and run it. 
 
 ## Usage
-Bugs and feature requests can be posted as 'issues' on [issue](https://github.com/polio-nanopore/piranhaGUI/issues).
+Bugs and feature requests can be posted as ['issues' here](https://github.com/polio-nanopore/piranhaGUI/issues).
 
 
 ### Startup
