@@ -1,6 +1,7 @@
 # PiranhaGUI
 
-PiranhaGUI is a piece of software designed to provide a graphical user interface for running DDNS analysis pipeline, [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also optionally run [RAMPART](https://github.com/artic-network/rampart) It is being developed as part of the [Poliovirus Sequencing Consortium](https://polio-nanopore.github.io/). 
+PiranhaGUI is a piece of software designed to provide a graphical user interface for running DDNS analysis pipeline, [PIRANHA](https://github.com/polio-nanopore/piranha). PiranhaGUI currently can also optionally run [RAMPART](https://github.com/artic-network/rampart) by [ARTIC](https://artic.network/). It is being developed as part of the [Poliovirus Sequencing Consortium](http://polionanopore.org). 
+
 ## Installation
 PiranhaGUI may be installed on Mac, Windows or Linux, downloadable from the [releases](https://github.com/polio-nanopore/piranhaGUI/releases) page.
 Installation instructions are on this page.
