@@ -122,7 +122,10 @@ def setup_panel():
                 ],
                 [
                     sg.Sizer(16,32),
-                ],  
+                ],
+                [
+                    sg.Sizer(16,32),
+                ],
                 [
                     sg.Sizer(16,32),
                 ],
@@ -142,7 +145,10 @@ def setup_panel():
                 ],
                 [
                     sg.Sizer(16,32), sg.Checkbox(translator('Overwrite Output'), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')
-                ],  
+                ],
+                [
+                    sg.Sizer(16,32), sg.Checkbox(translator('Output Intermediate Files'), default=False, tooltip=tooltips['-NO TEMP-'], key='-NO TEMP-')
+                ],
                 [
                     sg.Sizer(16,32), sg.Checkbox(translator('All Metadata to Header'), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')
                 ],
@@ -154,7 +160,6 @@ def setup_panel():
     
     misc_options_tab = [
         [sg.Checkbox('verbose', default=False, tooltip=tooltips['-VERBOSE-'], key='-VERBOSE-')],
-        [sg.Checkbox('output intermediate files', default=False, tooltip=tooltips['-NO TEMP-'], key='-NO TEMP-')],
     ]
 
 
@@ -229,7 +234,7 @@ def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
                     '-DATE STAMP-':'--datestamp',
                     '-OVERWRITE-':'--overwrite',
                     '-VERBOSE-':'--verbose',
-                    '-NO TEMP':'--no-temp'}
+                    '-NO TEMP-':'--no-temp'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
     
     while True:
