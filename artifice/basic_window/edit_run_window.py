@@ -95,7 +95,7 @@ def setup_panel(translator):
 
     panel = sg.Column([[
         sg.Sizer(16,16),
-        sg.Frame("Sequencing Run:", [
+        sg.Frame(translator("Sequencing Run:"), [
             [
                 sg.Sizer(32,0),
                 sg.Column(column1, element_justification='Right'),
