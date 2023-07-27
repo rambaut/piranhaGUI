@@ -114,7 +114,7 @@ def setup_builtin_protocols():
     except:
         pass
 
-def create_splash_window(version):
+def create_splash_window():
     sg.theme('CONTENT')
     
     main_logo_scaled = scale_image(consts.ICON_FILENAME,scale,(150,150))
@@ -124,7 +124,7 @@ def create_splash_window(version):
         [sg.Text(language.translator('Starting up..'), font=consts.TITLE_FONT, justification = 'center')]
         ]
     
-    window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=False, finalize=True,
+    window = sg.Window('PiranhaGUI', layout, resizable=False, enable_close_attempted_event=False, finalize=True,
                        icon=consts.ICON)
 
     return window
@@ -144,13 +144,13 @@ if __name__ == '__main__':
     version = consts.VERSION
     make_themes(version)
 
-    splash_window = create_splash_window(version)
+    splash_window = create_splash_window()
     
-    window = artifice_core.startup_window.create_startup_window(version=version) #create the startup window to check/install docker and images
+    window = artifice_core.startup_window.create_startup_window() #create the startup window to check/install docker and images
 
     splash_window.close()
 
-    advanced = artifice_core.startup_window.run_startup_window(window, version=version)
+    advanced = artifice_core.startup_window.run_startup_window(window)
     
     if advanced != None: # if button pressed to launch artifice
         try:
@@ -159,14 +159,14 @@ if __name__ == '__main__':
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running)
             else:
                 while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window(version=version)
-                    run_info = basic_window.edit_run_window.run_edit_window(window, version=version)
+                    window = basic_window.edit_run_window.create_edit_window()
+                    run_info = basic_window.edit_run_window.run_edit_window(window)
                     if run_info == None:
                         break
 
                     update_log(f'\nrun details confirmed, creating main window\n')
-                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window(version=version)
-                    edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running, version=version)
+                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window()
+                    edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running)
                     if edit != True:
                         break
             exit_time = datetime.today()

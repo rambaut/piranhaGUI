@@ -145,22 +145,31 @@ def check_for_image_updates(client, image_tag):
         response = requests.get(api_url)
         tags = response.json()
 
+        latest_version = None
         #search results for latest tag
         for tag in tags['results']:
             if tag['name'] == 'latest': 
                 latest_digest = tag['digest']
         
+        for tag in tags['results']:
+            if not tag['name'] == 'latest': 
+                digest = tag['digest']
+
+                if digest == latest_digest:
+                    latest_version = tag['name']
+                    break
+
         trunc_latest_digest = latest_digest.split('sha256:')[-1]
 
         if trunc_local_digest != trunc_latest_digest:
-            update_log(f'updated version of image: {image_tag} found')
-            return True
+            update_log(f'updated version of image, {image_tag}, found: {latest_version}')
+            return True, latest_version
         else:
-            update_log(f'confirmed image: {image_tag} is up to date')
-            return False
+            update_log(f'confirmed image, {image_tag}, is up to date:  {latest_version}')
+            return False, latest_version
     
     except:
-        return False
+        return False, None
 
 
 # Checks if docker is installed

@@ -105,18 +105,17 @@ def check_spaces(samples, column):
         if ' ' in str(row[int(column)]):
             return True
 
-
-
-def create_parse_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True, version='ARTIFICE'):
+def create_parse_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
 
     panel, column_headers = setup_panel(samples, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
 
-    content = window_functions.setup_content(panel, small=True, button_text='Close', button_key='-CLOSE-')
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Close', button_key='-CLOSE-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    
-    new_window = sg.Window(version, layout, resizable=True, finalize=True,
+    new_window = sg.Window(title, layout, resizable=True, finalize=True,
                            font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -127,7 +126,7 @@ def create_parse_window(samples, window = None, samples_column = 0, barcodes_col
     update_log(f'displaying samples: "{samples}"')
     return new_window, column_headers
 
-def view_samples(run_info, values, samples_key, version='ARTIFICE'):
+def view_samples(run_info, values, samples_key):
     if 'title' in run_info:
         if 'samples_column' in run_info:
             samples_column = run_info['samples_column']
@@ -142,7 +141,7 @@ def view_samples(run_info, values, samples_key, version='ARTIFICE'):
             barcodes_column = 1
 
         samples = values[samples_key]
-        parse_window, column_headers = create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column, version=version)
+        parse_window, column_headers = create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
         samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
 
         if samples_barcodes_indices != None:

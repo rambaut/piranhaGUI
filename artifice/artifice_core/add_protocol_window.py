@@ -24,16 +24,18 @@ def setup_panel():
 
     return panel
 
-def create_add_protocol_window(version = 'ARTIFICE', window = None):
+def create_add_protocol_window(window = None):
     update_log('creating add protocol window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    title='PiranhaGUI'
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,icon=consts.ICON, font=consts.DEFAULT_FONT, margins=(0,0), element_padding=(0,0))
 
     if window != None:

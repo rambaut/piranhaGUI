@@ -111,13 +111,15 @@ def check_barcodes(run_info):
 def create_barcodes_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
 
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
     panel, column_headers = setup_panel(samples_column, barcodes_column, has_headers)
 
-    content = window_functions.setup_content(panel, translator, small=True, button_text='Close', button_key='-BARCODES OK-')
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Close', button_key='-BARCODES OK-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window('Artifice', layout, resizable=True, font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window(title, layout, resizable=True, font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
     if window != None:
         window.close()
 

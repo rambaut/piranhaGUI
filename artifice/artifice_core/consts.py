@@ -168,6 +168,10 @@ ARTIC_URL = 'https://artic.network/'
 POSECO_URL = 'http://polionanopore.org'
 PIRANHA_URL = 'https://github.com/polio-nanopore/piranha/'
 
+RAMPART_VERSION = None
+PIRANHA_VERSION = None
+PIRANHA_GUI_VERSION = None
+
 config = retrieve_config()
 
 THEMES = { }

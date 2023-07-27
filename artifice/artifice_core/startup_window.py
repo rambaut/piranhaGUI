@@ -43,11 +43,11 @@ def setup_panel():
         docker_text_color = FAIL_TEXT_COLOUR
     
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
-        rampart_pull_text, rampart_text_color = \
+        rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
             set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
 
     got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-        piranha_pull_text, piranha_text_color = \
+        piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
             set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
 
     if is_piranhaGUI:
@@ -156,18 +156,20 @@ def setup_panel():
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8))
 
-def create_startup_window(version = 'ARTIFICE', window = None):
+def create_startup_window(window = None):
     update_log('creating startup window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, button_text='Continue', button_key='-LAUNCH-',
+    title = 'PiranhaGUI'
+
+    content = window_functions.setup_content(panel, title = title, button_text='Continue', button_key='-LAUNCH-',
                                              top_left_button_text='About', top_left_button_key='-ABOUT-', 
                                              top_right_button_text='Options', top_right_button_key='-OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
         
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,use_custom_titlebar=False,icon=consts.ICON,font=consts.DEFAULT_FONT,
                            margins=(0,0), element_padding=(0,0))
     new_window.set_min_size(size=(512,380))
@@ -211,15 +213,16 @@ def create_alt_docker_config():
 def set_image_status(name, image, check_for_updates = True, docker_client = None):
     got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
     update_available = False
+    latest_version = None
     if got_image:
         if check_for_updates:
-            update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
+            update_available, latest_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
-            image_status = translator(f'Update available for {name} software')
+            image_status = translator(f'Update available for {name} software to version {latest_version}')
             pull_text = translator(f'Install update to {name} software')
             text_color = FAIL_TEXT_COLOUR
         else:
-            image_status = translator(f'{name} software installed')
+            image_status = translator(f'{name} software version {latest_version} installed')
             pull_text = translator(f'Check for updates to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
@@ -227,7 +230,7 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         pull_text = translator(f'Install {name} software')
         text_color = FAIL_TEXT_COLOUR
 
-    return got_image, docker_client, update_available, image_status, pull_text, text_color
+    return got_image, docker_client, update_available, image_status, pull_text, text_color, latest_version
 
 def install_image(name, image_repo, window, client):
     client = docker.from_env()
@@ -278,7 +281,7 @@ def install_image(name, image_repo, window, client):
     install_popup.close()
         
 
-def run_startup_window(window, version='ARTIFICE'):
+def run_startup_window(window):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
     #print(client.configs())
     client = docker.from_env()
@@ -316,10 +319,10 @@ def run_startup_window(window, version='ARTIFICE'):
 
         elif event == '-ABOUT-':
             try:
-                about_window = create_about_window(version=version)
+                about_window = create_about_window()
                 run_about_window(about_window)
                 about_window.close()
-                window = create_startup_window(window=window,version=version)
+                window = create_startup_window(window=window)
 
             except Exception as err:
                 """
@@ -330,10 +333,10 @@ def run_startup_window(window, version='ARTIFICE'):
 
         elif event == '-OPTIONS-':
             try:
-                options_window = create_options_window(version=version)
+                options_window = create_options_window()
                 run_options_window(options_window)
                 options_window.close()
-                window = create_startup_window(window=window,version=version)
+                window = create_startup_window(window=window)
 
                 config = consts.retrieve_config()
                 try:
