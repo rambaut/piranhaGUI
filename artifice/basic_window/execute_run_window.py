@@ -153,7 +153,8 @@ def create_main_window(window = None):
 
 
     new_window = sg.Window(title, layout, resizable=True, enable_close_attempted_event=True, finalize=True,
-                           font=consts.DEFAULT_FONT,icon=consts.ICON, margins=(0,0), element_padding=(0,0))
+                           font=consts.DEFAULT_FONT,icon=consts.ICON, margins=(0,0), element_padding=(0,0),
+                           relative_location=(0,-200))
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
     new_window.set_min_size(size=(800,800))

@@ -91,11 +91,13 @@ def setup_panel(translator):
                 AltFolderBrowse(button_text=translator('Select'),),
             ]]
 
-    panel = sg.Frame("Sequencing Run:", [[sg.Column([
+    panel = sg.Column([[
+        sg.Sizer(16,16),
+        sg.Frame("Sequencing Run:", [
             [
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2),
-            ]], pad=(16,0))]], border_width=0, relief="solid", pad=(0,0))
+            ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=True)]],  expand_x=True, expand_y=True)
 
     return panel
 
@@ -115,7 +117,6 @@ def create_edit_window(window = None):
     new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
                            font=consts.DEFAULT_FONT, icon=consts.ICON, 
                            margins=(0,0), element_padding=(0,0))
-    
     new_window.set_min_size(size=(512,320))
 
     if window != None:
