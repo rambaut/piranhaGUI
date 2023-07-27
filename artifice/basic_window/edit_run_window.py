@@ -97,6 +97,7 @@ def setup_panel(translator):
         sg.Sizer(16,16),
         sg.Frame("Sequencing Run:", [
             [
+                sg.Sizer(32,0),
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2, expand_x=True),
             ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=True)]],  expand_x=True, expand_y=True)
@@ -143,7 +144,8 @@ def run_edit_window(window):
                     '-MINKNOW-':'basecalledPath',
                     '-OUTDIR-':'outputPath'}
     try:
-        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False)
+        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
+                            update_archive_button=False, max_length=MAX_LENGTH)
     except:
         pass
 
