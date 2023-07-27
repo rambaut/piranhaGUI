@@ -101,6 +101,7 @@ def create_run_options_window(version = 'ARTIFICE', window = None):
     layout = window_functions.setup_header_footer(content, small=True)
 
     new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+                           modal=True, keep_on_top=True,
                            font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -120,7 +121,8 @@ def run_run_options_window(window, run_info, version = 'ARTIFICE'):
                     '-USER NAME-':'--username',
                     '-INSTITUTE NAME-':'--institute',
                     '-ORIENTATION-':'--orientation'}
-    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
+    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
+                        update_archive_button=False, clear_previous=False)
     
     window['-SAMPLE TYPE-'].update(size=(100,100))
     while True:

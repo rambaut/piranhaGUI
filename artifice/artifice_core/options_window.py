@@ -59,11 +59,12 @@ def create_options_window(window = None, version='ARTIFICE'):
     panel = setup_panel()
 
     content = window_functions.setup_content(panel, small=True, button_text='Save', button_key='-SAVE-',
-                                             bottom_left_button_text='Reset', bottom_left_button_key='-RESET CONFIG-')
+                                             bottom_left_button_text='Cancel', bottom_left_button_key='-CANCEL-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, finalize=True,icon=consts.ICON, font=consts.DEFAULT_FONT,
+    new_window = sg.Window(version, layout, resizable=False, finalize=True, modal=True, keep_on_top=True,
+                           icon=consts.ICON, font=consts.DEFAULT_FONT,
                                                       margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -80,7 +81,7 @@ def run_options_window(window):
         if event != None:
             log_event(f'{event} [options window]')
 
-        if event == 'Exit' or event == sg.WIN_CLOSED:
+        if event == 'Exit' or event == sg.WIN_CLOSED or event == '-CANCEL-':
             window.close()
             return True
             break

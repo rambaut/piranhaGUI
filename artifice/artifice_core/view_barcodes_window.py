@@ -70,7 +70,7 @@ def save_barcodes(run_info):
             csvwriter.writerow(row)
 
 # checks if the sample file used to make barcodes file has been edited  since barcode file created
-def check_barcodes(run_info, font = None):
+def check_barcodes(run_info):
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
 
@@ -93,7 +93,7 @@ def check_barcodes(run_info, font = None):
             update_log('barcodes and samples do not match')
             overwrite_barcode = sg.popup_yes_no(
                 'Samples file appears to have been edited since it was selected. Do you want to remake the barcodes file with the modified samples?',
-                font=font
+                font=consts.DEFAULT_FONT, 
             )
             if overwrite_barcode == "Yes":
                 update_log('user chose to remake barcodes')

@@ -122,6 +122,7 @@ def error_popup(err, information=None):
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     error_popup = sg.Window(translator('ERROR'), layout, disable_close=False, finalize=True,
+                           modal=True, keep_on_top=True,
                                 resizable=False, no_titlebar=False,margins=(16,16))
     AltButton.intialise_buttons(error_popup)
 
