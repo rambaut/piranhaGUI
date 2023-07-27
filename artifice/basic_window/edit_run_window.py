@@ -91,29 +91,32 @@ def setup_panel(translator):
                 AltFolderBrowse(button_text=translator('Select'),),
             ]]
 
-    panel = sg.Frame("Sequencing Run:", [[sg.Column([
+    panel = sg.Column([[
+        sg.Sizer(16,16),
+        sg.Frame("Sequencing Run:", [
             [
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2),
-            ]], pad=(16,0))]], border_width=0, relief="solid", pad=(0,0))
+            ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=True)]],  expand_x=True, expand_y=True)
 
     return panel
 
-def create_edit_window(version = 'ARTIFICE', window = None):
+def create_edit_window(window = None):
     update_log('creating main window')
 
     panel = setup_panel(window_functions.translator)
 
-    content = window_functions.setup_content(panel, window_functions.translator, 
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
+    content = window_functions.setup_content(panel, title=title, 
                                              button_text='Continue', button_key='-CONFIRM-',
                                              bottom_left_button_text='Run Options', bottom_left_button_key='-RUN OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
 
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
                            font=consts.DEFAULT_FONT, icon=consts.ICON, 
                            margins=(0,0), element_padding=(0,0))
-    
     new_window.set_min_size(size=(512,320))
 
     if window != None:
@@ -127,7 +130,7 @@ def create_edit_window(version = 'ARTIFICE', window = None):
 
     return new_window
 
-def run_edit_window(window, version = 'ARTIFICE'):
+def run_edit_window(window):
     config = consts.retrieve_config()
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
@@ -157,7 +160,7 @@ def run_edit_window(window, version = 'ARTIFICE'):
                 if '-SAMPLES-' not in values:
                     error_popup("Samples not found in values")
 
-                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-', version=version)
+                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
                 selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
                 error_popup(err)
@@ -179,8 +182,8 @@ def run_edit_window(window, version = 'ARTIFICE'):
         """
         elif event == '-RUN OPTIONS-':
             try:
-                run_options_window = artifice_core.run_options_window.create_run_options_window(version=version)
-                run_info = artifice_core.run_options_window.run_run_options_window(run_options_window, run_info, version=version)
+                run_options_window = artifice_core.run_options_window.create_run_options_window()
+                run_info = artifice_core.run_options_window.run_run_options_window(run_options_window, run_info)
   
             except Exception as err:
                 error_popup(err)

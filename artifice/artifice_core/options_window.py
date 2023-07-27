@@ -53,17 +53,19 @@ def setup_panel():
 
     return panel
 
-def create_options_window(window = None, version='ARTIFICE'):
+def create_options_window(window = None):
     update_log(f'opening options window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Save', button_key='-SAVE-',
+    title ='PiranhaGUI';
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Save', button_key='-SAVE-',
                                              bottom_left_button_text='Cancel', bottom_left_button_key='-CANCEL-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, finalize=True, modal=True, keep_on_top=True,
+    new_window = sg.Window(title, layout, resizable=False, finalize=True, modal=True, keep_on_top=True,
                            icon=consts.ICON, font=consts.DEFAULT_FONT,
                                                       margins=(0,0), element_padding=(0,0))
 

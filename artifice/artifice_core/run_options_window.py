@@ -91,16 +91,18 @@ def setup_panel():
 
     return panel
 
-def create_run_options_window(version = 'ARTIFICE', window = None):
+def create_run_options_window(window = None):
     update_log('creating run options window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Continue', button_key='-CONFIRM-')
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Continue', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
                            modal=True, keep_on_top=True,
                            font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
 

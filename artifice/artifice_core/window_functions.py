@@ -228,7 +228,7 @@ def setup_header_footer(content, large=False, small=False):
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
-def setup_content(panel, small=False, button_text=None, button_key=None, 
+def setup_content(panel, title=None, small=False, button_text=None, button_key=None, 
                   top_left_button_text=None, top_left_button_key=None, 
                   top_right_button_text=None, top_right_button_key=None,
                   bottom_left_button_text=None, bottom_left_button_key=None):
@@ -240,7 +240,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 sg.Sizer(16,40),
                 sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
                 sg.Sizer(16,40),
-                sg.Text("Piranha v1.0.9", font=('Helvetica Neue Thin', 18))
+                sg.Text(title, font=('Helvetica Neue Thin', 18))
 
                 #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
                 #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
@@ -256,7 +256,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 sg.Sizer(16,72),
                 sg.Column(
                     [
-                        [sg.Text("Piranha", font=consts.TITLE_FONT)],
+                        [sg.Text(title, font=consts.TITLE_FONT)],
                         [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
                         [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
                     ]
