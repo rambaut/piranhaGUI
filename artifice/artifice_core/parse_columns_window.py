@@ -191,7 +191,7 @@ def run_parse_window(window, samples, column_headers):
                 window.close()
                 return samples_column, barcodes_column
             except Exception as err:
-                error_popup(err.args[0], err.args[1])
+                error_popup(err)
             break
 
 

@@ -94,10 +94,10 @@ def setup_check_container(tool_name):
 
 # creates a popup stating the exception raised with option of showing the logs
 def error_popup(err, information=None):
-    
+
     if isinstance(err, Exception):
-        message = err[0]
-        information = err[1] if len(err.args) > 1 else None
+        message = err.args[0]
+        information = err.args[1] if len(err.args) > 1 else None
     else:
         message = err
 
