@@ -29,7 +29,8 @@ def setup_panel():
         '-ALL META-':translator('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.'),
         '-DATE STAMP-':translator('Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp'),
         '-OVERWRITE-':translator('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists'),
-        '-VERBOSE-':translator('Print lots of stuff to screen')
+        '-VERBOSE-':translator('Print lots of stuff to screen'),
+        '-NO TEMP-':translator('Publish all intermediate files for debugging')
     }
 
     analysis_options_tab = [
@@ -153,6 +154,7 @@ def setup_panel():
     
     misc_options_tab = [
         [sg.Checkbox('verbose', default=False, tooltip=tooltips['-VERBOSE-'], key='-VERBOSE-')],
+        [sg.Checkbox('output intermediate files', default=False, tooltip=tooltips['-NO TEMP-'], key='-NO TEMP-')],
     ]
 
 
@@ -226,7 +228,8 @@ def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
                     '-ALL META-':'--all-metadata-to-header',
                     '-DATE STAMP-':'--datestamp',
                     '-OVERWRITE-':'--overwrite',
-                    '-VERBOSE-':'--verbose'}
+                    '-VERBOSE-':'--verbose',
+                    '-NO TEMP':'--no-temp'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
     
     while True:
