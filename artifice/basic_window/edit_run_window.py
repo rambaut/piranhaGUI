@@ -145,7 +145,7 @@ def run_edit_window(window):
                     '-OUTDIR-':'outputPath'}
     try:
         run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
-                            update_archive_button=False, max_length=MAX_LENGTH)
+                            update_archive_button=False)
     except:
         pass
 
