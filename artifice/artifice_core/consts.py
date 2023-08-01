@@ -105,6 +105,8 @@ def get_theme(key = None):
     else:
         return THEMES['DEFAULT']
 
+# This function converts relative paths to absolute paths, fixes issues for packaged application. 
+# Should be used to access any file not saved in the application data directory
 def get_resource(filepath):
     filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
     return filepath
