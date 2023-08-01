@@ -36,14 +36,14 @@ def setup_config():
     if os.path.isfile(config_path):
         return True
     else:
-        shutil.copyfile('./config.yml', config_path)
+        shutil.copyfile(get_resource('./config.yml'), config_path)
 
 # reset config to defaults
 def set_config_to_default():
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         remove(config_path)
-    shutil.copyfile('./config.yml', config_path)
+    shutil.copyfile(get_resource('./config.yml'), config_path)
 
 def get_config_value(key, config):
     try:
