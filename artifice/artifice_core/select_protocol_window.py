@@ -30,7 +30,7 @@ def setup_config():
 
 def setup_panel():
     sg.theme("PANEL")
-    translator = setup_translator
+    translator = setup_translator()
 
     config = consts.retrieve_config()
 
