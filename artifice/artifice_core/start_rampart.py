@@ -9,6 +9,7 @@ import json
 from time import sleep, time
 import re
 import multiprocessing
+import traceback
 
 from artifice_core.update_log import update_log
 import artifice_core.consts
@@ -134,7 +135,7 @@ def check_for_image(client, image_tag, popup = True, tool_name = 'RAMPART'):
 def check_for_image_updates(client, image_tag):
     if client == None:
         client = docker.from_env()
-    
+    update_log(f'checking for updates to: {image_tag}')
     try:
         image = client.images.get(image_tag)
         local_digest = image.attrs['RepoDigests'][0]
@@ -169,6 +170,8 @@ def check_for_image_updates(client, image_tag):
             return False, latest_version
     
     except:
+        update_log('error looking for updates')
+        update_log(traceback.format_exc())
         return False, None
 
 
