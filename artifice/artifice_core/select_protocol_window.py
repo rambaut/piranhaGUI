@@ -7,7 +7,7 @@ from os import listdir, mkdir
 from pathlib import Path
 from shutil import rmtree, copytree
 
-from artifice_core.language import translator
+from artifice_core.language import translator,setup_translator
 import artifice_core.parse_columns_window
 import artifice_core.consts as consts
 import artifice_core.start_rampart
@@ -30,6 +30,7 @@ def setup_config():
 
 def setup_panel():
     sg.theme("PANEL")
+    translator = setup_translator
 
     config = consts.retrieve_config()
 
@@ -190,6 +191,7 @@ def select_protocol(config, values, window):
 
 def run_protocol_window(window, version = 'ARTIFICE'):
     config = consts.retrieve_config()
+    translator = setup_translator()
     
     
     while True:
