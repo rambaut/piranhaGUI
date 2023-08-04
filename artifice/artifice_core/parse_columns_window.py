@@ -8,7 +8,7 @@ import sys
 import artifice_core.consts as consts
 import artifice_core.view_barcodes_window
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup
@@ -44,6 +44,7 @@ def samples_to_list(filepath, has_headers = True, trim = True):
 
 def setup_panel(samples, barcodes_column = 0, samples_column = 1, has_headers = True):
     sg.theme('PANEL')
+    translator = setup_translator()
 
     theme=consts.THEMES[sg.theme()]
 

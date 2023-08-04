@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import traceback
 import docker
 
-from artifice_core.language import translator
+from artifice_core.language import translator,setup_translator
 import artifice_core.parse_columns_window
 import artifice_core.consts as consts
 import artifice_core.start_rampart
@@ -106,8 +106,9 @@ def setup_panel(translator):
 
 def create_edit_window(window = None):
     update_log('creating main window')
+    translator = setup_translator()
 
-    panel = setup_panel(window_functions.translator)
+    panel = setup_panel(translator)
 
     title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
 
@@ -138,6 +139,7 @@ def run_edit_window(window):
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
     docker_client = docker.from_env()
+    translator = setup_translator()
 
 
     element_dict = {'-SAMPLES-':'samples',

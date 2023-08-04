@@ -3,7 +3,7 @@ import sys
 
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
@@ -13,6 +13,7 @@ def setup_panel():
     sg.theme("PANEL")
 
     config = consts.retrieve_config()
+    translator = setup_translator()
 
     tooltips = {
         '-REFERENCE SEQUENCES-':translator('Custom reference sequences file.'),

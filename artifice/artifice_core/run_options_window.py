@@ -3,7 +3,7 @@ import sys
 
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
@@ -11,6 +11,7 @@ from artifice_core.manage_runs import save_run, save_changes, load_run
 
 def setup_panel():
     sg.theme("PANEL")
+    translator = setup_translator()
 
     config = consts.retrieve_config()
 

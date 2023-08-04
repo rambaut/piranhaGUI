@@ -11,7 +11,7 @@ from io import BytesIO
 
 import artifice_core.start_rampart
 import artifice_core.consts as consts
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
@@ -94,6 +94,7 @@ def setup_check_container(tool_name):
 
 # creates a popup stating the exception raised with option of showing the logs
 def error_popup(err, information=None):
+    translator = setup_translator()
 
     if isinstance(err, Exception):
         message = err.args[0]
@@ -238,6 +239,7 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
                   top_right_button_text=None, top_right_button_key=None,
                   bottom_left_button_text=None, bottom_left_button_key=None):
     sg.theme("CONTENT")
+    translator = setup_translator()
 
     layout = []
     if small:

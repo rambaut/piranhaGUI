@@ -16,20 +16,22 @@ from shutil import unpack_archive
 import artifice_core.start_rampart
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup
-from artifice_core.window_functions import error_popup, translator
+from artifice_core.window_functions import error_popup
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
 
 def setup_panel():
+    translator = setup_translator()
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
+    print(config['LANGUAGE'])
     docker_client = None
 
     is_piranhaGUI = True
@@ -44,11 +46,11 @@ def setup_panel():
     
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
         rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-            set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
+            set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator)
 
     got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
         piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
-            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
 
     if is_piranhaGUI:
         if not got_piranha_image:
@@ -79,7 +81,7 @@ def setup_panel():
 
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
                     piranha_pull_text, piranha_text_color = \
-                        set_image_status('PIRANHA',translator,consts.PIRANHA_IMAGE,docker_client=docker_client)
+                        set_image_status('PIRANHA',translator,consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
 
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
@@ -210,7 +212,9 @@ def create_alt_docker_config():
             file.write(replace_data)
 
 # set up image status text and button after checking if image is installed/up to date
-def set_image_status(name, image, check_for_updates = True, docker_client = None):
+def set_image_status(name, image, check_for_updates = True, docker_client = None, translator = None):
+    if translator == None:
+        translator = setup_translator()
     got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
     update_available = False
     latest_version = None
@@ -232,7 +236,9 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
 
     return got_image, docker_client, update_available, image_status, pull_text, text_color, latest_version
 
-def install_image(name, image_repo, window, client):
+def install_image(name, image_repo, window, client, translator = None):
+    if translator == None:
+        translator = setup_translator()
     client = docker.from_env()
     install_popup = create_install_popup(name)
     old_images = client.images.list('polionanopore/piranha')
@@ -268,23 +274,25 @@ def install_image(name, image_repo, window, client):
     try:
         client.images.get(image_tag)
     except:
-        err_text = window_functions.translator('Docker was unable to download software')
+        err_text = translator('Docker was unable to download software')
         raise Exception(err_text)
 
     image_status = f'{name} software installed'
-    image_status = window_functions.translator(image_status)
+    image_status = translator(image_status)
     pull_text = f'Check for updates to {name} software'
-    pull_text = window_functions.translator(pull_text)
+    pull_text = translator(pull_text)
     text_color = PASS_TEXT_COLOUR
     window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
         
 
-def run_startup_window(window):
+def run_startup_window(window, translator = None):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
     #print(client.configs())
     client = docker.from_env()
+    if translator == None:
+        translator = setup_translator()
 
     while True:
         event, values = window.read()
@@ -305,14 +313,14 @@ def run_startup_window(window):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART', consts.RAMPART_IMAGE,window,client)
+                install_image('RAMPART', consts.RAMPART_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client)
+                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err)
@@ -343,6 +351,7 @@ def run_startup_window(window):
                     language = config['LANGUAGE']
                 except:
                     language = 'English'
+
             except Exception as err:
                 """
                 update_log(traceback.format_exc())
