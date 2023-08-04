@@ -174,23 +174,26 @@ def run_parse_window(window, samples, column_headers):
 
         if event == 'Exit' or event == sg.WIN_CLOSED or event == '-CLOSE-':
             try:
-                samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
-                barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
-                #print('columns: '+str(samples_column)+' '+str(barcodes_column))
-                update_log(f'column {samples_column} selected for samples, column {barcodes_column} selected for barcodes')
+                if values != None:
+                    samples_column = column_headers.index(values['-SAMPLES COLUMN-'])
+                    barcodes_column = column_headers.index(values['-BARCODES COLUMN-'])
+                    #print('columns: '+str(samples_column)+' '+str(barcodes_column))
+                    update_log(f'column {samples_column} selected for samples, column {barcodes_column} selected for barcodes')
 
-                if barcodes_column == samples_column:
-                    raise Exception('same column for barcodes and samples', 'Select different columns for barcodes and samples IDs')
+                    if barcodes_column == samples_column:
+                        raise Exception('same column for barcodes and samples', 'Select different columns for barcodes and samples IDs')
 
-                if check_for_duplicate_entries(samples, barcodes_column):
-                    raise Exception('duplicates in the barcodes column', 'Check the samples file for duplicate barcodes, or select a different column')
+                    if check_for_duplicate_entries(samples, barcodes_column):
+                        raise Exception('duplicates in the barcodes column', 'Check the samples file for duplicate barcodes, or select a different column')
 
-                if check_for_duplicate_entries(samples, samples_column):
-                    raise Exception('duplicates in the samples column', 'Check the samples file for duplicate sample IDs, or select a different column')
+                    if check_for_duplicate_entries(samples, samples_column):
+                        raise Exception('duplicates in the samples column', 'Check the samples file for duplicate sample IDs, or select a different column')
 
 
-                window.close()
-                return samples_column, barcodes_column
+                    window.close()
+                    return samples_column, barcodes_column
+                else:
+                    return
             except Exception as err:
                 error_popup(err)
             break

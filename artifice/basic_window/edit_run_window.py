@@ -166,8 +166,10 @@ def run_edit_window(window):
                 if '-SAMPLES-' not in values:
                     error_popup("Samples not found in values")
 
-                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
-                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
+                new_run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
+                if new_run_info != None:
+                    run_info = new_run_info
+                    selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
                 error_popup(err)
                 """
