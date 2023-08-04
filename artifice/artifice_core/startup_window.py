@@ -31,7 +31,6 @@ def setup_panel():
     translator = setup_translator()
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
-    print(config['LANGUAGE'])
     docker_client = None
 
     is_piranhaGUI = True
