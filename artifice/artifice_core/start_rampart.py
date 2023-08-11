@@ -137,10 +137,6 @@ def check_for_image_updates(client, image_tag):
         client = docker.from_env()
     update_log(f'checking for updates to: {image_tag}')
     try:
-        image = client.images.get(image_tag)
-        local_digest = image.attrs['RepoDigests'][0]
-        trunc_local_digest = local_digest.split('sha256:')[-1]
-
         api_url =  f'https://hub.docker.com/v2/repositories/{image_tag}/tags'
 
         response = requests.get(api_url)
@@ -149,8 +145,11 @@ def check_for_image_updates(client, image_tag):
         latest_version = None
         #search results for latest tag
         for tag in tags['results']:
-            if tag['name'] == 'latest': 
+            if tag['name'] == 'latest':
+                #print(tag)
+                latest_date = tag['last_pushed'] 
                 latest_digest = tag['digest']
+                print(latest_date)
         
         for tag in tags['results']:
             if not tag['name'] == 'latest': 
@@ -159,8 +158,13 @@ def check_for_image_updates(client, image_tag):
                 if digest == latest_digest:
                     latest_version = tag['name']
                     break
-
+        
+        #print(latest_digest)
         trunc_latest_digest = latest_digest.split('sha256:')[-1]
+    
+        image = client.images.get(image_tag)
+        local_digest = image.attrs['RepoDigests'][0]
+        trunc_local_digest = local_digest.split('sha256:')[-1]
 
         if trunc_local_digest != trunc_latest_digest:
             update_log(f'updated version of image, {image_tag}, found: {latest_version}')
