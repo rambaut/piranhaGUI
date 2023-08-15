@@ -147,7 +147,7 @@ def check_for_image_updates(client, image_tag):
         for tag in tags['results']:
             if tag['name'] == 'latest':
                 #print(tag)
-                latest_date = tag['last_pushed'] 
+                latest_date = str(tag['last_updated'])[0:10]
                 latest_digest = tag['digest']
                 print(latest_date)
         
@@ -161,12 +161,24 @@ def check_for_image_updates(client, image_tag):
         
         #print(latest_digest)
         trunc_latest_digest = latest_digest.split('sha256:')[-1]
-    
-        image = client.images.get(image_tag)
-        local_digest = image.attrs['RepoDigests'][0]
-        trunc_local_digest = local_digest.split('sha256:')[-1]
 
-        if trunc_local_digest != trunc_latest_digest:
+        image = client.images.get(image_tag)
+        new_version_available = False
+        try:
+            local_digest = image.attrs['RepoDigests'][0]
+
+            if len(local_digest) > 5:
+                trunc_local_digest = local_digest.split('sha256:')[-1]
+                if trunc_local_digest != trunc_latest_digest:
+                    new_version_available = True
+            else:
+                raise Exception
+        except:
+            local_date = str(image.attrs['Created'])[0:10]
+            if local_date != latest_date:
+                new_version_available = True
+
+        if new_version_available:
             update_log(f'updated version of image, {image_tag}, found: {latest_version}')
             return True, latest_version
         else:
