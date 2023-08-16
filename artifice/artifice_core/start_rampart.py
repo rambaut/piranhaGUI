@@ -149,7 +149,6 @@ def check_for_image_updates(client, image_tag):
                 #print(tag)
                 latest_date = str(tag['last_updated'])[0:10]
                 latest_digest = tag['digest']
-                print(latest_date)
         
         for tag in tags['results']:
             if not tag['name'] == 'latest': 
