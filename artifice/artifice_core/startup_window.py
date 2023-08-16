@@ -53,10 +53,13 @@ def setup_panel():
 
     if is_piranhaGUI:
         if not got_piranha_image:
-            print('u')
             # attempt to install piranha image from file
-            if sys.platform.startswith('win') or sys.platform.startswith("darwin"):
+            if sys.platform.startswith('win'):
                 image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
+            elif sys.platform.startswith('darwin'):
+                #image_file_path = str(consts.get_datadir() / 'piranha.tar')
+                image_file_path = str(consts.get_resource('./resources/piranha.tar'))
+                print(image_file_path)
             else:
                 image_file_path = '/usr/local/ARTIFICE/piranha.tar'
 
@@ -71,16 +74,20 @@ def setup_panel():
                 update_log(f'loading {image_file_path}')
                 try:
                     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
-                    with open(image_file_path, 'r') as image_file:
+                    with open(image_file_path, 'rb') as image_file:
                         docker_client.images.load(image_file)
-                        os.remove(image_file_path) # delete image file now that we're done with it
+                        #os.remove(image_file_path) # delete image file now that we're done with it
                 except Exception as err:
-                    update_log(err)
+                    update_log(traceback.format_exc())
                     update_log('unable to load PIRANHA image from file')
-
+                
+                print('u`')
+                sleep(10)
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-                    piranha_pull_text, piranha_text_color = \
-                        set_image_status('PIRANHA',translator,consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
+                    piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION  = \
+                        set_image_status('PIRANHA',translator,consts.PIRANHA_IMAGE,docker_client=None,translator=translator)
+                
+                print(got_piranha_image)
 
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
