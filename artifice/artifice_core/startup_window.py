@@ -75,7 +75,7 @@ def setup_panel():
                     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
                     with open(image_file_path, 'rb') as image_file:
                         docker_client.images.load(image_file)
-                        #os.remove(image_file_path) # delete image file now that we're done with it
+                        os.remove(image_file_path) # delete image file now that we're done with it
                 except Exception as err:
                     update_log(traceback.format_exc())
                     update_log('unable to load PIRANHA image from file')
