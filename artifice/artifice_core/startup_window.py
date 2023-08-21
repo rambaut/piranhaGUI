@@ -258,7 +258,7 @@ def install_image(name, image_repo, window, client, translator = None):
     
     try:
         client.images.pull(image_tag)
-    except: #docker.credentials.errors.InitializationError as err:
+    except Exception as err: #docker.credentials.errors.InitializationError as err:
         update_log(err)
         update_log('Probably credential initialisation error (on MacOS), attempting fix...')
         create_alt_docker_config()
