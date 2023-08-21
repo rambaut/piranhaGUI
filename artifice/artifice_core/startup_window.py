@@ -42,10 +42,6 @@ def setup_panel():
     else:
         docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
-    
-    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
-        rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-            set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator)
 
     got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
         piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
@@ -75,7 +71,7 @@ def setup_panel():
                     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
                     with open(image_file_path, 'rb') as image_file:
                         docker_client.images.load(image_file)
-                        os.remove(image_file_path) # delete image file now that we're done with it
+                        #os.remove(image_file_path) # delete image file now that we're done with it
                 except Exception as err:
                     update_log(traceback.format_exc())
                     update_log('unable to load PIRANHA image from file')
@@ -85,6 +81,10 @@ def setup_panel():
                 piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
                 set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
 
+    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+    rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+    set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator)
+    
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
     show_piranha_button = is_piranhaGUI and (not got_piranha_image or piranha_update_available)
@@ -258,9 +258,9 @@ def install_image(name, image_repo, window, client, translator = None):
     
     try:
         client.images.pull(image_tag)
-    except docker.credentials.errors.InitializationError as err:
+    except: #docker.credentials.errors.InitializationError as err:
         update_log(err)
-        update_log('Credential initialisation error (likely MacOS), attempting fix...')
+        update_log('Probably credential initialisation error (on MacOS), attempting fix...')
         create_alt_docker_config()
         docker_data_dir = consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
@@ -268,7 +268,6 @@ def install_image(name, image_repo, window, client, translator = None):
 
         command = ["/usr/local/bin/docker", "--config",docker_data_dir,"pull", image_tag]
         update_log(command)
-        #os.system(command)
         ret = subprocess.run(command, shell=False, text=True, capture_output=True)
         update_log(ret.stdout)
         update_log(ret.stderr)
