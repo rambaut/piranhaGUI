@@ -11,7 +11,7 @@ from io import BytesIO
 
 import artifice_core.start_rampart
 import artifice_core.consts as consts
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
@@ -94,6 +94,14 @@ def setup_check_container(tool_name):
 
 # creates a popup stating the exception raised with option of showing the logs
 def error_popup(err, information=None):
+    translator = setup_translator()
+
+    if isinstance(err, Exception):
+        message = err.args[0]
+        information = err.args[1] if len(err.args) > 1 else None
+    else:
+        message = err
+
     update_log(traceback.format_exc())
     sg.theme('DEFAULT')
     #log = ''
@@ -101,9 +109,7 @@ def error_popup(err, information=None):
     with open(filepath, 'r') as logfile:
         log = logfile.read()
 
-
-    er_tr = translator('Error')
-    error_message = f'{er_tr}: {err}'
+    error_message = f'{translator("Error")}: {translator(message)}'
 
     information_message = translator(information) if information != None \
         else translator('Please check the log file for more information')
@@ -122,6 +128,7 @@ def error_popup(err, information=None):
     ]
     #inst_frame = sg.Frame('', [[sg.Text(f'Pulling {name} image...')],],size=(250,50))
     error_popup = sg.Window(translator('ERROR'), layout, disable_close=False, finalize=True,
+                           modal=True, keep_on_top=True,
                                 resizable=False, no_titlebar=False,margins=(16,16))
     AltButton.intialise_buttons(error_popup)
 
@@ -163,6 +170,7 @@ def scale_image(filename, scale, size):
 
     #processed_image = str(consts.get_datadir() / 'resources' / filename)
     image_file = f'./resources/{filename}'
+    image_file = consts.get_resource(image_file)
     size = (int(size[0]*scale), int(size[1]*scale))
     im = Image.open(image_file)
     im = im.resize(size, resample=Image.BICUBIC)
@@ -226,11 +234,12 @@ def setup_header_footer(content, large=False, small=False):
     return layout
 
 # Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
-def setup_content(panel, small=False, button_text=None, button_key=None, 
+def setup_content(panel, title=None, small=False, button_text=None, button_key=None, 
                   top_left_button_text=None, top_left_button_key=None, 
                   top_right_button_text=None, top_right_button_key=None,
                   bottom_left_button_text=None, bottom_left_button_key=None):
     sg.theme("CONTENT")
+    translator = setup_translator()
 
     layout = []
     if small:
@@ -238,7 +247,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 sg.Sizer(16,40),
                 sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
                 sg.Sizer(16,40),
-                sg.Text("Piranha v1.0.9", font=('Helvetica Neue Thin', 18))
+                sg.Text(title, font=('Helvetica Neue Thin', 18))
 
                 #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
                 #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
@@ -254,7 +263,7 @@ def setup_content(panel, small=False, button_text=None, button_key=None,
                 sg.Sizer(16,72),
                 sg.Column(
                     [
-                        [sg.Text("Piranha", font=consts.TITLE_FONT)],
+                        [sg.Text(title, font=consts.TITLE_FONT)],
                         [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
                         [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
                     ]

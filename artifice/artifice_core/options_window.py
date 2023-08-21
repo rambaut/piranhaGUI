@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import traceback
 
 import artifice_core.consts as consts
-from artifice_core.language import translator, get_translate_scheme
+from artifice_core.language import translator, get_translate_scheme, setup_translator
 import artifice_core.window_functions as window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
@@ -12,6 +12,7 @@ from artifice_core.window_functions import error_popup, scale_window
 
 def setup_panel():
     sg.theme("PANEL")
+    translator = setup_translator()
 
     translate_scheme = get_translate_scheme()
     try:
@@ -53,17 +54,20 @@ def setup_panel():
 
     return panel
 
-def create_options_window(window = None, version='ARTIFICE'):
+def create_options_window(window = None):
     update_log(f'opening options window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Save', button_key='-SAVE-',
-                                             bottom_left_button_text='Reset', bottom_left_button_key='-RESET CONFIG-')
+    title ='PiranhaGUI';
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Save', button_key='-SAVE-',
+                                             bottom_left_button_text='Cancel', bottom_left_button_key='-CANCEL-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, finalize=True,icon=consts.ICON, font=consts.DEFAULT_FONT,
+    new_window = sg.Window(title, layout, resizable=False, finalize=True, modal=True, keep_on_top=True,
+                           icon=consts.ICON, font=consts.DEFAULT_FONT,
                                                       margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -80,7 +84,7 @@ def run_options_window(window):
         if event != None:
             log_event(f'{event} [options window]')
 
-        if event == 'Exit' or event == sg.WIN_CLOSED:
+        if event == 'Exit' or event == sg.WIN_CLOSED or event == '-CANCEL-':
             window.close()
             return True
             break

@@ -3,7 +3,7 @@ import sys
 
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
@@ -11,6 +11,7 @@ from artifice_core.manage_runs import save_run, save_changes, load_run
 
 def setup_panel():
     sg.theme("PANEL")
+    translator = setup_translator()
 
     config = consts.retrieve_config()
 
@@ -91,16 +92,19 @@ def setup_panel():
 
     return panel
 
-def create_run_options_window(version = 'ARTIFICE', window = None):
+def create_run_options_window(window = None):
     update_log('creating run options window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Continue', button_key='-CONFIRM-')
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Continue', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+                           modal=True, # keep_on_top=True, <- commented this out for now, creates issues for tooltips not showing correctly on mac, More info: https://github.com/PySimpleGUI/PySimpleGUI/issues/5952
                            font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
 
     if window != None:
@@ -120,7 +124,8 @@ def run_run_options_window(window, run_info, version = 'ARTIFICE'):
                     '-USER NAME-':'--username',
                     '-INSTITUTE NAME-':'--institute',
                     '-ORIENTATION-':'--orientation'}
-    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
+    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
+                        update_archive_button=False, clear_previous=False)
     
     window['-SAMPLE TYPE-'].update(size=(100,100))
     while True:

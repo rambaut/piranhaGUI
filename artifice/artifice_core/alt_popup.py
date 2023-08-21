@@ -162,7 +162,7 @@ def alt_popup(*args, title=None, button_color=None, background_color=None, text_
 # lazy function to create popup_ok, identical to PySimpleGUI popup_ok but uses alt_buttons
 def alt_popup_ok(*args, title=None, button_color=None, background_color=None, text_color=None, auto_close=False,
              auto_close_duration=None, non_blocking=False, icon=None, line_width=None, font=None,
-             no_titlebar=False, grab_anywhere=False, keep_on_top=None, location=(None, None), relative_location=(None, None), image=None, modal=True):
+             no_titlebar=False, grab_anywhere=False, keep_on_top=True, location=(None, None), relative_location=(None, None), image=None, modal=True):
     """
     Display Popup with OK button only
 
@@ -213,7 +213,7 @@ def alt_popup_ok(*args, title=None, button_color=None, background_color=None, te
 # lazy function to create popup_yes_no, identical to PySimpleGUI popup_yes_no but uses alt_buttons
 def alt_popup_yes_no(*args, title=None, button_color=None, background_color=None, text_color=None, auto_close=False,
                  auto_close_duration=None, non_blocking=False, icon=None, line_width=None, font=None,
-                 no_titlebar=False, grab_anywhere=False, keep_on_top=None, location=(None, None), relative_location=(None, None), image=None, modal=True):
+                 no_titlebar=False, grab_anywhere=False, keep_on_top=True, location=(None, None), relative_location=(None, None), image=None, modal=True):
     """
     Display Popup with Yes and No buttons
 

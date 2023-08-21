@@ -12,7 +12,7 @@ import sys
 from webbrowser import open_new_tab
 import webbrowser
 
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 import artifice_core.start_rampart
 import artifice_core.consts as consts
 import artifice_core.select_protocol_window
@@ -25,6 +25,7 @@ from artifice_core.alt_button import AltButton
 
 def setup_panel(config):
     sg.theme("PANEL")
+    translator = setup_translator()
 
     theme = consts.THEMES[sg.theme()]
 
@@ -44,8 +45,8 @@ def setup_panel(config):
         rampart_running = False
 
     #button_size=(220,36)
-    rampart_tab_title = translator('RAMPART OUTPUT')
-    piranha_tab_title = translator('PIRANHA OUTPUT')
+    rampart_tab_title = translator('RAMPART output')
+    piranha_tab_title = translator('Piranha output')
     selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
     rampart_tab = [[
@@ -137,21 +138,24 @@ def setup_panel(config):
 
     return panel, rampart_running, piranha_running
 
-def create_main_window(version = 'ARTIFICE', window = None):
+def create_main_window(window = None):
     update_log('creating main window')
 
-    config = artifice_core.consts.retrieve_config()
+    config = consts.retrieve_config()
   
     panel, rampart_running, piranha_running = setup_panel(config)
 
-    content = window_functions.setup_content(panel, 
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
+    content = window_functions.setup_content(panel, title=title,
                                              top_left_button_text=translator('Edit run'), top_left_button_key='-EDIT-')
 
     layout = window_functions.setup_header_footer(content)
 
 
-    new_window = sg.Window(version, layout, resizable=True, enable_close_attempted_event=True, finalize=True,
-                           font=consts.DEFAULT_FONT,icon=consts.ICON, margins=(0,0), element_padding=(0,0))
+    new_window = sg.Window(title, layout, resizable=True, enable_close_attempted_event=True, finalize=True,
+                           font=consts.DEFAULT_FONT,icon=consts.ICON, margins=(0,0), element_padding=(0,0),
+                           relative_location=(0,-200))
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
     new_window.set_min_size(size=(800,800))
@@ -164,8 +168,9 @@ def create_main_window(version = 'ARTIFICE', window = None):
 
     return new_window, rampart_running, piranha_running
 
-def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = False, piranha_running = False):
+def run_main_window(window, run_info, rampart_running = False, piranha_running = False):
     config = consts.retrieve_config()
+    translator = setup_translator()
    
     rampart_protocol = config['PROTOCOL']
 
@@ -333,8 +338,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
 
         elif event == '-SELECT PROTOCOL-':
             try:
-                protocol_window = artifice_core.select_protocol_window.create_protocol_window(version=version)
-                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window, version=version)
+                protocol_window = artifice_core.select_protocol_window.create_protocol_window()
+                rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window)
                 if rampart_protocol != None:
                     window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
 
@@ -343,8 +348,8 @@ def run_main_window(window, run_info, version = 'ARTIFICE', rampart_running = Fa
 
         elif event == '-PIRANHA OPTIONS-':
             try:
-                piranha_options_window = artifice_core.piranha_options_window.create_piranha_options_window(version=version)
-                run_info = artifice_core.piranha_options_window.run_piranha_options_window(piranha_options_window, run_info, version=version)
+                piranha_options_window = artifice_core.piranha_options_window.create_piranha_options_window()
+                run_info = artifice_core.piranha_options_window.run_piranha_options_window(piranha_options_window, run_info)
   
             except Exception as err:
                 error_popup(err)

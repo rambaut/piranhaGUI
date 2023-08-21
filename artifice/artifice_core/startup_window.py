@@ -16,18 +16,19 @@ from shutil import unpack_archive
 import artifice_core.start_rampart
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup
-from artifice_core.window_functions import error_popup, translator
+from artifice_core.window_functions import error_popup
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
 
 def setup_panel():
+    translator = setup_translator()
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
     docker_client = None
@@ -41,21 +42,19 @@ def setup_panel():
     else:
         docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
-    
-    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
-        rampart_pull_text, rampart_text_color = \
-            set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
 
     got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-        piranha_pull_text, piranha_text_color = \
-            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+        piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
 
     if is_piranhaGUI:
         if not got_piranha_image:
-            print('u')
             # attempt to install piranha image from file
-            if sys.platform.startswith('win') or sys.platform.startswith("darwin"):
+            if sys.platform.startswith('win'):
                 image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
+            elif sys.platform.startswith('darwin'):
+                #image_file_path = str(consts.get_datadir() / 'piranha.tar')
+                image_file_path = str(consts.get_resource('./resources/piranha.tar'))
             else:
                 image_file_path = '/usr/local/ARTIFICE/piranha.tar'
 
@@ -70,17 +69,22 @@ def setup_panel():
                 update_log(f'loading {image_file_path}')
                 try:
                     filepath = str(artifice_core.consts.get_datadir() / artifice_core.consts.LOGFILE)
-                    with open(image_file_path, 'r') as image_file:
+                    with open(image_file_path, 'rb') as image_file:
                         docker_client.images.load(image_file)
                         os.remove(image_file_path) # delete image file now that we're done with it
                 except Exception as err:
-                    update_log(err)
+                    update_log(traceback.format_exc())
                     update_log('unable to load PIRANHA image from file')
-
+                
+                
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-                    piranha_pull_text, piranha_text_color = \
-                        set_image_status('PIRANHA',translator,consts.PIRANHA_IMAGE,docker_client=docker_client)
+                piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
 
+    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+    rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+    set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator)
+    
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
     show_piranha_button = is_piranhaGUI and (not got_piranha_image or piranha_update_available)
@@ -156,18 +160,20 @@ def setup_panel():
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8))
 
-def create_startup_window(version = 'ARTIFICE', window = None):
+def create_startup_window(window = None):
     update_log('creating startup window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, button_text='Continue', button_key='-LAUNCH-',
+    title = 'PiranhaGUI'
+
+    content = window_functions.setup_content(panel, title = title, button_text='Continue', button_key='-LAUNCH-',
                                              top_left_button_text='About', top_left_button_key='-ABOUT-', 
                                              top_right_button_text='Options', top_right_button_key='-OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
         
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,use_custom_titlebar=False,icon=consts.ICON,font=consts.DEFAULT_FONT,
                            margins=(0,0), element_padding=(0,0))
     new_window.set_min_size(size=(512,380))
@@ -208,18 +214,21 @@ def create_alt_docker_config():
             file.write(replace_data)
 
 # set up image status text and button after checking if image is installed/up to date
-def set_image_status(name, image, check_for_updates = True, docker_client = None):
+def set_image_status(name, image, check_for_updates = True, docker_client = None, translator = None):
+    if translator == None:
+        translator = setup_translator()
     got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
     update_available = False
+    latest_version = None
     if got_image:
         if check_for_updates:
-            update_available = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
+            update_available, latest_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
-            image_status = translator(f'Update available for {name} software')
+            image_status = translator(f'Update available for {name} software to version {latest_version}')
             pull_text = translator(f'Install update to {name} software')
             text_color = FAIL_TEXT_COLOUR
         else:
-            image_status = translator(f'{name} software installed')
+            image_status = translator(f'{name} software version {latest_version} installed')
             pull_text = translator(f'Check for updates to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
@@ -227,9 +236,11 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         pull_text = translator(f'Install {name} software')
         text_color = FAIL_TEXT_COLOUR
 
-    return got_image, docker_client, update_available, image_status, pull_text, text_color
+    return got_image, docker_client, update_available, image_status, pull_text, text_color, latest_version
 
-def install_image(name, image_repo, window, client):
+def install_image(name, image_repo, window, client, translator = None):
+    if translator == None:
+        translator = setup_translator()
     client = docker.from_env()
     install_popup = create_install_popup(name)
     old_images = client.images.list('polionanopore/piranha')
@@ -247,9 +258,9 @@ def install_image(name, image_repo, window, client):
     
     try:
         client.images.pull(image_tag)
-    except docker.credentials.errors.InitializationError as err:
+    except Exception as err: #docker.credentials.errors.InitializationError as err:
         update_log(err)
-        update_log('Credential initialisation error (likely MacOS), attempting fix...')
+        update_log('Probably credential initialisation error (on MacOS), attempting fix...')
         create_alt_docker_config()
         docker_data_dir = consts.get_datadir() / 'docker'
         docker_data_dir = str(docker_data_dir).replace(' ', '\\ ')
@@ -257,7 +268,6 @@ def install_image(name, image_repo, window, client):
 
         command = ["/usr/local/bin/docker", "--config",docker_data_dir,"pull", image_tag]
         update_log(command)
-        #os.system(command)
         ret = subprocess.run(command, shell=False, text=True, capture_output=True)
         update_log(ret.stdout)
         update_log(ret.stderr)
@@ -265,23 +275,25 @@ def install_image(name, image_repo, window, client):
     try:
         client.images.get(image_tag)
     except:
-        err_text = window_functions.translator('Docker was unable to download software')
+        err_text = translator('Docker was unable to download software')
         raise Exception(err_text)
 
     image_status = f'{name} software installed'
-    image_status = window_functions.translator(image_status)
+    image_status = translator(image_status)
     pull_text = f'Check for updates to {name} software'
-    pull_text = window_functions.translator(pull_text)
+    pull_text = translator(pull_text)
     text_color = PASS_TEXT_COLOUR
     window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
         
 
-def run_startup_window(window, version='ARTIFICE'):
+def run_startup_window(window, translator = None):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
     #print(client.configs())
     client = docker.from_env()
+    if translator == None:
+        translator = setup_translator()
 
     while True:
         event, values = window.read()
@@ -302,24 +314,24 @@ def run_startup_window(window, version='ARTIFICE'):
 
         elif event == '-RAMPART INSTALL-':
             try:
-                install_image('RAMPART', consts.RAMPART_IMAGE,window,client)
+                install_image('RAMPART', consts.RAMPART_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err)
 
         elif event == '-PIRANHA INSTALL-':
             try:
-                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client)
+                install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
             except Exception as err:
                 error_popup(err)
 
         elif event == '-ABOUT-':
             try:
-                about_window = create_about_window(version=version)
+                about_window = create_about_window()
                 run_about_window(about_window)
                 about_window.close()
-                window = create_startup_window(window=window,version=version)
+                window = create_startup_window(window=window)
 
             except Exception as err:
                 """
@@ -330,16 +342,17 @@ def run_startup_window(window, version='ARTIFICE'):
 
         elif event == '-OPTIONS-':
             try:
-                options_window = create_options_window(version=version)
+                options_window = create_options_window()
                 run_options_window(options_window)
                 options_window.close()
-                window = create_startup_window(window=window,version=version)
+                window = create_startup_window(window=window)
 
                 config = consts.retrieve_config()
                 try:
                     language = config['LANGUAGE']
                 except:
                     language = 'English'
+
             except Exception as err:
                 """
                 update_log(traceback.format_exc())

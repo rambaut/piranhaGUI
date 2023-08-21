@@ -2,13 +2,14 @@ import PySimpleGUI as sg
 
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
 
 def setup_panel():
     sg.theme("PANEL")
+    translator = setup_translator()
 
     button_size=(120,36)
     layout = [
@@ -24,16 +25,18 @@ def setup_panel():
 
     return panel
 
-def create_add_protocol_window(version = 'ARTIFICE', window = None):
+def create_add_protocol_window(window = None):
     update_log('creating add protocol window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    title='PiranhaGUI'
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,icon=consts.ICON, font=consts.DEFAULT_FONT, margins=(0,0), element_padding=(0,0))
 
     if window != None:

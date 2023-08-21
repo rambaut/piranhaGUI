@@ -3,7 +3,7 @@ import sys
 
 import artifice_core.consts as consts
 import artifice_core.window_functions as window_functions
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
@@ -13,6 +13,7 @@ def setup_panel():
     sg.theme("PANEL")
 
     config = consts.retrieve_config()
+    translator = setup_translator()
 
     tooltips = {
         '-REFERENCE SEQUENCES-':translator('Custom reference sequences file.'),
@@ -29,7 +30,8 @@ def setup_panel():
         '-ALL META-':translator('Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.'),
         '-DATE STAMP-':translator('Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp'),
         '-OVERWRITE-':translator('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists'),
-        '-VERBOSE-':translator('Print lots of stuff to screen')
+        '-VERBOSE-':translator('Print lots of stuff to screen'),
+        '-NO TEMP-':translator('Publish all intermediate files for debugging')
     }
 
     analysis_options_tab = [
@@ -121,7 +123,10 @@ def setup_panel():
                 ],
                 [
                     sg.Sizer(16,32),
-                ],  
+                ],
+                [
+                    sg.Sizer(16,32),
+                ],
                 [
                     sg.Sizer(16,32),
                 ],
@@ -141,7 +146,10 @@ def setup_panel():
                 ],
                 [
                     sg.Sizer(16,32), sg.Checkbox(translator('Overwrite Output'), default=False, tooltip=tooltips['-OVERWRITE-'], key='-OVERWRITE-')
-                ],  
+                ],
+                [
+                    sg.Sizer(16,32), sg.Checkbox(translator('Output Intermediate Files'), default=False, tooltip=tooltips['-NO TEMP-'], key='-NO TEMP-')
+                ],
                 [
                     sg.Sizer(16,32), sg.Checkbox(translator('All Metadata to Header'), default=False, tooltip=tooltips['-ALL META-'], key='-ALL META-')
                 ],
@@ -186,16 +194,19 @@ def setup_panel():
 
     return panel
 
-def create_piranha_options_window(version = 'ARTIFICE', window = None):
+def create_piranha_options_window(window = None):
     update_log('creating add protocol window')
 
     panel = setup_panel()
 
-    content = window_functions.setup_content(panel, small=True, button_text='Continue', button_key='-CONFIRM-')
+    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Continue', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True)
 
-    new_window = sg.Window(version, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, finalize=True,
+                           modal=True, # keep_on_top=True, <- commented this out for now, creates issues for tooltips not showing correctly on mac, More info: https://github.com/PySimpleGUI/PySimpleGUI/issues/5952
                            font=consts.DEFAULT_FONT, icon=consts.ICON, margins=(0,0), element_padding=(0,0))
 
     new_window.set_min_size(size=(512,320))
@@ -207,7 +218,7 @@ def create_piranha_options_window(version = 'ARTIFICE', window = None):
 
     return new_window
 
-def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
+def run_piranha_options_window(window, run_info):
     config = consts.retrieve_config()
     selected_run_title = run_info['title']
 
@@ -225,7 +236,8 @@ def run_piranha_options_window(window, run_info, version = 'ARTIFICE'):
                     '-ALL META-':'--all-metadata-to-header',
                     '-DATE STAMP-':'--datestamp',
                     '-OVERWRITE-':'--overwrite',
-                    '-VERBOSE-':'--verbose'}
+                    '-VERBOSE-':'--verbose',
+                    '-NO TEMP-':'--no-temp'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], update_archive_button=False, clear_previous=False)
     
     while True:

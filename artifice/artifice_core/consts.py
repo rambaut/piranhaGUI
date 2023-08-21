@@ -36,20 +36,20 @@ def setup_config():
     if os.path.isfile(config_path):
         return True
     else:
-        shutil.copyfile('./config.yml', config_path)
+        shutil.copyfile(get_resource('./config.yml'), config_path)
 
 # reset config to defaults
 def set_config_to_default():
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         remove(config_path)
-    shutil.copyfile('./config.yml', config_path)
+    shutil.copyfile(get_resource('./config.yml'), config_path)
 
 def get_config_value(key, config):
     try:
         value = config[key]
     except:
-        with open('./config.yml') as file:
+        with open(get_resource('./config.yml')) as file:
             default_config = safe_load(file)
             value = default_config[key]
             edit_config(key, value)
@@ -104,6 +104,12 @@ def get_theme(key = None):
         return THEMES[key]
     else:
         return THEMES['DEFAULT']
+
+# This function converts relative paths to absolute paths, fixes issues for packaged application. 
+# Should be used to access any file not saved in the application data directory
+def get_resource(filepath):
+    filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
+    return filepath
     
 setup_config()
 config = retrieve_config()
@@ -135,7 +141,10 @@ BUTTON_FONT = (BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE)
 DEFAULT_FONT_FAMILY = 'Helvetica Neue Light'
 DEFAULT_FONT_SIZE = 16
 DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
-MONOTYPE_FONT_FAMILY = 'Consolas'
+if sys.platform.startswith("darwin"): #macOS
+    MONOTYPE_FONT_FAMILY = 'Menlo'
+else:
+    MONOTYPE_FONT_FAMILY = 'Consalas'
 CONSOLE_FONT_SIZE = 14
 CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, CONSOLE_FONT_SIZE)
 
@@ -153,7 +162,7 @@ VALUE_NEGATIVE = get_config_value('VALUE_NEGATIVE', config)
 VALUE_SAMPLE_TYPE = get_config_value('VALUE_SAMPLE_TYPE', config)
 VALUE_MIN_MAP_QUALITY = get_config_value('VALUE_MIN_MAP_QUALITY', config)
 VALUE_MIN_READ_LENGTH = get_config_value('VALUE_MIN_READ_LENGTH', config)
-VALUE_MAX_READ_LENGTH = get_config_value('VALUE_MIN_READ_LENGTH', config)
+VALUE_MAX_READ_LENGTH = get_config_value('VALUE_MAX_READ_LENGTH', config)
 VALUE_MIN_READS = get_config_value('VALUE_MIN_READS', config)
 VALUE_MIN_PCENT = get_config_value('VALUE_MIN_PCENT', config)
 VALUE_PRIMER_LENGTH = get_config_value('VALUE_PRIMER_LENGTH', config)
@@ -163,6 +172,10 @@ VALUE_OUTPUT_PREFIX = get_config_value('VALUE_OUTPUT_PREFIX', config)
 ARTIC_URL = 'https://artic.network/'
 POSECO_URL = 'http://polionanopore.org'
 PIRANHA_URL = 'https://github.com/polio-nanopore/piranha/'
+
+RAMPART_VERSION = None
+PIRANHA_VERSION = None
+PIRANHA_GUI_VERSION = None
 
 config = retrieve_config()
 

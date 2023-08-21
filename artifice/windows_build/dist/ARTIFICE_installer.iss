@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=piranhaGUI
-AppVersion=1.4.1
+AppVersion=1.5.1
 WizardStyle=modern
 DefaultDirName={autopf}\piranhaGUI
 DefaultGroupName=pirahnaGUI
@@ -12,7 +12,7 @@ UninstallDisplayIcon={app}\.exe
 Compression=lzma2
 SolidCompression=yes
 OutputDir=.\installer
-OutputBaseFilename=PiranhaGUIv1.4.1_installer_windows
+OutputBaseFilename=PiranhaGUIv1.5.1_installer_windows
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon";
@@ -24,6 +24,7 @@ Source: "resources\poseqco_logo_cropped.png"; DestDir: "{app}\resources"
 Source: "resources\LiberationSans-Regular.ttf"; DestDir: "{app}\resources"
 Source: "resources\translation_scheme.csv"; DestDir: "{app}\resources"
 Source: "resources\piranha.png"; DestDir: "{app}\resources"
+Source: "resources\artic-small.png"; DestDir: "{app}\resources"
 Source: "resources\piranha.tar"; DestDir: "{localappdata}\piranhaGUI"
 Source: "builtin_protocols\*"; DestDir: "{app}\builtin_protocols"; Flags: ignoreversion recursesubdirs
 Source: "config.yml"; DestDir: "{app}"

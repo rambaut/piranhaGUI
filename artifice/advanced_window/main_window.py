@@ -204,7 +204,7 @@ def create_main_window(theme = 'Artifice', font = None, window = None):
 
     return new_window, rampart_running
 
-def run_main_window(window, font = None, rampart_running = False):
+def run_main_window(window, rampart_running = False):
     runlist_visible = True
     hide_archived = True
     run_info = {}
@@ -226,7 +226,7 @@ def run_main_window(window, font = None, rampart_running = False):
         window.close()
         return None
 
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, artifice_core.consts.RAMPART_IMAGE, font=font)
+    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, consts.RAMPART_IMAGE, font=consts.DEFAULT_FONT)
 
     if not got_image:
         window.close()
@@ -240,7 +240,7 @@ def run_main_window(window, font = None, rampart_running = False):
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             if rampart_running:
-                chk_stop = sg.popup_yes_no('Do you wish to stop RAMPART while closing', font=font)
+                chk_stop = sg.popup_yes_no('Do you wish to stop RAMPART while closing', font=consts.DEFAULT_FONT)
                 window.close()
 
                 if chk_stop == 'Yes':
@@ -262,14 +262,17 @@ def run_main_window(window, font = None, rampart_running = False):
 
         elif event.startswith('-INFOTAB-'):
             try:
-                run_info, selected_run_title, window = infotab_event(event, run_info, selected_run_title, hide_archived, element_dict, font, values, window)
+                run_info, selected_run_title, window = infotab_event(event, run_info, selected_run_title, hide_archived, 
+                                                                     element_dict, consts.DEFAULT_FONT, values, window)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
 
         elif event.startswith('-RAMPART TAB-'):
             try:
-                run_info, docker_client, rampart_container, rampart_running, window = rampart_tab_event(event, run_info, docker_client, rampart_container, rampart_running, font, window)
+                run_info, docker_client, rampart_container, rampart_running, window = rampart_tab_event(event, run_info, docker_client, 
+                                                                                                        rampart_container, rampart_running, 
+                                                                                                        consts.DEFAULT_FONT, window)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -277,11 +280,11 @@ def run_main_window(window, font = None, rampart_running = False):
         elif event == '-START PIRANHA-':
             try:
                 runs_dir = artifice_core.consts.RUNS_DIR
-                artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,font=font)
+                artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir)
 
                 run_path = runs_dir+'/'+run_info['title']
                 basecalled_path = run_info['basecalledPath']
-                piranha_container = start_piranha(run_path, basecalled_path, docker_client, artifice_core.consts.PIRANHA_IMAGE, container=None)
+                piranha_container = start_piranha(run_path, basecalled_path, docker_client, consts.PIRANHA_IMAGE, container=None)
                 sleep(1)
                 #remove ANSI escape codes
                 ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
@@ -311,7 +314,8 @@ def run_main_window(window, font = None, rampart_running = False):
                 selected_run_title = values['-RUN LIST-'][0]
                 #run_info = load_run(window, selected_run_title)
 
-                run_info = update_run_list(window, {}, run_to_select=selected_run_title, hide_archived=hide_archived, element_dict=element_dict)
+                run_info = update_run_list(window, {}, run_to_select=selected_run_title, hide_archived=hide_archived, 
+                                           element_dict=element_dict)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
@@ -322,7 +326,8 @@ def run_main_window(window, font = None, rampart_running = False):
                 if selected_run_title == None:
                     continue
 
-                run_info = update_run_list(window, run_info, run_to_select=selected_run_title, hide_archived=hide_archived, element_dict=element_dict)
+                run_info = update_run_list(window, run_info, run_to_select=selected_run_title, hide_archived=hide_archived, 
+                                           element_dict=element_dict)
             except Exception as err:
                 update_log(traceback.format_exc())
                 sg.popup_error(err)
