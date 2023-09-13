@@ -127,7 +127,7 @@ THREADS = get_config_value('THREADS', config)
 VERSION = get_config_value('VERSION', config)
 SCALING = get_config_value('SCALING', config)
 
-ICON_FILENAME = 'piranha.png'
+ICON_FILENAME = 'artic.png'
 ICON = None
 
 # styling constants

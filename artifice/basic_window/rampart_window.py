@@ -59,7 +59,7 @@ def setup_panel(config):
 
     layout = []
     layout.append([
-        sg.Text(rampart_status, visible=SHOW_RAMPART, key='-RAMPART STATUS-',),sg.Push(),
+        sg.Text(rampart_status, key='-RAMPART STATUS-',),sg.Push(),
         sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
         AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
     ])
@@ -79,7 +79,7 @@ def setup_panel(config):
                      [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,8)) ]], border_width=0, relief="solid", 
                      pad=(0,8), expand_x=True, expand_y=True)
 
-    return panel, rampart_running, piranha_running
+    return panel, rampart_running
 
 def create_main_window(window = None):
     update_log('creating main window')

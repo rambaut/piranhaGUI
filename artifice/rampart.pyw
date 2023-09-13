@@ -138,6 +138,7 @@ if __name__ == '__main__':
     language.translator = language.setup_translator()
 
     scale = scale_window()
+    consts.ICON_FILENAME = "rampart-icon.png"
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 
     version = consts.VERSION
