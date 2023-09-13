@@ -18,7 +18,7 @@ import artifice_core.consts as consts
 import artifice_core.select_protocol_window
 import artifice_core.piranha_options_window
 import artifice_core.window_functions as window_functions
-from artifice_core.start_piranha import launch_piranha
+from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
@@ -175,7 +175,19 @@ def create_main_window(window = None):
 
 def run_main_window(window, rampart_running = False, piranha_running = False):
     config = consts.retrieve_config()
-   
+
+    run_info = {'title': 'TEMP_RUN'}
+    selected_run_title = 'TEMP_RUN'
+    docker_client = docker.from_env()
+
+    element_dict = {'-SAMPLES-':'samples',
+                    '-MINKNOW-':'basecalledPath'}
+    try:
+        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
+                            update_archive_button=False)
+    except:
+        pass
+
     rampart_protocol = config['PROTOCOL']
 
     docker_client = docker.from_env()
@@ -213,6 +225,16 @@ def run_main_window(window, rampart_running = False, piranha_running = False):
 
 
             break
+
+        elif event == '-VIEW SAMPLES-':
+            try:
+                if '-SAMPLES-' not in values:
+                    error_popup("Samples not found in values")
+
+                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
+                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
+            except Exception as err:
+                error_popup(err)
 
         elif event == '-START/STOP RAMPART-':
             try:
