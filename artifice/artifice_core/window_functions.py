@@ -218,7 +218,7 @@ def setup_header_footer(content, large=False, small=False):
     else:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2), 
+            sg.Image(scale_image("artic-icon.png", 1, (32,32)), pad=(8,2), 
                      enable_events=True, key='-ARTIC LOGO-'),
             sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, 
                     pad=(8,2),enable_events=True, key='-ARTIC LOGO-'),
@@ -232,7 +232,7 @@ def setup_header_footer(content, large=False, small=False):
 
     return layout
 
-# Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
+# Creates a frame that embeds a content panel in a Application branded layout
 def setup_content(panel, title=None, small=False, button_text=None, button_key=None, 
                   top_left_button_text=None, top_left_button_key=None, 
                   top_right_button_text=None, top_right_button_key=None,
@@ -243,34 +243,30 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
     if small:
         layout.append([
                 sg.Sizer(16,40),
-                sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
+                sg.Image(scale_image(consts.ICON_FILENAME, 1, (32,32)), enable_events=True, key='-APPLICATION LOGO-'),
                 sg.Sizer(16,40),
                 sg.Text(title, font=('Helvetica Neue Thin', 18))
-
-                #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
-                #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
-                #     element_justification="right", expand_x=True, pad=(8,0))
             ])
     else:
         layout.append([
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)),
-                               enable_events=True, key='-PIRANHA LOGO-')]],
+                    [[sg.Image(scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64)),
+                               enable_events=True, key='-APPLICATION LOGO-')]],
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
                     [
                         [sg.Text(title, font=consts.TITLE_FONT)],
-                        [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
-                        [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
+                        [sg.Text(consts.APPLICATION_TITLE_LINE_1, font=consts.SUBTITLE_FONT)], #APPLICATION_TITLE_LINE_1 = "Polio Direct Detection by Nanopore Sequencing (DDNS)"
+                        [sg.Text(consts.APPLICATION_TITLE_LINE_2 , font=consts.SUBTITLE_FONT)], #consts.APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
                     ]
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)), 
-                               enable_events=True, key='-POSECO LOGO-')],
-                    [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
+                    [[sg.Image(scale_image(consts.PROJECT_LOGO, 1, (150,68)), # consts.PROJECT_LOGO = "poseqco_logo_cropped.png"
+                               enable_events=True, key='-PROJECT LOGO-')],
+                    [sg.Text(consts.PROJECT_FOOTER, font=consts.FOOTER_FONT)]], # consts.PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
                     element_justification="right", expand_x=True, pad=(8,0))
             ])
 

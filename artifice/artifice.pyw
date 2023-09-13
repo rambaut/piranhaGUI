@@ -138,6 +138,13 @@ if __name__ == '__main__':
 
     language.translator = language.setup_translator()
 
+    consts.WINDOW_TITLE = "Piranha-GUI"
+    consts.ICON_FILENAME = "piranha-icon.png"
+    consts.APPLICATION_TITLE_LINE_1 = "Polio Direct Detection by Nanopore Sequencing (DDNS)"
+    consts.APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
+    consts.PROJECT_LOGO = "poseqco_logo_cropped.png"
+    consts.PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
+
     scale = scale_window()
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 

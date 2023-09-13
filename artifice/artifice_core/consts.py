@@ -127,8 +127,14 @@ THREADS = get_config_value('THREADS', config)
 VERSION = get_config_value('VERSION', config)
 SCALING = get_config_value('SCALING', config)
 
+WINDOW_TITLE = 'ARTIFICE'
 ICON_FILENAME = 'artic.png'
 ICON = None
+
+APPLICATION_TITLE_LINE_1 = "Polio Direct Detection by Nanopore Sequencing (DDNS)"
+APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
+PROJECT_LOGO = "poseqco_logo_cropped.png"
+PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
 
 # styling constants
 BUTTON_SIZE = (128,32)

@@ -27,7 +27,7 @@ from artifice_core.window_functions import error_popup, translator
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
 
-def setup_panel():
+def setup_panel(usesRAMPART, usesPiranha):
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
     docker_client = None
@@ -42,15 +42,16 @@ def setup_panel():
         docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
     
-    got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
-        rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-            set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
+    if usesRAMPART:
+        got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+            rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
 
-    got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-        piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
-            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+    if usesPiranha:
+        got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
+            piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
 
-    if is_piranhaGUI:
         if not got_piranha_image:
             print('u')
             # attempt to install piranha image from file
@@ -83,18 +84,15 @@ def setup_panel():
 
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
-    show_piranha_button = is_piranhaGUI and (not got_piranha_image or piranha_update_available)
+    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available)
 
-    show_rampart_button = rampart_update_available or not got_rampart_image
+    show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available)
 
     if 'SHOW_RAMPART' in config:
         SHOW_RAMPART = config['SHOW_RAMPART']
     else:
-        if is_piranhaGUI:
-            SHOW_RAMPART = False
-        else:
-            SHOW_RAMPART = True
-        
+        SHOW_RAMPART = usesRAMPART
+
         consts.edit_config('SHOW_RAMPART', SHOW_RAMPART)
     
     show_rampart_text = SHOW_RAMPART
@@ -135,17 +133,18 @@ def setup_panel():
             ]])
             ])
         
-    layout.append([
-        sg.Sizer(16,56), 
-        sg.Column([[
-            sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
-                    size=(32,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
-            AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
-        ],[
-            sg.Sizer(32,0), 
-            sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
-        ]])
-    ])
+    if usesPiranha:
+        layout.append([
+            sg.Sizer(16,56), 
+            sg.Column([[
+                sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
+                        size=(32,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+                AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+            ],[
+                sg.Sizer(32,0), 
+                sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
+            ]])
+        ])
 
     layout.append([
         sg.Sizer(0,32), 
@@ -156,20 +155,18 @@ def setup_panel():
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8))
 
-def create_startup_window(window = None):
+def create_startup_window(usesRAMPART = True, usesPiranha = True, window = None):
     update_log('creating startup window')
 
-    panel = setup_panel()
+    panel = setup_panel(usesRAMPART, usesPiranha)
 
-    title = 'PiranhaGUI'
-
-    content = window_functions.setup_content(panel, title = title, button_text='Continue', button_key='-LAUNCH-',
+    content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-',
                                              top_left_button_text='About', top_left_button_key='-ABOUT-', 
                                              top_right_button_text='Options', top_right_button_key='-OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
         
-    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(consts.WINDOW_TITLE, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,use_custom_titlebar=False,icon=consts.ICON,font=consts.DEFAULT_FONT,
                            margins=(0,0), element_padding=(0,0))
     new_window.set_min_size(size=(512,380))

@@ -138,7 +138,13 @@ if __name__ == '__main__':
     language.translator = language.setup_translator()
 
     scale = scale_window()
+    consts.WINDOW_TITLE = "RAMPART"
     consts.ICON_FILENAME = "rampart-icon.png"
+    consts.APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
+    consts.APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+    consts.PROJECT_LOGO = "artic_panel.png"
+    consts.PROJECT_FOOTER = ""
+
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 
     version = consts.VERSION
@@ -146,7 +152,7 @@ if __name__ == '__main__':
 
     splash_window = create_splash_window()
     
-    window = artifice_core.startup_window.create_startup_window() #create the startup window to check/install docker and images
+    window = artifice_core.startup_window.create_startup_window(usesPiranha = False) #create the startup window to check/install docker and images
 
     splash_window.close()
 
@@ -154,18 +160,21 @@ if __name__ == '__main__':
     
     if advanced != None: # if button pressed to launch artifice
         try:
-            while True: # user can go back and forth between editing and executing runs
-                window = basic_window.rampart_run_window.create_edit_window()
-                run_info = basic_window.rampart_run_window.run_edit_window(window)
-                if run_info == None:
-                    break
-
-                update_log(f'\nrun details confirmed, creating main window\n')
-                window, rampart_running = basic_window.rampart_window.create_main_window()
-                edit = basic_window.rampart_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running)
-                if edit != True:
-                    break
+            #while True: # user can go back and forth between editing and executing runs
+                #window = basic_window.rampart_run_window.create_edit_window()
+                #run_info = basic_window.rampart_run_window.run_edit_window(window)
+                #if run_info == None:
+                #    break
+                #
+                #update_log(f'\nrun details confirmed, creating main window\n')
+                #window, rampart_running = basic_window.rampart_window.create_main_window()
+                #edit = basic_window.rampart_window.run_main_window(window, run_info, rampart_running=rampart_running)
+                #if edit != True:
+                #    break
                 
+            window, rampart_running = basic_window.rampart_window.create_main_window()
+            edit = basic_window.rampart_window.run_main_window(window, rampart_running=rampart_running)
+
             exit_time = datetime.today()
             update_log(f'\nExited successfully at {exit_time}\n')
 
