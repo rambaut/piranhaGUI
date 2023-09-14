@@ -179,13 +179,36 @@ def scale_image(filename, scale, size):
     im.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue())
 
+def scale_image_proportionally(filename, hsize = None, vsize = None):
+    if not os.path.isdir(consts.get_datadir() / 'resources'):
+        mkdir(consts.get_datadir() / 'resources')
+
+    #processed_image = str(consts.get_datadir() / 'resources' / filename)
+    image_file = f'./resources/{filename}'
+    image_file = consts.get_resource(image_file)
+    im = Image.open(image_file)
+    ratio = im.size[0] / im.size[1]    
+    if hsize:
+        h = float(hsize)
+        v = float(hsize) / ratio
+    if vsize:
+        h = float(vsize) * ratio
+        v = float(vsize)
+      
+    im = im.resize((int(h), int(v)), resample=Image.BICUBIC)
+    #im.save(processed_image)
+
+    buffered = BytesIO()
+    im.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue())
+
 # Creates a layout for a window that embeds a content frame into an ARTIC header and footer
 def setup_header_footer(content, large=False, small=False):
     sg.theme("HEADER")
     if large:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2), 
+            sg.Image(scale_image_proportionally("artic-small.png", consts.SCALING, vsize=64), pad=(8,2), 
                      enable_events=True, key='-ARTIC LOGO-'),
             sg.Column([[
                     sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),
@@ -198,8 +221,8 @@ def setup_header_footer(content, large=False, small=False):
             content
         ],
         [
-            sg.Text(consts.APPLICATION_CREDITS, font=consts.FOOTER_FONT, pad=(8,2)),
-            sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'),
+            sg.Push(), sg.Text(consts.APPLICATION_CREDITS, font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'), sg.Push(),
         ]]
     elif small:
         layout = [
@@ -227,7 +250,7 @@ def setup_header_footer(content, large=False, small=False):
             content
         ],
         [
-            sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Push(), sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2)), sg.Push()
         ]]
 
     return layout
@@ -251,7 +274,7 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
         layout.append([
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64)),
+                    [[sg.Image(scale_image_proportionally(consts.ICON_FILENAME, vsize=96),
                                enable_events=True, key='-APPLICATION LOGO-')]],
                 ),
                 sg.Sizer(16,72),
@@ -264,7 +287,7 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image(consts.PROJECT_LOGO, 1, (150,68)),
+                    [[sg.Image(scale_image_proportionally(consts.PROJECT_LOGO, vsize=96),
                                enable_events=True, key='-PROJECT LOGO-')],
                     [sg.Text(consts.PROJECT_FOOTER, font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))

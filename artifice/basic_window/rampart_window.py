@@ -112,6 +112,13 @@ def setup_panel(config):
     threads_list = [i for i in range(1, cpu_count()+1)]
 
     layout = []
+
+    layout.append([
+        sg.Push(),
+        sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
+        AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
+    ])
+
     layout.append([
         sg.Sizer(16,16),
         sg.Frame(translator("Sequencing Run:"), [
@@ -121,17 +128,16 @@ def setup_panel(config):
                 sg.Column(column2, expand_x=True),      
             ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=True)
     ])
-    layout.append([
-        sg.Text(rampart_status, key='-RAMPART STATUS-',),sg.Push(),
-        sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-        AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
-    ])
+
     layout.append([
         AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
         AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
     ])
+    layout.append([
+        sg.Text(rampart_status, key='-RAMPART STATUS-',),
+    ])
     layout.append([sg.Sizer(16,16)])
-    layout.append([sg.HorizontalSeparator()])
+    #layout.append([sg.HorizontalSeparator()])
         
     layout.append([sg.TabGroup([output_tabs], 
                                title_color=theme['BUTTON_HOVER'][0], tab_background_color = theme['BUTTON_HOVER'][1],
@@ -155,7 +161,7 @@ def create_main_window(window = None):
 
     content = window_functions.setup_content(panel, title=title)
 
-    layout = window_functions.setup_header_footer(content)
+    layout = window_functions.setup_header_footer(content, small=True)
 
 
     new_window = sg.Window(title, layout, resizable=True, enable_close_attempted_event=True, finalize=True,
