@@ -28,8 +28,6 @@ def setup_panel(config):
 
     theme = consts.THEMES[sg.theme()]
 
-    is_piranhaGUI = True
-
     rampart_running, rampart_button_text, rampart_status, got_rampart_image = setup_check_container('RAMPART')
     rampart_button_text = translator(rampart_button_text)
     rampart_status = translator(rampart_status)
@@ -92,41 +90,45 @@ def setup_panel(config):
     rampart_tab_title = translator('RAMPART output')
     selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
-    rampart_tab = [[
-        sg.Column([
-            [sg.Sizer(2,2)],
-            [
-                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
-                            background_color = theme['CONSOLE_BACKGROUND'], 
-                            text_color=theme['CONSOLE_TEXT'],
-                            expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
-            ]
-        ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
-    ]]
+    rampart_console =  sg.Column([
+        [sg.Sizer(2,2)],
+        [
+            sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
+                        background_color = theme['CONSOLE_BACKGROUND'], 
+                        text_color=theme['CONSOLE_TEXT'],
+                        expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
+        ]
+    ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
 
-    output_tabs = []
-    output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
-                                    background_color = theme['BUTTON'][1],
-                                    visible=False,key='-RAMPART TAB-'))
+    # rampart_tab = [[
+    #     rampart_console
+    # ]]
 
-    threads_list = [i for i in range(1, cpu_count()+1)]
+    # output_tabs = []
+    # output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
+    #                                 background_color = theme['BUTTON'][1],
+    #                                 visible=False,key='-RAMPART TAB-'))
 
     layout = []
 
     layout.append([
-        sg.Push(),
+#    sg.Sizer(16,16),
+    sg.Frame(translator("RAMPART Protocol:"), [[
+        sg.Sizer(32,0),
         sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
+        sg.Push(),
         AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
+        ]]  , border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=False)
     ])
 
     layout.append([
-        sg.Sizer(16,16),
+#        sg.Sizer(16,16),
         sg.Frame(translator("Sequencing Run:"), [
             [
                 sg.Sizer(32,0),
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2, expand_x=True),      
-            ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=True)
+            ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=False)
     ])
 
     layout.append([
@@ -138,11 +140,20 @@ def setup_panel(config):
     ])
     layout.append([sg.Sizer(16,16)])
     #layout.append([sg.HorizontalSeparator()])
-        
-    layout.append([sg.TabGroup([output_tabs], 
-                               title_color=theme['BUTTON_HOVER'][0], tab_background_color = theme['BUTTON_HOVER'][1],
-                               selected_title_color=theme['BUTTON'][0], selected_background_color = theme['BUTTON'][1],
-                               expand_x=True, expand_y=True)])
+    layout.append([sg.Column([
+            [sg.Sizer(2,2)],
+            [
+                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
+                            background_color = theme['CONSOLE_BACKGROUND'], 
+                            text_color=theme['CONSOLE_TEXT'],
+                            expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
+            ]
+        ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
+    ])    
+    # layout.append([sg.TabGroup([output_tabs], 
+    #                            title_color=theme['BUTTON_HOVER'][0], tab_background_color = theme['BUTTON_HOVER'][1],
+    #                            selected_title_color=theme['BUTTON'][0], selected_background_color = theme['BUTTON'][1],
+    #                            expand_x=True, expand_y=True)])
     
     panel = sg.Frame("",  
                      [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,8)) ]], border_width=0, relief="solid", 
@@ -169,7 +180,7 @@ def create_main_window(window = None):
                            relative_location=(0,-200))
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
-    new_window.set_min_size(size=(800,800))
+    new_window.set_min_size(size=(800,600))
     new_window.set_title(consts.VERSION)
 
     if window != None:
