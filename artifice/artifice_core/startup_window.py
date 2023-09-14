@@ -45,7 +45,7 @@ def setup_panel(usesRAMPART, usesPiranha):
     if usesRAMPART:
         got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
             rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client)
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
 
     if usesPiranha:
         got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
