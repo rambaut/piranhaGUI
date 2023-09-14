@@ -198,8 +198,8 @@ def setup_header_footer(content, large=False, small=False):
             content
         ],
         [
-            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=consts.FOOTER_FONT, pad=(8,2)),
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'),
+            sg.Text(consts.APPLICATION_CREDITS, font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'),
         ]]
     elif small:
         layout = [
@@ -220,14 +220,14 @@ def setup_header_footer(content, large=False, small=False):
         [
             sg.Image(scale_image("artic-icon.png", 1, (32,32)), pad=(8,2), 
                      enable_events=True, key='-ARTIC LOGO-'),
-            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, 
+            sg.Text(consts.APPLICATION_HEADER, font=consts.HEADER_FONT, 
                     pad=(8,2),enable_events=True, key='-ARTIC LOGO-'),
         ],
         [
             content
         ],
         [
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2)),
         ]]
 
     return layout
@@ -258,15 +258,15 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
                 sg.Column(
                     [
                         [sg.Text(title, font=consts.TITLE_FONT)],
-                        [sg.Text(consts.APPLICATION_TITLE_LINE_1, font=consts.SUBTITLE_FONT)], #APPLICATION_TITLE_LINE_1 = "Polio Direct Detection by Nanopore Sequencing (DDNS)"
-                        [sg.Text(consts.APPLICATION_TITLE_LINE_2 , font=consts.SUBTITLE_FONT)], #consts.APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
+                        [sg.Text(consts.APPLICATION_TITLE_LINE_1, font=consts.SUBTITLE_FONT)],
+                        [sg.Text(consts.APPLICATION_TITLE_LINE_2 , font=consts.SUBTITLE_FONT)],
                     ]
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image(consts.PROJECT_LOGO, 1, (150,68)), # consts.PROJECT_LOGO = "poseqco_logo_cropped.png"
+                    [[sg.Image(scale_image(consts.PROJECT_LOGO, 1, (150,68)),
                                enable_events=True, key='-PROJECT LOGO-')],
-                    [sg.Text(consts.PROJECT_FOOTER, font=consts.FOOTER_FONT)]], # consts.PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
+                    [sg.Text(consts.PROJECT_FOOTER, font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))
             ])
 

@@ -131,10 +131,14 @@ WINDOW_TITLE = 'ARTIFICE'
 ICON_FILENAME = 'artic.png'
 ICON = None
 
-APPLICATION_TITLE_LINE_1 = "Polio Direct Detection by Nanopore Sequencing (DDNS)"
-APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
-PROJECT_LOGO = "poseqco_logo_cropped.png"
-PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
+APPLICATION_TITLE_LINE_1 = ""
+APPLICATION_TITLE_LINE_2 = ""             
+PROJECT_LOGO = "artic_logo.png"
+PROJECT_FOOTER = ""
+
+APPLICATION_HEADER = 'Powered by ARTIFICE | ARTICnetwork: http://artic.network'
+APPLICATION_CREDITS = 'ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut'
+APPLICATION_FOOTER='ARTIC-network supported by the Wellcome Trust Award 206298/Z/17/Z'
 
 # styling constants
 BUTTON_SIZE = (128,32)

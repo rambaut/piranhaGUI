@@ -160,9 +160,12 @@ def create_startup_window(usesRAMPART = True, usesPiranha = True, window = None)
 
     panel = setup_panel(usesRAMPART, usesPiranha)
 
-    content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-',
-                                             top_left_button_text='About', top_left_button_key='-ABOUT-', 
-                                             top_right_button_text='Options', top_right_button_key='-OPTIONS-')
+    if usesPiranha:
+        content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-',
+                                            top_left_button_text='About', top_left_button_key='-ABOUT-', 
+                                            top_right_button_text='Options', top_right_button_key='-OPTIONS-')
+    else:
+        content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-')
 
     layout = window_functions.setup_header_footer(content)
         
