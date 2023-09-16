@@ -24,12 +24,10 @@ def setup_panel():
 
     return panel
 
-def create_add_protocol_window(window = None):
+def create_add_protocol_window(title=consts.WINDOW_TITLE, window = None):
     update_log('creating add protocol window')
 
     panel = setup_panel()
-
-    title='PiranhaGUI'
 
     content = window_functions.setup_content(panel, title=title, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
@@ -45,7 +43,7 @@ def create_add_protocol_window(window = None):
 
     return new_window
 
-def run_add_protocol_window(window, version = 'ARTIFICE'):
+def run_add_protocol_window(window):
     
     while True:
         event, values = window.read()
