@@ -20,8 +20,7 @@ def get_datadir():
     else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
-    #path = Path(os_path) / "ARTIFICE"
-    path = Path(os_path) / "piranhaGUI"
+    path = Path(os_path) / APPLICATION_NAME
 
     path = path.expanduser()
 
@@ -31,30 +30,31 @@ def get_datadir():
     return path
 
 # checks config file exists, if not creates the config file
-def setup_config():
+def setup_config(default_config_file):
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         return True
     else:
-        shutil.copyfile('./config.yml', config_path)
+        shutil.copyfile(f'./{default_config_file}', config_path)
 
 # reset config to defaults
-def set_config_to_default():
+def set_config_to_default(default_config_file):
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         remove(config_path)
-    shutil.copyfile('./config.yml', config_path)
+    shutil.copyfile(f'./{default_config_file}', config_path)
 
-def get_config_value(key, config):
-    try:
-        value = config[key]
-    except:
-        with open('./config.yml') as file:
-            default_config = safe_load(file)
-            value = default_config[key]
-            edit_config(key, value)
+def get_config_value(key):
+    # try:
+    #     value = config[key]
+    # except:
+    #     with open('./config.yml') as file:
+    #         default_config = safe_load(file)
+    #         value = default_config[key]
+    #         edit_config(key, value)
+    # return value
     
-    return value
+    return config[key]
                   
 # returns a dict with config value taken from the config file
 def retrieve_config():
@@ -64,9 +64,8 @@ def retrieve_config():
 
     config['RUNS_DIR'] = get_datadir() / 'runs'
     config['PROTOCOLS_DIR'] = get_datadir() / 'protocols'
-    config['CONSOLE_FONT'] = 'Consolas'
 
-    THREADS = config['THREADS'] #how many threads piranha should use
+    THREADS = config['THREADS'] #how many threads pipelines should use
     if THREADS == None:
         THREADS = max(int(cpu_count()/2),1)
         if THREADS == None:
@@ -78,10 +77,7 @@ def retrieve_config():
         config['LANGUAGE'] = 'English'
 
     if 'PROTOCOL' not in config:
-        config['PROTOCOL'] = 'ARTIC Poliovirus protocol v1.1' #'default RAMPART protocol'#
-
-    if 'VERSION' not in config:
-        config['VERSION'] = 'piranhaGUI'
+        config['PROTOCOL'] = 'Select RAMPART protocol'
     
     return config
 
@@ -109,24 +105,7 @@ def get_resource(filepath):
     filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
     return filepath
     
-setup_config()
-config = retrieve_config()
-
-RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1', config)
-RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2', config)
-ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS', config)
-RUNS_DIR = get_config_value('RUNS_DIR', config)
-RAMPART_IMAGE = get_config_value('RAMPART_IMAGE', config)
-RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE', config)
-SHOW_RAMPART = get_config_value('SHOW_RAMPART', config)
-PIRANHA_IMAGE = get_config_value('PIRANHA_IMAGE', config)
-PIRANHA_LOGFILE = get_config_value('PIRANHA_LOGFILE', config)
-LOGFILE = get_config_value('LOGFILE', config)
-#FIRST_TIME_SETUP = get_config_value('FIRST_TIME_SETUP', config)
-THREADS = get_config_value('THREADS', config)
-VERSION = get_config_value('VERSION', config)
-SCALING = get_config_value('SCALING', config)
-
+APPLICATION_NAME = 'ARTIFICE'
 WINDOW_TITLE = 'ARTIFICE'
 ICON_FILENAME = 'artic.png'
 ICON = None
@@ -161,18 +140,6 @@ TITLE_FONT = ('Helvetica Neue Thin', 24)
 SUBTITLE_FONT = (DEFAULT_FONT_FAMILY, 18)
 CAPTION_FONT = (DEFAULT_FONT_FAMILY, 14)
 
-# piranhna options
-VALUE_POSITIVE =  get_config_value('VALUE_POSITIVE', config)
-VALUE_NEGATIVE = get_config_value('VALUE_NEGATIVE', config)
-VALUE_SAMPLE_TYPE = get_config_value('VALUE_SAMPLE_TYPE', config)
-VALUE_MIN_MAP_QUALITY = get_config_value('VALUE_MIN_MAP_QUALITY', config)
-VALUE_MIN_READ_LENGTH = get_config_value('VALUE_MIN_READ_LENGTH', config)
-VALUE_MAX_READ_LENGTH = get_config_value('VALUE_MAX_READ_LENGTH', config)
-VALUE_MIN_READS = get_config_value('VALUE_MIN_READS', config)
-VALUE_MIN_PCENT = get_config_value('VALUE_MIN_PCENT', config)
-VALUE_PRIMER_LENGTH = get_config_value('VALUE_PRIMER_LENGTH', config)
-VALUE_OUTPUT_PREFIX = get_config_value('VALUE_OUTPUT_PREFIX', config)
-
 # URLS
 ARTIC_URL = 'https://artic.network/'
 POSECO_URL = 'http://polionanopore.org'
@@ -182,7 +149,12 @@ RAMPART_VERSION = None
 PIRANHA_VERSION = None
 PIRANHA_GUI_VERSION = None
 
-config = retrieve_config()
+config = None
+LOGFILE = None
+RUNS_DIR = None
+ARCHIVED_RUNS = None
+SCALING = 1
+THREADS = 1
 
 THEMES = { }
 

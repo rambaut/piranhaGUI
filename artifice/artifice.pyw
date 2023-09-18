@@ -21,7 +21,7 @@ from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
 
 #create artifice theme
-def make_themes(version):
+def make_themes():
 
     consts.THEMES = {
         'DEFAULT': {'BACKGROUND': "#1e5b67",
@@ -129,14 +129,9 @@ def create_splash_window():
 
     return window
 
-if __name__ == '__main__':
-    advanced = False
-    startup_time = datetime.today()
-    check_runs_dir(consts.RUNS_DIR)
-    update_log(f'Started ARTIFICE at {startup_time}\n', overwrite = True)
-    setup_builtin_protocols()
-
-    language.translator = language.setup_translator()
+def setup_config():
+    # must be set first...
+    consts.APPLICATION_NAME = 'PiranhaGUI'
 
     consts.WINDOW_TITLE = "Piranha-GUI"
     consts.ICON_FILENAME = "piranha-icon.png"
@@ -144,12 +139,51 @@ if __name__ == '__main__':
     consts.APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
     consts.PROJECT_LOGO = "poseqco_logo_cropped.png"
     consts.PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
-
-    scale = scale_window()
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 
-    version = consts.VERSION
-    make_themes(version)
+    consts.setup_config()
+    consts.config = consts.retrieve_config()
+
+    consts.RAMPART_PORT_1 = consts.get_config_value('RAMPART_PORT_1', config)
+    consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2', config)
+    consts.ARCHIVED_RUNS = consts.get_config_value('ARCHIVED_RUNS', config)
+    consts.RUNS_DIR = consts.get_config_value('RUNS_DIR', config)
+    consts.RAMPART_IMAGE = consts.get_config_value('RAMPART_IMAGE', config)
+    consts.RAMPART_LOGFILE = consts.get_config_value('RAMPART_LOGFILE', config)
+    consts.SHOW_RAMPART = consts.get_config_value('SHOW_RAMPART', config)
+    consts.PIRANHA_IMAGE = consts.get_config_value('PIRANHA_IMAGE', config)
+    consts.PIRANHA_LOGFILE = consts.get_config_value('PIRANHA_LOGFILE', config)
+    consts.LOGFILE = consts.get_config_value('LOGFILE', config)
+    consts.THREADS = consts.get_config_value('THREADS', config)
+    consts.SCALING = consts.get_config_value('SCALING', config)
+
+    # piranhna options
+    consts.VALUE_POSITIVE =  consts.get_config_value('VALUE_POSITIVE', config)
+    consts.VALUE_NEGATIVE = consts.get_config_value('VALUE_NEGATIVE', config)
+    consts.VALUE_SAMPLE_TYPE = consts.get_config_value('VALUE_SAMPLE_TYPE', config)
+    consts.VALUE_MIN_MAP_QUALITY = consts.get_config_value('VALUE_MIN_MAP_QUALITY', config)
+    consts.VALUE_MIN_READ_LENGTH = consts.get_config_value('VALUE_MIN_READ_LENGTH', config)
+    consts.VALUE_MAX_READ_LENGTH = consts.get_config_value('VALUE_MAX_READ_LENGTH', config)
+    consts.VALUE_MIN_READS = consts.get_config_value('VALUE_MIN_READS', config)
+    consts.VALUE_MIN_PCENT = consts.get_config_value('VALUE_MIN_PCENT', config)
+    consts.VALUE_PRIMER_LENGTH = consts.get_config_value('VALUE_PRIMER_LENGTH', config)
+    consts.VALUE_OUTPUT_PREFIX = consts.get_config_value('VALUE_OUTPUT_PREFIX', config)
+
+
+if __name__ == '__main__':
+    advanced = False
+    startup_time = datetime.today()
+
+    setup_config()
+    check_runs_dir(consts.RUNS_DIR)
+    update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
+    setup_builtin_protocols()
+
+    language.translator = language.setup_translator()
+
+    scale = scale_window()
+
+    make_themes()
 
     splash_window = create_splash_window()
     

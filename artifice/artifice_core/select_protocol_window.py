@@ -120,7 +120,7 @@ def create_protocol_window(window = None):
 
     title = f'RAMPART{" v" + consts.RAMPART_VERSION if consts.RAMPART_VERSION != None else ""}'
 
-    content = window_functions.setup_content(panel, title=title, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Close', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True,)
 

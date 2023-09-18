@@ -22,6 +22,7 @@ from artifice_core.manage_runs import save_run, save_changes, load_run
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
+from artifice_core.alt_popup import alt_popup_ok, alt_popup_yes_no
 
 def setup_panel(config):
     sg.theme("PANEL")
@@ -79,7 +80,7 @@ def setup_panel(config):
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select')),
-                sg.Sizer(consts.BUTTON_SIZE[0], 0),
+                AltButton(button_text=translator('Open folder'),key='-VIEW MINKNOW-'),
             ],
             [                
                 sg.Sizer(1,16),
@@ -131,6 +132,8 @@ def setup_panel(config):
             ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=False)
     ])
 
+    sg.theme("CONTENT")
+
     layout.append([
         AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
         AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
@@ -181,7 +184,7 @@ def create_main_window(window = None):
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
     new_window.set_min_size(size=(800,600))
-    new_window.set_title(consts.VERSION)
+    new_window.set_title(title)
 
     if window != None:
         window.close()
@@ -200,7 +203,7 @@ def run_main_window(window, rampart_running = False, piranha_running = False):
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath'}
     try:
-        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
+        run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RAMPART_CONFIG_DIR'], 
                             update_archive_button=False)
     except:
         pass
@@ -253,6 +256,22 @@ def run_main_window(window, rampart_running = False, piranha_running = False):
             except Exception as err:
                 error_popup(err)
 
+        elif event == '-VIEW MINKNOW-':
+            try:
+                if '-MINKNOW-' not in values:
+                    error_popup("Sequence data path not found in values")
+
+                minknow_path = values['-MINKNOW-'] + '/'
+                if sys.platform.startswith("darwin"):
+                    #webbrowser.open('file:///{output_path}/')
+                    subprocess.call(["open", minknow_path])
+                else:
+                    path = os.path.realpath(minknow_path)
+                    os.startfile(path)
+
+            except Exception as err:
+                error_popup(err)
+
         elif event == '-START/STOP RAMPART-':
             try:
                 if rampart_running:
@@ -263,6 +282,10 @@ def run_main_window(window, rampart_running = False, piranha_running = False):
                     window['-START/STOP RAMPART-'].update(text=translator('Start RAMPART'))
                     window['-RAMPART STATUS-'].update(translator('RAMPART is not running'))
                 else:
+                    run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+                    if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
+                        alt_popup_ok(translator('Warning: there are spaces in samples'))
+
                     art_protocol_path = config['PROTOCOLS_DIR'] / rampart_protocol
                     protocol_path = artifice_core.select_protocol_window.get_protocol_dir(art_protocol_path)
                     rampart_container = artifice_core.start_rampart.launch_rampart(
@@ -282,7 +305,7 @@ def run_main_window(window, rampart_running = False, piranha_running = False):
 
                     update_log('',filename=config['RAMPART_LOGFILE'],overwrite=True)
 
-                    window['-RAMPART TAB-'].select() 
+                    # window['-RAMPART TAB-'].select() 
 
             except Exception as err:
                 error_popup(err)

@@ -16,9 +16,7 @@ def setup_panel():
     [
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-PROTOCOL DIR-',),
     AltFolderBrowse(button_text=translator('Browse'),size=button_size),
-    ],
-    # [AltButton(button_text=translator('Confirm'),size=button_size,font=font,key='-CONFIRM-'),],
-    ]
+    ]]
 
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 

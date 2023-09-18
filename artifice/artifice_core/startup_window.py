@@ -22,10 +22,30 @@ from artifice_core.options_window import create_options_window, run_options_wind
 from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup
-from artifice_core.window_functions import error_popup, translator
+from artifice_core.window_functions import error_popup
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
+
+def check_installation_required(usesRAMPART = True, usesPiranha = True):
+    config = artifice_core.consts.retrieve_config()
+    docker_client = None
+
+    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed    
+    if usesRAMPART:
+        got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+            rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
+
+    if usesPiranha:
+        got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
+            piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+
+    piranha_update = usesPiranha and (not got_piranha_image or piranha_update_available)
+    rampart_update = usesRAMPART and (not got_rampart_image or rampart_update_available)
+    
+    return not docker_installed or piranha_update or rampart_update
 
 def setup_panel(usesRAMPART, usesPiranha):
     sg.theme("PANEL")
