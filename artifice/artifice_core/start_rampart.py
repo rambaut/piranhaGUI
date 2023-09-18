@@ -194,7 +194,7 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, output = Fal
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception(f'Invalid samples file')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
-        raise Exception('Invalid MinKnow')
+        raise Exception('Invalid sequencing data directory')
 
     if output:
         if 'outputPath' not in run_info or os.path.isdir(run_info['outputPath']) == False:
