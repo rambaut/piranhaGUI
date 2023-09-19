@@ -101,15 +101,7 @@ def setup_panel(config):
         ]
     ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
 
-    # rampart_tab = [[
-    #     rampart_console
-    # ]]
-
-    # output_tabs = []
-    # output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
-    #                                 background_color = theme['BUTTON'][1],
-    #                                 visible=False,key='-RAMPART TAB-'))
-
+    # create run settings layout
     layout = []
 
     layout.append([
@@ -129,37 +121,42 @@ def setup_panel(config):
                 sg.Sizer(32,0),
                 sg.Column(column1, element_justification='Right'),
                 sg.Column(column2, expand_x=True),      
-            ]], border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=False)
+            ]], border_width=0, relief="solid", pad=(16,0), expand_x=True, expand_y=False)
     ])
+    
+    frame = sg.Frame("",  
+                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,8)) ]], border_width=0, relief="solid", 
+                     pad=(0,8), expand_x=True, expand_y=False)
 
+    # add run settings into the RAMPART control layout
     sg.theme("CONTENT")
 
+    layout = []
+    layout.append([frame])
     layout.append([
-        AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
-        AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
-    ])
-    layout.append([
-        sg.Text(rampart_status, key='-RAMPART STATUS-',),
-    ])
-    layout.append([sg.Sizer(16,16)])
-    #layout.append([sg.HorizontalSeparator()])
-    layout.append([sg.Column([
-            [sg.Sizer(2,2)],
+        sg.Column([
             [
-                sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
+                sg.Text(rampart_status, key='-RAMPART STATUS-',)
+            ], [
+                AltButton(button_text=rampart_button_text, visible=got_rampart_image,key='-START/STOP RAMPART-'),
+                AltButton(button_text=translator('Display RAMPART'),visible=rampart_running,key='-VIEW RAMPART-'),
+            ],
+            [sg.Sizer(16,16)],
+            [sg.Column([
+                [sg.Sizer(2,2)],
+                [
+                    sg.Multiline(write_only=True, font=consts.CONSOLE_FONT, 
                             background_color = theme['CONSOLE_BACKGROUND'], 
                             text_color=theme['CONSOLE_TEXT'],
                             expand_x=True, expand_y=True, key='-RAMPART OUTPUT-')
+                ]
+            ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
             ]
-        ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
-    ])    
-    # layout.append([sg.TabGroup([output_tabs], 
-    #                            title_color=theme['BUTTON_HOVER'][0], tab_background_color = theme['BUTTON_HOVER'][1],
-    #                            selected_title_color=theme['BUTTON'][0], selected_background_color = theme['BUTTON'][1],
-    #                            expand_x=True, expand_y=True)])
-    
+        ], expand_x=True, expand_y=True, pad=(16,2), background_color = theme['BUTTON'][1])
+    ])
+
     panel = sg.Frame("",  
-                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(16,8)) ]], border_width=0, relief="solid", 
+                     [[ sg.Column(layout, expand_x=True, expand_y=True, pad=(0,0)) ]], border_width=0, relief="solid", 
                      pad=(0,8), expand_x=True, expand_y=True)
 
     return panel, rampart_running
