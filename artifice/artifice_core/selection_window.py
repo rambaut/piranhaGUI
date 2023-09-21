@@ -34,7 +34,7 @@ def setup_selection_layout():
 def create_select_window(window = None):
     update_log(f'opening selection window')
     layout = setup_selection_layout()
-    new_window = sg.Window('Artifice', layout, icon=consts.ICON, font=consts.DEFAULT_FONT, resizable=False)
+    new_window = sg.Window(consts.WINDOW_TITLE, layout, icon=consts.ICON, font=consts.DEFAULT_FONT, resizable=False)
 
     if window != None:
         window.close()
@@ -59,11 +59,11 @@ def run_select_window(window):
                     raise Exception('Invalid samples file')
 
                 if MinKnow != '':
-                    update_log(f'selected "{MinKnow}" as MinKnow run')
+                    update_log(f'selected "{MinKnow}" as sequencing data')
                     if os.path.isdir(MinKnow) == False:
-                        raise Exception('Invalid MinKnows')
+                        raise Exception('Invalid path to sequencing data')
                 else:
-                    update_log(f'No MinKnow run selected')
+                    update_log(f'No sequencing data selected')
 
                 window.close()
                 return samples, MinKnow, values['-HEADERS CHECKBOX-']

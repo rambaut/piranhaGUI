@@ -16,20 +16,16 @@ def setup_panel():
     [
     sg.In(size=(25,1), enable_events=True,expand_y=False, key='-PROTOCOL DIR-',),
     AltFolderBrowse(button_text=translator('Browse'),size=button_size),
-    ],
-    # [AltButton(button_text=translator('Confirm'),size=button_size,font=font,key='-CONFIRM-'),],
-    ]
+    ]]
 
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,16))
 
     return panel
 
-def create_add_protocol_window(window = None):
+def create_add_protocol_window(title=consts.WINDOW_TITLE, window = None):
     update_log('creating add protocol window')
 
     panel = setup_panel()
-
-    title='PiranhaGUI'
 
     content = window_functions.setup_content(panel, title=title, small=True, button_text='Confirm', button_key='-CONFIRM-')
 
@@ -45,7 +41,7 @@ def create_add_protocol_window(window = None):
 
     return new_window
 
-def run_add_protocol_window(window, version = 'ARTIFICE'):
+def run_add_protocol_window(window):
     
     while True:
         event, values = window.read()

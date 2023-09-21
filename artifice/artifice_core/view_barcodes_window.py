@@ -111,7 +111,7 @@ def check_barcodes(run_info):
 def create_barcodes_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
     update_log('creating view barcodes window')
 
-    title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
+    title = consts.WINDOW_TITLE
 
     panel, column_headers = setup_panel(samples_column, barcodes_column, has_headers)
 

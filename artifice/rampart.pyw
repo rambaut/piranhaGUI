@@ -20,10 +20,10 @@ from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
 
 #create artifice theme
-def make_themes(version):
+def make_themes():
 
     consts.THEMES = {
-        'DEFAULT': {'BACKGROUND': "#1e5b67",
+        'DEFAULT': {'BACKGROUND': "#005B67",
                 'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
@@ -34,13 +34,13 @@ def make_themes(version):
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
                 'PROGRESS_DEPTH': 0},
-        'CONTENT': {'BACKGROUND': "#f7eacd",
-                'TEXT': '#1e5b67',
+        'CONTENT': {'BACKGROUND': "#005B67",
+                'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
+                'BUTTON': ('#f7eacd', '#d97168'),
+                'BUTTON_HOVER': ('#f7eacd', '#F48379'),
                 'PROGRESS': ('#f7eacd', '#d97168'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
@@ -52,13 +52,13 @@ def make_themes(version):
                 'CONSOLE_TEXT': '#FFBF00',
                 'CONSOLE_BACKGROUND': '#072429',
                 'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON': ('#f7eacd', '#005B67'),
                 'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#f7eacd', '#d97168'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
                 'PROGRESS_DEPTH': 2},
-        'HEADER': {'BACKGROUND': "#1e5b67",
+        'HEADER': {'BACKGROUND': "#005B67",
                 'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
@@ -128,35 +128,63 @@ def create_splash_window():
 
     return window
 
-if __name__ == '__main__':
-    advanced = False
-    startup_time = datetime.today()
-    check_runs_dir(consts.RUNS_DIR)
-    update_log(f'Started RAMPART at {startup_time}\n', overwrite = True)
-    setup_builtin_protocols()
-
-    language.translator = language.setup_translator()
-
-    scale = scale_window()
+def setup_config():
+    # must be set first...
+    consts.APPLICATION_NAME = 'RAMPART'
+    
+    consts.APPLICATION_NAME = "RAMPART"
     consts.WINDOW_TITLE = "RAMPART"
     consts.ICON_FILENAME = "rampart-icon.png"
     consts.APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
     consts.APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
     consts.PROJECT_LOGO = "artic_panel.png"
     consts.PROJECT_FOOTER = ""
-
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 
-    version = consts.VERSION
-    make_themes(version)
+    consts.setup_config('rampart.yml')
+    consts.config = consts.retrieve_config()
+
+    consts.ARCHIVED_RUNS = consts.get_config_value('ARCHIVED_RUNS')
+    consts.RUNS_DIR = consts.get_config_value('RUNS_DIR')
+    consts.LOGFILE = consts.get_config_value('LOGFILE')
+    consts.THREADS = consts.get_config_value('THREADS')
+    consts.SCALING = consts.get_config_value('SCALING')
+
+    consts.RAMPART_PORT_1 = consts.get_config_value('RAMPART_PORT_1')
+    consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2')
+    consts.RAMPART_IMAGE = consts.get_config_value('RAMPART_IMAGE')
+    consts.RAMPART_LOGFILE = consts.get_config_value('RAMPART_LOGFILE')
+
+if __name__ == '__main__':
+
+    advanced = False
+
+    startup_time = datetime.today()
+
+    setup_config()
+    check_runs_dir(consts.RUNS_DIR)
+    update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
+    setup_builtin_protocols()
+
+    language.translator = language.setup_translator()
+
+    scale = scale_window()
+
+    make_themes()
 
     splash_window = create_splash_window()
-    
-    window = artifice_core.startup_window.create_startup_window(usesPiranha = False) #create the startup window to check/install docker and images
+    splash_closed = False
 
-    splash_window.close()
+    show_startup_window = True or artifice_core.startup_window.check_installation_required(usesPiranha = False)
 
-    advanced = artifice_core.startup_window.run_startup_window(window)
+    if show_startup_window:
+        window = artifice_core.startup_window.create_startup_window(usesPiranha = False) #create the startup window to check/install docker and images
+
+        splash_window.close()
+        splash_closed = True
+
+        advanced = artifice_core.startup_window.run_startup_window(window)
+
     
     if advanced != None: # if button pressed to launch artifice
         try:
@@ -173,6 +201,11 @@ if __name__ == '__main__':
                 #    break
                 
             window, rampart_running = basic_window.rampart_window.create_main_window()
+
+            if not splash_closed:
+                splash_window.close()
+                splash_closed = True
+
             edit = basic_window.rampart_window.run_main_window(window, rampart_running=rampart_running)
 
             exit_time = datetime.today()

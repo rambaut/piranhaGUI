@@ -11,7 +11,7 @@ import re
 import multiprocessing
 
 from artifice_core.update_log import update_log
-import artifice_core.consts
+import artifice_core.consts as consts
 import artifice_core.view_barcodes_window
 
 def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None, protocol_path = None,):
@@ -186,7 +186,10 @@ def check_for_docker(docker_url = 'https://docs.docker.com/get-docker/', popup =
         return False
 
 #makes sure run is valid for running rampart/piranha and creates run_configuration json
-def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, output = False):
+def prepare_run(run_info, runs_dir = None, output = False):
+    if not runs_dir:
+        runs_dir = consts.RUNS_DIR
+
     if 'title' not in run_info or not len(run_info['title']) > 0:
         raise Exception('Invalid Name/No Run Selected')
     title = run_info['title']
@@ -194,7 +197,7 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, output = Fal
     if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
         raise Exception(f'Invalid samples file')
     if 'basecalledPath' not in run_info or os.path.isdir(run_info['basecalledPath']) == False:
-        raise Exception('Invalid MinKnow')
+        raise Exception('Invalid sequencing data directory')
 
     if output:
         if 'outputPath' not in run_info or os.path.isdir(run_info['outputPath']) == False:
@@ -215,12 +218,15 @@ def prepare_run(run_info, runs_dir = artifice_core.consts.RUNS_DIR, output = Fal
 
     artifice_core.view_barcodes_window.check_barcodes(run_info)
 
-def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = artifice_core.consts.RUNS_DIR, container = None, protocol_path = None):
+def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = None, container = None, protocol_path = None):
+    if not runs_dir:
+        runs_dir = consts.RUNS_DIR
+
     prepare_run(run_info,runs_dir=runs_dir)
 
     basecalled_path = run_info['basecalledPath']
     run_path = runs_dir / run_info['title']
-    container = start_rampart(run_path, basecalled_path, client, artifice_core.consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container, protocol_path=protocol_path)
+    container = start_rampart(run_path, basecalled_path, client, consts.RAMPART_IMAGE, firstPort = firstPort, secondPort = secondPort, container=container, protocol_path=protocol_path)
     """
     iter = 0
     while True:
