@@ -172,7 +172,7 @@ def create_main_window(window = None):
 
     content = window_functions.setup_content(panel, title=title)
 
-    layout = window_functions.setup_header_footer(content, small=True)
+    layout = window_functions.setup_header_footer(content, small=False)
 
 
     new_window = sg.Window(title, layout, resizable=True, enable_close_attempted_event=True, finalize=True,
@@ -190,7 +190,7 @@ def create_main_window(window = None):
 
     return new_window, rampart_running
 
-def run_main_window(window, rampart_running = False, piranha_running = False):
+def run_main_window(window, rampart_running = False):
     config = consts.retrieve_config()
 
     run_info = {'title': 'TEMP_RUN'}
