@@ -105,7 +105,9 @@ def get_theme(key = None):
 def get_resource(filepath):
     filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
     return filepath
-    
+
+VERSION = get_config_value('VERSION', retrieve_config())
+
 APPLICATION_NAME = 'ARTIFICE'
 WINDOW_TITLE = 'ARTIFICE'
 ICON_FILENAME = 'artic.png'

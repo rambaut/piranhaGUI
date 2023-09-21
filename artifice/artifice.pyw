@@ -143,6 +143,7 @@ def setup_config():
 
     consts.setup_config()
     consts.config = consts.retrieve_config()
+    config = consts.config
 
     consts.RAMPART_PORT_1 = consts.get_config_value('RAMPART_PORT_1', config)
     consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2', config)
