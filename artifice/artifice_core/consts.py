@@ -30,29 +30,28 @@ def get_datadir():
     return path
 
 # checks config file exists, if not creates the config file
-def setup_config(default_config_file):
+def setup_config(default_config_file='config.yml'):
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         return True
     else:
-        shutil.copyfile(f'./{default_config_file}', config_path)
+        shutil.copyfile(get_resource(f'./{default_config_file}'), config_path)
 
 # reset config to defaults
-def set_config_to_default(default_config_file):
+def set_config_to_default(default_config_file='config.yml'):
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         remove(config_path)
-    shutil.copyfile(f'./{default_config_file}', config_path)
+    shutil.copyfile(get_resource(f'./{default_config_file}'), config_path)
 
-def get_config_value(key):
-    # try:
-    #     value = config[key]
-    # except:
-    #     with open('./config.yml') as file:
-    #         default_config = safe_load(file)
-    #         value = default_config[key]
-    #         edit_config(key, value)
-    # return value
+def get_config_value(key, config):
+    try:
+        value = config[key]
+    except:
+        with open(get_resource('./config.yml')) as file:
+            default_config = safe_load(file)
+            value = default_config[key]
+            edit_config(key, value)
     
     return config[key]
                   
@@ -101,6 +100,8 @@ def get_theme(key = None):
     else:
         return THEMES['DEFAULT']
 
+# This function converts relative paths to absolute paths, fixes issues for packaged application. 
+# Should be used to access any file not saved in the application data directory
 def get_resource(filepath):
     filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
     return filepath
@@ -128,7 +129,10 @@ BUTTON_FONT = (BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE)
 DEFAULT_FONT_FAMILY = 'Helvetica Neue Light'
 DEFAULT_FONT_SIZE = 16
 DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
-MONOTYPE_FONT_FAMILY = 'Consolas'
+if sys.platform.startswith("darwin"): #macOS
+    MONOTYPE_FONT_FAMILY = 'Menlo'
+else:
+    MONOTYPE_FONT_FAMILY = 'Consalas'
 CONSOLE_FONT_SIZE = 14
 CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, CONSOLE_FONT_SIZE)
 
@@ -155,7 +159,6 @@ RUNS_DIR = None
 ARCHIVED_RUNS = None
 SCALING = 1
 THREADS = 1
-
 THEMES = { }
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import traceback
 import docker
 
-from artifice_core.language import translator
+from artifice_core.language import translator,setup_translator
 import artifice_core.parse_columns_window
 import artifice_core.consts as consts
 import artifice_core.start_rampart
@@ -55,7 +55,7 @@ def setup_panel(translator):
                 sg.Sizer(1,y2),
                 sg.In(enable_events=True,expand_y=True, key='-SAMPLES-',font=consts.CONSOLE_FONT, 
                     pad=(0,12), disabled_readonly_background_color='#393938', expand_x=True,
-                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
+                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),)),
                 AltButton(button_text=translator('View'),key='-VIEW SAMPLES-'),
@@ -71,7 +71,7 @@ def setup_panel(translator):
                 sg.Sizer(1,y2),
                 sg.In(enable_events=True,expand_y=True, key='-MINKNOW-',font=consts.CONSOLE_FONT, 
                     pad=(0,12), disabled_readonly_background_color='#393938', expand_x=True,
-                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
+                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select')),
                 sg.Sizer(consts.BUTTON_SIZE[0], 0),
@@ -87,7 +87,7 @@ def setup_panel(translator):
                 sg.Sizer(1,y2),
                 sg.In(enable_events=True,expand_y=True, key='-OUTDIR-',font=consts.CONSOLE_FONT, 
                     pad=(0,12), disabled_readonly_background_color='#393938', expand_x=True,
-                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="right"),
+                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-OUTDIR-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select'),),
                 sg.Sizer(consts.BUTTON_SIZE[0], 0),
@@ -106,8 +106,9 @@ def setup_panel(translator):
 
 def create_edit_window(window = None):
     update_log('creating main window')
+    translator = setup_translator()
 
-    panel = setup_panel(window_functions.translator)
+    panel = setup_panel(translator)
 
     title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
 
@@ -138,6 +139,7 @@ def run_edit_window(window):
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
     docker_client = docker.from_env()
+    translator = setup_translator()
 
 
     element_dict = {'-SAMPLES-':'samples',
@@ -164,8 +166,10 @@ def run_edit_window(window):
                 if '-SAMPLES-' not in values:
                     error_popup("Samples not found in values")
 
-                run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
-                selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
+                new_run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
+                if new_run_info != None:
+                    run_info = new_run_info
+                    selected_run_title = save_run(run_info, title=selected_run_title, overwrite=True)
             except Exception as err:
                 error_popup(err)
                 """

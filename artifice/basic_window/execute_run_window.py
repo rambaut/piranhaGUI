@@ -12,7 +12,7 @@ import sys
 from webbrowser import open_new_tab
 import webbrowser
 
-from artifice_core.language import translator
+from artifice_core.language import translator, setup_translator
 import artifice_core.start_rampart
 import artifice_core.consts as consts
 import artifice_core.select_protocol_window
@@ -25,6 +25,7 @@ from artifice_core.alt_button import AltButton
 
 def setup_panel(config):
     sg.theme("PANEL")
+    translator = setup_translator()
 
     theme = consts.THEMES[sg.theme()]
 
@@ -169,6 +170,7 @@ def create_main_window(window = None):
 
 def run_main_window(window, run_info, rampart_running = False, piranha_running = False):
     config = consts.retrieve_config()
+    translator = setup_translator()
    
     rampart_protocol = config['PROTOCOL']
 
