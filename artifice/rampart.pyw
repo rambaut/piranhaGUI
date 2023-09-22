@@ -128,6 +128,7 @@ def create_splash_window():
 
     return window
 
+"""
 def setup_config():
     # must be set first...
     consts.APPLICATION_NAME = 'RAMPART'
@@ -154,6 +155,7 @@ def setup_config():
     consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2')
     consts.RAMPART_IMAGE = consts.get_config_value('RAMPART_IMAGE')
     consts.RAMPART_LOGFILE = consts.get_config_value('RAMPART_LOGFILE')
+"""
 
 if __name__ == '__main__':
 
@@ -161,7 +163,7 @@ if __name__ == '__main__':
 
     startup_time = datetime.today()
 
-    setup_config()
+    #setup_config()
     check_runs_dir(consts.RUNS_DIR)
     update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
