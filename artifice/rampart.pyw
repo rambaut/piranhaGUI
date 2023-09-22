@@ -177,6 +177,7 @@ if __name__ == '__main__':
     splash_window = create_splash_window()
     splash_closed = False
 
+    # remove 'True or' to only show startup window if docker is not installed / updates needed to pipelines
     show_startup_window = True or artifice_core.startup_window.check_installation_required(usesPiranha = False)
 
     if show_startup_window:
