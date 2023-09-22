@@ -128,15 +128,16 @@ def create_splash_window():
 
     return window
 
+"""
 def setup_config():
     # must be set first...
     consts.APPLICATION_NAME = 'RAMPART'
     
-    consts.APPLICATION_NAME = "RAMPART"
     consts.WINDOW_TITLE = "RAMPART"
     consts.ICON_FILENAME = "rampart-icon.png"
     consts.APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
-    consts.APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+    consts.APPLICATION_TITLE_LINE_2 = ""
+    consts.APPLICATION_SUBTITLE_LINE = "built by James Hadfield, Áine O'Toole, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
     consts.PROJECT_LOGO = "artic_panel.png"
     consts.PROJECT_FOOTER = ""
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
@@ -154,6 +155,7 @@ def setup_config():
     consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2')
     consts.RAMPART_IMAGE = consts.get_config_value('RAMPART_IMAGE')
     consts.RAMPART_LOGFILE = consts.get_config_value('RAMPART_LOGFILE')
+"""
 
 if __name__ == '__main__':
 
@@ -161,7 +163,7 @@ if __name__ == '__main__':
 
     startup_time = datetime.today()
 
-    setup_config()
+    #setup_config()
     check_runs_dir(consts.RUNS_DIR)
     update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
@@ -175,6 +177,7 @@ if __name__ == '__main__':
     splash_window = create_splash_window()
     splash_closed = False
 
+    # remove 'True or' to only show startup window if docker is not installed / updates needed to pipelines
     show_startup_window = True or artifice_core.startup_window.check_installation_required(usesPiranha = False)
 
     if show_startup_window:

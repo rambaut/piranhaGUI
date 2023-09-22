@@ -9,6 +9,8 @@ import os.path
 
 from os import getenv, cpu_count, mkdir, remove
 
+
+
 #returns directory where Artifice stores data, dependent on os
 def get_datadir():
     home = pathlib.Path.home()
@@ -20,7 +22,7 @@ def get_datadir():
     else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
-    path = Path(os_path) / APPLICATION_NAME
+    path = Path(os_path) / "RAMPART"
 
     path = path.expanduser()
 
@@ -28,6 +30,33 @@ def get_datadir():
         mkdir(path)
 
     return path
+
+#def setup_config():
+    # must be set first...
+    APPLICATION_NAME = 'RAMPART'
+    
+    APPLICATION_NAME = "RAMPART"
+    WINDOW_TITLE = "RAMPART"
+    ICON_FILENAME = "rampart-icon.png"
+    APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
+    APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+    PROJECT_LOGO = "artic_panel.png"
+    PROJECT_FOOTER = ""
+    ICON = window_functions.scale_image(ICON_FILENAME, SCALING, (64,64))
+
+    setup_config('rampart.yml')
+    config = retrieve_config()
+
+    ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS')
+    RUNS_DIR = get_config_value('RUNS_DIR')
+    LOGFILE = get_config_value('LOGFILE')
+    THREADS = get_config_value('THREADS')
+    SCALING = get_config_value('SCALING')
+
+    RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1')
+    RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2')
+    RAMPART_IMAGE = get_config_value('RAMPART_IMAGE')
+    RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE')
 
 # checks config file exists, if not creates the config file
 def setup_config(default_config_file='config.yml'):
@@ -106,17 +135,17 @@ def get_resource(filepath):
     filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
     return filepath
 
-VERSION = get_config_value('VERSION', retrieve_config())
+#VERSION = get_config_value('VERSION', retrieve_config())
 
-APPLICATION_NAME = 'ARTIFICE'
-WINDOW_TITLE = 'ARTIFICE'
-ICON_FILENAME = 'artic.png'
-ICON = None
+#APPLICATION_NAME = 'ARTIFICE'
+#WINDOW_TITLE = 'ARTIFICE'
+#ICON_FILENAME = 'artic.png'
+#ICON = None
 
-APPLICATION_TITLE_LINE_1 = ""
-APPLICATION_TITLE_LINE_2 = ""             
-PROJECT_LOGO = "artic_logo.png"
-PROJECT_FOOTER = ""
+#APPLICATION_TITLE_LINE_1 = ""
+#APPLICATION_TITLE_LINE_2 = ""             
+#PROJECT_LOGO = "artic_logo.png"
+#PROJECT_FOOTER = ""
 
 APPLICATION_HEADER = 'Powered by ARTIFICE | ARTICnetwork: http://artic.network'
 APPLICATION_CREDITS = 'ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut'
@@ -156,12 +185,38 @@ PIRANHA_VERSION = None
 PIRANHA_GUI_VERSION = None
 
 config = None
-LOGFILE = None
-RUNS_DIR = None
-ARCHIVED_RUNS = None
-SCALING = 1
-THREADS = 1
+#LOGFILE = None
+#RUNS_DIR = None
+#ARCHIVED_RUNS = None
+#SCALING = 1
+#THREADS = 1
 THEMES = { }
+
+APPLICATION_NAME = 'RAMPART'
+    
+APPLICATION_NAME = "RAMPART"
+WINDOW_TITLE = "RAMPART"
+ICON_FILENAME = "rampart-icon.png"
+APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
+APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+APPLICATION_SUBTITLE_LINE = None
+PROJECT_LOGO = "artic_panel.png"
+PROJECT_FOOTER = ""
+ICON = ICON_FILENAME #window_functions.scale_image(ICON_FILENAME, SCALING, (64,64))
+
+setup_config('rampart.yml')
+config = retrieve_config()
+
+ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS',config)
+RUNS_DIR = get_config_value('RUNS_DIR',config)
+LOGFILE = get_config_value('LOGFILE',config)
+THREADS = get_config_value('THREADS',config)
+SCALING = get_config_value('SCALING',config)
+
+RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1',config)
+RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2',config)
+RAMPART_IMAGE = get_config_value('RAMPART_IMAGE',config)
+RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE',config)
 
 if __name__ == '__main__':
     #home = pathlib.Path.home()

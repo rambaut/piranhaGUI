@@ -94,7 +94,7 @@ class AltButton(sg.Button):
         draw = ImageDraw.Draw(button_image)
         #draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
         draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=32, fill=fill)
-        button_image = button_image.resize(self.Size, resample=Image.ANTIALIAS) # resize to actual size with antialiasing for smoother shape
+        button_image = button_image.resize(self.Size, resample=Image.BILINEAR) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()
         button_image.save(buffered, format="PNG")
