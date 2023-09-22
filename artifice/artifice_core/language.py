@@ -50,9 +50,10 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
     return return_string
 
 def setup_translator():
+    config = consts.retrieve_config()
     translate_scheme = get_translate_scheme()
     try:
-        language = consts.config['LANGUAGE']
+        language = config['LANGUAGE']
     except:
         language = 'English'
         

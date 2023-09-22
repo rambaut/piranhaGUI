@@ -9,6 +9,7 @@ import json
 from time import sleep, time
 import re
 import multiprocessing
+import traceback
 
 from artifice_core.update_log import update_log
 import artifice_core.consts as consts
@@ -134,12 +135,8 @@ def check_for_image(client, image_tag, popup = True, tool_name = 'RAMPART'):
 def check_for_image_updates(client, image_tag):
     if client == None:
         client = docker.from_env()
-    
+    update_log(f'checking for updates to: {image_tag}')
     try:
-        image = client.images.get(image_tag)
-        local_digest = image.attrs['RepoDigests'][0]
-        trunc_local_digest = local_digest.split('sha256:')[-1]
-
         api_url =  f'https://hub.docker.com/v2/repositories/{image_tag}/tags'
 
         response = requests.get(api_url)
@@ -148,7 +145,9 @@ def check_for_image_updates(client, image_tag):
         latest_version = None
         #search results for latest tag
         for tag in tags['results']:
-            if tag['name'] == 'latest': 
+            if tag['name'] == 'latest':
+                #print(tag)
+                latest_date = str(tag['last_updated'])[0:10]
                 latest_digest = tag['digest']
         
         for tag in tags['results']:
@@ -158,10 +157,27 @@ def check_for_image_updates(client, image_tag):
                 if digest == latest_digest:
                     latest_version = tag['name']
                     break
-
+        
+        #print(latest_digest)
         trunc_latest_digest = latest_digest.split('sha256:')[-1]
 
-        if trunc_local_digest != trunc_latest_digest:
+        image = client.images.get(image_tag)
+        new_version_available = False
+        try:
+            local_digest = image.attrs['RepoDigests'][0]
+
+            if len(local_digest) > 5:
+                trunc_local_digest = local_digest.split('sha256:')[-1]
+                if trunc_local_digest != trunc_latest_digest:
+                    new_version_available = True
+            else:
+                raise Exception
+        except:
+            local_date = str(image.attrs['Created'])[0:10]
+            if local_date != latest_date:
+                new_version_available = True
+
+        if new_version_available:
             update_log(f'updated version of image, {image_tag}, found: {latest_version}')
             return True, latest_version
         else:
@@ -169,6 +185,8 @@ def check_for_image_updates(client, image_tag):
             return False, latest_version
     
     except:
+        update_log('error looking for updates')
+        update_log(traceback.format_exc())
         return False, None
 
 

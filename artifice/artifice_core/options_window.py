@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 import traceback
 
 import artifice_core.consts as consts
-from artifice_core.language import translator, get_translate_scheme
+from artifice_core.language import translator, get_translate_scheme, setup_translator
 import artifice_core.window_functions as window_functions
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
@@ -12,6 +12,7 @@ from artifice_core.window_functions import error_popup, scale_window
 
 def setup_panel():
     sg.theme("PANEL")
+    translator = setup_translator()
 
     translate_scheme = get_translate_scheme()
     try:
