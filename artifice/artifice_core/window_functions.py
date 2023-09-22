@@ -283,6 +283,7 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
                         [sg.Text(title, font=consts.TITLE_FONT)],
                         [sg.Text(consts.APPLICATION_TITLE_LINE_1, font=consts.SUBTITLE_FONT)],
                         [sg.Text(consts.APPLICATION_TITLE_LINE_2 , font=consts.SUBTITLE_FONT)],
+                        [sg.Text(consts.APPLICATION_SUBTITLE_LINE , font=consts.CAPTION_FONT)],
                     ]
                 ),
                 sg.Sizer(16,72),

@@ -132,11 +132,11 @@ def setup_config():
     # must be set first...
     consts.APPLICATION_NAME = 'RAMPART'
     
-    consts.APPLICATION_NAME = "RAMPART"
     consts.WINDOW_TITLE = "RAMPART"
     consts.ICON_FILENAME = "rampart-icon.png"
     consts.APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
-    consts.APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+    consts.APPLICATION_TITLE_LINE_2 = ""
+    consts.APPLICATION_SUBTITLE_LINE = "built by James Hadfield, Áine O'Toole, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
     consts.PROJECT_LOGO = "artic_panel.png"
     consts.PROJECT_FOOTER = ""
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
