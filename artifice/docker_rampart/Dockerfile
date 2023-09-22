@@ -38,7 +38,8 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /data/rampart
 
 # update npm, install npm packages, build rampart
-RUN source /venv/bin/activate && npm install  && \
+RUN export NODE_OPTIONS=--openssl-legacy-provider && \
+    source /venv/bin/activate && npm install  && \
     npm run build && npm install --global .
 
 # runtime image
@@ -49,7 +50,7 @@ COPY --from=compile-image /data/rampart /data/rampart
 # Copy /venv from the previous stage:
 COPY --from=compile-image /venv /venv
 
-WORKDIR /data/run_data/analysis
+WORKDIR /data/run_data/
 
 # set environment variable PYTHONUNBUFFERED to allow unbuffered log output for artifice
 ENV PYTHONUNBUFFERED=1
