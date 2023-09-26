@@ -1,6 +1,9 @@
 import os.path
 import json
 import traceback
+import csv
+import os.path
+import traceback
 from os import mkdir, listdir
 from shutil import rmtree, copytree
 
@@ -251,3 +254,32 @@ def rename_run(values, run_info, window, hide_archived = True, runs_dir = None, 
         edit_archive(previous_run_title, window, archive=False)
         delete_run(previous_run_title, window, clear_selected=False)
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived, element_dict=element_dict)
+
+# return a list with the samples from given csv file
+def samples_to_list(filepath, has_headers = True, trim = True):
+    if not os.path.isfile(filepath):
+        if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+            raise Exception('Excel files are not supported')
+
+    with open(filepath, newline = '') as csvfile:
+        try:
+            csvreader = csv.reader(csvfile)
+            csv_list = list(csvreader)
+        except Exception as err:
+            raise Exception('Invalid CSV file')
+        
+    if trim:
+        for row in csv_list:
+            for i in range(len(row)):
+                row[i] = row[i].strip()
+
+    if has_headers:
+        column_headers = csv_list[0]
+        samples_list = csv_list[1:]
+    else:
+        column_headers = []
+        for i in range(1,len(csv_list[0])+1):
+            column_headers.append(str(i))
+        samples_list = csv_list
+
+    return samples_list, column_headers

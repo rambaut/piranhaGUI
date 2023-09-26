@@ -1,7 +1,6 @@
 from optparse import Option
 import PySimpleGUI as sg
 import os.path
-import csv
 import traceback
 import sys
 
@@ -12,35 +11,7 @@ from artifice_core.language import translator, setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup
-
-# return a list with the samples from given csv file
-def samples_to_list(filepath, has_headers = True, trim = True):
-    if not os.path.isfile(filepath):
-        if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
-            raise Exception('Excel files are not supported')
-
-    with open(filepath, newline = '') as csvfile:
-        try:
-            csvreader = csv.reader(csvfile)
-            csv_list = list(csvreader)
-        except Exception as err:
-            raise Exception('Invalid CSV file')
-        
-    if trim:
-        for row in csv_list:
-            for i in range(len(row)):
-                row[i] = row[i].strip()
-
-    if has_headers:
-        column_headers = csv_list[0]
-        samples_list = csv_list[1:]
-    else:
-        column_headers = []
-        for i in range(1,len(csv_list[0])+1):
-            column_headers.append(str(i))
-        samples_list = csv_list
-
-    return samples_list, column_headers
+from artifice_core.manage_runs import samples_to_list
 
 def setup_panel(samples, barcodes_column = 0, samples_column = 1, has_headers = True):
     sg.theme('PANEL')
