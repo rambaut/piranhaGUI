@@ -12,7 +12,7 @@ UninstallDisplayIcon={app}\.exe
 Compression=lzma2
 SolidCompression=yes
 OutputDir=.\installer
-OutputBaseFilename=rampartGUIv1.5.1_installer_windows
+OutputBaseFilename=rampartGUIv1.5.2_installer_windows
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon";
