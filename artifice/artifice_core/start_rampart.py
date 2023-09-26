@@ -12,6 +12,7 @@ import multiprocessing
 import traceback
 
 from artifice_core.update_log import update_log
+from artifice_core.manage_runs import samples_to_list
 import artifice_core.consts as consts
 import artifice_core.view_barcodes_window
 
@@ -30,7 +31,8 @@ def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, se
     log_ports = str(ports)
     update_log(f'ports: {log_ports}')
 
-    environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}']
+    barcodes = create_barcode_string(run_path)
+    environment = [f'PORT_ONE={firstPort}', f'PORT_TWO={secondPort}', f'BARCODES={barcodes}']
     log_environment = str(environment)
     update_log(f'environment variables: {log_environment}')
 
@@ -82,6 +84,20 @@ def stop_docker(client = None, container_name='rampart', container = None):
                 update_log(f'tried to stop {tool_name}, appears to not be running')
                 return None
     update_log(f'stopped {tool_name}')
+
+def create_barcode_string(run_path):
+    barcodes_filepath = run_path / 'barcodes.csv'
+    #with open(barcodes_filepath) as barcodefile:
+    barcodes = samples_to_list(barcodes_filepath)[0]
+
+    barcode_string = ''
+    for barcode in barcodes:
+        barcode_string += f' {str(barcode[0])}={str(barcode[1])}'
+    
+    if len(barcode_string) == 0:
+        barcode_string = ' placeholder=placeholder'
+    
+    return barcode_string
 
 #put the streamed output of container log into queue
 def queue_log(log, queue):
