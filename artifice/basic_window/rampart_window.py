@@ -4,7 +4,7 @@ import traceback
 import re
 import docker
 import multiprocessing
-from os import cpu_count
+from os import cpu_count, listdir
 import threading
 import queue
 import os.path
@@ -89,7 +89,7 @@ def setup_panel(config):
 
     #button_size=(220,36)
     rampart_tab_title = translator('RAMPART output')
-    selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
+    #selected_protocol_text = translator('Selected Protocol') + ": " + str(config["PROTOCOL"])
 
     rampart_console =  sg.Column([
         [sg.Sizer(2,2)],
@@ -101,6 +101,12 @@ def setup_panel(config):
         ]
     ], expand_x=True, expand_y=True, pad=(2,2), background_color = theme['BUTTON'][1])
 
+    config = consts.retrieve_config()
+    protocols = listdir(config['PROTOCOLS_DIR'])
+    if config['PROTOCOL'] in protocols:
+        selected_protocol = config['PROTOCOL']
+    else:
+        selected_protocol = protocols[0]
     # create run settings layout
     layout = []
 
@@ -108,11 +114,11 @@ def setup_panel(config):
 #    sg.Sizer(16,16),
     sg.Frame(translator("RAMPART Protocol:"), [[
         sg.Sizer(32,0),
-        sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-        #sg.Text('Selected Protocol', visible=got_rampart_image, key='-PROTOCOL STATUS-'),
-        #sg.OptionMenu(values=['1','2']),
+        #sg.Text(selected_protocol_text, visible=got_rampart_image, key='-PROTOCOL STATUS-'), 
+        sg.Text('Selected Protocol:', visible=got_rampart_image, key='-PROTOCOL STATUS-'),
+        sg.OptionMenu(values=protocols,default_value=selected_protocol,key='-PROTOCOL DROPDOWN-'),
         sg.Push(),
-        AltButton(button_text=translator('Select Protocol'), visible=got_rampart_image, key='-SELECT PROTOCOL-')
+        AltButton(button_text=translator('Manage Protocols'), visible=got_rampart_image, key='-MANAGE PROTOCOLS-')
         ]]  , border_width=0, relief="solid", pad=(16,8), expand_x=True, expand_y=False)
     ])
 
@@ -232,6 +238,7 @@ def run_main_window(window, rampart_running = False):
                 window['-RAMPART STATUS-'].update(translator('RAMPART is not running'))
 
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
+            consts.edit_config('PROTOCOL',values['-PROTOCOL DROPDOWN-'])
             running_tools = []
 
             if rampart_running:
@@ -284,7 +291,8 @@ def run_main_window(window, rampart_running = False):
                     run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                     if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
                         alt_popup_ok(translator('Warning: there are spaces in samples'))
-
+                    rampart_protocol = values['-PROTOCOL DROPDOWN-']
+                    print(rampart_protocol)
                     art_protocol_path = config['PROTOCOLS_DIR'] / rampart_protocol
                     protocol_path = artifice_core.select_protocol_window.get_protocol_dir(art_protocol_path)
                     rampart_container = artifice_core.start_rampart.launch_rampart(
@@ -318,12 +326,13 @@ def run_main_window(window, rampart_running = False):
             except Exception as err:
                 error_popup(err)
 
-        elif event == '-SELECT PROTOCOL-':
+        elif event == '-MANAGE PROTOCOLS-':
             try:
                 protocol_window = artifice_core.select_protocol_window.create_protocol_window()
                 rampart_protocol = artifice_core.select_protocol_window.run_protocol_window(protocol_window)
                 if rampart_protocol != None:
-                    window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
+                    #window['-PROTOCOL STATUS-'].update(f'Selected Protocol: {rampart_protocol}')
+                    window['-PROTOCOL DROPDOWN-'].update(value=rampart_protocol)
 
             except Exception as err:
                 error_popup(err)
