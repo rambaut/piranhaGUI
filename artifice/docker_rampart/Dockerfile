@@ -63,4 +63,6 @@ cp -a /data/rampart/default_protocol/.  /data/run_data/protocol
 SHELL ["/bin/bash", "-c"]
 # run rampart
 #ENTRYPOINT rampart --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
-ENTRYPOINT source /venv/bin/activate && rampart --protocol /data/run_data/protocol --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
+ENTRYPOINT source /venv/bin/activate && if ["$BARCODES" == ""] ; \
+then rampart --protocol /data/run_data/protocol --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled  --clearAnnotated; \
+else rampart --protocol /data/run_data/protocol --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --barcodeNames ${BARCODES} --clearAnnotated ; fi
