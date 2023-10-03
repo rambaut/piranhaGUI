@@ -1,5 +1,5 @@
-pyinstaller piranhaGUI.spec
+pyinstaller rampart #piranhaGUI.spec
 cp -r ../resources ./dist/resources
-cp ../config.yml ./dist
+cp ../rampart.yml ./dist #../config.yml ./dist
 chmod +x launch_script.sh
 cp launch_script.sh ./dist
