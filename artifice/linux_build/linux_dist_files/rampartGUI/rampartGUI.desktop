@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=rampartGUI
+Comment=Bioinformatics GUI
+Icon=/usr/local/ARTIFICE/resources/rampart-icon.png
+Exec=/usr/local/ARTIFICE/launch_script.sh
+Categories=artifice;rampart;piranha;

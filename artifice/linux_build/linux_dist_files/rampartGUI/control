@@ -1,0 +1,5 @@
+Package: rampartGUI
+Version: 1.5.2
+Architecture: amd64
+Maintainer: Corey Ansley <c.ansley@ed.ac.uk>
+Description: Graphical interface for bioinformatics tools
