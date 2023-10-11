@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source build_config_piranha
+source build_config_rampart
 mkdir $ART_PKG_NAME
 mkdir -p $ART_PKG_NAME/usr/local/ARTIFICE
 mkdir -p $ART_PKG_NAME/usr/share/applications
