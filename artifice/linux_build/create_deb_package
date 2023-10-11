@@ -5,7 +5,13 @@ mkdir $ART_PKG_NAME
 mkdir -p $ART_PKG_NAME/usr/local/ARTIFICE
 mkdir -p $ART_PKG_NAME/usr/share/applications
 cp ./linux_dist_files/$APPLICATION_NAME/$APPLICATION_NAME.desktop $ART_PKG_NAME/usr/share/applications
-source build_artifice
+
+pyinstaller $APPLICATION_NAME.spec #piranhaGUI.spec
+cp -r ../resources ./dist/resources
+cp ../$CONFIG_FILE ./dist #../config.yml ./dist
+chmod +x launch_script.sh
+cp launch_script.sh ./dist
+
 cp -r ./dist/. $ART_PKG_NAME/usr/local/ARTIFICE
 #cp -r /data/piranha_image_file/. $ART_PKG_NAME/~/.local/share
 mkdir -p $ART_PKG_NAME/DEBIAN

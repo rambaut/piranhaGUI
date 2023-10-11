@@ -1,3 +1,4 @@
+#source build_config_rampart
 pyinstaller rampart #piranhaGUI.spec
 cp -r ../resources ./dist/resources
 cp ../rampart.yml ./dist #../config.yml ./dist
