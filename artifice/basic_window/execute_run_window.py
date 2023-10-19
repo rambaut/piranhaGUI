@@ -159,7 +159,7 @@ def create_main_window(window = None):
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
     new_window.set_min_size(size=(800,800))
-    new_window.set_title(consts.VERSION)
+    new_window.set_title(consts.WINDOW_TITLE)
 
     if window != None:
         window.close()

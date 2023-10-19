@@ -209,7 +209,7 @@ def setup_header_footer(content, large=False, small=False):
     if large:
         layout = [
         [
-            sg.Image(scale_image_proportionally("artic-small.png", consts.SCALING, vsize=64), pad=(8,2), 
+            sg.Image(scale_image_proportionally("artic-icon.png", consts.SCALING, vsize=64), pad=(8,2), 
                      enable_events=True, key='-ARTIC LOGO-'),
             sg.Column([[
                     sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),
@@ -229,7 +229,7 @@ def setup_header_footer(content, large=False, small=False):
         layout = [
         [
             sg.Sizer(16,16),
-            # sg.Image(scale_image("artic-small.png", 1, (16,16)), pad=(8,0)),
+            # sg.Image(scale_image("artic-icon.png", 1, (16,16)), pad=(8,0)),
             # sg.Push(),
             # sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
         ],
