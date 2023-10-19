@@ -82,7 +82,7 @@ def get_config_value(key, config):
             value = default_config[key]
             edit_config(key, value)
     
-    return config[key]
+    return key
                   
 # returns a dict with config value taken from the config file
 def retrieve_config():
