@@ -37,6 +37,9 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /data/rampart
 
+#RUN conda install "nodejs>=16"
+#RUN export NODE_OPTIONS=--openssl-legacy-provider
+
 # update npm, install npm packages, build rampart
 RUN export NODE_OPTIONS=--openssl-legacy-provider && \
     source /venv/bin/activate && npm install  && \
