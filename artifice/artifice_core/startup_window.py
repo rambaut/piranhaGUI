@@ -152,7 +152,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(rampart_image_status, key='-RAMPART IMAGE STATUS-',
-                        size=(32,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
+                        size=(40,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
                 AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,
                           key='-RAMPART INSTALL-'),
             ],[
@@ -166,7 +166,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
-                        size=(32,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+                        size=(40,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
                 AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
             ],[
                 sg.Sizer(32,0), 
