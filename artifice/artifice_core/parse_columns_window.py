@@ -28,7 +28,7 @@ def setup_panel(samples, barcodes_column = 0, samples_column = 1, has_headers = 
     if sys.platform.startswith("darwin"): #on MacOS
         option_menu_text_color = '#000000'
     else:
-        option_menu_text_color = '#f7eacd'
+        option_menu_text_color = '#000000'#'#f7eacd'
 
     layout = [
         [sg.Sizer(500,0)],
