@@ -31,23 +31,37 @@ def setup_panel():
         '-DATE STAMP-':translator('Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp'),
         '-OVERWRITE-':translator('Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists'),
         '-VERBOSE-':translator('Print lots of stuff to screen'),
-        '-NO TEMP-':translator('Publish all intermediate files for debugging')
+        '-NO TEMP-':translator('Publish all intermediate files for debugging'),
+        #'-RUN PHYLO-':translator('Trigger the optional phylogenetics module. Additional dependencies may need to be installed.'),
+        #'-SUP SEQS-':translator('Supplementary sequence FASTA file to be incorporated into phylogenetic analysis.'),
+        #'-SUP METADATA-':translator('Supplementary metadata file associated with the supplementary sequence FASTA file.'),
+        #'-PHYLO METADATA COL-':translator(f'Columns in the barcodes.csv file to annotate the phylogeny with. Default:'), #{consts.VALUE_PHYLO_METADATA_COLUMNS}'),
+        #'-SUP METADATA COL-':translator('Supplementary sequence FASTA file to be incorporated into phylogenetic analysis.'),
+        #'-SUP METADATA ID COL-':translator('Supplementary sequence FASTA file to be incorporated into phylogenetic analysis.'),
+        #'-UPDATE DB-':translator('Supplementary sequence FASTA file to be incorporated into phylogenetic analysis.'),
+        
     }
 
     analysis_options_tab = [
         #Commented out for now
-        #[
-        #sg.Text(translator('Analysis Mode:'),tooltip=tooltips['-ANALYSIS MODE-']),
-        #sg.Push(),
-        #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
-        #],
-        #[
-        #sg.Text(translator('Medaka Model:'),tooltip=tooltips['-MEDAKA MODEL-']),
-        #sg.Push(),
-        #sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
-        #],
+        [
+        sg.Push(),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
+        ],
+        [
+        sg.Push(),
+        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
+        ],
         [
             sg.Column([
+                #[
+                #sg.Sizer(16,32),
+                #sg.Text(translator('Analysis Mode:'),justification='right',tooltip=tooltips['-ANALYSIS MODE-']),
+                #],
+                #[
+                #sg.Sizer(16,32),
+                #sg.Text(translator('Medaka Model:'),justification='right',tooltip=tooltips['-MEDAKA MODEL-']),
+                #],
                 [
                 sg.Sizer(16,32),
                 sg.Text(translator('Minimum Mapping Quality:'),justification='right',tooltip=tooltips['-MIN MAP QUALITY-']),
@@ -223,8 +237,8 @@ def run_piranha_options_window(window, run_info):
     selected_run_title = run_info['title']
 
     element_dict = {
-                    #'-ANALYSIS MODE-':'m',
-                    #'-MEDAKA MODEL-':'--medaka-model',
+                    '-ANALYSIS MODE-':'-m',
+                    '-MEDAKA MODEL-':'--medaka-model',
                     '-MIN MAP QUALITY-':'-q',
                     '-MIN READ LENGTH-':'-n',
                     '-MAX READ LENGTH-':'-x',
