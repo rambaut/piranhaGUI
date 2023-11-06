@@ -20,7 +20,7 @@ from artifice_core.language import setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from basic_window.about_window import create_about_window, run_about_window
-from artifice_core.alt_button import AltButton
+from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.alt_popup import alt_popup
 from artifice_core.window_functions import error_popup
 
@@ -152,7 +152,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(rampart_image_status, key='-RAMPART IMAGE STATUS-',
-                        size=(40,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
+                        size=(50,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
                 AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,
                           key='-RAMPART INSTALL-'),
             ],[
@@ -160,18 +160,36 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Text(translator('RAMPART is optional software used to monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
             ]])
             ])
-        
+    
+    if consts.PHYLO_ENABLED:
+        phylo_button_text = 'Disable Phylogenetics module'
+    else:
+        phylo_button_text = 'Enable Phylogenetics module'
     if usesPiranha:
         layout.append([
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
-                        size=(40,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+                        size=(50,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
                 AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
             ],[
                 sg.Sizer(32,0), 
                 sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
-            ]])
+            ],
+            [sg.Sizer(16,28)],[
+            sg.Sizer(16,0),
+            AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
+            ],
+            [
+                sg.Sizer(16,56),
+                sg.Text(translator('Supplementary sequences for phylogenetic module:'),
+                        size=(42,1),visible=(got_piranha_image and consts.PHYLO_ENABLED),justification='left', key='PHYLO_TEXT'),
+                sg.In(enable_events=True,expand_y=True,font=consts.CONSOLE_FONT, 
+                    pad=(0,15), disabled_readonly_background_color='#393938', expand_x=True,
+                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left", visible=(got_piranha_image and consts.PHYLO_ENABLED), key='PHYLO_DIR'),
+                AltFolderBrowse(button_text=translator('Select'), visible=(got_piranha_image and consts.PHYLO_ENABLED), key='PHYLO_BUTTON'),
+                sg.Push()
+            ],])
         ])
 
     layout.append([

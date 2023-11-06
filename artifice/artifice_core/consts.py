@@ -212,6 +212,7 @@ RUNS_DIR = get_config_value('RUNS_DIR',config)
 LOGFILE = get_config_value('LOGFILE',config)
 THREADS = get_config_value('THREADS',config)
 SCALING = get_config_value('SCALING',config)
+PHYLO_ENABLED = get_config_value('PHYLO_ENABLED', config)
 
 RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1',config)
 RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2',config)
