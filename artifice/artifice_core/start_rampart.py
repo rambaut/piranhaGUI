@@ -319,8 +319,6 @@ def get_options(run_info):
             else:
                 if run_info[element] != '':
                     if ' ' in run_info[element]:
-                        b = r'\"'
-                        q = '"'
                         value = run_info[element].replace(' ', '_')
 
                         #options_str += f'{element} "{run_info[element]}" '
