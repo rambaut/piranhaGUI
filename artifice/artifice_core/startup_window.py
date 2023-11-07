@@ -180,7 +180,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,0),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
-            [sg.Frame(title='',size=(800,40), layout=[
+            [sg.Frame(title='',size=(950,65), layout=[
             [
                 sg.Sizer(16,56),
                 sg.Text(translator('Supplementary directory for phylogenetic module:'),
