@@ -22,7 +22,7 @@ def get_datadir():
     else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
-    path = Path(os_path) / "RAMPART"
+    path = Path(os_path) /  'piranhaGUI'#"RAMPART"
 
     path = path.expanduser()
 
@@ -163,7 +163,7 @@ DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
 if sys.platform.startswith("darwin"): #macOS
     MONOTYPE_FONT_FAMILY = 'Menlo'
 else:
-    MONOTYPE_FONT_FAMILY = 'Consalas'
+    MONOTYPE_FONT_FAMILY = 'Consolas'
 CONSOLE_FONT_SIZE = 14
 CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, CONSOLE_FONT_SIZE)
 

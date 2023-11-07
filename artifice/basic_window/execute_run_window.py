@@ -77,10 +77,12 @@ def setup_panel(config):
     output_tabs = []
     if is_piranhaGUI:
         output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,
+                                     font = consts.CONSOLE_FONT,
                                     background_color = theme['BUTTON'][1],
                                     visible=is_piranhaGUI,key='-PIRANHA TAB-'))
     if SHOW_RAMPART:
         output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
+                                        font=consts.CONSOLE_FONT,
                                         background_color = theme['BUTTON'][1],
                                         visible=False,key='-RAMPART TAB-'))
 
