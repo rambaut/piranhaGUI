@@ -180,13 +180,36 @@ def scale_image(filename, scale, size):
     im.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue())
 
+def scale_image_proportionally(filename, hsize = None, vsize = None):
+    if not os.path.isdir(consts.get_datadir() / 'resources'):
+        mkdir(consts.get_datadir() / 'resources')
+
+    #processed_image = str(consts.get_datadir() / 'resources' / filename)
+    image_file = f'./resources/{filename}'
+    image_file = consts.get_resource(image_file)
+    im = Image.open(image_file)
+    ratio = im.size[0] / im.size[1]    
+    if hsize:
+        h = float(hsize)
+        v = float(hsize) / ratio
+    if vsize:
+        h = float(vsize) * ratio
+        v = float(vsize)
+      
+    im = im.resize((int(h), int(v)), resample=Image.BICUBIC)
+    #im.save(processed_image)
+
+    buffered = BytesIO()
+    im.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue())
+
 # Creates a layout for a window that embeds a content frame into an ARTIC header and footer
 def setup_header_footer(content, large=False, small=False):
     sg.theme("HEADER")
     if large:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", consts.SCALING, (64,64)), pad=(8,2), 
+            sg.Image(scale_image_proportionally("artic-icon.png", consts.SCALING, vsize=64), pad=(8,2), 
                      enable_events=True, key='-ARTIC LOGO-'),
             sg.Column([[
                     sg.Text('Powered by ARTIFICE', font=consts.HEADER_TITLE_FONT, pad=(8,2)),
@@ -199,14 +222,14 @@ def setup_header_footer(content, large=False, small=False):
             content
         ],
         [
-            sg.Text('ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut', font=consts.FOOTER_FONT, pad=(8,2)),
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'),
+            sg.Push(), sg.Text(consts.APPLICATION_CREDITS, font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2), expand_x=True, justification='right'), sg.Push(),
         ]]
     elif small:
         layout = [
         [
             sg.Sizer(16,16),
-            # sg.Image(scale_image("artic-small.png", 1, (16,16)), pad=(8,0)),
+            # sg.Image(scale_image("artic-icon.png", 1, (16,16)), pad=(8,0)),
             # sg.Push(),
             # sg.Text('ARTICnetwork: http://artic.network', font=('Helvetica Neue Light', 14), pad=(8,2)),
         ],
@@ -219,21 +242,21 @@ def setup_header_footer(content, large=False, small=False):
     else:
         layout = [
         [
-            sg.Image(scale_image("artic-small.png", 1, (32,32)), pad=(8,2), 
+            sg.Image(scale_image("artic-icon.png", 1, (32,32)), pad=(8,2), 
                      enable_events=True, key='-ARTIC LOGO-'),
-            sg.Text('Powered by ARTIFICE | ARTICnetwork: http://artic.network', font=consts.HEADER_FONT, 
+            sg.Text(consts.APPLICATION_HEADER, font=consts.HEADER_FONT, 
                     pad=(8,2),enable_events=True, key='-ARTIC LOGO-'),
         ],
         [
             content
         ],
         [
-            sg.Text('Wellcome Trust Award 206298/Z/17/Z', font=consts.FOOTER_FONT, pad=(8,2)),
+            sg.Push(), sg.Text(consts.APPLICATION_FOOTER, font=consts.FOOTER_FONT, pad=(8,2)), sg.Push()
         ]]
 
     return layout
 
-# Creates a frame that embeds a content panel in a Piranha/PoSeqCo branded layout
+# Creates a frame that embeds a content panel in a Application branded layout
 def setup_content(panel, title=None, small=False, button_text=None, button_key=None, 
                   top_left_button_text=None, top_left_button_key=None, 
                   top_right_button_text=None, top_right_button_key=None,
@@ -245,34 +268,31 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
     if small:
         layout.append([
                 sg.Sizer(16,40),
-                sg.Image(scale_image("piranha.png", 1, (32,32)), enable_events=True, key='-PIRANHA LOGO-'),
+                sg.Image(scale_image(consts.ICON_FILENAME, 1, (32,32)), enable_events=True, key='-APPLICATION LOGO-'),
                 sg.Sizer(16,40),
                 sg.Text(title, font=('Helvetica Neue Thin', 18))
-
-                #     [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)))],
-                #     [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=('Helvetica Neue Light', 12))]],
-                #     element_justification="right", expand_x=True, pad=(8,0))
             ])
     else:
         layout.append([
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image("piranha.png", consts.SCALING, (64,64)),
-                               enable_events=True, key='-PIRANHA LOGO-')]],
+                    [[sg.Image(scale_image_proportionally(consts.ICON_FILENAME, vsize=96),
+                               enable_events=True, key='-APPLICATION LOGO-')]],
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
                     [
                         [sg.Text(title, font=consts.TITLE_FONT)],
-                        [sg.Text("Polio Direct Detection by Nanopore Sequencing (DDNS)", font=consts.SUBTITLE_FONT)],
-                        [sg.Text("analysis pipeline and reporting tool", font=consts.SUBTITLE_FONT)],             
+                        [sg.Text(consts.APPLICATION_TITLE_LINE_1, font=consts.SUBTITLE_FONT)],
+                        [sg.Text(consts.APPLICATION_TITLE_LINE_2 , font=consts.SUBTITLE_FONT)],
+                        [sg.Text(consts.APPLICATION_SUBTITLE_LINE , font=consts.CAPTION_FONT)],
                     ]
                 ),
                 sg.Sizer(16,72),
                 sg.Column(
-                    [[sg.Image(scale_image("poseqco_logo_cropped.png", 1, (150,68)), 
-                               enable_events=True, key='-POSECO LOGO-')],
-                    [sg.Text("Bill & Melinda Gates Foundation OPP1171890 and OPP1207299", font=consts.FOOTER_FONT)]],
+                    [[sg.Image(scale_image_proportionally(consts.PROJECT_LOGO, vsize=96),
+                               enable_events=True, key='-PROJECT LOGO-')],
+                    [sg.Text(consts.PROJECT_FOOTER, font=consts.FOOTER_FONT)]],
                     element_justification="right", expand_x=True, pad=(8,0))
             ])
 

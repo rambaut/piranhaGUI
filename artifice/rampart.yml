@@ -1,0 +1,11 @@
+RAMPART_PORT_1: 1100
+RAMPART_PORT_2: 1200
+ARCHIVED_RUNS: 'archived_runs'
+RUNS_DIR: 'runs'
+RAMPART_IMAGE: 'coreyansley/artifice_polio_rampart'
+RAMPART_LOGFILE: 'RAMPART-log.txt'
+LOGFILE: 'log.txt'
+THREADS: null
+FIRST_TIME_SETUP: true
+LANGUAGE: 'English'
+SCALING: 1

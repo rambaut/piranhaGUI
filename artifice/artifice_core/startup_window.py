@@ -20,14 +20,34 @@ from artifice_core.language import setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.options_window import create_options_window, run_options_window
 from basic_window.about_window import create_about_window, run_about_window
-from artifice_core.alt_button import AltButton
+from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.alt_popup import alt_popup
 from artifice_core.window_functions import error_popup
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
 
-def setup_panel():
+def check_installation_required(usesRAMPART = True, usesPiranha = True):
+    config = artifice_core.consts.retrieve_config()
+    docker_client = None
+
+    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed    
+    if usesRAMPART:
+        got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+            rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
+
+    if usesPiranha:
+        got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
+            piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+
+    piranha_update = usesPiranha and (not got_piranha_image or piranha_update_available)
+    rampart_update = usesRAMPART and (not got_rampart_image or rampart_update_available)
+    
+    return not docker_installed or piranha_update or rampart_update
+
+def setup_panel(usesRAMPART, usesPiranha):
     translator = setup_translator()
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
@@ -42,12 +62,17 @@ def setup_panel():
     else:
         docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
+    
+    if usesRAMPART:
+        got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
+            rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
 
-    got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-        piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
-            set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
+    if usesPiranha:
+        got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
+            piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
 
-    if is_piranhaGUI:
         if not got_piranha_image:
             # attempt to install piranha image from file
             if sys.platform.startswith('win'):
@@ -87,18 +112,15 @@ def setup_panel():
     
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
-    show_piranha_button = is_piranhaGUI and (not got_piranha_image or piranha_update_available)
+    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available)
 
-    show_rampart_button = rampart_update_available or not got_rampart_image
+    show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available)
 
     if 'SHOW_RAMPART' in config:
         SHOW_RAMPART = config['SHOW_RAMPART']
     else:
-        if is_piranhaGUI:
-            SHOW_RAMPART = False
-        else:
-            SHOW_RAMPART = True
-        
+        SHOW_RAMPART = usesRAMPART
+
         consts.edit_config('SHOW_RAMPART', SHOW_RAMPART)
     
     show_rampart_text = SHOW_RAMPART
@@ -130,7 +152,7 @@ def setup_panel():
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(rampart_image_status, key='-RAMPART IMAGE STATUS-',
-                        size=(32,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
+                        size=(50,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
                 AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,
                           key='-RAMPART INSTALL-'),
             ],[
@@ -138,18 +160,43 @@ def setup_panel():
                 sg.Text(translator('RAMPART is optional software used to monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
             ]])
             ])
-        
-    layout.append([
-        sg.Sizer(16,56), 
-        sg.Column([[
-            sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
-                    size=(32,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
-            AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
-        ],[
-            sg.Sizer(32,0), 
-            sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
-        ]])
-    ])
+    
+    if consts.PHYLO_ENABLED:
+        phylo_button_text = 'Disable Phylogenetics module'
+    else:
+        phylo_button_text = 'Enable Phylogenetics module'
+    if usesPiranha:
+        layout.append([
+            sg.Sizer(16,56), 
+            sg.Column([[
+                sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
+                        size=(50,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+                AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+            ],[
+                sg.Sizer(32,0), 
+                sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
+            ],
+            [sg.Sizer(16,28)],[
+            sg.Sizer(16,0),
+            AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
+            ],
+            [sg.Frame(title='',size=(800,40), layout=[
+            [
+                sg.Sizer(16,56),
+                sg.Text(translator('Supplementary directory for phylogenetic module:'),
+                        size=(42,1),justification='left'),
+                sg.In(default_text=consts.PHYLO_DIR, enable_events=True,expand_y=True,font=consts.CONSOLE_FONT, 
+                    pad=(0,5), disabled_readonly_background_color='#393938', expand_x=True,
+                    disabled_readonly_text_color='#F5F1DF', readonly=True, 
+                    tooltip='Path to directory containing supplementary sequence FASTA file and optional metadata to be incorporated into phylogenetic analysis.', 
+                    justification="left",  key='-PHYLO DIR-'),
+                AltFolderBrowse(button_text=translator('Select')),
+                sg.Push()
+            ],],
+            visible=(got_piranha_image and consts.PHYLO_ENABLED),
+            key = '-PHYLO FRAME-')]
+            ]),
+        ])
 
     layout.append([
         sg.Sizer(0,32), 
@@ -160,20 +207,21 @@ def setup_panel():
 
     return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8))
 
-def create_startup_window(window = None):
+def create_startup_window(usesRAMPART = True, usesPiranha = True, window = None):
     update_log('creating startup window')
 
-    panel = setup_panel()
+    panel = setup_panel(usesRAMPART, usesPiranha)
 
-    title = 'PiranhaGUI'
-
-    content = window_functions.setup_content(panel, title = title, button_text='Continue', button_key='-LAUNCH-',
-                                             top_left_button_text='About', top_left_button_key='-ABOUT-', 
-                                             top_right_button_text='Options', top_right_button_key='-OPTIONS-')
+    if usesPiranha:
+        content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-',
+                                            top_left_button_text='About', top_left_button_key='-ABOUT-', 
+                                            top_right_button_text='Options', top_right_button_key='-OPTIONS-')
+    else:
+        content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-')
 
     layout = window_functions.setup_header_footer(content)
         
-    new_window = sg.Window(title, layout, resizable=False, enable_close_attempted_event=True, 
+    new_window = sg.Window(consts.WINDOW_TITLE, layout, resizable=False, enable_close_attempted_event=True, 
                            finalize=True,use_custom_titlebar=False,icon=consts.ICON,font=consts.DEFAULT_FONT,
                            margins=(0,0), element_padding=(0,0))
     new_window.set_min_size(size=(512,380))
@@ -326,6 +374,21 @@ def run_startup_window(window, translator = None):
             except Exception as err:
                 error_popup(err)
 
+        elif event == '-ENABLE PHYLO-':
+            try:
+                if consts.PHYLO_ENABLED:
+                    consts.edit_config('PHYLO_ENABLED', False)
+                    consts.PHYLO_ENABLED = False
+                    window['-ENABLE PHYLO-'].update(text = 'Enable Phylogenetics module')
+                    window['-PHYLO FRAME-'].update(visible=False)
+                else:
+                    consts.edit_config('PHYLO_ENABLED', True)
+                    consts.PHYLO_ENABLED = True
+                    window['-ENABLE PHYLO-'].update(text = 'Disable Phylogenetics module')
+                    window['-PHYLO FRAME-'].update(visible=True)
+            except Exception as err:
+                error_popup(err)
+
         elif event == '-ABOUT-':
             try:
                 about_window = create_about_window()
@@ -362,5 +425,9 @@ def run_startup_window(window, translator = None):
 
 
         elif event == '-LAUNCH-':
+            try:
+                consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+            except Exception as err:
+                error_popup(err)
             window.close()
             return False

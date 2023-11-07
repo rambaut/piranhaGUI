@@ -1,7 +1,10 @@
 import artifice_core.consts as consts
 
 #update the log with a new line
-def update_log(line, filename = consts.LOGFILE, overwrite = False, add_newline = True):
+def update_log(line, filename = None, overwrite = False, add_newline = True):
+    if not filename:
+        filename = consts.LOGFILE
+
     #make sure line can be converted to string
     try:
         line = str(line)
@@ -26,5 +29,5 @@ def update_log(line, filename = consts.LOGFILE, overwrite = False, add_newline =
             f.write(line)
 
 # lazy function to log a PySimpleGUI event 
-def log_event(input, filename = consts.LOGFILE):
+def log_event(input, filename = None):
     update_log(f'\nEVENT: {input}', filename)

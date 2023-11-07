@@ -77,10 +77,12 @@ def setup_panel(config):
     output_tabs = []
     if is_piranhaGUI:
         output_tabs.insert(0, sg.Tab(piranha_tab_title,piranha_tab,
+                                     font = consts.CONSOLE_FONT,
                                     background_color = theme['BUTTON'][1],
                                     visible=is_piranhaGUI,key='-PIRANHA TAB-'))
     if SHOW_RAMPART:
         output_tabs.insert(0, sg.Tab(rampart_tab_title,rampart_tab,
+                                        font=consts.CONSOLE_FONT,
                                         background_color = theme['BUTTON'][1],
                                         visible=False,key='-RAMPART TAB-'))
 
@@ -159,7 +161,7 @@ def create_main_window(window = None):
     #new_window.TKroot.minsize(1024,640)
     #new_window.TKroot.minsize(640,480)
     new_window.set_min_size(size=(800,800))
-    new_window.set_title(consts.VERSION)
+    new_window.set_title(consts.WINDOW_TITLE)
 
     if window != None:
         window.close()

@@ -3,28 +3,27 @@
 
 
 [Setup]
-AppName=piranhaGUI
-AppVersion=1.5.3
+AppName=rampartGUI
+AppVersion=1.5.2
 WizardStyle=modern
-DefaultDirName={autopf}\piranhaGUI
-DefaultGroupName=piranhaGUI
+DefaultDirName={autopf}\rampartGUI
+DefaultGroupName=rampartGUI
 UninstallDisplayIcon={app}\.exe
 Compression=lzma2
 SolidCompression=yes
 OutputDir=.\installer
-OutputBaseFilename=PiranhaGUIv1.5.3_installer_windows
+OutputBaseFilename=rampartGUIv1.5.2_installer_windows
 
 [Tasks]
 Name: desktopicon; Description: "Create a &desktop icon";
 
 [Files]
-Source: "piranhaGUI.exe"; DestDir: "{app}"
+Source: "rampartGUI.exe"; DestDir: "{app}"
 ;Source: "runs\archived_runs.json"; DestDir: "{app}\runs"
 Source: "resources\*"; DestDir: "{app}\resources"
-;Source: "resources\piranha.tar"; DestDir: "{localappdata}\piranhaGUI"
 Source: "builtin_protocols\*"; DestDir: "{app}\builtin_protocols"; Flags: ignoreversion recursesubdirs
 Source: "config.yml"; DestDir: "{app}"
 
 [Icons]
-Name: "{group}\piranhaGUI"; Filename: "{app}\piranhaGUI.exe"
-Name: "{commondesktop}\piranhaGUI"; Filename: "{app}\piranhaGUI.exe"; Tasks: desktopicon
+Name: "{group}\rampartGUI"; Filename: "{app}\rampartGUI.exe"
+Name: "{commondesktop}\rampartGUI"; Filename: "{app}\rampartGUI.exe"; Tasks: desktopicon

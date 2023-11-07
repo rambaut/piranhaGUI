@@ -5,10 +5,10 @@ block_cipher = None
 
 
 a = Analysis(
-    ['../../artifice.pyw'],
+    ['..\\rampart.pyw'],
     pathex=[],
     binaries=[],
-    datas=[('../../config.yml', '.'), ('../../resources', './resources')],
+    datas=[],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -24,34 +24,22 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
     [],
-    exclude_binaries=True,
-    name='piranhaGUIv1.5.3',
+    name='rampartGUI',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='../resources/piranha_resized.icns',
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='artifice',
-)
-app = BUNDLE(
-    coll,
-    name='piranhaGUIv1.5.3.app',
-    icon='../../resources/piranha_resized.icns',
-    bundle_identifier=None,
+    icon='..\\resources\\rampart-icon.ico',
 )

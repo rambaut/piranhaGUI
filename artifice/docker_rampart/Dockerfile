@@ -37,8 +37,12 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /data/rampart
 
+#RUN conda install "nodejs>=16"
+#RUN export NODE_OPTIONS=--openssl-legacy-provider
+
 # update npm, install npm packages, build rampart
-RUN source /venv/bin/activate && npm install  && \
+RUN export NODE_OPTIONS=--openssl-legacy-provider && \
+    source /venv/bin/activate && npm install  && \
     npm run build && npm install --global .
 
 # runtime image
@@ -49,7 +53,7 @@ COPY --from=compile-image /data/rampart /data/rampart
 # Copy /venv from the previous stage:
 COPY --from=compile-image /venv /venv
 
-WORKDIR /data/run_data/analysis
+WORKDIR /data/run_data/
 
 # set environment variable PYTHONUNBUFFERED to allow unbuffered log output for artifice
 ENV PYTHONUNBUFFERED=1
@@ -62,4 +66,6 @@ cp -a /data/rampart/default_protocol/.  /data/run_data/protocol
 SHELL ["/bin/bash", "-c"]
 # run rampart
 #ENTRYPOINT rampart --protocol /data/realtime-polio/rampart/ --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
-ENTRYPOINT source /venv/bin/activate && rampart --protocol /data/run_data/protocol --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --clearAnnotated
+ENTRYPOINT source /venv/bin/activate && if ["$BARCODES" == ""] ; \
+then rampart --protocol /data/run_data/protocol --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled  --clearAnnotated; \
+else rampart --protocol /data/run_data/protocol --ports ${PORT_ONE} ${PORT_TWO} --basecalledPath /data/run_data/basecalled --barcodeNames ${BARCODES} --clearAnnotated ; fi

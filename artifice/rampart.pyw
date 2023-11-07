@@ -12,9 +12,8 @@ from artifice_core import consts
 from artifice_core.update_log import update_log
 import artifice_core.language as language
 import advanced_window.main_window
-import basic_window.edit_run_window
-import basic_window.execute_run_window
-import basic_window.about_window
+import basic_window.rampart_run_window
+import basic_window.rampart_window
 import artifice_core.startup_window
 import artifice_core.window_functions as window_functions
 from artifice_core.manage_protocols import add_protocol
@@ -24,7 +23,7 @@ from artifice_core.window_functions import scale_window, scale_image
 def make_themes():
 
     consts.THEMES = {
-        'DEFAULT': {'BACKGROUND': "#1e5b67",
+        'DEFAULT': {'BACKGROUND': "#005B67",
                 'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
@@ -35,13 +34,13 @@ def make_themes():
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
                 'PROGRESS_DEPTH': 0},
-        'CONTENT': {'BACKGROUND': "#f7eacd",
-                'TEXT': '#1e5b67',
+        'CONTENT': {'BACKGROUND': "#005B67",
+                'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
                 'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
-                'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
+                'BUTTON': ('#f7eacd', '#d97168'),
+                'BUTTON_HOVER': ('#f7eacd', '#F48379'),
                 'PROGRESS': ('#f7eacd', '#d97168'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
@@ -53,13 +52,13 @@ def make_themes():
                 'CONSOLE_TEXT': '#FFBF00',
                 'CONSOLE_BACKGROUND': '#072429',
                 'SCROLL': '#707070',
-                'BUTTON': ('#f7eacd', '#1e5b67'),
+                'BUTTON': ('#f7eacd', '#005B67'),
                 'BUTTON_HOVER': ('#f7eacd', '#328E9A'),
                 'PROGRESS': ('#f7eacd', '#d97168'),
                 'BORDER': 0,
                 'SLIDER_DEPTH': 0,
                 'PROGRESS_DEPTH': 2},
-        'HEADER': {'BACKGROUND': "#1e5b67",
+        'HEADER': {'BACKGROUND': "#005B67",
                 'TEXT': '#f7eacd',
                 'INPUT': '#072429',
                 'TEXT_INPUT': '#f7eacd',
@@ -124,58 +123,47 @@ def create_splash_window():
         [sg.Text(language.translator('Starting up..'), font=consts.TITLE_FONT, justification = 'center')]
         ]
     
-    window = sg.Window('PiranhaGUI', layout, resizable=False, enable_close_attempted_event=False, finalize=True,
+    window = sg.Window('RAMPART', layout, resizable=False, enable_close_attempted_event=False, finalize=True,
                        icon=consts.ICON)
 
     return window
 
+"""
 def setup_config():
     # must be set first...
-    consts.APPLICATION_NAME = 'PiranhaGUI'
-
-    consts.WINDOW_TITLE = "Piranha-GUI"
-    consts.ICON_FILENAME = "piranha-icon.png"
-    consts.APPLICATION_TITLE_LINE_1 = "Polio Direct Detection by Nanopore Sequencing (DDNS)"
-    consts.APPLICATION_TITLE_LINE_2 = "analysis pipeline and reporting tool"             
-    consts.PROJECT_LOGO = "poseqco_logo_cropped.png"
-    consts.PROJECT_FOOTER = "Bill & Melinda Gates Foundation OPP1171890 and OPP1207299"
+    consts.APPLICATION_NAME = 'RAMPART'
+    
+    consts.WINDOW_TITLE = "RAMPART"
+    consts.ICON_FILENAME = "rampart-icon.png"
+    consts.APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
+    consts.APPLICATION_TITLE_LINE_2 = ""
+    consts.APPLICATION_SUBTITLE_LINE = "built by James Hadfield, Áine O'Toole, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+    consts.PROJECT_LOGO = "artic_panel.png"
+    consts.PROJECT_FOOTER = ""
     consts.ICON = window_functions.scale_image(consts.ICON_FILENAME, consts.SCALING, (64,64))
 
-    consts.setup_config()
+    consts.setup_config('rampart.yml')
     consts.config = consts.retrieve_config()
-    config = consts.config
 
-    consts.RAMPART_PORT_1 = consts.get_config_value('RAMPART_PORT_1', config)
-    consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2', config)
-    consts.ARCHIVED_RUNS = consts.get_config_value('ARCHIVED_RUNS', config)
-    consts.RUNS_DIR = consts.get_config_value('RUNS_DIR', config)
-    consts.RAMPART_IMAGE = consts.get_config_value('RAMPART_IMAGE', config)
-    consts.RAMPART_LOGFILE = consts.get_config_value('RAMPART_LOGFILE', config)
-    consts.SHOW_RAMPART = consts.get_config_value('SHOW_RAMPART', config)
-    consts.PIRANHA_IMAGE = consts.get_config_value('PIRANHA_IMAGE', config)
-    consts.PIRANHA_LOGFILE = consts.get_config_value('PIRANHA_LOGFILE', config)
-    consts.LOGFILE = consts.get_config_value('LOGFILE', config)
-    consts.THREADS = consts.get_config_value('THREADS', config)
-    consts.SCALING = consts.get_config_value('SCALING', config)
+    consts.ARCHIVED_RUNS = consts.get_config_value('ARCHIVED_RUNS')
+    consts.RUNS_DIR = consts.get_config_value('RUNS_DIR')
+    consts.LOGFILE = consts.get_config_value('LOGFILE')
+    consts.THREADS = consts.get_config_value('THREADS')
+    consts.SCALING = consts.get_config_value('SCALING')
 
-    # piranhna options
-    consts.VALUE_POSITIVE =  consts.get_config_value('VALUE_POSITIVE', config)
-    consts.VALUE_NEGATIVE = consts.get_config_value('VALUE_NEGATIVE', config)
-    consts.VALUE_SAMPLE_TYPE = consts.get_config_value('VALUE_SAMPLE_TYPE', config)
-    consts.VALUE_MIN_MAP_QUALITY = consts.get_config_value('VALUE_MIN_MAP_QUALITY', config)
-    consts.VALUE_MIN_READ_LENGTH = consts.get_config_value('VALUE_MIN_READ_LENGTH', config)
-    consts.VALUE_MAX_READ_LENGTH = consts.get_config_value('VALUE_MAX_READ_LENGTH', config)
-    consts.VALUE_MIN_READS = consts.get_config_value('VALUE_MIN_READS', config)
-    consts.VALUE_MIN_PCENT = consts.get_config_value('VALUE_MIN_PCENT', config)
-    consts.VALUE_PRIMER_LENGTH = consts.get_config_value('VALUE_PRIMER_LENGTH', config)
-    consts.VALUE_OUTPUT_PREFIX = consts.get_config_value('VALUE_OUTPUT_PREFIX', config)
-
+    consts.RAMPART_PORT_1 = consts.get_config_value('RAMPART_PORT_1')
+    consts.RAMPART_PORT_2 = consts.get_config_value('RAMPART_PORT_2')
+    consts.RAMPART_IMAGE = consts.get_config_value('RAMPART_IMAGE')
+    consts.RAMPART_LOGFILE = consts.get_config_value('RAMPART_LOGFILE')
+"""
 
 if __name__ == '__main__':
+
     advanced = False
+
     startup_time = datetime.today()
 
-    setup_config()
+    #setup_config()
     check_runs_dir(consts.RUNS_DIR)
     update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
@@ -187,30 +175,42 @@ if __name__ == '__main__':
     make_themes()
 
     splash_window = create_splash_window()
-    
-    window = artifice_core.startup_window.create_startup_window() #create the startup window to check/install docker and images
+    splash_closed = False
 
-    splash_window.close()
+    # remove 'True or' to only show startup window if docker is not installed / updates needed to pipelines
+    show_startup_window = True or artifice_core.startup_window.check_installation_required(usesPiranha = False)
 
-    advanced = artifice_core.startup_window.run_startup_window(window)
+    if show_startup_window:
+        window = artifice_core.startup_window.create_startup_window(usesPiranha = False) #create the startup window to check/install docker and images
+
+        splash_window.close()
+        splash_closed = True
+
+        advanced = artifice_core.startup_window.run_startup_window(window)
+
     
     if advanced != None: # if button pressed to launch artifice
         try:
-            if advanced:
-                window, rampart_running = advanced_window.main_window.create_main_window()
-                advanced_window.main_window.run_main_window(window, rampart_running=rampart_running)
-            else:
-                while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window()
-                    run_info = basic_window.edit_run_window.run_edit_window(window)
-                    if run_info == None:
-                        break
+            #while True: # user can go back and forth between editing and executing runs
+                #window = basic_window.rampart_run_window.create_edit_window()
+                #run_info = basic_window.rampart_run_window.run_edit_window(window)
+                #if run_info == None:
+                #    break
+                #
+                #update_log(f'\nrun details confirmed, creating main window\n')
+                #window, rampart_running = basic_window.rampart_window.create_main_window()
+                #edit = basic_window.rampart_window.run_main_window(window, run_info, rampart_running=rampart_running)
+                #if edit != True:
+                #    break
+                
+            window, rampart_running = basic_window.rampart_window.create_main_window()
 
-                    update_log(f'\nrun details confirmed, creating main window\n')
-                    window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window()
-                    edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running)
-                    if edit != True:
-                        break
+            if not splash_closed:
+                splash_window.close()
+                splash_closed = True
+
+            edit = basic_window.rampart_window.run_main_window(window, rampart_running=rampart_running)
+
             exit_time = datetime.today()
             update_log(f'\nExited successfully at {exit_time}\n')
 

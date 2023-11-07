@@ -121,7 +121,7 @@ def create_protocol_window(window = None):
 
     title = f'RAMPART{" v" + consts.RAMPART_VERSION if consts.RAMPART_VERSION != None else ""}'
 
-    content = window_functions.setup_content(panel, title=title, small=True, button_text='Confirm', button_key='-CONFIRM-')
+    content = window_functions.setup_content(panel, title=title, small=True, button_text='Close', button_key='-CONFIRM-')
 
     layout = window_functions.setup_header_footer(content, small=True,)
 
@@ -189,7 +189,7 @@ def select_protocol(config, values, window):
     window['-PROTOCOL DESC-'].update(protocol_desc)
     
 
-def run_protocol_window(window, version = 'ARTIFICE'):
+def run_protocol_window(window):
     config = consts.retrieve_config()
     translator = setup_translator()
     
@@ -212,8 +212,8 @@ def run_protocol_window(window, version = 'ARTIFICE'):
     
         elif event == '-ADD PROTOCOL-':
             try:
-                add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window(version=version)
-                added_protocol_dir = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window, version=version)
+                add_protocol_window = artifice_core.add_protocol_window.create_add_protocol_window()
+                added_protocol_dir = artifice_core.add_protocol_window.run_add_protocol_window(add_protocol_window)
                 print(added_protocol_dir)
                 if added_protocol_dir != None:
                     protocol_name = get_protocol_details(added_protocol_dir, "name")

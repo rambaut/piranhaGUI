@@ -9,6 +9,8 @@ import os.path
 
 from os import getenv, cpu_count, mkdir, remove
 
+
+
 #returns directory where Artifice stores data, dependent on os
 def get_datadir():
     home = pathlib.Path.home()
@@ -20,8 +22,7 @@ def get_datadir():
     else: #linux
         os_path = getenv("XDG_DATA_HOME", "~/.local/share")
 
-    #path = Path(os_path) / "ARTIFICE"
-    path = Path(os_path) / "piranhaGUI"
+    path = Path(os_path) /  'piranhaGUI'#"RAMPART"
 
     path = path.expanduser()
 
@@ -30,20 +31,47 @@ def get_datadir():
 
     return path
 
+#def setup_config():
+    # must be set first...
+    APPLICATION_NAME = 'RAMPART'
+    
+    APPLICATION_NAME = "RAMPART"
+    WINDOW_TITLE = "RAMPART"
+    ICON_FILENAME = "rampart-icon.png"
+    APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
+    APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+    PROJECT_LOGO = "artic_panel.png"
+    PROJECT_FOOTER = ""
+    ICON = window_functions.scale_image(ICON_FILENAME, SCALING, (64,64))
+
+    setup_config('rampart.yml')
+    config = retrieve_config()
+
+    ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS')
+    RUNS_DIR = get_config_value('RUNS_DIR')
+    LOGFILE = get_config_value('LOGFILE')
+    THREADS = get_config_value('THREADS')
+    SCALING = get_config_value('SCALING')
+
+    RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1')
+    RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2')
+    RAMPART_IMAGE = get_config_value('RAMPART_IMAGE')
+    RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE')
+
 # checks config file exists, if not creates the config file
-def setup_config():
+def setup_config(default_config_file='config.yml'):
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         return True
     else:
-        shutil.copyfile(get_resource('./config.yml'), config_path)
+        shutil.copyfile(get_resource(f'./{default_config_file}'), config_path)
 
 # reset config to defaults
-def set_config_to_default():
+def set_config_to_default(default_config_file='config.yml'):
     config_path = str(get_datadir() / 'config.yml')
     if os.path.isfile(config_path):
         remove(config_path)
-    shutil.copyfile(get_resource('./config.yml'), config_path)
+    shutil.copyfile(get_resource(f'./{default_config_file}'), config_path)
 
 def get_config_value(key, config):
     try:
@@ -64,9 +92,8 @@ def retrieve_config():
 
     config['RUNS_DIR'] = get_datadir() / 'runs'
     config['PROTOCOLS_DIR'] = get_datadir() / 'protocols'
-    config['CONSOLE_FONT'] = 'Consolas'
 
-    THREADS = config['THREADS'] #how many threads piranha should use
+    THREADS = config['THREADS'] #how many threads pipelines should use
     if THREADS == None:
         THREADS = max(int(cpu_count()/2),1)
         if THREADS == None:
@@ -78,10 +105,7 @@ def retrieve_config():
         config['LANGUAGE'] = 'English'
 
     if 'PROTOCOL' not in config:
-        config['PROTOCOL'] = 'ARTIC Poliovirus protocol v1.1' #'default RAMPART protocol'#
-
-    if 'VERSION' not in config:
-        config['VERSION'] = 'piranhaGUI'
+        config['PROTOCOL'] = 'Select RAMPART protocol'
     
     return config
 
@@ -110,27 +134,22 @@ def get_theme(key = None):
 def get_resource(filepath):
     filepath = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), filepath))
     return filepath
-    
-setup_config()
-config = retrieve_config()
 
-RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1', config)
-RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2', config)
-ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS', config)
-RUNS_DIR = get_config_value('RUNS_DIR', config)
-RAMPART_IMAGE = get_config_value('RAMPART_IMAGE', config)
-RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE', config)
-SHOW_RAMPART = get_config_value('SHOW_RAMPART', config)
-PIRANHA_IMAGE = get_config_value('PIRANHA_IMAGE', config)
-PIRANHA_LOGFILE = get_config_value('PIRANHA_LOGFILE', config)
-LOGFILE = get_config_value('LOGFILE', config)
-#FIRST_TIME_SETUP = get_config_value('FIRST_TIME_SETUP', config)
-THREADS = get_config_value('THREADS', config)
-VERSION = get_config_value('VERSION', config)
-SCALING = get_config_value('SCALING', config)
+#VERSION = get_config_value('VERSION', retrieve_config())
 
-ICON_FILENAME = 'piranha.png'
-ICON = None
+#APPLICATION_NAME = 'ARTIFICE'
+#WINDOW_TITLE = 'ARTIFICE'
+#ICON_FILENAME = 'artic.png'
+#ICON = None
+
+#APPLICATION_TITLE_LINE_1 = ""
+#APPLICATION_TITLE_LINE_2 = ""             
+#PROJECT_LOGO = "artic_logo.png"
+#PROJECT_FOOTER = ""
+
+APPLICATION_HEADER = 'Powered by ARTIFICE | ARTICnetwork: http://artic.network'
+APPLICATION_CREDITS = 'ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut'
+APPLICATION_FOOTER='ARTIC-network supported by the Wellcome Trust Award 206298/Z/17/Z'
 
 # styling constants
 BUTTON_SIZE = (128,32)
@@ -144,7 +163,7 @@ DEFAULT_FONT = (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE)
 if sys.platform.startswith("darwin"): #macOS
     MONOTYPE_FONT_FAMILY = 'Menlo'
 else:
-    MONOTYPE_FONT_FAMILY = 'Consalas'
+    MONOTYPE_FONT_FAMILY = 'Consolas'
 CONSOLE_FONT_SIZE = 14
 CONSOLE_FONT = (MONOTYPE_FONT_FAMILY, CONSOLE_FONT_SIZE)
 
@@ -156,18 +175,6 @@ TITLE_FONT = ('Helvetica Neue Thin', 24)
 SUBTITLE_FONT = (DEFAULT_FONT_FAMILY, 18)
 CAPTION_FONT = (DEFAULT_FONT_FAMILY, 14)
 
-# piranhna options
-VALUE_POSITIVE =  get_config_value('VALUE_POSITIVE', config)
-VALUE_NEGATIVE = get_config_value('VALUE_NEGATIVE', config)
-VALUE_SAMPLE_TYPE = get_config_value('VALUE_SAMPLE_TYPE', config)
-VALUE_MIN_MAP_QUALITY = get_config_value('VALUE_MIN_MAP_QUALITY', config)
-VALUE_MIN_READ_LENGTH = get_config_value('VALUE_MIN_READ_LENGTH', config)
-VALUE_MAX_READ_LENGTH = get_config_value('VALUE_MAX_READ_LENGTH', config)
-VALUE_MIN_READS = get_config_value('VALUE_MIN_READS', config)
-VALUE_MIN_PCENT = get_config_value('VALUE_MIN_PCENT', config)
-VALUE_PRIMER_LENGTH = get_config_value('VALUE_PRIMER_LENGTH', config)
-VALUE_OUTPUT_PREFIX = get_config_value('VALUE_OUTPUT_PREFIX', config)
-
 # URLS
 ARTIC_URL = 'https://artic.network/'
 POSECO_URL = 'http://polionanopore.org'
@@ -177,9 +184,41 @@ RAMPART_VERSION = None
 PIRANHA_VERSION = None
 PIRANHA_GUI_VERSION = None
 
+config = None
+#LOGFILE = None
+#RUNS_DIR = None
+#ARCHIVED_RUNS = None
+#SCALING = 1
+#THREADS = 1
+THEMES = { }
+
+APPLICATION_NAME = 'RAMPART'
+    
+APPLICATION_NAME = "RAMPART"
+WINDOW_TITLE = "RAMPART"
+ICON_FILENAME = "rampart-icon.png"
+APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
+APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
+APPLICATION_SUBTITLE_LINE = None
+PROJECT_LOGO = "artic_panel.png"
+PROJECT_FOOTER = ""
+ICON = ICON_FILENAME #window_functions.scale_image(ICON_FILENAME, SCALING, (64,64))
+
+setup_config('rampart.yml')
 config = retrieve_config()
 
-THEMES = { }
+ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS',config)
+RUNS_DIR = get_config_value('RUNS_DIR',config)
+LOGFILE = get_config_value('LOGFILE',config)
+THREADS = get_config_value('THREADS',config)
+SCALING = get_config_value('SCALING',config)
+PHYLO_ENABLED = get_config_value('PHYLO_ENABLED', config)
+PHYLO_DIR = get_config_value('PHYLO_DIR', config)
+
+RAMPART_PORT_1 = get_config_value('RAMPART_PORT_1',config)
+RAMPART_PORT_2 = get_config_value('RAMPART_PORT_2',config)
+RAMPART_IMAGE = get_config_value('RAMPART_IMAGE',config)
+RAMPART_LOGFILE = get_config_value('RAMPART_LOGFILE',config)
 
 if __name__ == '__main__':
     #home = pathlib.Path.home()
