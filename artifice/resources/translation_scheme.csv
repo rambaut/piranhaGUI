@@ -1,12 +1,12 @@
 English,Français
-~SETUP WINDOW~ ,
+~SETUP WINDOW~,
 Starting up..,Départ...
 Docker software installed,le logiciel Docker est installé
 RAMPART software not installed,le logiciel RAMPART n'est pas installé
 Install RAMPART software,Installer le logiciel RAMPART
 PIRANHA software installed,le logiciel PIRANHA est installé
 Check for updates to PIRANHA software,Vérifier les mises à jour de le logiciel PIRANHA
-An internet connection and a Docker install is required to install or update software,,Une connexion internet et un installation Docker est nécessaire pour installer ou mettre à jours les logiciels
+An internet connection and a Docker install is required to install or update software,Une connexion internet et un installation Docker est nécessaire pour installer ou mettre à jours les logiciels
 Docker is free software used to install and run the analysis pipelines.,Docker est un logiciel gratuit utilisé pour installer et courir les pipelines d'analyse
 RAMPART is optional software used to monitor Nanopore sequencing in real-time.,RAMPART est un logiciel optionnel utilisé pour surveiller le séquençage Nanopore en temps réel
 Piranha is the primary analysis pipeline for the DDNS polio detection platform.,PIRANHA est le pipeline d'analyse principal pour le plate-forme de détection DDNS polio
@@ -19,10 +19,13 @@ Install RAMPART image,Installer image RAMPART
 PIRANHA image not installed,Image PIRANHA n’est pas installé
 Install PIRANHA image,Installer image PIRANHA
 Update available for RAMPART image,Une mise à jour pour RAMPART est disponible
-Install update to RAMPART image,Mettez à jour la image RAMPART
+Install update to RAMPART software,Mettez à jour le logiciel RAMPART
 Update available for PIRANHA image,Une mise à jour pour PIRANHA est disponible
 Install update to PIRANHA image,Mettez à jour la image PIRANHA
 Open Docker Site in Browser,Ouvrez le site Docker dans le navigateur
+Enable Phylogenetics module, Activez le module phylogénétique
+Disable Phylogenetics module, Désactivez le module phylogénétique
+Supplementary directory for phylogenetic module:, Le dossier supplémentaire pour le module phylogénétique:
 Launch ARTIFICE,Lancez ARTIFICE
 Continue,Continuez
 Close,Fermer
@@ -74,6 +77,8 @@ Analysis is not installed,Analyse n'est installé pas
 Analysis Options,Options D'analyse
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
+RAMPART output,sortie RAMPART
+Piranha output,sortie PIRANHA
 ANALYSIS OUTPUT,SORTIE ANALYSE
 ~ERROR POPUP~,
 Error,Erreur
@@ -92,7 +97,7 @@ Description:,La Description:
 Add Protocol,Ajouter un Protocole
 Selected Protocol,Protocole Sélectionné
 Remove Protocol,Retirez cet Protocole
-~PIRANHA OPTIONS WINDOW~
+~PIRANHA OPTIONS WINDOW~,
 Username to appear in report. Default: no user name,Nom d'utilisateur qui apparaît dans le rapport. Défaut: Pas de nom d'utilisateur
 Institute name to appear in report. Default: no institute name,Nom d'institut qui apparaît dans le rapport. Défaut: Pas de nom d'institut
 "Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.",Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`  
@@ -137,3 +142,19 @@ Misc Options,Options Diverses
 Basic,Options de Base
 Advanced,Options Avancées
 ""
+Update available for RAMPART software to version None
+PIRANHA software version 1.2.1 installed
+RAMPART software version None installed
+Select language for user-interface: 
+Use of RAMPART: 
+Enabled
+Cancel
+Sequencing Run:
+"Specify sample type. Options: `stool`, `environmental`. Default: stool"
+Sample name of positive control. Default: positive
+Publish all intermediate files for debugging
+Output Intermediate Files
+"RAMPART is optional software used monitor
+Nanopore sequencing in real-time."
+Check for updates to RAMPART software
+

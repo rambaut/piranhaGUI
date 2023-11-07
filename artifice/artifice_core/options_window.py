@@ -33,7 +33,7 @@ def setup_panel():
                 sg.Text(translator('Use of RAMPART: ')),
             ],[
                 sg.Sizer(8,0),
-                sg.Text(translator('RAMPART is optional software used monitor\nNanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
+                sg.Text(translator('RAMPART is optional software used to monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
             ]])
         ]]
 
