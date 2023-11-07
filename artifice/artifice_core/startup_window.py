@@ -180,16 +180,22 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,0),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
+            [sg.Frame(title='',size=(800,40), layout=[
             [
                 sg.Sizer(16,56),
-                sg.Text(translator('Supplementary sequences for phylogenetic module:'),
-                        size=(42,1),visible=(got_piranha_image and consts.PHYLO_ENABLED),justification='left', key='PHYLO_TEXT'),
-                sg.In(enable_events=True,expand_y=True,font=consts.CONSOLE_FONT, 
-                    pad=(0,15), disabled_readonly_background_color='#393938', expand_x=True,
-                    disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left", visible=(got_piranha_image and consts.PHYLO_ENABLED), key='PHYLO_DIR'),
-                AltFolderBrowse(button_text=translator('Select'), visible=(got_piranha_image and consts.PHYLO_ENABLED), key='PHYLO_BUTTON'),
+                sg.Text(translator('Supplementary directory for phylogenetic module:'),
+                        size=(42,1),justification='left'),
+                sg.In(default_text=consts.PHYLO_DIR, enable_events=True,expand_y=True,font=consts.CONSOLE_FONT, 
+                    pad=(0,5), disabled_readonly_background_color='#393938', expand_x=True,
+                    disabled_readonly_text_color='#F5F1DF', readonly=True, 
+                    tooltip='Path to directory containing supplementary sequence FASTA file and optional metadata to be incorporated into phylogenetic analysis.', 
+                    justification="left",  key='-PHYLO DIR-'),
+                AltFolderBrowse(button_text=translator('Select')),
                 sg.Push()
-            ],])
+            ],],
+            visible=(got_piranha_image and consts.PHYLO_ENABLED),
+            key = '-PHYLO FRAME-')]
+            ]),
         ])
 
     layout.append([
@@ -368,6 +374,21 @@ def run_startup_window(window, translator = None):
             except Exception as err:
                 error_popup(err)
 
+        elif event == '-ENABLE PHYLO-':
+            try:
+                if consts.PHYLO_ENABLED:
+                    consts.edit_config('PHYLO_ENABLED', False)
+                    consts.PHYLO_ENABLED = False
+                    window['-ENABLE PHYLO-'].update(text = 'Enable Phylogenetics module')
+                    window['-PHYLO FRAME-'].update(visible=False)
+                else:
+                    consts.edit_config('PHYLO_ENABLED', True)
+                    consts.PHYLO_ENABLED = True
+                    window['-ENABLE PHYLO-'].update(text = 'Disable Phylogenetics module')
+                    window['-PHYLO FRAME-'].update(visible=True)
+            except Exception as err:
+                error_popup(err)
+
         elif event == '-ABOUT-':
             try:
                 about_window = create_about_window()
@@ -404,5 +425,9 @@ def run_startup_window(window, translator = None):
 
 
         elif event == '-LAUNCH-':
+            try:
+                consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+            except Exception as err:
+                error_popup(err)
             window.close()
             return False

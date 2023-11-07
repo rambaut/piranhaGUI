@@ -11,16 +11,22 @@ def launch_piranha(run_info, docker_client):
     artifice_core.start_rampart.prepare_run(run_info,runs_dir=runs_dir,output=True)
 
     options_str = artifice_core.start_rampart.get_options(run_info)
+    phylo_dir = ''
+    if 'PHYLO_DIR' in run_info:
+        if run_info['PHYLO_DIR'] != '':
+            options_str += '-sd /data/run_data/phylo_datadir'
+            phylo_dir = run_info['PHYLO_DIR']
 
     run_path = runs_dir / run_info['title']
     basecalled_path = run_info['basecalledPath']
     output_path = run_info['outputPath']
-    piranha_container = start_piranha(run_path, basecalled_path, output_path, docker_client, config['PIRANHA_IMAGE'], threads=config['THREADS'], container=None, options_str=options_str)
+    piranha_container = start_piranha(run_path, basecalled_path, output_path, docker_client, config['PIRANHA_IMAGE'],
+                                       threads=config['THREADS'], container=None, options_str=options_str, phylo_dir=phylo_dir)
 
     return piranha_container
 
 # starts a container with the piranha docker image
-def start_piranha(run_path, basecalled_path, output_path, client, image, threads = artifice_core.consts.THREADS, container = None, options_str = ''):
+def start_piranha(run_path, basecalled_path, output_path, client, image, threads = artifice_core.consts.THREADS, container = None, options_str = '', phylo_dir=''):
     if client == None:
         client = docker.from_env()
 
@@ -30,6 +36,8 @@ def start_piranha(run_path, basecalled_path, output_path, client, image, threads
     artifice_core.start_rampart.stop_docker(client=client, container_name=container_name, container=container)
 
     volumes = [f'{run_path}:/data/run_data/analysis', f'{basecalled_path}:/data/run_data/basecalled', f'{output_path}:/data/run_data/output']
+    if phylo_dir != '':
+        volumes.append(f'{phylo_dir}:/data/run_data/phylo_datadir')
     log_volumes = str(volumes)
     update_log(f'volumes: {log_volumes}')
 

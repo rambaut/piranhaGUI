@@ -197,6 +197,15 @@ def run_edit_window(window):
                 error_popup(err)
         elif event == '-CONFIRM-':
             try:
+                if 'PHYLO_ENABLED' in config:
+                    if config['PHYLO_ENABLED']:
+                        run_info['-rp'] = True
+                        if 'PHYLO_DIR' in config:
+                            run_info['PHYLO_DIR'] = config['PHYLO_DIR']
+                    else:
+                        run_info['-rp'] = False
+                        run_info['PHYLO_DIR'] = ''
+
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
                     alt_popup_ok(translator('Warning: there are spaces in samples'))
