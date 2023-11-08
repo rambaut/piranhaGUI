@@ -23,6 +23,13 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
             lang_pos = languages.index(language)
 
     return_string = string # if no translation exists, the given string is returned back
+
+    multi_line = False
+    if '\n' in string:
+        multi_line = True
+        lines = string.split('\n')
+        string = string.replace('\n', ' ')
+
     string_in_scheme = False
     try:
         for row in scheme_list:
@@ -36,19 +43,41 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
                         break
                 except:
                     break
+                
+        if string_in_scheme:
+            if multi_line:
+                print(string)
+                translated_words = return_string.split(' ')
+                print(translated_words)
+                return_string = ''
+                while True:
+                    return_line = ''
+                    for i in range(len(translated_words)):
+                        if len(return_line) + len(translated_words[i]) <= len(lines[0]):
+                            word = translated_words.pop(0)
+                            return_line += word + ' '
+                        elif len(return_line) == 0:
+                            word = translated_words.pop(0)
+                            return_line += word + ' '
+                        else:
+                            print(return_line)
+                            return_line = return_line[:-1]
+                            return_string += return_line
+                            break
+                
+                    
 
         if append_scheme:
             if not string_in_scheme:
-                scheme_list.append([string,])
+                scheme_list.append([string,''])
                 with open('./resources/translation_scheme.csv', 'w', newline='', encoding='utf-8') as csvfile:
                     csvwriter = csv.writer(csvfile)
                     for row in scheme_list:
                         csvwriter.writerow(row)
     except Exception as err:
-        update_log(f'failed to translate string:')
+        update_log(f'failed to translate string: {string}')
         update_log(err)
         return_string = string
-        print(string)
 
     if vb: # for debugging
         print(language)
