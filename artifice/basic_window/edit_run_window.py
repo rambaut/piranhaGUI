@@ -10,7 +10,7 @@ import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, save_changes, load_run
+from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 
@@ -146,9 +146,19 @@ def run_edit_window(window):
                     '-MINKNOW-':'basecalledPath',
                     '-OUTDIR-':'outputPath'}
     try:
+        event, values = window.read()
         run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
                             update_archive_button=False)
+        
+        old_run_info = run_info.copy()
+        old_run_info['title'] = 'PREVIOUS_RUN'
+        save_changes(values, old_run_info, window)
+        run_info = {'title': 'TEMP_RUN'}
+        window['-SAMPLES-'].update('')
+        window['-MINKNOW-'].update('')
+        window['-OUTDIR-'].update('')
     except:
+        print('yyy')
         pass
 
     while True:
