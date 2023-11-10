@@ -174,7 +174,7 @@ def setup_panel():
         ]]
     
     misc_options_tab = [
-        [sg.Checkbox('verbose', default=False, tooltip=tooltips['-VERBOSE-'], key='-VERBOSE-')],
+        [sg.Checkbox(translator('verbose'), default=False, tooltip=tooltips['-VERBOSE-'], key='-VERBOSE-')],
     ]
 
 

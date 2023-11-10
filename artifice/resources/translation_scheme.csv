@@ -31,12 +31,16 @@ Continue,Continuez
 Close,Fermer
 Options,Paramétres
 ~OPTIONS WINDOW~,
-Select language:,Sélectionnez la langue
+Select language for user-interface: ,Sélectionnez la langue pour l'interface utilisateur: 
+Use of RAMPART: ,Utilisation de RAMPART
+Enabled,activé
+Cancel,annulé
 Threads to use for analysis:,Threads à utiliser pour analyse
 Reset config to default,Réinitialisez la configuration par défaut
 Enable/Disable RAMPART,Activez/Désactivez RAMPART
 Save,Enregistrez
 ~EDIT RUN WINDOW~,
+Sequencing Run:,Course séquençage:
 Select a CSV file containing the IDs and barcodes for each sample:,Sélectionnez un fichier CSV contenant les IDs et barcodes pour chaque énchantillons:
 Select,Sélectionnez
 Select the folder containing sequencing reads from MinKnow:,Sélectionnez le dossier contenant les lectures séquençage de MinKnow:
@@ -119,11 +123,13 @@ Prefix of output directory & report name: Default: `analysis`,Préfixe du réper
 "Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.",Parsez tous les champes du fichier d'entrée barcodes.csv(codes-barres.csv) et incluez dans les en-tétes de sortie fasta. Sachez que les espaces dans les métadatonnées perturberont l'ID de l'enregistrement, évitez-les.
 Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp,Ajoutez l'horodatage au nom du répertoire lors de l'utilisation de <-o/--outdir>. Défaut: <-o/--outdir> sans horodatage
 Print lots of stuff to screen,Affichez beucoup sur la console
+Publish all intermediate files for debugging,Publiez tous les fichiers intermédiaires pour le débogage
 User Name:,Nom d'utilisateur
 Institute:,Institut
 Orientation:,Orientation
 Sample Type:,Type d'énchantillons
-Overwrite Output,Écraser Sortie   
+Overwrite Output,Écraser Sortie
+Output Intermediate Files,Sortez des fichiers intermédiaires
 Positive Control:,Contrôle Positif:
 Negative Control:,Contrôle Négatif:
 Minimum Mapping Quality:,Qualité de Mappage Minimale:
@@ -136,25 +142,11 @@ Publish Directory:,Répertoire de Publication:
 Output Prefix:,Préfixe de Sortie:
 All Metadata to Header,Toutes les Métadatonnées à les En-Tétes
 Date Stamp,Horodatage
+verbose,verbeux
 Input Options,Options D'entrée
 Output Options,Options de Sortie
 Misc Options,Options Diverses
 Basic,Options de Base
 Advanced,Options Avancées
 ""
-Update available for RAMPART software to version None
-PIRANHA software version 1.2.1 installed
-RAMPART software version None installed
-Select language for user-interface: 
-Use of RAMPART: 
-Enabled
-Cancel
-Sequencing Run:
-"Specify sample type. Options: `stool`, `environmental`. Default: stool"
-Sample name of positive control. Default: positive
-Publish all intermediate files for debugging
-Output Intermediate Files
-"RAMPART is optional software used monitor
-Nanopore sequencing in real-time."
-Check for updates to RAMPART software
 
