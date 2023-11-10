@@ -379,12 +379,12 @@ def run_startup_window(window, translator = None):
                 if consts.PHYLO_ENABLED:
                     consts.edit_config('PHYLO_ENABLED', False)
                     consts.PHYLO_ENABLED = False
-                    window['-ENABLE PHYLO-'].update(text = 'Enable Phylogenetics module')
+                    window['-ENABLE PHYLO-'].update(text = translator('Enable Phylogenetics module'))
                     window['-PHYLO FRAME-'].update(visible=False)
                 else:
                     consts.edit_config('PHYLO_ENABLED', True)
                     consts.PHYLO_ENABLED = True
-                    window['-ENABLE PHYLO-'].update(text = 'Disable Phylogenetics module')
+                    window['-ENABLE PHYLO-'].update(text = translator('Disable Phylogenetics module'))
                     window['-PHYLO FRAME-'].update(visible=True)
             except Exception as err:
                 error_popup(err)
