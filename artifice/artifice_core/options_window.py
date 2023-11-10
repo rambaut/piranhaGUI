@@ -33,7 +33,7 @@ def setup_panel():
                 sg.Text(translator('Use of RAMPART: ')),
             ],[
                 sg.Sizer(8,0),
-                sg.Text(translator('RAMPART is optional software used to monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
+                sg.Text(translator('RAMPART is optional\nsoftware used to monitor Nanopore sequencing in real-time.'),font=consts.CAPTION_FONT),
             ]])
         ]]
 
@@ -59,7 +59,7 @@ def create_options_window(window = None):
 
     panel = setup_panel()
 
-    title ='PiranhaGUI';
+    title ='PiranhaGUI'
 
     content = window_functions.setup_content(panel, title=title, small=True, button_text='Save', button_key='-SAVE-',
                                              bottom_left_button_text='Cancel', bottom_left_button_key='-CANCEL-')
