@@ -51,6 +51,7 @@ def save_run(run_info, title = None, runs_dir = None, overwrite = False, iter = 
 
     return title
 
+# old function for 'advanced' window
 def save_changes(values, run_info, window, rename = False, overwrite = True, hide_archived = True, element_dict = None, update_list = True):
     title = run_info['title']
     run_info = get_run_info(values, run_info, element_dict)
@@ -90,12 +91,15 @@ def get_run_info(values, run_info, element_dict):
     run_info['samples'] = values['-INFOTAB-SAMPLES-'].strip()
     run_info['basecalledPath'] = values['-INFOTAB-MINKNOW-'].strip()
     """
-    for element in element_dict:
-        if element in values:
-            if type(values[element]) == str:
-                run_info[element_dict[element]] = values[element].strip()
-            else:
-                run_info[element_dict[element]] = values[element]
+    try:
+        for element in element_dict:
+            if element in values:
+                if type(values[element]) == str:
+                    run_info[element_dict[element]] = values[element].strip()
+                else:
+                    run_info[element_dict[element]] = values[element]
+    except:
+        pass
 
     return run_info
 
