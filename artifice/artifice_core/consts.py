@@ -147,6 +147,11 @@ def get_resource(filepath):
 #PROJECT_LOGO = "artic_logo.png"
 #PROJECT_FOOTER = ""
 
+#   NOTE THIS SHOULD BE UPDATED WITH EACH NEW MAJOR PACKAGE RELEASE (assuming it's compatible with the latest artifice version)
+COMPATIBLE_VERSIONS = {
+    'polionanopore/piranha':1.2
+    }
+
 APPLICATION_HEADER = 'Powered by ARTIFICE | ARTICnetwork: http://artic.network'
 APPLICATION_CREDITS = 'ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut'
 APPLICATION_FOOTER='ARTIC-network supported by the Wellcome Trust Award 206298/Z/17/Z'

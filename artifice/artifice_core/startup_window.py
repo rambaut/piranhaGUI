@@ -272,11 +272,16 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         if check_for_updates:
             update_available, latest_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
-            image_status = translator(f'Update available for {name} software to version {latest_version}')
-            pull_text = translator(f'Install update to {name} software')
+            image_compatible = check_image_compatible
+            if image_compatible:
+                image_status = translator(f'Update available for {name} software to version {latest_version}')
+                pull_text = translator(f'Install update to {name} software')
+            else:
+                image_status = translator(f'Major release available for {name} software to version {latest_version}\nIt is recommended you install the latest {consts.APPLICATION_NAME} version')
             text_color = FAIL_TEXT_COLOUR
         else:
-            image_status = translator(f'{name} software version {latest_version} installed')
+            #image_status = translator(f'{name} software version {latest_version} installed')
+            image_status = translator(f'Major release available for {name} software to version {latest_version}\nIt is recommended you install the latest {consts.APPLICATION_NAME} version')
             pull_text = translator(f'Check for updates to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
@@ -285,6 +290,18 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         text_color = FAIL_TEXT_COLOUR
 
     return got_image, docker_client, update_available, image_status, pull_text, text_color, latest_version
+
+def check_image_compatible(latest_version, image):
+    try:
+        if image in consts.COMPATIBLE_VERSIONS:
+            latest_major_version = '.'.join(str(latest_version).split('.')[0:2])
+            compatible_major_version = '.'.join(str(consts.COMPATIBLE_VERSIONS[image]).split('.')[0:2])
+            if latest_major_version != compatible_major_version:
+                return False
+    except:
+        pass
+    return True
+
 
 def install_image(name, image_repo, window, client, translator = None):
     if translator == None:
