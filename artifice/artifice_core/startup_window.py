@@ -68,10 +68,12 @@ def setup_panel(usesRAMPART, usesPiranha):
             rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
                 set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
 
+    piranha_image_incompatible = True
     if usesPiranha:
         got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
             piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
                 set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+        piranha_image_incompatible =  not check_image_compatible(consts.PIRANHA_VERSION, consts.PIRANHA_IMAGE)
 
         if not got_piranha_image:
             # attempt to install piranha image from file
@@ -170,10 +172,14 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
-                        size=(50,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+                        size=(60,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
                 AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+            ],
+            [
+                sg.Text(f'It is recommended you install the latest {consts.APPLICATION_NAME} version',
+                        size=(50,1), text_color=piranha_text_color,visible=piranha_image_incompatible,font=consts.TITLE_FONT), 
             ],[
-                sg.Sizer(32,0), 
+                sg.Sizer(32,0),
                 sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
             ],
             [sg.Sizer(16,28)],[
@@ -272,16 +278,16 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         if check_for_updates:
             update_available, latest_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
-            image_compatible = check_image_compatible
+            image_compatible = check_image_compatible(latest_version, image)
             if image_compatible:
                 image_status = translator(f'Update available for {name} software to version {latest_version}')
                 pull_text = translator(f'Install update to {name} software')
             else:
-                image_status = translator(f'Major release available for {name} software to version {latest_version}\nIt is recommended you install the latest {consts.APPLICATION_NAME} version')
+                image_status = translator(f'Major update available for {name} software to version {latest_version}')
             text_color = FAIL_TEXT_COLOUR
         else:
-            #image_status = translator(f'{name} software version {latest_version} installed')
-            image_status = translator(f'Major release available for {name} software to version {latest_version}\nIt is recommended you install the latest {consts.APPLICATION_NAME} version')
+            image_status = translator(f'{name} software version {latest_version} installed')
+            #image_status = translator(f'Major release available for {name} software to version {latest_version}\nIt is recommended you install the latest {consts.APPLICATION_NAME} version')
             pull_text = translator(f'Check for updates to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
