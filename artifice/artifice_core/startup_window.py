@@ -7,6 +7,7 @@ import os.path
 import sys
 import os
 import subprocess
+import requests
 from os import system, mkdir
 from webbrowser import open_new_tab
 from PIL import Image
@@ -52,6 +53,8 @@ def setup_panel(usesRAMPART, usesPiranha):
     sg.theme("PANEL")
     config = artifice_core.consts.retrieve_config()
     docker_client = None
+
+    gui_update_available, latest_gui_version = check_for_gui_updates()
 
     is_piranhaGUI = True
 
@@ -131,11 +134,17 @@ def setup_panel(usesRAMPART, usesPiranha):
 
     install_buttons_size = (396,32)
     layout = []
-    # layout.append([
-    #     AltButton(button_text=translator('About'),font=font,key='-ABOUT-'),
-    #     sg.Push(),
-    #     AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-'),
-    #     ])
+    if gui_update_available:
+        gui_update_text = f'{consts.APPLICATION_NAME} update available to {latest_gui_version}'
+        layout.append([
+            sg.Sizer(16,56),
+            sg.Column([[
+                sg.Text(gui_update_text,text_color=FAIL_TEXT_COLOUR,
+                        size=(32,1), font=consts.TITLE_FONT),
+                AltButton(button_text=translator('Open Github download page in browser'),key='-GUI DOWNLOADS-', 
+                        size=install_buttons_size),
+            ]])
+        ])
     layout.append([
             sg.Sizer(16,56), 
             sg.Column([[
@@ -287,7 +296,6 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
             text_color = FAIL_TEXT_COLOUR
         else:
             image_status = translator(f'{name} software version {latest_version} installed')
-            #image_status = translator(f'Major release available for {name} software to version {latest_version}\nIt is recommended you install the latest {consts.APPLICATION_NAME} version')
             pull_text = translator(f'Check for updates to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
@@ -308,6 +316,23 @@ def check_image_compatible(latest_version, image):
         pass
     return True
 
+def check_for_gui_updates(owner='polio-nanopore',repo='piranhaGUI'):
+    update_available = False
+    latest_gui_version = 'v' + consts.PIRANHA_GUI_VERSION
+    try:
+        api_url =  f'https://api.github.com/repos/{owner}/{repo}/releases'
+
+        response = requests.get(api_url)
+        releases = response.json()
+        latest_gui_version = releases[0]['tag_name']
+        installed_gui_version = 'v' + consts.PIRANHA_GUI_VERSION
+        if installed_gui_version != latest_gui_version:
+            update_available = True
+    except:
+        pass
+    
+    return update_available, latest_gui_version
+    
 
 def install_image(name, image_repo, window, client, translator = None):
     if translator == None:
@@ -376,6 +401,12 @@ def run_startup_window(window, translator = None):
             window.close()
             break
             return
+        
+        elif event == '-GUI DOWNLOADS-':
+            try:
+                open_new_tab('https://github.com/polio-nanopore/piranhaGUI/releases')
+            except Exception as err:
+                error_popup(err)
 
         elif event == '-DOCKER INSTALL-':
             try:
