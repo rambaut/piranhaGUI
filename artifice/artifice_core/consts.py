@@ -187,7 +187,7 @@ PIRANHA_URL = 'https://github.com/polio-nanopore/piranha/'
 
 RAMPART_VERSION = None
 PIRANHA_VERSION = None
-PIRANHA_GUI_VERSION = '1.5.2'
+PIRANHA_GUI_VERSION = '1.5.3'
 
 config = None
 #LOGFILE = None
