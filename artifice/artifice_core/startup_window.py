@@ -117,7 +117,7 @@ def setup_panel(usesRAMPART, usesPiranha):
     
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
-    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available)
+    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available) and not piranha_image_incompatible
 
     show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available)
 
@@ -185,7 +185,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
             ],
             [
-                sg.Text(f'It is recommended you install the latest {consts.APPLICATION_NAME} version',
+                sg.Text(f'Please install the latest {consts.APPLICATION_NAME} version to use it',
                         size=(50,1), text_color=piranha_text_color,visible=piranha_image_incompatible,font=consts.TITLE_FONT), 
             ],[
                 sg.Sizer(32,0),
