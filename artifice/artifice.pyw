@@ -200,15 +200,17 @@ if __name__ == '__main__':
                 window, rampart_running = advanced_window.main_window.create_main_window()
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running)
             else:
+                reset_run = True
                 while True: # user can go back and forth between editing and executing runs
                     window = basic_window.edit_run_window.create_edit_window()
-                    run_info = basic_window.edit_run_window.run_edit_window(window)
+                    run_info = basic_window.edit_run_window.run_edit_window(window,reset_run=reset_run)
                     if run_info == None:
                         break
 
                     update_log(f'\nrun details confirmed, creating main window\n')
                     window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window()
                     edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running)
+                    reset_run = False
                     if edit != True:
                         break
             exit_time = datetime.today()

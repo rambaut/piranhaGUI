@@ -134,7 +134,7 @@ def create_edit_window(window = None):
 
     return new_window
 
-def run_edit_window(window):
+def run_edit_window(window, reset_run = True):
     config = consts.retrieve_config()
     run_info = {'title': 'TEMP_RUN'}
     selected_run_title = 'TEMP_RUN'
@@ -150,11 +150,12 @@ def run_edit_window(window):
         run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
                             update_archive_button=False)
         
-        save_run(run_info, title = 'PREVIOUS_RUN', runs_dir = config['RUNS_DIR'], overwrite = True,)
-        run_info = {'title': 'TEMP_RUN'}
-        window['-SAMPLES-'].update('')
-        window['-MINKNOW-'].update('')
-        window['-OUTDIR-'].update('')
+        if reset_run == True:
+            save_run(run_info, title = 'PREVIOUS_RUN', runs_dir = config['RUNS_DIR'], overwrite = True,)
+            run_info = {'title': 'TEMP_RUN'}
+            window['-SAMPLES-'].update('')
+            window['-MINKNOW-'].update('')
+            window['-OUTDIR-'].update('')
     except Exception as err:
         update_log(traceback.format_exc())
 
