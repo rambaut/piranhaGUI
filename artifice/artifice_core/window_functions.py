@@ -17,16 +17,18 @@ from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
 
 # prints the queued log output until it's empty, prints a message if container stopped
-def print_container_log(log_queue, window, output_key, logfile,):
+def print_container_log(log_queue, window, output_key, logfile, software=''):
     queue_empty = False
     while not queue_empty:
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
+            if output == '###CONTAINER STOPPED###\n':
+                window[output_key].print(f'###{software} SOFTWARE FINISHED###', font=consts.CONSOLE_FONT, end='')
+                update_log(output, filename=logfile, add_newline=False)
+                return True
             window[output_key].print(output, font=consts.CONSOLE_FONT, end='')
             update_log(output, filename=logfile, add_newline=False)
-            if output == '###CONTAINER STOPPED###\n':
-                return True
         except queue.Empty:
             queue_empty = True
             pass

@@ -198,7 +198,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
 
         if piranha_running:
             try:
-                piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'])
+                piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'],software='PIRANHA')
                 if piranha_finished:
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
@@ -217,7 +217,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                 error_popup(err)
 
         if rampart_running:
-            rampart_finished = print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'])
+            rampart_finished = print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'],software='RAMPART')
             if rampart_finished:
                 rampart_running = False
                 artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
