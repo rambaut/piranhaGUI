@@ -134,10 +134,8 @@ def create_edit_window(window = None):
 
     return new_window
 
-def run_edit_window(window, reset_run = True):
+def run_edit_window(window, run_info, selected_run_title, reset_run = True):
     config = consts.retrieve_config()
-    run_info = {'title': 'TEMP_RUN'}
-    selected_run_title = 'TEMP_RUN'
     docker_client = docker.from_env()
     translator = setup_translator()
 
