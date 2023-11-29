@@ -276,6 +276,8 @@ def samples_to_list(filepath, has_headers = True, trim = True):
         for row in csv_list:
             for i in range(len(row)):
                 row[i] = row[i].strip()
+                row[i] = row[i].strip('\ufeff') # remove characters added by excel
+                row[i] = row[i].strip()
 
     if has_headers:
         column_headers = csv_list[0]
