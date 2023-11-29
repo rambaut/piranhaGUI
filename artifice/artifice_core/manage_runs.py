@@ -289,3 +289,23 @@ def samples_to_list(filepath, has_headers = True, trim = True):
         samples_list = csv_list
 
     return samples_list, column_headers
+
+# searches column headers for given string
+def find_column(column_headers, string):
+    candidates = []
+    for i in range(len(column_headers)):
+        if string in column_headers[i]:
+            candidates.append(i)
+    
+    if len(candidates) == 0:
+        return None
+    elif len(candidates) == 1:
+        pass
+
+    
+    return None
+            
+def set_default_columns(column_headers, barcodes_column = None, samples_column = None):
+    if barcodes_column == None:
+        barcodes_column = find_column
+
