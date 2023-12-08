@@ -190,7 +190,7 @@ if __name__ == '__main__':
     make_themes()
 
     splash_window = create_splash_window()
-    piranha_running = True #check_container('piranha')
+    piranha_running = check_container('piranha')
     rampart_running = check_rampart_running()
 
     if piranha_running or rampart_running:
