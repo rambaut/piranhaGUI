@@ -291,21 +291,44 @@ def samples_to_list(filepath, has_headers = True, trim = True):
     return samples_list, column_headers
 
 # searches column headers for given string
-def find_column(column_headers, string):
+def find_column(column_headers, string, case_sensitive = False):
+    headers = column_headers.copy()
+
+    if not case_sensitive:
+        string = string.lower()
+        for i in range(len(headers)):
+            headers[i] = str(headers[i]).lower()
+
     candidates = []
-    for i in range(len(column_headers)):
-        if string in column_headers[i]:
+    for i in range(len(headers)):
+        if string in headers[i]:
             candidates.append(i)
     
     if len(candidates) == 0:
         return None
     elif len(candidates) == 1:
-        pass
-
+        return candidates[0]
+    else:
+        for i in candidates:
+            if headers[i] == string:
+                return i
+        return candidates[0]
+    
     
     return None
             
-def set_default_columns(column_headers, barcodes_column = None, samples_column = None):
+def set_default_columns(column_headers, run_info, barcodes_column = None, samples_column = None):
     if barcodes_column == None:
-        barcodes_column = find_column
+        if 'barcodes_column' in run_info:
+                barcodes_column = run_info['barcodes_column']
+        else:
+            barcodes_column = find_column(column_headers, 'barcode')
+
+    if samples_column == None:
+        if 'samples_column' in run_info:
+            samples_column = run_info['samples_column']
+        else:
+            samples_column = find_column(column_headers, 'sample')
+    
+    return barcodes_column, samples_column
 
