@@ -91,9 +91,9 @@ def check_spaces(samples, column):
         if ' ' in str(row[int(column)]):
             return True
 
-def create_parse_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def create_parse_window(samples, run_info = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
 
-    panel, column_headers = setup_panel(samples, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
+    panel, column_headers = setup_panel(samples, samples_column=samples_column, run_info=run_info, barcodes_column=barcodes_column, has_headers=has_headers)
 
     title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
 
@@ -117,7 +117,7 @@ def view_samples(run_info, values, samples_key):
     if 'title' in run_info:
 
         samples = values[samples_key]
-        parse_window, column_headers = create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column, run_info=run_info)
+        parse_window, column_headers = create_parse_window(samples, run_info=run_info)
         samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
 
         if samples_barcodes_indices != None:

@@ -330,5 +330,23 @@ def set_default_columns(column_headers, run_info, barcodes_column = None, sample
         else:
             samples_column = find_column(column_headers, 'sample')
     
+    # sets the columns if no match found
+    if barcodes_column == None:
+        if samples_column == None:
+            barcodes_column = 0
+            samples_column = 1
+            return barcodes_column, samples_column
+        elif samples_column > 0:
+            barcodes_column = samples_column - 1
+        else:
+            barcodes_column = samples_column + 1
+    
+    if samples_column == None:
+        if barcodes_column > 0:
+            samples_column = barcodes_column - 1
+        else:
+            samples_column = barcodes_column + 1
+
+    
     return barcodes_column, samples_column
 
