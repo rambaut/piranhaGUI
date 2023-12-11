@@ -13,13 +13,16 @@ from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup
 from artifice_core.manage_runs import samples_to_list, set_default_columns
 
-def setup_panel(samples, barcodes_column = 0, samples_column = 1, has_headers = True):
+def setup_panel(samples, run_info = None, barcodes_column = 0, samples_column = 1, has_headers = True):
     sg.theme('PANEL')
     translator = setup_translator()
 
     theme=consts.THEMES[sg.theme()]
 
     samples_list, column_headers = samples_to_list(samples, has_headers=has_headers)
+
+    if not run_info == None: 
+        barcodes_column, samples_column = set_default_columns(column_headers, run_info)
 
     visible_column_map = []
     for i in range(len(samples_list[0])):
@@ -112,10 +115,9 @@ def create_parse_window(samples, window = None, samples_column = 0, barcodes_col
 
 def view_samples(run_info, values, samples_key):
     if 'title' in run_info:
-        barcodes_column, samples_column = set_default_columns(column_headers, run_info)
 
         samples = values[samples_key]
-        parse_window, column_headers = create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
+        parse_window, column_headers = create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column, run_info=run_info)
         samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
 
         if samples_barcodes_indices != None:
