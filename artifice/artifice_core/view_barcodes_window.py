@@ -50,7 +50,14 @@ def make_barcodes_list(run_info):
     samples_list = artifice_core.parse_columns_window.samples_to_list(run_info['samples'], has_headers=False)[0]
     barcodes_list = []
     for row in samples_list:
-        barcodes_list.append([row[int(samples_column)], row[int(barcodes_column)]])
+        sample = row.pop(int(samples_column))
+        barcodes = row.pop(int(barcodes_column))
+        new_row = [sample, barcodes]
+        new_row.append(row)
+        barcodes_list.append(new_row)
+    
+    barcodes_list[0][0] = 'sample'
+    barcodes_list[0][1] = 'barcode'
 
     return barcodes_list
 
