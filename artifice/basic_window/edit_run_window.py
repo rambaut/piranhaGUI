@@ -171,7 +171,8 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
             try:
                 if '-SAMPLES-' not in values:
                     error_popup("Samples not found in values")
-
+                
+                run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 new_run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
                 if new_run_info != None:
                     run_info = new_run_info
