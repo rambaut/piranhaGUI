@@ -350,3 +350,16 @@ def set_default_columns(column_headers, run_info, barcodes_column = None, sample
     
     return barcodes_column, samples_column
 
+def set_report_language(run_info, config): #adds language to options
+    language = config['LANGUAGE']
+    if language == 'Français':
+        language = 'French'
+    else:
+        language = 'English'
+
+    print(language)
+    run_info['--language'] = language
+    run_info['title'] = save_run(run_info, title=run_info['title'], overwrite=True)
+
+    return run_info
+

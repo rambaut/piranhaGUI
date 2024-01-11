@@ -21,6 +21,7 @@ import artifice_core.window_functions as window_functions
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
+from artifice_core.manage_runs import set_report_language
 from artifice_core.alt_button import AltButton
 
 def setup_panel(config):
@@ -286,6 +287,8 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                 else:
                     if values['-THREADS SELECT-'] != config['THREADS']:
                         consts.edit_config('THREADS', values['-THREADS SELECT-'])
+
+                    run_info = set_report_language(run_info, config)
                         
                     piranha_container = launch_piranha(run_info, docker_client)
                     piranha_running = True
