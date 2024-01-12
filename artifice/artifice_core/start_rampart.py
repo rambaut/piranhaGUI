@@ -207,7 +207,7 @@ def check_for_image_updates(client, image_tag):
 
 
 # Checks if docker is installed
-def check_for_docker(docker_url = 'https://docs.docker.com/get-docker/', popup = True):
+def check_for_docker(docker_url = 'https://docs.docker.com/get-docker/', popup = False):
     try:
         info = docker.from_env().info()
         return True

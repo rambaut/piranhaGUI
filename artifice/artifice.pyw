@@ -19,7 +19,7 @@ import artifice_core.startup_window
 import artifice_core.window_functions as window_functions
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
-from artifice_core.start_rampart import check_container, check_rampart_running
+from artifice_core.start_rampart import check_container, check_rampart_running, check_for_docker
 from artifice_core.alt_popup import alt_popup_yes_no
 from artifice_core.manage_runs import load_run
 
@@ -190,8 +190,13 @@ if __name__ == '__main__':
     make_themes()
 
     splash_window = create_splash_window()
-    piranha_running = check_container('piranha')
-    rampart_running = check_rampart_running()
+    docker_running = check_for_docker(popup=False)
+    if docker_running:
+        piranha_running = check_container('piranha')
+        rampart_running = check_rampart_running()
+    else:
+        piranha_running = False
+        rampart_running = False
 
     if piranha_running or rampart_running:
         if piranha_running:
