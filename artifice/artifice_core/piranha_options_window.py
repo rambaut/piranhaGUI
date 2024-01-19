@@ -88,7 +88,7 @@ def setup_panel():
                 ],
                 [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_DEFAULT_MEDAKA_MODE,
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_DEFAULT_MEDAKA_MODEL,
                       border_width=1,
                       tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
                 ],

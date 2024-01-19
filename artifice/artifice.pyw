@@ -173,7 +173,7 @@ def setup_config():
     consts.VALUE_PRIMER_LENGTH = consts.get_config_value('VALUE_PRIMER_LENGTH', config)
     consts.VALUE_OUTPUT_PREFIX = consts.get_config_value('VALUE_OUTPUT_PREFIX', config)
     consts.VALUE_ANALYSIS_MODE = consts.get_config_value('VALUE_ANALYSIS_MODE', config)
-    consts.VALUE_DEFAULT_MEDAKA_MODEL: consts.get_config_value('VALUE_DEFAULT_MEDAKA_MODE', config)
+    consts.VALUE_DEFAULT_MEDAKA_MODEL = consts.get_config_value('VALUE_DEFAULT_MEDAKA_MODEL', config)
 
 
 
