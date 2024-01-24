@@ -4,6 +4,7 @@ import traceback
 import csv
 import os.path
 import traceback
+import pandas as pd
 from os import mkdir, listdir
 from shutil import rmtree, copytree
 
@@ -34,7 +35,7 @@ def save_run(run_info, title = None, runs_dir = None, overwrite = False, iter = 
             update_log(f'run: "{title}" already exists, adding iterator')
             return save_run(run_info,title=original_title,overwrite=overwrite,iter=iter+1)
 
-    if os.path.isfile(samples) == False or samples[-4:] != '.csv':
+    if os.path.isfile(samples) == False or not samples.endswith(('.csv','.xls','.xlsx')): #samples[-4:] != '.csv':
         raise Exception('No valid samples file provided')
 
     if not os.path.isdir(runs_dir / title):
@@ -262,8 +263,12 @@ def rename_run(values, run_info, window, hide_archived = True, runs_dir = None, 
 # return a list with the samples from given csv file
 def samples_to_list(filepath, has_headers = True, trim = True):
     if not os.path.isfile(filepath):
-        if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
-            raise Exception('Excel files are not supported')
+        raise Exception('Samples files missing')
+    
+    if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+        samples_frame = pd.read_excel(filepath)
+        print(samples_frame.to_string())
+        raise Exception('Excel files are not supported')
 
     with open(filepath, newline = '') as csvfile:
         try:
