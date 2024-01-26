@@ -260,16 +260,25 @@ def rename_run(values, run_info, window, hide_archived = True, runs_dir = None, 
         delete_run(previous_run_title, window, clear_selected=False)
         run_info = update_run_list(window, run_info, run_to_select=run_info['title'], hide_archived=hide_archived, element_dict=element_dict)
 
-# return a list with the samples from given csv file
+# return a list with the samples from given file
 def samples_to_list(filepath, has_headers = True, trim = True):
     if not os.path.isfile(filepath):
         raise Exception('Samples files missing')
     
-    if filepath.endswith('.xls') or filepath.endswith('.xlsx'):
+    if filepath.endswith('.csv'):
+        samples_list, column_headers = csv_to_list(filepath, has_headers=has_headers, trim=trim)
+
+    elif filepath.endswith('.xls') or filepath.endswith('.xlsx'):
         samples_frame = pd.read_excel(filepath)
-        print(samples_frame.to_string())
+        samples_list, column_headers = excel_to_list(filepath, has_headers=has_headers)
+
         raise Exception('Excel files are not supported')
 
+
+    return samples_list, column_headers
+
+# return a list with the samples from given csv file
+def csv_to_list(filepath, has_headers = True, trim = True):
     with open(filepath, newline = '') as csvfile:
         try:
             csvreader = csv.reader(csvfile)
@@ -294,6 +303,13 @@ def samples_to_list(filepath, has_headers = True, trim = True):
         samples_list = csv_list
 
     return samples_list, column_headers
+
+def excel_to_list(filepath, has_headers = True):
+    samples_frame = pd.read_excel(filepath)
+    list = samples_frame.values.to_list()
+    print(list)
+
+    return None, None
 
 # searches column headers for given string
 def find_column(column_headers, string, case_sensitive = False):
