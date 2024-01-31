@@ -293,23 +293,28 @@ def csv_to_list(filepath, has_headers = True, trim = True):
                 row[i] = row[i].strip('\ufeff') # remove characters added by excel
                 row[i] = row[i].strip()
 
-    if has_headers:
-        column_headers = csv_list[0]
-        samples_list = csv_list[1:]
-    else:
-        column_headers = []
-        for i in range(1,len(csv_list[0])+1):
-            column_headers.append(str(i))
-        samples_list = csv_list
+    samples_list, column_headers = get_headers(csv_list, has_headers)
 
     return samples_list, column_headers
 
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
-    list = samples_frame.values.to_list()
-    print(list)
+    list = samples_frame.values.tolist()
 
-    return None, None
+    samples_list, column_headers = get_headers(list, has_headers)
+ 
+    return samples_list, column_headers
+
+def get_headers(list, has_headers):
+    if has_headers:
+        column_headers = list[0]
+        samples_list = list[1:]
+    else:
+        column_headers = []
+        for i in range(1,len(list[0])+1):
+            column_headers.append(str(i))
+        samples_list = list
+    return samples_list, column_headers
 
 # searches column headers for given string
 def find_column(column_headers, string, case_sensitive = False):
