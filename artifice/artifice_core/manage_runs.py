@@ -301,14 +301,23 @@ def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
     list = samples_frame.values.tolist()
 
-    samples_list, column_headers = get_headers(list, has_headers)
+    #check if matches template
+    header_row = 0
+    if list[0][0] == 'Date of run:':
+        print('y')
+        for i in range(len(list)):
+            if list[i][0] == 'barcode':
+                print('e')
+                header_row = i
+    samples_list, column_headers = get_headers(list, has_headers, header_row=header_row)
+    print(column_headers)
  
     return samples_list, column_headers
 
-def get_headers(list, has_headers):
+def get_headers(list, has_headers, header_row = 0):
     if has_headers:
-        column_headers = list[0]
-        samples_list = list[1:]
+        column_headers = list[header_row]
+        samples_list = list[header_row+1:]
     else:
         column_headers = []
         for i in range(1,len(list[0])+1):

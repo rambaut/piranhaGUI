@@ -57,7 +57,7 @@ def setup_panel(translator):
                     pad=(0,12), disabled_readonly_background_color='#393938', expand_x=True,
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
-                AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),)),
+                AltFileBrowse(button_text=translator('Select'),),#file_types=(("CSV Files", "*.csv"),)),
                 AltButton(button_text=translator('View'),key='-VIEW SAMPLES-'),
             ],
             [                
