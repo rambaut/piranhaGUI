@@ -299,30 +299,33 @@ def csv_to_list(filepath, has_headers = True, trim = True):
 
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
-    list = samples_frame.values.tolist()
+    data_list = samples_frame.values.tolist()
 
     #check if matches template
-    header_row = 0
-    if list[0][0] == 'Date of run:':
-        print('y')
-        for i in range(len(list)):
-            if list[i][0] == 'barcode':
-                print('e')
-                header_row = i
-    samples_list, column_headers = get_headers(list, has_headers, header_row=header_row)
+    header_row = find_header_row(data_list)
+   
+    samples_list, column_headers = get_headers(data_list, has_headers, header_row=header_row)
     print(column_headers)
  
     return samples_list, column_headers
 
-def get_headers(list, has_headers, header_row = 0):
+def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #for finding where headers start in excel
+    #if not any#list[0][0] == 'Date of run:':
+    for i in range(len(data_list)):
+        for j in range(len(data_list[i])):
+            if any(data_list[i][j] == header for header in ['barcode', 'sample']): #list[i][0] == 'barcode':
+                return i
+    return default
+
+def get_headers(data_list, has_headers, header_row = 0):
     if has_headers:
-        column_headers = list[header_row]
-        samples_list = list[header_row+1:]
+        column_headers = data_list[header_row]
+        samples_list = data_list[header_row+1:]
     else:
         column_headers = []
-        for i in range(1,len(list[0])+1):
+        for i in range(1,len(data_list[0])+1):
             column_headers.append(str(i))
-        samples_list = list
+        samples_list = data_list
     return samples_list, column_headers
 
 # searches column headers for given string
