@@ -272,7 +272,7 @@ def samples_to_list(filepath, has_headers = True, trim = True):
         samples_frame = pd.read_excel(filepath)
         samples_list, column_headers = excel_to_list(filepath, has_headers=has_headers)
 
-        raise Exception('Excel files are not supported')
+        #raise Exception('Excel files are not supported')
 
 
     return samples_list, column_headers
@@ -299,10 +299,15 @@ def csv_to_list(filepath, has_headers = True, trim = True):
 
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
+    first_row = list(samples_frame.columns)
     data_list = samples_frame.values.tolist()
+    data_list.insert(0,first_row)
+    #print(data_list)
 
     #check if matches template
     header_row = find_header_row(data_list)
+    if header_row > 0:
+        print(get_options_from_excel(data_list,header_row))
    
     samples_list, column_headers = get_headers(data_list, has_headers, header_row=header_row)
     print(column_headers)
@@ -316,6 +321,14 @@ def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #f
             if any(data_list[i][j] == header for header in ['barcode', 'sample']): #list[i][0] == 'barcode':
                 return i
     return default
+
+def get_options_from_excel(data_list, header_row):
+    options = {}
+    for i in range(header_row):
+        print(i)
+        print(data_list[i][0])
+        options[data_list[i][0]] = data_list[i][1]
+    return options
 
 def get_headers(data_list, has_headers, header_row = 0):
     if has_headers:
