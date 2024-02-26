@@ -265,6 +265,8 @@ def samples_to_list(filepath, has_headers = True, trim = True):
     if not os.path.isfile(filepath):
         raise Exception('Samples files missing')
     
+    filepath = str(filepath)
+
     if filepath.endswith('.csv'):
         samples_list, column_headers = csv_to_list(filepath, has_headers=has_headers, trim=trim)
 
