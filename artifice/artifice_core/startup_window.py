@@ -195,7 +195,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,0),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
-            [sg.Frame(title='',size=(950,65), layout=[
+            [sg.Frame(title='',size=(1150,65), layout=[
             [
                 sg.Sizer(16,56),
                 sg.Text(translator('Supplementary directory for phylogenetic module:'),
@@ -206,6 +206,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                     tooltip='Path to directory containing supplementary sequence FASTA file and optional metadata to be incorporated into phylogenetic analysis.', 
                     justification="left",  key='-PHYLO DIR-'),
                 AltFolderBrowse(button_text=translator('Select')),
+                AltButton(button_text=translator('Clear'), key='-CLEAR PHYLO DIR-'),
                 sg.Push()
             ],],
             visible=(got_piranha_image and consts.PHYLO_ENABLED),
@@ -442,6 +443,9 @@ def run_startup_window(window, translator = None):
                     window['-PHYLO FRAME-'].update(visible=True)
             except Exception as err:
                 error_popup(err)
+        
+        elif event == '-CLEAR PHYLO DIR-':
+            window['-PHYLO DIR-'].update('')
 
         elif event == '-ABOUT-':
             try:
