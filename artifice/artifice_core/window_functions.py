@@ -23,6 +23,9 @@ def print_container_log(log_queue, window, output_key, logfile, software=''):
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
+            if output.startswith('Calculating consensus sequences for '):
+                print('e')
+
             if output == '###CONTAINER STOPPED###\n':
                 window[output_key].print(f'###{software} SOFTWARE FINISHED###', font=consts.CONSOLE_FONT, end='')
                 update_log(output, filename=logfile, add_newline=False)
