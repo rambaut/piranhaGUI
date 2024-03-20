@@ -5,6 +5,7 @@ import traceback
 import base64
 import os.path
 import csv
+import time
 from os import mkdir
 from PIL import Image
 from io import BytesIO
@@ -23,8 +24,19 @@ def print_container_log(log_queue, window, output_key, logfile, software=''):
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
-            if output.startswith('Calculating consensus sequences for '):
-                print('e')
+            if output.startswith('Barcode '):
+                if output.endswith('fastq file\n') or output.endswith('fastq files\n'):
+                    bar_max_value = getattr(window['-PIRANHA PROGRESS BAR-'], 'MaxValue')
+                    new_max = bar_max_value + 2
+                    print(f'm:{new_max}')
+                    window['-PIRANHA PROGRESS BAR-'].update(max=new_max,current_count=0)
+                    time.sleep(1)
+                    
+            if output.startswith('Calculating consensus sequences for ') or output.startswith('Gathering variation info for '):
+                bar_current_value = window['-PIRANHA PROGRESS BAR-'].QT_QProgressBar.value()
+                bar_current_value = bar_current_value + 1
+                print(bar_current_value)
+                window['-PIRANHA PROGRESS BAR-'].update(current_count=bar_current_value)
 
             if output == '###CONTAINER STOPPED###\n':
                 window[output_key].print(f'###{software} SOFTWARE FINISHED###', font=consts.CONSOLE_FONT, end='')

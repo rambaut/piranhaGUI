@@ -128,6 +128,7 @@ def setup_panel(config):
             sg.Sizer(8,8),
             AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
         ])
+        layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=True,key='-PIRANHA PROGRESS BAR-')])
         layout.append([sg.Sizer(16,16)])
 
     layout.append([sg.TabGroup([output_tabs], 
@@ -192,7 +193,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
 
     while True:
         event, values = window.read(timeout=500)
-
+        
         if event != '__TIMEOUT__':
             log_event(f'{event} [main window]')
 
