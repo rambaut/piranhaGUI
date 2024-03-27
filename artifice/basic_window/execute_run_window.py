@@ -118,8 +118,6 @@ def setup_panel(config):
     if got_piranha_image:
         layout.append([
             AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-            # hiding this until we have a way to handle progress
-            #sg.ProgressBar(max_value=100, visible=got_piranha_image, expand_x=True),
             #AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
             sg.Sizer(16,16),
             sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),
@@ -128,7 +126,7 @@ def setup_panel(config):
             sg.Sizer(8,8),
             AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
         ])
-        layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=True,key='-PIRANHA PROGRESS BAR-')])
+        layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=False,key='-PIRANHA PROGRESS BAR-')])
         layout.append([sg.Sizer(16,16)])
 
     layout.append([sg.TabGroup([output_tabs], 
@@ -188,12 +186,13 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
         container = get_pre_log(docker_client, rampart_log_queue, 'rampart')
 
     if piranha_running:
+        window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=True)
         container = get_pre_log(docker_client, piranha_log_queue, 'piranha')
 
 
     while True:
         event, values = window.read(timeout=500)
-        
+
         if event != '__TIMEOUT__':
             log_event(f'{event} [main window]')
 
@@ -295,6 +294,8 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     piranha_running = True
                     window['-START/STOP PIRANHA-'].update(text=translator('Stop Analysis'))
                     window['-PIRANHA STATUS-'].update(translator('Analysis is running'))
+
+                    window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=True)
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)

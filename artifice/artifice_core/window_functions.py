@@ -59,6 +59,7 @@ def print_container_log(log_queue, window, output_key, logfile, software=''):
 
             if output == '###CONTAINER STOPPED###\n':
                 window[output_key].print(f'###{software} SOFTWARE FINISHED###', font=consts.CONSOLE_FONT, end='')
+                window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=False)
                 update_log(output, filename=logfile, add_newline=False)
                 return True
             window[output_key].print(output, font=consts.CONSOLE_FONT, end='')
