@@ -366,7 +366,7 @@ def find_column(column_headers, string, case_sensitive = False):
             if headers[i] == string:
                 return i
         return candidates[0]
-    
+     
     
     return None
             
@@ -415,4 +415,32 @@ def set_report_language(run_info, config): #adds language to options
     run_info['title'] = save_run(run_info, title=run_info['title'], overwrite=True)
 
     return run_info
+
+# this function looks for (sub)directory containing barcodes from given directory, hopefully to correct user error
+def look_for_barcodes(minknow_dir):
+    minknow_base_dir = os.path.basename(minknow_dir)
+    minknow_list_dir = os.listdir(minknow_dir)
+    minknow_list_dir = filter(os.path.isdir, [os.path.join(minknow_dir, dir) for dir in minknow_list_dir])
+
+    print(os.path.basename(minknow_dir))
+    print(minknow_list_dir)
+
+    if minknow_base_dir == 'demultiplexed':
+        print('b')
+        return minknow_dir
+    else:
+        print('a')
+        for dir in minknow_list_dir:
+            print(dir)
+            new_dir = look_for_barcodes(dir)
+            print(new_dir)
+            if new_dir != None:
+                return new_dir
+
+    print('y')     
+    return None
+            #if dir == 'demultiplexed':
+            #    return os.path.join(minknow_dir,dir)
+            
+        
 

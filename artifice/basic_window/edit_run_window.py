@@ -10,7 +10,7 @@ import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run
+from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 
@@ -212,6 +212,14 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                     else:
                         run_info['-rp'] = False
                         run_info['PHYLO_DIR'] = ''
+                if len(values['-MINKNOW-']) > 0:
+                    new_minknow = look_for_barcodes(values['-MINKNOW-'])
+                    #if new_minknow != None:
+                        #window['-MINKNOW-'].update(value=new_minknow)
+                    print(new_minknow)
+
+                    #if new_minknow != None:
+                        
 
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
