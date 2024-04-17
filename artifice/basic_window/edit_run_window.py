@@ -214,11 +214,11 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                         run_info['PHYLO_DIR'] = ''
                 if len(values['-MINKNOW-']) > 0:
                     new_minknow = look_for_barcodes(values['-MINKNOW-'])
-                    #if new_minknow != None:
-                        #window['-MINKNOW-'].update(value=new_minknow)
-                    print(new_minknow)
-
-                    #if new_minknow != None:
+                    if new_minknow != None:
+                        #if alt_popup_yes_no(translator('Detected ')):                       
+                        window['-MINKNOW-'].update(value=new_minknow)
+                        values['-MINKNOW-'] = new_minknow
+                    #print(new_minknow)
                         
 
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)

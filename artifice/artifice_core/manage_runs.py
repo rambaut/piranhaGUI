@@ -422,22 +422,14 @@ def look_for_barcodes(minknow_dir):
     minknow_list_dir = os.listdir(minknow_dir)
     minknow_list_dir = filter(os.path.isdir, [os.path.join(minknow_dir, dir) for dir in minknow_list_dir])
 
-    print(os.path.basename(minknow_dir))
-    print(minknow_list_dir)
-
     if minknow_base_dir == 'demultiplexed':
-        print('b')
         return minknow_dir
     else:
-        print('a')
         for dir in minknow_list_dir:
-            print(dir)
             new_dir = look_for_barcodes(dir)
-            print(new_dir)
             if new_dir != None:
                 return new_dir
-
-    print('y')     
+     
     return None
             #if dir == 'demultiplexed':
             #    return os.path.join(minknow_dir,dir)
