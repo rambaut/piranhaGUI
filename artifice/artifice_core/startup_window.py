@@ -24,6 +24,7 @@ from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.alt_popup import alt_popup
 from artifice_core.window_functions import error_popup
+from artifice_core.manage_runs import check_supp_datadir
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
@@ -484,8 +485,15 @@ def run_startup_window(window, translator = None):
 
         elif event == '-LAUNCH-':
             try:
-                consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+                if consts.PHYLO_ENABLED:
+                    if len(values['-PHYLO DIR-']):
+                        if check_supp_datadir(values['-PHYLO DIR-']):
+                            print('checked')
+                            consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+                        else:
+                            raise Exception(translator('No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters'))
+                window.close()
+                return False
             except Exception as err:
                 error_popup(err)
-            window.close()
-            return False
+            

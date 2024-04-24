@@ -434,5 +434,25 @@ def look_for_barcodes(minknow_dir):
             #if dir == 'demultiplexed':
             #    return os.path.join(minknow_dir,dir)
             
-        
+def check_file_utf8(filepath):
+    with open(filepath) as file:
+        try:
+            data = file.decode('utf-8')
+        except:
+            data = None
 
+        if data == None:
+            return False
+        else:
+            return True
+
+def check_supp_datadir(dirpath):
+    supp_list = os.listdir(dirpath)
+    supp_file_list = filter(os.path.isfile, [os.path.join(dirpath, file) for file in supp_list])
+
+    for file in supp_file_list:
+        if file.endswith('.fasta') or file.endswith('.fa'):
+            if check_file_utf8(file):
+                return True
+    
+    return False
