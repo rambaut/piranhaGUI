@@ -422,7 +422,7 @@ def look_for_barcodes(minknow_dir):
     minknow_list_dir = os.listdir(minknow_dir)
     minknow_list_dir = filter(os.path.isdir, [os.path.join(minknow_dir, dir) for dir in minknow_list_dir])
 
-    if minknow_base_dir == 'demultiplexed':
+    if minknow_base_dir == 'fastq_pass':
         return minknow_dir
     else:
         for dir in minknow_list_dir:

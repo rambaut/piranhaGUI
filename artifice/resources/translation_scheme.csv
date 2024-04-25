@@ -30,6 +30,7 @@ Launch ARTIFICE,Lancez ARTIFICE
 Continue,Continuez
 Close,Fermer
 Options,Paramétres
+No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters,
 ~OPTIONS WINDOW~,
 Select language for user-interface: ,Sélectionnez la langue pour l'interface utilisateur: 
 Use of RAMPART: ,Utilisation de RAMPART
