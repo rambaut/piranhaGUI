@@ -416,23 +416,26 @@ def set_report_language(run_info, config): #adds language to options
 
     return run_info
 
-# this function looks for (sub)directory containing barcodes from given directory, hopefully to correct user error
+# this function looks for (sub)directory containing barcodes from given directory, hopefully to correct user error, also returns run name based on directories
 def look_for_barcodes(minknow_dir):
     minknow_base_dir = os.path.basename(minknow_dir)
     minknow_list_dir = os.listdir(minknow_dir)
     minknow_list_dir = filter(os.path.isdir, [os.path.join(minknow_dir, dir) for dir in minknow_list_dir])
 
-    if minknow_base_dir == 'fastq_pass':
-        return minknow_dir
+    if minknow_base_dir == 'demultiplexed': #'fastq_pass':
+        run_name = os.path.basename(os.path.dirname(os.path.dirname(minknow_dir)))
+        return minknow_dir, run_name
     else:
         for dir in minknow_list_dir:
-            new_dir = look_for_barcodes(dir)
+            new_dir, run_name = look_for_barcodes(dir)
             if new_dir != None:
-                return new_dir
+                return new_dir, run_name
      
-    return None
+    return None, None
             #if dir == 'demultiplexed':
             #    return os.path.join(minknow_dir,dir)
+
+
             
 def check_file_utf8(filepath):
     with open(filepath) as file:

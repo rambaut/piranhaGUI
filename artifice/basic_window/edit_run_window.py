@@ -213,7 +213,7 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                         run_info['-rp'] = False
                         run_info['PHYLO_DIR'] = ''
                 if len(values['-MINKNOW-']) > 0:
-                    new_minknow = look_for_barcodes(values['-MINKNOW-'])
+                    new_minknow, run_name = look_for_barcodes(values['-MINKNOW-'])
                     if new_minknow != None:
                         #if alt_popup_yes_no(translator('Detected ')):
                         #minknow_base_dir = os.path.basename(new_minknow)                     
