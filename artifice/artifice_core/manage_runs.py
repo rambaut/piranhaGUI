@@ -438,10 +438,12 @@ def look_for_barcodes(minknow_dir):
 
             
 def check_file_utf8(filepath):
-    with open(filepath) as file:
+    with open(filepath, 'rb') as file:
         try:
-            data = file.decode('utf-8')
-        except:
+            data = file.read()
+            data = data.decode('utf-8')
+        except Exception as ex:
+            print(ex)
             data = None
 
         if data == None:
@@ -455,6 +457,7 @@ def check_supp_datadir(dirpath):
 
     for file in supp_file_list:
         if file.endswith('.fasta') or file.endswith('.fa'):
+            print(file)
             if check_file_utf8(file):
                 return True
     
