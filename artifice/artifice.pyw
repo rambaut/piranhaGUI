@@ -183,7 +183,7 @@ if __name__ == '__main__':
 
     setup_config()
     check_runs_dir(consts.RUNS_DIR)
-    update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
+    update_log(f'Started {consts.APPLICATION_NAME} v{consts.PIRANHA_GUI_VERSION} at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
     language.translator = language.setup_translator()
