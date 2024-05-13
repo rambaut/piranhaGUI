@@ -271,11 +271,8 @@ def samples_to_list(filepath, has_headers = True, trim = True):
         samples_list, column_headers = csv_to_list(filepath, has_headers=has_headers, trim=trim)
 
     elif filepath.endswith('.xls') or filepath.endswith('.xlsx'):
-        samples_frame = pd.read_excel(filepath)
-        samples_list, column_headers = excel_to_list(filepath, has_headers=has_headers)
-
-        #raise Exception('Excel files are not supported')
-
+        #samples_frame = pd.read_excel(filepath)
+        samples_list, column_headers, options = excel_to_list(filepath, has_headers=has_headers)
 
     return samples_list, column_headers
 
@@ -304,17 +301,16 @@ def excel_to_list(filepath, has_headers = True):
     first_row = list(samples_frame.columns)
     data_list = samples_frame.values.tolist()
     data_list.insert(0,first_row)
-    #print(data_list)
+    print(data_list)
 
     #check if matches template
     header_row = find_header_row(data_list)
     if header_row > 0:
-        print(get_options_from_excel(data_list,header_row))
+        options = get_options_from_excel(data_list,header_row)
    
     samples_list, column_headers = get_headers(data_list, has_headers, header_row=header_row)
-    print(column_headers)
  
-    return samples_list, column_headers
+    return samples_list, column_headers, options
 
 def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #for finding where headers start in excel
     #if not any#list[0][0] == 'Date of run:':
@@ -327,10 +323,23 @@ def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #f
 def get_options_from_excel(data_list, header_row):
     options = {}
     for i in range(header_row):
-        print(i)
-        print(data_list[i][0])
-        options[data_list[i][0]] = data_list[i][1]
+        if str(data_list[i][1]).startswith('Unnamed') or data_list[i][1] != data_list[i][1]: 
+            options[data_list[i][0]] = data_list[i][2]
+        else:
+            options[data_list[i][0]] = data_list[i][1]
+    
     return options
+
+def set_options_from_excel(filepath, el_string_dict, window, has_headers = True):
+    samples_list, column_headers, options = excel_to_list(filepath, has_headers=has_headers)
+    for elem in el_string_dict:
+        for option in options:
+            for string in el_string_dict[elem]:
+                if option == string or option == f'{string}:':
+                    window[elem].update(value=options[option])
+                    break
+    
+    
 
 def get_headers(data_list, has_headers, header_row = 0):
     if has_headers:

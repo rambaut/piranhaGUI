@@ -10,7 +10,7 @@ import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes
+from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 
@@ -81,7 +81,7 @@ def setup_panel(translator):
                     pad=(0,12), disabled_readonly_background_color='#393938', expand_x=True,
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
-                AltFileBrowse(button_text=translator('Select'),),#file_types=(("CSV Files", "*.csv"),)),
+                AltFileBrowse(button_text=translator('Select'),key='-SELECT SAMPLES-'),#file_types=(("CSV Files", "*.csv"),)),
                 AltButton(button_text=translator('View'),key='-VIEW SAMPLES-'),
             ],
             [                
@@ -204,8 +204,15 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                     '-OUTDIR-':'outputPath',
                     '-RUN NAME-':'--runname',
                     '-INSTITUTE-':'--institute',
-                    '-USER-':'--username',
+                    '-USER NAME-':'--username',
                     '-NOTES-':'--notes'}
+    
+    el_string_dict = {'-MINKNOW-':['basecalledPath','minknow run','Minknow Run','-i','--readdir','readdir'],
+                      '-OUTDIR-':['outputPath','output path','Output Path','-o','--outdir','outdir'],
+                      '-RUN NAME-':['--runname','run name','Run Name','Title'],
+                      '-INSTITUTE-':['--institute','institute','Institute','institution','Institution'],
+                      '-USER NAME-':['--username','username','Username','User Name','User'],
+                      '-NOTES-':['--notes', 'notes', 'Notes', 'note', 'Note']}
     
     try:
         event, values = window.read()
@@ -215,9 +222,11 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
         if reset_run == True:
             save_run(run_info, title = 'PREVIOUS_RUN', runs_dir = config['RUNS_DIR'], overwrite = True,)
             run_info = {'title': 'TEMP_RUN'}
-            window['-SAMPLES-'].update('')
-            window['-MINKNOW-'].update('')
-            window['-OUTDIR-'].update('')
+            for elem in element_dict:
+                window[elem].update('')
+            #window['-SAMPLES-'].update('')
+            #window['-MINKNOW-'].update('')
+            #window['-OUTDIR-'].update('')
     except Exception as err:
         update_log(traceback.format_exc())
 
@@ -230,6 +239,15 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
             return
+        
+        elif event == '-SAMPLES-':
+            try:
+                if values['-SAMPLES-'].endswith('.xls') or values['-SAMPLES-'].endswith('.xlsx'):
+                    #samples_list, column_headers, options = excel_to_list(values['-SAMPLES-'])
+                    #print(options)
+                    set_options_from_excel(values['-SAMPLES-'], el_string_dict, window)
+            except Exception as err:
+                error_popup(err)
 
         elif event == '-VIEW SAMPLES-':
             try:
