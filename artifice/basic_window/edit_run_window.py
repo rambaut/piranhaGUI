@@ -35,7 +35,31 @@ def setup_panel(translator):
                 sg.Sizer(1,y1),
             ],
             [
-                sg.Sizer(1,y2), sg.Text(translator('MinKnow run:'), pad=(0,12), expand_y=True),
+                sg.Sizer(1,y2), sg.Text(translator('MinKnow Run:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Run Name:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('User Name:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Institute:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Notes:'), pad=(0,12), expand_y=True),
             ],
             [                
                 sg.Sizer(1,16),
@@ -75,6 +99,42 @@ def setup_panel(translator):
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select')),
                 sg.Sizer(consts.BUTTON_SIZE[0], 0),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-RUN NAME-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-USER NAME-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-INSTITUTE-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-NOTES-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
             ],
             [                
                 sg.Sizer(1,16),
@@ -139,10 +199,14 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
     docker_client = docker.from_env()
     translator = setup_translator()
 
-
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath',
-                    '-OUTDIR-':'outputPath'}
+                    '-OUTDIR-':'outputPath',
+                    '-RUN NAME-':'--runname',
+                    '-INSTITUTE-':'--institute',
+                    '-USER-':'--username',
+                    '-NOTES-':'--notes'}
+    
     try:
         event, values = window.read()
         run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
