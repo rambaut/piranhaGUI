@@ -207,7 +207,8 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                     '-USER NAME-':'--username',
                     '-NOTES-':'--notes'}
     
-    el_string_dict = {'-MINKNOW-':['basecalledPath','minknow run','Minknow Run','-i','--readdir','readdir'],
+    # dictionary used to try to match options from excel to elements in window, case insensitive
+    el_string_dict = {'-MINKNOW-':['basecalledPath','minknow run','-i','--readdir','readdir','read dir','MINKNOW'],
                       '-OUTDIR-':['outputPath','output path','Output Path','-o','--outdir','outdir'],
                       '-RUN NAME-':['--runname','run name','Run Name','Title'],
                       '-INSTITUTE-':['--institute','institute','Institute','institution','Institution'],
@@ -224,9 +225,6 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
             run_info = {'title': 'TEMP_RUN'}
             for elem in element_dict:
                 window[elem].update('')
-            #window['-SAMPLES-'].update('')
-            #window['-MINKNOW-'].update('')
-            #window['-OUTDIR-'].update('')
     except Exception as err:
         update_log(traceback.format_exc())
 
@@ -284,6 +282,7 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
   
             except Exception as err:
                 error_popup(err)
+
         elif event == '-CONFIRM-':
             try:
                 if 'PHYLO_ENABLED' in config:

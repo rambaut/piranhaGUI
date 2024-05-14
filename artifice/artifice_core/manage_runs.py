@@ -330,12 +330,15 @@ def get_options_from_excel(data_list, header_row):
     
     return options
 
+# function to set window elements as specified in samples excel
 def set_options_from_excel(filepath, el_string_dict, window, has_headers = True):
     samples_list, column_headers, options = excel_to_list(filepath, has_headers=has_headers)
     for elem in el_string_dict:
         for option in options:
-            for string in el_string_dict[elem]:
-                if option == string or option == f'{string}:':
+            for el_string in el_string_dict[elem]:
+                option_match = str(option).replace(' ','').lower()
+                el_string = str(el_string).replace(' ','').lower()
+                if option_match == el_string or option_match == f'{el_string}:': #checking if option in excel could match an element, case insensitive
                     window[elem].update(value=options[option])
                     break
     
