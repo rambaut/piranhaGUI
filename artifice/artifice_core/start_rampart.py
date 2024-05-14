@@ -12,9 +12,8 @@ import multiprocessing
 import traceback
 
 from artifice_core.update_log import update_log
-from artifice_core.manage_runs import samples_to_list
+from artifice_core.manage_runs import samples_to_list, check_barcodes
 import artifice_core.consts as consts
-import artifice_core.view_barcodes_window
 
 def start_rampart(run_path, basecalled_path, client, image, firstPort = 1100, secondPort = 1200, container = None, protocol_path = None,):
     if client == None:
@@ -250,7 +249,7 @@ def prepare_run(run_info, runs_dir = None, output = False):
     with open(config_path, 'w') as file:
         config_json = json.dump(run_configuration, file)
 
-    artifice_core.view_barcodes_window.check_barcodes(run_info)
+    check_barcodes(run_info)
 
 def launch_rampart(run_info, client, firstPort = 1100, secondPort = 1200, runs_dir = None, container = None, protocol_path = None):
     if not runs_dir:

@@ -5,13 +5,12 @@ import traceback
 import sys
 
 import artifice_core.consts as consts
-import artifice_core.view_barcodes_window
 import artifice_core.window_functions as window_functions
 from artifice_core.language import translator, setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup
-from artifice_core.manage_runs import samples_to_list, set_default_columns
+from artifice_core.manage_runs import samples_to_list, set_default_columns, save_barcodes
 
 def setup_panel(samples, run_info = None, barcodes_column = 0, samples_column = 1, has_headers = True):
     sg.theme('PANEL')
@@ -125,7 +124,7 @@ def view_samples(run_info, values, samples_key):
             run_info['samples'] = samples
             run_info['barcodes_column'] = barcodes_column
             run_info['samples_column']  = samples_column
-            artifice_core.view_barcodes_window.save_barcodes(run_info)
+            save_barcodes(run_info)
 
     return run_info
 

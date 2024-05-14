@@ -5,6 +5,7 @@ import csv
 import os.path
 import traceback
 import pandas as pd
+import PySimpleGUI as sg
 from os import mkdir, listdir
 from shutil import rmtree, copytree
 
@@ -414,6 +415,95 @@ def set_default_columns(column_headers, run_info, barcodes_column = None, sample
 
     
     return barcodes_column, samples_column
+
+def make_barcodes_list(run_info):
+
+    samples_list, column_headers = samples_to_list(run_info['samples'], has_headers=False)
+    barcodes_column, samples_column = set_default_columns(column_headers, run_info)
+
+    if 'samples_column' in run_info:
+        samples_column = run_info['samples_column']
+
+    if 'barcodes_column' in run_info:
+        barcodes_column = run_info['barcodes_column']
+
+    if 'samples' not in run_info or os.path.isfile(run_info['samples']) == False:
+        raise Exception('Invalid samples file')
+
+    barcodes_list = []
+    for row in samples_list:
+        sample = row[int(samples_column)]#row.pop(int(samples_column))
+        barcodes = row[int(barcodes_column)]#row.pop(int(barcodes_column))
+        new_row = [sample, barcodes]
+        if int(barcodes_column) > int(samples_column):
+            row.pop(int(barcodes_column))
+            row.pop(int(samples_column))
+        else:
+            row.pop(int(samples_column))
+            row.pop(int(barcodes_column))
+        
+        #old_row = list(set(row) - set(new_row))
+        new_row = new_row + row
+        barcodes_list.append(new_row)
+    
+    barcodes_list[0][0] = 'sample'
+    barcodes_list[0][1] = 'barcode'
+
+    return barcodes_list
+
+# save a barcode file based on given samples file and selected columns
+def save_barcodes(run_info):
+    barcodes_list = make_barcodes_list(run_info)
+    title = run_info['title']
+    update_log(f'saving barcodes file for run: "{title}"')
+    
+    # make sure run dir exists
+    if not os.path.exists(consts.RUNS_DIR / title):
+         os.mkdir(consts.RUNS_DIR / title)
+
+    with open(consts.RUNS_DIR / title / 'barcodes.csv', 'w+', newline='') as csvfile:
+        csvwriter = csv.writer(csvfile)
+        for row in barcodes_list:
+            csvwriter.writerow(row)
+
+# checks if the sample file used to make barcodes file has been edited  since barcode file created
+def check_barcodes(run_info):
+    if 'title' not in run_info or not len(run_info['title']) > 0:
+        raise Exception('Invalid Name/No Run Selected')
+
+    title = run_info['title']
+    update_log(f'checking barcodes for run: "{title}" still match chosen samples...')
+
+    barcodes_file = consts.RUNS_DIR / title / 'barcodes.csv'
+    if os.path.isfile(barcodes_file):
+        new_barcodes = make_barcodes_list(run_info)
+        old_barcodes = samples_to_list(barcodes_file, has_headers=False)[0]
+        new_barcodes.sort()
+        old_barcodes.sort()
+
+        if old_barcodes != new_barcodes:
+            sample_modified = True
+        else:
+            sample_modified = False
+
+        if sample_modified:
+            update_log('barcodes and samples do not match')
+            overwrite_barcode = sg.popup_yes_no(
+                'Samples file appears to have been edited since it was selected. Do you want to remake the barcodes file with the modified samples?',
+                font=consts.DEFAULT_FONT, 
+            )
+            if overwrite_barcode == "Yes":
+                update_log('user chose to remake barcodes')
+                save_barcodes(run_info)
+            else:
+                update_log('user chose to keep barcodes as they are')
+        else:
+            update_log('barcodes and samples match')
+    else:
+        update_log(f'missing barcodes file, creating it now')
+        save_barcodes(run_info)
+
+    return False
 
 def set_report_language(run_info, config): #adds language to options
     language = config['LANGUAGE']

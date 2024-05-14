@@ -8,6 +8,7 @@ import artifice_core.consts
 import artifice_core.view_barcodes_window
 import artifice_core.start_rampart
 from artifice_core.update_log import update_log
+from artifice_core.manage_runs import check_barcodes
 
 
 def rampart_tab_event(event, run_info, docker_client, rampart_container, rampart_running, font, window):
@@ -15,7 +16,7 @@ def rampart_tab_event(event, run_info, docker_client, rampart_container, rampart
 
     if event == '-VIEW BARCODES-':
         try:
-            artifice_core.view_barcodes_window.check_barcodes(run_info, font=font)
+            check_barcodes(run_info, font=font)
 
             barcodes = artifice_core.consts.RUNS_DIR+'/'+run_info['title']+'/barcodes.csv'
             barcodes_window, column_headers = artifice_core.view_barcodes_window.create_barcodes_window(barcodes,font=font)
