@@ -26,7 +26,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='piranhaGUIv1.5.3',
+    name='piranhaGUIv1.5.4pre',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
