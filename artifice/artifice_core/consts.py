@@ -209,7 +209,7 @@ PROJECT_LOGO = "artic_panel.png"
 PROJECT_FOOTER = ""
 ICON = ICON_FILENAME #window_functions.scale_image(ICON_FILENAME, SCALING, (64,64))
 
-setup_config('rampart.yml')
+setup_config() #setup_config('rampart.yml')
 config = retrieve_config()
 
 ARCHIVED_RUNS = get_config_value('ARCHIVED_RUNS',config)
