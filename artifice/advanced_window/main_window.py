@@ -16,7 +16,7 @@ import artifice_core.start_rampart
 import artifice_core.view_barcodes_window
 from artifice_core.start_piranha import start_piranha
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, update_run_list, get_runs, save_changes
+from artifice_core.manage_runs import save_run, update_run_list, get_runs, save_changes, save_barcodes
 from advanced_window.infotab import infotab_event
 from advanced_window.rampart_tab import rampart_tab_event
 
@@ -179,7 +179,7 @@ def create_run(font=None):
     run_info['has_headers'] = has_headers
 
     title = save_run(run_info)
-    artifice_core.view_barcodes_window.save_barcodes(run_info)
+    save_barcodes(run_info)
     update_log(f'created run: "{title}" successfully')
 
     return title

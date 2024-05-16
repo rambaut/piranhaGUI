@@ -19,6 +19,9 @@ import artifice_core.startup_window
 import artifice_core.window_functions as window_functions
 from artifice_core.manage_protocols import add_protocol
 from artifice_core.window_functions import scale_window, scale_image
+from artifice_core.start_rampart import check_container, check_rampart_running, check_for_docker
+from artifice_core.alt_popup import alt_popup_yes_no
+from artifice_core.manage_runs import load_run
 
 #create artifice theme
 def make_themes():
@@ -169,6 +172,9 @@ def setup_config():
     consts.VALUE_MIN_PCENT = consts.get_config_value('VALUE_MIN_PCENT', config)
     consts.VALUE_PRIMER_LENGTH = consts.get_config_value('VALUE_PRIMER_LENGTH', config)
     consts.VALUE_OUTPUT_PREFIX = consts.get_config_value('VALUE_OUTPUT_PREFIX', config)
+    consts.VALUE_ANALYSIS_MODE = consts.get_config_value('VALUE_ANALYSIS_MODE', config)
+    consts.VALUE_DEFAULT_MEDAKA_MODEL = consts.get_config_value('VALUE_DEFAULT_MEDAKA_MODEL', config)
+
 
 
 if __name__ == '__main__':
@@ -177,7 +183,7 @@ if __name__ == '__main__':
 
     setup_config()
     check_runs_dir(consts.RUNS_DIR)
-    update_log(f'Started {consts.APPLICATION_NAME} at {startup_time}\n', overwrite = True)
+    update_log(f'Started {consts.APPLICATION_NAME} v{consts.PIRANHA_GUI_VERSION} at {startup_time}\n', overwrite = True)
     setup_builtin_protocols()
 
     language.translator = language.setup_translator()
@@ -187,12 +193,35 @@ if __name__ == '__main__':
     make_themes()
 
     splash_window = create_splash_window()
+    docker_running = check_for_docker(popup=False)
+    if docker_running:
+        piranha_running = check_container('piranha')
+        rampart_running = check_rampart_running()
+    else:
+        piranha_running = False
+        rampart_running = False
+
+    if piranha_running or rampart_running:
+        if piranha_running:
+            software = 'Piranha'
+        else:
+            software = 'Rampart'
+
+        skip_to_execute_window = alt_popup_yes_no(f'{software} software running, continue that run immediately?')
+        if skip_to_execute_window == 'Yes':
+            skip_to_execute_window = True
+        else:
+            skip_to_execute_window = False
+    else:
+        skip_to_execute_window = False
     
-    window = artifice_core.startup_window.create_startup_window() #create the startup window to check/install docker and images
+    if not skip_to_execute_window:
+        window = artifice_core.startup_window.create_startup_window() #create the startup window to check/install docker and images
 
     splash_window.close()
 
-    advanced = artifice_core.startup_window.run_startup_window(window)
+    if not skip_to_execute_window:
+        advanced = artifice_core.startup_window.run_startup_window(window)
     
     if advanced != None: # if button pressed to launch artifice
         try:
@@ -200,15 +229,23 @@ if __name__ == '__main__':
                 window, rampart_running = advanced_window.main_window.create_main_window()
                 advanced_window.main_window.run_main_window(window, rampart_running=rampart_running)
             else:
+                run_info = {'title': 'TEMP_RUN'}
+                selected_run_title = 'TEMP_RUN'
+                reset_run = True
                 while True: # user can go back and forth between editing and executing runs
-                    window = basic_window.edit_run_window.create_edit_window()
-                    run_info = basic_window.edit_run_window.run_edit_window(window)
-                    if run_info == None:
-                        break
+                    if not skip_to_execute_window:
+                        window = basic_window.edit_run_window.create_edit_window()
+                        run_info = basic_window.edit_run_window.run_edit_window(window, run_info, selected_run_title, reset_run=reset_run)
+                        if run_info == None:
+                            break
+                    else:
+                        run_info = load_run(None, selected_run_title, [], runs_dir = consts.RUNS_DIR, 
+                            update_archive_button=False)
 
                     update_log(f'\nrun details confirmed, creating main window\n')
                     window, rampart_running, piranha_running = basic_window.execute_run_window.create_main_window()
                     edit = basic_window.execute_run_window.run_main_window(window, run_info, rampart_running=rampart_running, piranha_running=piranha_running)
+                    reset_run = False
                     if edit != True:
                         break
             exit_time = datetime.today()

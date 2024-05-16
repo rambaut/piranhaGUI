@@ -24,8 +24,8 @@ def setup_panel():
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
         '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.'),
-        '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: {consts.VALUE_SAMPLE_TYPE}'),
-        '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: {consts.VALUE_POSITIVE}'),
+        '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: `{consts.VALUE_SAMPLE_TYPE}`'),
+        '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: `{consts.VALUE_POSITIVE}`'),
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
     }
 
@@ -43,7 +43,7 @@ def setup_panel():
             sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
             ],
             [
-            sg.Sizer(16,32),sg.Text(translator('Sample Type:'),tooltip=tooltips['-SAMPLE TYPE-'],),
+            sg.Sizer(16,32),sg.Text(translator('Protocol:'),tooltip=tooltips['-SAMPLE TYPE-'],),
             ],
             [sg.Sizer(0,8)],
             [

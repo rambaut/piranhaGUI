@@ -21,6 +21,7 @@ import artifice_core.window_functions as window_functions
 from artifice_core.start_piranha import launch_piranha
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import print_container_log, check_stop_on_close, get_pre_log, setup_check_container, error_popup
+from artifice_core.manage_runs import set_report_language
 from artifice_core.alt_button import AltButton
 
 def setup_panel(config):
@@ -117,8 +118,6 @@ def setup_panel(config):
     if got_piranha_image:
         layout.append([
             AltButton(button_text=piranha_button_text, visible=got_piranha_image, key='-START/STOP PIRANHA-'),
-            # hiding this until we have a way to handle progress
-            #sg.ProgressBar(max_value=100, visible=got_piranha_image, expand_x=True),
             #AltButton(button_text=translator('Stop'), visible=got_piranha_image, disabled=True, key='-STOP PIRANHA-'),
             sg.Sizer(16,16),
             sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),
@@ -127,6 +126,7 @@ def setup_panel(config):
             sg.Sizer(8,8),
             AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
         ])
+        layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=False,key='-PIRANHA PROGRESS BAR-')])
         layout.append([sg.Sizer(16,16)])
 
     layout.append([sg.TabGroup([output_tabs], 
@@ -186,6 +186,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
         container = get_pre_log(docker_client, rampart_log_queue, 'rampart')
 
     if piranha_running:
+        window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=True)
         container = get_pre_log(docker_client, piranha_log_queue, 'piranha')
 
 
@@ -198,7 +199,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
 
         if piranha_running:
             try:
-                piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'])
+                piranha_finished = print_container_log(piranha_log_queue, window, '-PIRANHA OUTPUT-', config['PIRANHA_LOGFILE'],software='PIRANHA')
                 if piranha_finished:
                     piranha_running = False
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
@@ -217,7 +218,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                 error_popup(err)
 
         if rampart_running:
-            rampart_finished = print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'])
+            rampart_finished = print_container_log(rampart_log_queue, window, '-RAMPART OUTPUT-', config['RAMPART_LOGFILE'],software='RAMPART')
             if rampart_finished:
                 rampart_running = False
                 artifice_core.start_rampart.stop_docker(client=docker_client, container=rampart_container)
@@ -286,11 +287,15 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                 else:
                     if values['-THREADS SELECT-'] != config['THREADS']:
                         consts.edit_config('THREADS', values['-THREADS SELECT-'])
+
+                    run_info = set_report_language(run_info, config)
                         
                     piranha_container = launch_piranha(run_info, docker_client)
                     piranha_running = True
                     window['-START/STOP PIRANHA-'].update(text=translator('Stop Analysis'))
                     window['-PIRANHA STATUS-'].update(translator('Analysis is running'))
+
+                    window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=True)
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)

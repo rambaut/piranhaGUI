@@ -7,6 +7,7 @@ import os.path
 import sys
 import os
 import subprocess
+import requests
 from os import system, mkdir
 from webbrowser import open_new_tab
 from PIL import Image
@@ -23,6 +24,7 @@ from basic_window.about_window import create_about_window, run_about_window
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.alt_popup import alt_popup
 from artifice_core.window_functions import error_popup
+from artifice_core.manage_runs import check_supp_datadir
 
 PASS_TEXT_COLOUR = '#1E707E' #blueish '#00bd00'<-green
 FAIL_TEXT_COLOUR = '#FF0000' #'#db4325' #red
@@ -53,6 +55,8 @@ def setup_panel(usesRAMPART, usesPiranha):
     config = artifice_core.consts.retrieve_config()
     docker_client = None
 
+    gui_update_available, latest_gui_version = check_for_gui_updates()
+
     is_piranhaGUI = True
 
     docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
@@ -66,14 +70,16 @@ def setup_panel(usesRAMPART, usesPiranha):
     if usesRAMPART:
         got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
             rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client, docker_installed=docker_installed)
 
+    piranha_image_incompatible = True
     if usesPiranha:
         got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
             piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
-                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,docker_installed=docker_installed)
+        piranha_image_incompatible =  not check_image_compatible(consts.PIRANHA_VERSION, consts.PIRANHA_IMAGE)
 
-        if not got_piranha_image:
+        if not got_piranha_image and docker_installed:
             # attempt to install piranha image from file
             if sys.platform.startswith('win'):
                 image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
@@ -108,13 +114,13 @@ def setup_panel(usesRAMPART, usesPiranha):
 
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
     rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-    set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator)
+    set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator, docker_installed=docker_installed)
     
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
-    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available)
+    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available) and not piranha_image_incompatible and docker_installed
 
-    show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available)
+    show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available) and docker_installed
 
     if 'SHOW_RAMPART' in config:
         SHOW_RAMPART = config['SHOW_RAMPART']
@@ -129,11 +135,17 @@ def setup_panel(usesRAMPART, usesPiranha):
 
     install_buttons_size = (396,32)
     layout = []
-    # layout.append([
-    #     AltButton(button_text=translator('About'),font=font,key='-ABOUT-'),
-    #     sg.Push(),
-    #     AltButton(button_text=translator('Options'),font=font,key='-OPTIONS-'),
-    #     ])
+    if gui_update_available:
+        gui_update_text = f'{consts.APPLICATION_NAME} update available to {latest_gui_version}'
+        layout.append([
+            sg.Sizer(16,56),
+            sg.Column([[
+                sg.Text(gui_update_text,text_color=FAIL_TEXT_COLOUR,
+                        size=(32,1), font=consts.TITLE_FONT),
+                AltButton(button_text=translator('Open Github download page in browser'),key='-GUI DOWNLOADS-', 
+                        size=install_buttons_size),
+            ]])
+        ])
     layout.append([
             sg.Sizer(16,56), 
             sg.Column([[
@@ -170,17 +182,21 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
-                        size=(50,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
+                        size=(60,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
                 AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+            ],
+            [
+                sg.Text(f'Please install the latest {consts.APPLICATION_NAME} version to use it',
+                        size=(50,1), text_color=piranha_text_color,visible=piranha_image_incompatible and docker_installed,font=consts.TITLE_FONT), 
             ],[
-                sg.Sizer(32,0), 
+                sg.Sizer(32,0),
                 sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
             ],
             [sg.Sizer(16,28)],[
             sg.Sizer(16,0),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
-            [sg.Frame(title='',size=(800,40), layout=[
+            [sg.Frame(title='',size=(1150,65), layout=[
             [
                 sg.Sizer(16,56),
                 sg.Text(translator('Supplementary directory for phylogenetic module:'),
@@ -191,6 +207,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                     tooltip='Path to directory containing supplementary sequence FASTA file and optional metadata to be incorporated into phylogenetic analysis.', 
                     justification="left",  key='-PHYLO DIR-'),
                 AltFolderBrowse(button_text=translator('Select')),
+                AltButton(button_text=translator('Clear'), key='-CLEAR PHYLO DIR-'),
                 sg.Push()
             ],],
             visible=(got_piranha_image and consts.PHYLO_ENABLED),
@@ -262,18 +279,25 @@ def create_alt_docker_config():
             file.write(replace_data)
 
 # set up image status text and button after checking if image is installed/up to date
-def set_image_status(name, image, check_for_updates = True, docker_client = None, translator = None):
+def set_image_status(name, image, check_for_updates = True, docker_client = None, translator = None, docker_installed = True):
     if translator == None:
         translator = setup_translator()
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
+    if docker_installed:
+        got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
+    else:
+        got_image = False
     update_available = False
     latest_version = None
     if got_image:
         if check_for_updates:
             update_available, latest_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
-            image_status = translator(f'Update available for {name} software to version {latest_version}')
-            pull_text = translator(f'Install update to {name} software')
+            image_compatible = check_image_compatible(latest_version, image)
+            if image_compatible:
+                image_status = translator(f'Update available for {name} software to version {latest_version}')
+                pull_text = translator(f'Install update to {name} software')
+            else:
+                image_status = translator(f'Major update available for {name} software to version {latest_version}')
             text_color = FAIL_TEXT_COLOUR
         else:
             image_status = translator(f'{name} software version {latest_version} installed')
@@ -285,6 +309,35 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         text_color = FAIL_TEXT_COLOUR
 
     return got_image, docker_client, update_available, image_status, pull_text, text_color, latest_version
+
+def check_image_compatible(latest_version, image):
+    try:
+        if image in consts.COMPATIBLE_VERSIONS:
+            latest_major_version = '.'.join(str(latest_version).split('.')[0:2])
+            compatible_major_version = '.'.join(str(consts.COMPATIBLE_VERSIONS[image]).split('.')[0:2])
+            if latest_major_version != compatible_major_version:
+                return False
+    except:
+        pass
+    return True
+
+def check_for_gui_updates(owner='polio-nanopore',repo='piranhaGUI'):
+    update_available = False
+    latest_gui_version = 'v' + consts.PIRANHA_GUI_VERSION
+    try:
+        api_url =  f'https://api.github.com/repos/{owner}/{repo}/releases'
+
+        response = requests.get(api_url)
+        releases = response.json()
+        latest_gui_version = releases[0]['tag_name']
+        installed_gui_version = 'v' + consts.PIRANHA_GUI_VERSION
+        if installed_gui_version != latest_gui_version:
+            update_available = True
+    except:
+        pass
+    
+    return update_available, latest_gui_version
+    
 
 def install_image(name, image_repo, window, client, translator = None):
     if translator == None:
@@ -339,7 +392,15 @@ def install_image(name, image_repo, window, client, translator = None):
 def run_startup_window(window, translator = None):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
     #print(client.configs())
-    client = docker.from_env()
+    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
+    if docker_installed:
+        try:
+            client = docker.from_env()
+        except:
+            client = None
+    else:
+        client = None
+
     if translator == None:
         translator = setup_translator()
 
@@ -353,6 +414,12 @@ def run_startup_window(window, translator = None):
             window.close()
             break
             return
+        
+        elif event == '-GUI DOWNLOADS-':
+            try:
+                open_new_tab('https://github.com/polio-nanopore/piranhaGUI/releases')
+            except Exception as err:
+                error_popup(err)
 
         elif event == '-DOCKER INSTALL-':
             try:
@@ -379,15 +446,18 @@ def run_startup_window(window, translator = None):
                 if consts.PHYLO_ENABLED:
                     consts.edit_config('PHYLO_ENABLED', False)
                     consts.PHYLO_ENABLED = False
-                    window['-ENABLE PHYLO-'].update(text = 'Enable Phylogenetics module')
+                    window['-ENABLE PHYLO-'].update(text = translator('Enable Phylogenetics module'))
                     window['-PHYLO FRAME-'].update(visible=False)
                 else:
                     consts.edit_config('PHYLO_ENABLED', True)
                     consts.PHYLO_ENABLED = True
-                    window['-ENABLE PHYLO-'].update(text = 'Disable Phylogenetics module')
+                    window['-ENABLE PHYLO-'].update(text = translator('Disable Phylogenetics module'))
                     window['-PHYLO FRAME-'].update(visible=True)
             except Exception as err:
                 error_popup(err)
+        
+        elif event == '-CLEAR PHYLO DIR-':
+            window['-PHYLO DIR-'].update('')
 
         elif event == '-ABOUT-':
             try:
@@ -426,8 +496,15 @@ def run_startup_window(window, translator = None):
 
         elif event == '-LAUNCH-':
             try:
-                consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+                if consts.PHYLO_ENABLED:
+                    if len(values['-PHYLO DIR-']):
+                        if check_supp_datadir(values['-PHYLO DIR-']):
+                            print('checked')
+                            consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+                        else:
+                            raise Exception(translator('No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters'))
+                window.close()
+                return False
             except Exception as err:
                 error_popup(err)
-            window.close()
-            return False
+            

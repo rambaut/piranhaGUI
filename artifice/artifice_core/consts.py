@@ -147,6 +147,11 @@ def get_resource(filepath):
 #PROJECT_LOGO = "artic_logo.png"
 #PROJECT_FOOTER = ""
 
+#   NOTE THIS SHOULD BE UPDATED WITH EACH NEW MAJOR PACKAGE RELEASE (assuming it's compatible with the latest artifice version)
+COMPATIBLE_VERSIONS = {
+    'polionanopore/piranha':1.2
+    }
+
 APPLICATION_HEADER = 'Powered by ARTIFICE | ARTICnetwork: http://artic.network'
 APPLICATION_CREDITS = 'ARTIFICE developed by Corey Ansley, Áine O\'Toole, Rachel Colquhoun, Zoe Vance & Andrew Rambaut'
 APPLICATION_FOOTER='ARTIC-network supported by the Wellcome Trust Award 206298/Z/17/Z'
@@ -182,7 +187,7 @@ PIRANHA_URL = 'https://github.com/polio-nanopore/piranha/'
 
 RAMPART_VERSION = None
 PIRANHA_VERSION = None
-PIRANHA_GUI_VERSION = None
+PIRANHA_GUI_VERSION = '1.5.4pre'
 
 config = None
 #LOGFILE = None

@@ -43,25 +43,17 @@ def setup_panel():
     }
 
     analysis_options_tab = [
-        #Commented out for now
-        [
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
-        ],
-        [
-        sg.Push(),
-        sg.In(size=(25,1), enable_events=True,expand_y=False,tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
-        ],
+        
         [
             sg.Column([
-                #[
-                #sg.Sizer(16,32),
-                #sg.Text(translator('Analysis Mode:'),justification='right',tooltip=tooltips['-ANALYSIS MODE-']),
-                #],
-                #[
-                #sg.Sizer(16,32),
-                #sg.Text(translator('Medaka Model:'),justification='right',tooltip=tooltips['-MEDAKA MODEL-']),
-                #],
+                [
+                sg.Sizer(16,32),
+                sg.Text(translator('Analysis Mode:'),justification='right',tooltip=tooltips['-ANALYSIS MODE-']),
+                ],
+                [
+                sg.Sizer(16,32),
+                sg.Text(translator('Medaka Model:'),justification='right',tooltip=tooltips['-MEDAKA MODEL-']),
+                ],
                 [
                 sg.Sizer(16,32),
                 sg.Text(translator('Minimum Mapping Quality:'),justification='right',tooltip=tooltips['-MIN MAP QUALITY-']),
@@ -88,6 +80,18 @@ def setup_panel():
                 ],
             ], element_justification='right'),
             sg.Column([
+                [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_ANALYSIS_MODE,
+                      border_width=1,
+                      tooltip=tooltips['-ANALYSIS MODE-'], key='-ANALYSIS MODE-',),
+                ],
+                [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_DEFAULT_MEDAKA_MODEL,
+                      border_width=1,
+                      tooltip=tooltips['-MEDAKA MODEL-'], key='-MEDAKA MODEL-',),
+                ],
                 [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,default_text=consts.VALUE_MIN_MAP_QUALITY, 
@@ -173,11 +177,6 @@ def setup_panel():
             ])
         ]]
     
-    misc_options_tab = [
-        [sg.Checkbox('verbose', default=False, tooltip=tooltips['-VERBOSE-'], key='-VERBOSE-')],
-    ]
-
-
     """
         [
         sg.Text(translate_text('Run Name',language,translate_scheme),size=(14,1)),
@@ -196,9 +195,8 @@ def setup_panel():
     layout = [
         [sg.TabGroup([
         [
-        sg.Tab(translator('Analysis Options'),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
         sg.Tab(translator('Output Options'),output_options_tab,key='-OUTPUT OPTIONS TAB-'),
-        sg.Tab(translator('Misc Options'),misc_options_tab,key='-MISC OPTIONS TAB-')
+        sg.Tab(translator('Analysis Options'),analysis_options_tab,key='-ANALYSIS OPTIONS TAB-'),
         ]
             ],expand_x=True, expand_y=True)
         ]

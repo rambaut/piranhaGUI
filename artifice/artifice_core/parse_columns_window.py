@@ -5,21 +5,23 @@ import traceback
 import sys
 
 import artifice_core.consts as consts
-import artifice_core.view_barcodes_window
 import artifice_core.window_functions as window_functions
 from artifice_core.language import translator, setup_translator
 from artifice_core.update_log import log_event, update_log
 from artifice_core.alt_button import AltButton
 from artifice_core.window_functions import error_popup
-from artifice_core.manage_runs import samples_to_list
+from artifice_core.manage_runs import samples_to_list, set_default_columns, save_barcodes
 
-def setup_panel(samples, barcodes_column = 0, samples_column = 1, has_headers = True):
+def setup_panel(samples, run_info = None, barcodes_column = 0, samples_column = 1, has_headers = True):
     sg.theme('PANEL')
     translator = setup_translator()
 
     theme=consts.THEMES[sg.theme()]
 
     samples_list, column_headers = samples_to_list(samples, has_headers=has_headers)
+
+    if not run_info == None: 
+        barcodes_column, samples_column = set_default_columns(column_headers, run_info)
 
     visible_column_map = []
     for i in range(len(samples_list[0])):
@@ -88,9 +90,9 @@ def check_spaces(samples, column):
         if ' ' in str(row[int(column)]):
             return True
 
-def create_parse_window(samples, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
+def create_parse_window(samples, run_info = None, window = None, samples_column = 0, barcodes_column = 1, has_headers = True):
 
-    panel, column_headers = setup_panel(samples, samples_column=samples_column, barcodes_column=barcodes_column, has_headers=has_headers)
+    panel, column_headers = setup_panel(samples, samples_column=samples_column, run_info=run_info, barcodes_column=barcodes_column, has_headers=has_headers)
 
     title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
 
@@ -112,20 +114,9 @@ def create_parse_window(samples, window = None, samples_column = 0, barcodes_col
 
 def view_samples(run_info, values, samples_key):
     if 'title' in run_info:
-        if 'samples_column' in run_info:
-            samples_column = run_info['samples_column']
-
-            if 'barcodes_column' in run_info:
-                barcodes_column = run_info['barcodes_column']
-            else:
-                samples_column = 0
-                barcodes_column = 1
-        else:
-            samples_column = 0
-            barcodes_column = 1
 
         samples = values[samples_key]
-        parse_window, column_headers = create_parse_window(samples, samples_column=samples_column, barcodes_column=barcodes_column)
+        parse_window, column_headers = create_parse_window(samples, run_info=run_info)
         samples_barcodes_indices = run_parse_window(parse_window,samples,column_headers)
 
         if samples_barcodes_indices != None:
@@ -133,7 +124,7 @@ def view_samples(run_info, values, samples_key):
             run_info['samples'] = samples
             run_info['barcodes_column'] = barcodes_column
             run_info['samples_column']  = samples_column
-            artifice_core.view_barcodes_window.save_barcodes(run_info)
+            save_barcodes(run_info)
 
     return run_info
 

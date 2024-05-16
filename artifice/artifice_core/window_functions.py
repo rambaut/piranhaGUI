@@ -5,6 +5,7 @@ import traceback
 import base64
 import os.path
 import csv
+import time
 from os import mkdir
 from PIL import Image
 from io import BytesIO
@@ -17,16 +18,52 @@ from artifice_core.alt_button import AltButton
 from artifice_core.alt_popup import alt_popup, alt_popup_yes_no
 
 # prints the queued log output until it's empty, prints a message if container stopped
-def print_container_log(log_queue, window, output_key, logfile,):
+def print_container_log(log_queue, window, output_key, logfile, software=''):
     queue_empty = False
     while not queue_empty:
         try:
             output = log_queue.get(block=False)
             log_queue.task_done()
+            """
+            if output.startswith('Barcode '):
+                if output.endswith('fastq file\n') or output.endswith('fastq files\n'):
+                    bar_max_value = getattr(window['-PIRANHA PROGRESS BAR-'].TKProgressBar, 'Max')
+                    new_max = bar_max_value + 2
+                    print(f'm:{new_max}')
+                    window['-PIRANHA PROGRESS BAR-'].update(max=new_max,current_count=0)
+                    time.sleep(0.1)
+            """
+            gen_seq_start_string = 'generate_consensus_sequences '
+            if output.startswith(gen_seq_start_string):
+                #if len(output) == 32:
+                bar_max_value = getattr(window['-PIRANHA PROGRESS BAR-'].TKProgressBar, 'Max')
+
+                new_max = int(output[len(gen_seq_start_string):])
+                print(f'm:{new_max}')
+                if bar_max_value == None:
+                    window['-PIRANHA PROGRESS BAR-'].update(max=new_max+1,current_count=0)
+                elif new_max > bar_max_value:
+                    window['-PIRANHA PROGRESS BAR-'].update(max=new_max+1,current_count=0)
+
+            if output.startswith('Calculating consensus sequences for '): #or output.startswith('Gathering variation info for '):
+                #bar_current_value = getattr(window['-PIRANHA PROGRESS BAR-'].TKProgressBar, 'Count') #window['-PIRANHA PROGRESS BAR-'].QT_QProgressBar.value()
+                bar_current_value = window['-PIRANHA PROGRESS BAR-'].TKProgressBar.TKProgressBarForReal['value']
+                #print(window['-PIRANHA PROGRESS BAR-'].__dict__)
+                #print(dir(window['-PIRANHA PROGRESS BAR-']))
+                if bar_current_value != None:
+                    bar_current_value = bar_current_value + 1
+                else:
+                    bar_current_value = 1
+                print(bar_current_value)
+                window['-PIRANHA PROGRESS BAR-'].update(current_count=bar_current_value)
+
+            if output == '###CONTAINER STOPPED###\n':
+                window[output_key].print(f'###{software} SOFTWARE FINISHED###', font=consts.CONSOLE_FONT, end='')
+                window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=False)
+                update_log(output, filename=logfile, add_newline=False)
+                return True
             window[output_key].print(output, font=consts.CONSOLE_FONT, end='')
             update_log(output, filename=logfile, add_newline=False)
-            if output == '###CONTAINER STOPPED###\n':
-                return True
         except queue.Empty:
             queue_empty = True
             pass

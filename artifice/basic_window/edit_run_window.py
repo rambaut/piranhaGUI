@@ -10,7 +10,7 @@ import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, save_changes, load_run
+from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 
@@ -35,7 +35,31 @@ def setup_panel(translator):
                 sg.Sizer(1,y1),
             ],
             [
-                sg.Sizer(1,y2), sg.Text(translator('MinKnow run:'), pad=(0,12), expand_y=True),
+                sg.Sizer(1,y2), sg.Text(translator('MinKnow Run:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Run Name:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('User Name:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Institute:'), pad=(0,12), expand_y=True),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2), sg.Text(translator('Notes:'), pad=(0,12), expand_y=True),
             ],
             [                
                 sg.Sizer(1,16),
@@ -57,7 +81,7 @@ def setup_panel(translator):
                     pad=(0,12), disabled_readonly_background_color='#393938', expand_x=True,
                     disabled_readonly_text_color='#F5F1DF', readonly=True, justification="left"),
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-SAMPLES-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
-                AltFileBrowse(button_text=translator('Select'),file_types=(("CSV Files", "*.csv"),)),
+                AltFileBrowse(button_text=translator('Select'),key='-SELECT SAMPLES-'),#file_types=(("CSV Files", "*.csv"),)),
                 AltButton(button_text=translator('View'),key='-VIEW SAMPLES-'),
             ],
             [                
@@ -75,6 +99,42 @@ def setup_panel(translator):
                 #sg.Text(size=35, enable_events=True, expand_y=True, key='-MINKNOW-',font=artifice_core.consts.CONSOLE_FONT, pad=(0,12), background_color='#393938', text_color='#F5F1DF', justification="Right"),
                 AltFolderBrowse(button_text=translator('Select')),
                 sg.Sizer(consts.BUTTON_SIZE[0], 0),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-RUN NAME-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-USER NAME-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-INSTITUTE-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
+            ],
+            [                
+                sg.Sizer(1,16),
+            ],
+            [
+                sg.Sizer(1,y2),
+                sg.In(enable_events=True,expand_y=True, key='-NOTES-',font=consts.CONSOLE_FONT, 
+                    pad=(0,12), background_color='#393938', #expand_x=True,
+                    text_color='#F5F1DF', justification="left"),
             ],
             [                
                 sg.Sizer(1,16),
@@ -134,22 +194,39 @@ def create_edit_window(window = None):
 
     return new_window
 
-def run_edit_window(window):
+def run_edit_window(window, run_info, selected_run_title, reset_run = True):
     config = consts.retrieve_config()
-    run_info = {'title': 'TEMP_RUN'}
-    selected_run_title = 'TEMP_RUN'
     docker_client = docker.from_env()
     translator = setup_translator()
 
-
     element_dict = {'-SAMPLES-':'samples',
                     '-MINKNOW-':'basecalledPath',
-                    '-OUTDIR-':'outputPath'}
+                    '-OUTDIR-':'outputPath',
+                    '-RUN NAME-':'--runname',
+                    '-INSTITUTE-':'--institute',
+                    '-USER NAME-':'--username',
+                    '-NOTES-':'--notes'}
+    
+    # dictionary used to try to match options from excel to elements in window, case insensitive
+    el_string_dict = {'-MINKNOW-':['basecalledPath','minknow run','-i','--readdir','readdir','read dir','MINKNOW'],
+                      '-OUTDIR-':['outputPath','output path','Output Path','-o','--outdir','outdir'],
+                      '-RUN NAME-':['--runname','run name','Run Name','Title'],
+                      '-INSTITUTE-':['--institute','institute','Institute','institution','Institution'],
+                      '-USER NAME-':['--username','username','Username','User Name','User'],
+                      '-NOTES-':['--notes', 'notes', 'Notes', 'note', 'Note']}
+    
     try:
+        event, values = window.read()
         run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
                             update_archive_button=False)
-    except:
-        pass
+        
+        if reset_run == True:
+            save_run(run_info, title = 'PREVIOUS_RUN', runs_dir = config['RUNS_DIR'], overwrite = True,)
+            run_info = {'title': 'TEMP_RUN'}
+            for elem in element_dict:
+                window[elem].update('')
+    except Exception as err:
+        update_log(traceback.format_exc())
 
     while True:
         event, values = window.read()
@@ -160,12 +237,22 @@ def run_edit_window(window):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
             return
+        
+        elif event == '-SAMPLES-':
+            try:
+                if values['-SAMPLES-'].endswith('.xls') or values['-SAMPLES-'].endswith('.xlsx'):
+                    #samples_list, column_headers, options = excel_to_list(values['-SAMPLES-'])
+                    #print(options)
+                    set_options_from_excel(values['-SAMPLES-'], el_string_dict, window)
+            except Exception as err:
+                error_popup(err)
 
         elif event == '-VIEW SAMPLES-':
             try:
                 if '-SAMPLES-' not in values:
                     error_popup("Samples not found in values")
-
+                
+                run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 new_run_info = artifice_core.parse_columns_window.view_samples(run_info, values, '-SAMPLES-')
                 if new_run_info != None:
                     run_info = new_run_info
@@ -195,6 +282,7 @@ def run_edit_window(window):
   
             except Exception as err:
                 error_popup(err)
+
         elif event == '-CONFIRM-':
             try:
                 if 'PHYLO_ENABLED' in config:
@@ -205,6 +293,19 @@ def run_edit_window(window):
                     else:
                         run_info['-rp'] = False
                         run_info['PHYLO_DIR'] = ''
+                if len(values['-MINKNOW-']) > 0:
+                    new_minknow, run_name = look_for_barcodes(values['-MINKNOW-'])
+                    if values['-RUN NAME-'] == '':
+                        window['-RUN NAME-'].update(value=run_name)
+                        values['-RUN NAME-'] = run_name
+                        
+                    if new_minknow != None:
+                        #if alt_popup_yes_no(translator('Detected ')):
+                        #minknow_base_dir = os.path.basename(new_minknow)                     
+                        window['-MINKNOW-'].update(value=new_minknow)
+                        values['-MINKNOW-'] = new_minknow
+                    #print(new_minknow)
+                        
 
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
