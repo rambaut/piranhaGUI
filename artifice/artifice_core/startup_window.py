@@ -70,16 +70,16 @@ def setup_panel(usesRAMPART, usesPiranha):
     if usesRAMPART:
         got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
             rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client)
+                set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client, docker_installed=docker_installed)
 
     piranha_image_incompatible = True
     if usesPiranha:
         got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
             piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
-                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client)
+                set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,docker_installed=docker_installed)
         piranha_image_incompatible =  not check_image_compatible(consts.PIRANHA_VERSION, consts.PIRANHA_IMAGE)
 
-        if not got_piranha_image:
+        if not got_piranha_image and docker_installed:
             # attempt to install piranha image from file
             if sys.platform.startswith('win'):
                 image_file_path = str(artifice_core.consts.get_datadir() / 'piranha.tar')
@@ -114,13 +114,13 @@ def setup_panel(usesRAMPART, usesPiranha):
 
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
     rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
-    set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator)
+    set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator, docker_installed=docker_installed)
     
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
 
-    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available) and not piranha_image_incompatible
+    show_piranha_button = usesPiranha and (not got_piranha_image or piranha_update_available) and not piranha_image_incompatible and docker_installed
 
-    show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available)
+    show_rampart_button = usesRAMPART and (not got_rampart_image or rampart_update_available) and docker_installed
 
     if 'SHOW_RAMPART' in config:
         SHOW_RAMPART = config['SHOW_RAMPART']
@@ -187,7 +187,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             ],
             [
                 sg.Text(f'Please install the latest {consts.APPLICATION_NAME} version to use it',
-                        size=(50,1), text_color=piranha_text_color,visible=piranha_image_incompatible,font=consts.TITLE_FONT), 
+                        size=(50,1), text_color=piranha_text_color,visible=piranha_image_incompatible and docker_installed,font=consts.TITLE_FONT), 
             ],[
                 sg.Sizer(32,0),
                 sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
@@ -279,10 +279,13 @@ def create_alt_docker_config():
             file.write(replace_data)
 
 # set up image status text and button after checking if image is installed/up to date
-def set_image_status(name, image, check_for_updates = True, docker_client = None, translator = None):
+def set_image_status(name, image, check_for_updates = True, docker_client = None, translator = None, docker_installed = True):
     if translator == None:
         translator = setup_translator()
-    got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
+    if docker_installed:
+        got_image, docker_client = artifice_core.start_rampart.check_for_image(docker_client, image, popup=False)
+    else:
+        got_image = False
     update_available = False
     latest_version = None
     if got_image:
@@ -389,7 +392,15 @@ def install_image(name, image_repo, window, client, translator = None):
 def run_startup_window(window, translator = None):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
     #print(client.configs())
-    client = docker.from_env()
+    docker_installed = artifice_core.start_rampart.check_for_docker(popup=False) #check docker is installed
+    if docker_installed:
+        try:
+            client = docker.from_env()
+        except:
+            client = None
+    else:
+        client = None
+
     if translator == None:
         translator = setup_translator()
 
