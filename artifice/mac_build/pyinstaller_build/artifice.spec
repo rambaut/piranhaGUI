@@ -51,7 +51,7 @@ coll = COLLECT(
 )
 app = BUNDLE(
     coll,
-    name='piranhaGUIv1.5.3.app',
+    name='piranhaGUIv1.5.4pre.app',
     icon='../../resources/piranha_resized.icns',
     bundle_identifier=None,
 )
