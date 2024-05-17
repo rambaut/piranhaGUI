@@ -338,7 +338,6 @@ def check_for_gui_updates(owner='polio-nanopore',repo='piranhaGUI'):
     
     return update_available, latest_gui_version
     
-
 def install_image(name, image_repo, window, client, translator = None):
     if translator == None:
         translator = setup_translator()
@@ -387,7 +386,7 @@ def install_image(name, image_repo, window, client, translator = None):
     window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
-        
+
 
 def run_startup_window(window, translator = None):
     #client = docker.from_env(credstore_env={'credStore':'desktop'})
@@ -455,6 +454,9 @@ def run_startup_window(window, translator = None):
                     window['-PHYLO FRAME-'].update(visible=True)
             except Exception as err:
                 error_popup(err)
+        
+        elif event == '-PHYLO DIR':
+            pass
         
         elif event == '-CLEAR PHYLO DIR-':
             window['-PHYLO DIR-'].update('')

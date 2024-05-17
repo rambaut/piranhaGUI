@@ -556,11 +556,12 @@ def check_file_utf8(filepath):
 def check_supp_datadir(dirpath):
     supp_list = os.listdir(dirpath)
     supp_file_list = filter(os.path.isfile, [os.path.join(dirpath, file) for file in supp_list])
+    contains_fasta = False
 
     for file in supp_file_list:
         if file.endswith('.fasta') or file.endswith('.fa'):
             print(file)
             if check_file_utf8(file):
-                return True
+                contains_fasta = True
     
-    return False
+    return contains_fasta
