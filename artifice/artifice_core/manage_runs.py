@@ -299,10 +299,12 @@ def csv_to_list(filepath, has_headers = True, trim = True):
 
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
+    #samples_frame.fillna('', inplace=True)
+    #samples_frame.replace('nan', '')
     first_row = list(samples_frame.columns)
     data_list = samples_frame.values.tolist()
     data_list.insert(0,first_row)
-    print(data_list)
+    #data_list.fillna()
 
     #check if matches template
     header_row = find_header_row(data_list)
@@ -478,8 +480,8 @@ def check_barcodes(run_info):
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
         old_barcodes = samples_to_list(barcodes_file, has_headers=False)[0]
-        new_barcodes.sort()
-        old_barcodes.sort()
+        #new_barcodes.sort()
+        #old_barcodes.sort()
 
         if old_barcodes != new_barcodes:
             sample_modified = True
