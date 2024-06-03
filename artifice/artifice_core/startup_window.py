@@ -141,7 +141,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56),
             sg.Column([[
                 sg.Text(gui_update_text,text_color=FAIL_TEXT_COLOUR,
-                        size=(32,1), font=consts.TITLE_FONT),
+                        size=(50,1), font=consts.TITLE_FONT),
                 AltButton(button_text=translator('Open Github download page in browser'),key='-GUI DOWNLOADS-', 
                         size=install_buttons_size),
             ]])
@@ -192,10 +192,14 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Sizer(32,0),
                 sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
             ],
-            [sg.Sizer(16,28)],[
-            sg.Sizer(16,0),
+            [sg.Sizer(16,28)],
+
+            [
+            sg.Sizer(750,0),
+            sg.Push(),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
+            
             [sg.Frame(title='',size=(1150,65), layout=[
             [
                 sg.Sizer(16,56),
