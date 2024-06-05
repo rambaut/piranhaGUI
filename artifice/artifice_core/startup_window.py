@@ -141,7 +141,7 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56),
             sg.Column([[
                 sg.Text(gui_update_text,text_color=FAIL_TEXT_COLOUR,
-                        size=(50,1), font=consts.TITLE_FONT),
+                        size=(60,1), font=consts.TITLE_FONT),
                 AltButton(button_text=translator('Open Github download page in browser'),key='-GUI DOWNLOADS-', 
                         size=install_buttons_size),
             ]])
@@ -150,9 +150,9 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(docker_status,text_color=docker_text_color, key='-DOCKER STATUS-',
-                        size=(32,1), font=consts.TITLE_FONT),
+                        size=(60,1), font=consts.TITLE_FONT),
                 AltButton(button_text=translator('Open Docker Site in Browser'),key='-DOCKER INSTALL-', 
-                        size=install_buttons_size,visible=not docker_installed),
+                        size=install_buttons_size,visible=not docker_installed), 
             ],[
                 sg.Sizer(32,0), 
                 sg.Text(translator('Docker is free software used to install and run the analysis pipelines.'),font=consts.CAPTION_FONT),
@@ -164,8 +164,9 @@ def setup_panel(usesRAMPART, usesPiranha):
             sg.Sizer(16,56), 
             sg.Column([[
                 sg.Text(rampart_image_status, key='-RAMPART IMAGE STATUS-',
-                        size=(50,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
-                AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button,
+                        size=(60,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
+                sg.Push(),
+                AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button, 
                           key='-RAMPART INSTALL-'),
             ],[
                 sg.Sizer(32,0), 
@@ -179,11 +180,12 @@ def setup_panel(usesRAMPART, usesPiranha):
         phylo_button_text = 'Enable Phylogenetics module'
     if usesPiranha:
         layout.append([
-            sg.Sizer(16,56), 
+            sg.Sizer(16,56),
             sg.Column([[
                 sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
                         size=(60,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
-                AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'),
+                sg.Push(),
+                AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'), 
             ],
             [
                 sg.Text(f'Please install the latest {consts.APPLICATION_NAME} version to use it',
@@ -195,12 +197,13 @@ def setup_panel(usesRAMPART, usesPiranha):
             [sg.Sizer(16,28)],
 
             [
-            sg.Sizer(750,0),
             sg.Push(),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
             
-            [sg.Frame(title='',size=(1150,65), layout=[
+            [
+            #sg.Push(),
+            sg.Frame(title='',size=(1150,65), expand_x = True, layout=[
             [
                 sg.Sizer(16,56),
                 sg.Text(translator('Supplementary directory for phylogenetic module:'),
@@ -212,11 +215,11 @@ def setup_panel(usesRAMPART, usesPiranha):
                     justification="left",  key='-PHYLO DIR-'),
                 AltFolderBrowse(button_text=translator('Select')),
                 AltButton(button_text=translator('Clear'), key='-CLEAR PHYLO DIR-'),
-                sg.Push()
+                #sg.Push()
             ],],
             visible=(got_piranha_image and consts.PHYLO_ENABLED),
             key = '-PHYLO FRAME-')]
-            ]),
+            ], expand_x=True),
         ])
 
     layout.append([
