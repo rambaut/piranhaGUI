@@ -6,6 +6,7 @@ import os.path
 import traceback
 import pandas as pd
 import PySimpleGUI as sg
+import datetime
 from os import mkdir, listdir
 from shutil import rmtree, copytree
 
@@ -299,20 +300,32 @@ def csv_to_list(filepath, has_headers = True, trim = True):
 
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
-    #samples_frame.fillna('', inplace=True)
-    #samples_frame.replace('nan', '')
+    samples_frame.fillna('', inplace=True)
+    samples_frame.replace(float('nan'), '')
     first_row = list(samples_frame.columns)
     data_list = samples_frame.values.tolist()
     data_list.insert(0,first_row)
     #data_list.fillna()
 
     #check if matches template
+    #print(data_list)
     header_row = find_header_row(data_list)
     if header_row > 0:
         options = get_options_from_excel(data_list,header_row)
    
     samples_list, column_headers = get_headers(data_list, has_headers, header_row=header_row)
- 
+    #print(samples_list)
+    for i in range(len(samples_list)):
+        for j in range(len(samples_list[i])):
+            if type(samples_list[i][j]) != str:
+                print(f'{type(samples_list[i][j])}: {samples_list[i][j]}')
+                if type(samples_list[i][j]) == datetime.datetime:
+                    samples_list[i][j] = str(samples_list[i][j].date())
+                else:
+                    samples_list[i][j] = str(samples_list[i][j])
+    
+    print(samples_list)
+
     return samples_list, column_headers, options
 
 def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #for finding where headers start in excel
@@ -326,7 +339,7 @@ def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #f
 def get_options_from_excel(data_list, header_row):
     options = {}
     for i in range(header_row):
-        if str(data_list[i][1]).startswith('Unnamed') or data_list[i][1] != data_list[i][1]: 
+        if str(data_list[i][1]).startswith('Unnamed') or data_list[i][1] != data_list[i][1] or data_list[i][1] == '': 
             options[data_list[i][0]] = data_list[i][2]
         else:
             options[data_list[i][0]] = data_list[i][1]
