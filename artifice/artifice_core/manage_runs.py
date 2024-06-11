@@ -301,7 +301,6 @@ def csv_to_list(filepath, has_headers = True, trim = True):
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
     samples_frame.fillna('', inplace=True)
-    samples_frame.replace(float('nan'), '')
     first_row = list(samples_frame.columns)
     data_list = samples_frame.values.tolist()
     data_list.insert(0,first_row)
@@ -318,13 +317,13 @@ def excel_to_list(filepath, has_headers = True):
     for i in range(len(samples_list)):
         for j in range(len(samples_list[i])):
             if type(samples_list[i][j]) != str:
-                print(f'{type(samples_list[i][j])}: {samples_list[i][j]}')
+                #print(f'{type(samples_list[i][j])}: {samples_list[i][j]}')
                 if type(samples_list[i][j]) == datetime.datetime:
                     samples_list[i][j] = str(samples_list[i][j].date())
                 else:
                     samples_list[i][j] = str(samples_list[i][j])
     
-    print(samples_list)
+    #print(samples_list)
 
     return samples_list, column_headers, options
 
@@ -368,7 +367,7 @@ def get_headers(data_list, has_headers, header_row = 0):
         column_headers = []
         for i in range(1,len(data_list[0])+1):
             column_headers.append(str(i))
-        samples_list = data_list
+        samples_list = data_list[header_row:]
     return samples_list, column_headers
 
 # searches column headers for given string
@@ -435,6 +434,7 @@ def make_barcodes_list(run_info):
 
     samples_list, column_headers = samples_to_list(run_info['samples'], has_headers=False)
     barcodes_column, samples_column = set_default_columns(column_headers, run_info)
+
 
     if 'samples_column' in run_info:
         samples_column = run_info['samples_column']
