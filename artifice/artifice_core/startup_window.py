@@ -336,7 +336,12 @@ def check_for_gui_updates(owner='polio-nanopore',repo='piranhaGUI'):
 
         response = requests.get(api_url)
         releases = response.json()
-        latest_gui_version = releases[0]['tag_name']
+        for release in releases:
+            if release['prerelease'] == False:
+                latest_gui_version = release['tag_name']
+                break
+        
+        #latest_gui_version = releases[0]['tag_name']
         installed_gui_version = 'v' + consts.PIRANHA_GUI_VERSION
         if installed_gui_version != latest_gui_version:
             update_available = True
