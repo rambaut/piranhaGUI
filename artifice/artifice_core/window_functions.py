@@ -39,7 +39,6 @@ def print_container_log(log_queue, window, output_key, logfile, software=''):
                 bar_max_value = getattr(window['-PIRANHA PROGRESS BAR-'].TKProgressBar, 'Max')
 
                 new_max = int(output[len(gen_seq_start_string):])
-                print(f'm:{new_max}')
                 if bar_max_value == None:
                     window['-PIRANHA PROGRESS BAR-'].update(max=new_max+1,current_count=0)
                 elif new_max > bar_max_value:
@@ -54,12 +53,12 @@ def print_container_log(log_queue, window, output_key, logfile, software=''):
                     bar_current_value = bar_current_value + 1
                 else:
                     bar_current_value = 1
-                print(bar_current_value)
                 window['-PIRANHA PROGRESS BAR-'].update(current_count=bar_current_value)
 
             if output == '###CONTAINER STOPPED###\n':
                 window[output_key].print(f'###{software} SOFTWARE FINISHED###', font=consts.CONSOLE_FONT, end='')
                 window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=False)
+                window['-PROGRESS BAR TEXT-'].update(value=translator('Run Complete'))
                 update_log(output, filename=logfile, add_newline=False)
                 return True
             window[output_key].print(output, font=consts.CONSOLE_FONT, end='')

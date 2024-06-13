@@ -126,6 +126,7 @@ def setup_panel(config):
             sg.Sizer(8,8),
             AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
         ])
+        layout.append([sg.Text(translator('Processing samples...'),justification='center',visible=False,key='-PROGRESS BAR TEXT-')])
         layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=False,key='-PIRANHA PROGRESS BAR-')])
         layout.append([sg.Sizer(16,16)])
 
@@ -296,6 +297,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     window['-PIRANHA STATUS-'].update(translator('Analysis is running'))
 
                     window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=True)
+                    window['-PROGRESS BAR TEXT-'].update(value=translator('Processing samples...'),visible=True)
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)
