@@ -174,7 +174,8 @@ def create_edit_window(window = None):
 
     content = window_functions.setup_content(panel, title=title, 
                                              button_text='Continue', button_key='-CONFIRM-',
-                                             bottom_left_button_text='Run Options', bottom_left_button_key='-RUN OPTIONS-')
+                                             top_left_button_text='Persistent Run Options', top_left_button_key='-PERSISTENT RUN OPTIONS-',
+                                             bottom_left_button_text='Set options for this run', bottom_left_button_key='-RUN OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
 
