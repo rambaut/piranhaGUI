@@ -13,7 +13,7 @@ class AltButton(sg.Button):
     def __init__(self, button_text='', size=(None, None), s=(None,None), button_colors=(None, None), mouseover_colors=(None, None), **kwargs):
         theme = consts.get_theme(sg.theme())
     
-        self.Font = kwargs['font'] if 'font' in kwargs else consts.BUTTON_FONT if consts.BUTTON_FONT else consts ('Helvetica', '18')
+        self.Font = kwargs['font'] if 'font' in kwargs and kwargs['font'] != None else consts.BUTTON_FONT if consts.BUTTON_FONT else ('Helvetica', '18') #consts ('Helvetica', '18')
         self.ButtonText = button_text
         self.ButtonColor = sg.button_color_to_tuple(theme['BUTTON'])
         self.MouseOverColors = sg.button_color_to_tuple(theme['BUTTON_HOVER'])
@@ -26,7 +26,7 @@ class AltButton(sg.Button):
 
         self.AltColors = (self.ButtonColor[1],self.ButtonColor[0])
 
-        self.Size = size if size != (None, None) else s if s != (None, None) else consts.BUTTON_SIZE
+        self.Size = size if size != (None, None) else s if s != (None, None) else (None, None)#consts.BUTTON_SIZE
         scaling=consts.SCALING
         if self.Size == (None, None):
             self.Size = self.get_string_size()
