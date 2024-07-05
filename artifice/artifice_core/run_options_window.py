@@ -32,12 +32,12 @@ def setup_panel():
     layout = [[
         sg.Column([ 
             #[sg.Sizer(128,0)],
-            [
-            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
-            ],
-            [
-            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
-            ],
+            #[
+            #sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            #],
+            #[
+            #sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            #],
             [sg.Sizer(0,8)],
             [
             sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
@@ -55,16 +55,16 @@ def setup_panel():
         ],element_justification='right',pad=(0,0)),
         sg.Column([ 
             [sg.Sizer(256,0)],
-            [
-                sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
-            ],
-            [
-                sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
-            ],
+            #[
+            #    sg.Sizer(16,32),
+            #    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+            #          tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+            #],
+            #[
+            #    sg.Sizer(16,32),
+            #    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+            #          tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+            #],
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
@@ -121,8 +121,8 @@ def run_run_options_window(window, run_info, version = 'ARTIFICE'):
     element_dict = {'-POSITIVE CONTROL-':'-pc',
                     '-NEGATIVE CONTROL-':'-nc',
                     '-SAMPLE TYPE-':'-s', 
-                    '-USER NAME-':'--username',
-                    '-INSTITUTE NAME-':'--institute',
+                    #'-USER NAME-':'--username',
+                    #'-INSTITUTE NAME-':'--institute',
                     '-ORIENTATION-':'--orientation'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
                         update_archive_button=False, clear_previous=False)
