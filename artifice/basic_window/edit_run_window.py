@@ -13,6 +13,7 @@ from artifice_core.update_log import log_event, update_log
 from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
+from artifice_core.persistent_run_options_window import create_persistent_run_options_window, run_persistent_run_options_window
 
 
 def setup_panel(translator):
@@ -280,6 +281,14 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
             try:
                 run_options_window = artifice_core.run_options_window.create_run_options_window()
                 run_info = artifice_core.run_options_window.run_run_options_window(run_options_window, run_info)
+  
+            except Exception as err:
+                error_popup(err)
+        
+        elif event == '-PERSISTENT RUN OPTIONS-':
+            try:
+                run_options_window = create_persistent_run_options_window()
+                run_info = run_persistent_run_options_window(run_options_window, run_info)
   
             except Exception as err:
                 error_popup(err)
