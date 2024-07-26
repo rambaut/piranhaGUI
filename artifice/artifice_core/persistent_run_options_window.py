@@ -23,7 +23,7 @@ def setup_panel():
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
-        '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.'),
+        '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `vertical`. Options: `horizontal` or `vertical`.'),
         '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: `{consts.VALUE_SAMPLE_TYPE}`'),
         '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: `{consts.VALUE_POSITIVE}`'),
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
@@ -34,17 +34,8 @@ def setup_panel():
     else:
         phylo_button_text = 'Enable Piranha Phylogenetics module'
 
-    layout = [[
-        sg.Column([ 
-            #[sg.Sizer(128,0)],
-            #[
-            #sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
-            #],
-            #[
-            #sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
-            #],
-            [sg.Sizer(0,8)],
-            [
+    layout = [
+        [
             #sg.Push(),
             AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
             ],
@@ -66,6 +57,16 @@ def setup_panel():
             ],],
             visible=(consts.PHYLO_ENABLED),
             key = '-PHYLO FRAME-')],
+        [
+        sg.Column([ 
+            #[sg.Sizer(128,0)],
+            #[
+            #sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            #],
+            #[
+            #sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            #],
+            [sg.Sizer(0,8)],
             [
             sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
             ],
@@ -119,6 +120,12 @@ def setup_panel():
 
     return panel
 
+def update_config_options(element_key_dict, values, config):
+    for element_key in element_key_dict:
+        if values[element_key] != config[element_key_dict[element_key]]:
+            consts.edit_config(element_key_dict[element_key], values[element_key])
+     
+
 def create_persistent_run_options_window(window = None):
     update_log('creating run options window')
 
@@ -145,14 +152,11 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
     config = consts.retrieve_config()
     selected_run_title = run_info['title']
 
-    element_dict = {'-POSITIVE CONTROL-':'-pc',
-                    '-NEGATIVE CONTROL-':'-nc',
-                    '-SAMPLE TYPE-':'-s', 
-                    #'-USER NAME-':'--username',
-                    #'-INSTITUTE NAME-':'--institute',
-                    '-ORIENTATION-':'--orientation'}
-    run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
-                        update_archive_button=False, clear_previous=False)
+    element_key_dict = {'-POSITIVE CONTROL-':'VALUE_POSITIVE',
+                    '-NEGATIVE CONTROL-':'VALUE_NEGATIVE',
+                    '-SAMPLE TYPE-':'VALUE_SAMPLE_TYPE',
+                    '-ORIENTATION-':'VALUE_ORIENTATION'}
+
     
     window['-SAMPLE TYPE-'].update(size=(100,100))
     while True:
@@ -164,10 +168,30 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
         if event == 'Exit' or event == sg.WINDOW_CLOSE_ATTEMPTED_EVENT:
             window.close()
             return run_info
+        
+        elif event == '-ENABLE PHYLO-':
+            try:
+                if consts.PHYLO_ENABLED:
+                    consts.edit_config('PHYLO_ENABLED', False)
+                    consts.PHYLO_ENABLED = False
+                    window['-ENABLE PHYLO-'].update(text = translator('Enable Phylogenetics module'))
+                    window['-PHYLO FRAME-'].update(visible=False)
+                else:
+                    consts.edit_config('PHYLO_ENABLED', True)
+                    consts.PHYLO_ENABLED = True
+                    window['-ENABLE PHYLO-'].update(text = translator('Disable Phylogenetics module'))
+                    window['-PHYLO FRAME-'].update(visible=True)
+            except Exception as err:
+                error_popup(err)
+        elif event == '-PHYLO DIR':
+            pass
+        
+        elif event == '-CLEAR PHYLO DIR-':
+            window['-PHYLO DIR-'].update('')
        
         elif event == '-CONFIRM-':
             try:
-                run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+                update_config_options(element_key_dict, values, config)
                 window.close()
                 return run_info
             except Exception as err:

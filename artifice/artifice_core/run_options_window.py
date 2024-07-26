@@ -23,7 +23,7 @@ def setup_panel():
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
-        '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.'),
+        '-ORIENTATION-':translator(f'Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: {consts.VALUE_ORIENTATION}. Options: `horizontal` or `vertical`.'),
         '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: `{consts.VALUE_SAMPLE_TYPE}`'),
         '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: `{consts.VALUE_POSITIVE}`'),
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
