@@ -7,7 +7,7 @@ from artifice_core.language import translator, setup_translator
 from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
-from artifice_core.manage_runs import save_run, save_changes, load_run
+from artifice_core.manage_runs import save_run, save_changes, load_run, check_supp_datadir
 
 def setup_panel():
     sg.theme("PANEL")
@@ -191,6 +191,14 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
        
         elif event == '-CONFIRM-':
             try:
+                if consts.PHYLO_ENABLED:
+                    if len(values['-PHYLO DIR-']):
+                        if check_supp_datadir(values['-PHYLO DIR-']):
+                            print('checked')
+                            consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
+                        else:
+                            raise Exception(translator('No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters'))
+                        
                 update_config_options(element_key_dict, values, config)
                 window.close()
                 return run_info
