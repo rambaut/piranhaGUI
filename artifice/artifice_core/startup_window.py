@@ -174,10 +174,6 @@ def setup_panel(usesRAMPART, usesPiranha):
             ]])
             ])
     
-    if consts.PHYLO_ENABLED:
-        phylo_button_text = 'Disable Phylogenetics module'
-    else:
-        phylo_button_text = 'Enable Phylogenetics module'
     if usesPiranha:
         layout.append([
             sg.Sizer(16,56),
@@ -194,31 +190,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Sizer(32,0),
                 sg.Text(translator('Piranha is the primary analysis pipeline for the DDNS polio detection platform.'),font=consts.CAPTION_FONT),
             ],
-            [sg.Sizer(16,28)],
-
-            [
-            sg.Push(),
-            AltButton(translator(phylo_button_text),size=(396,32),key='-ENABLE PHYLO-'),
-            ],
-            
-            [
-            #sg.Push(),
-            sg.Frame(title='',size=(1150,65), expand_x = True, layout=[
-            [
-                sg.Sizer(16,56),
-                sg.Text(translator('Supplementary directory for phylogenetic module:'),
-                        size=(42,1),justification='left'),
-                sg.In(default_text=consts.PHYLO_DIR, enable_events=True,expand_y=True,font=consts.CONSOLE_FONT, 
-                    pad=(0,5), disabled_readonly_background_color='#393938', expand_x=True,
-                    disabled_readonly_text_color='#F5F1DF', readonly=True, 
-                    tooltip='Path to directory containing supplementary sequence FASTA file and optional metadata to be incorporated into phylogenetic analysis.', 
-                    justification="left",  key='-PHYLO DIR-'),
-                AltFolderBrowse(button_text=translator('Select')),
-                AltButton(button_text=translator('Clear'), key='-CLEAR PHYLO DIR-'),
-                #sg.Push()
-            ],],
-            visible=(got_piranha_image and consts.PHYLO_ENABLED),
-            key = '-PHYLO FRAME-')]
+            [sg.Sizer(16,28)]
             ], expand_x=True),
         ])
 
@@ -452,27 +424,6 @@ def run_startup_window(window, translator = None):
             except Exception as err:
                 error_popup(err)
 
-        elif event == '-ENABLE PHYLO-':
-            try:
-                if consts.PHYLO_ENABLED:
-                    consts.edit_config('PHYLO_ENABLED', False)
-                    consts.PHYLO_ENABLED = False
-                    window['-ENABLE PHYLO-'].update(text = translator('Enable Phylogenetics module'))
-                    window['-PHYLO FRAME-'].update(visible=False)
-                else:
-                    consts.edit_config('PHYLO_ENABLED', True)
-                    consts.PHYLO_ENABLED = True
-                    window['-ENABLE PHYLO-'].update(text = translator('Disable Phylogenetics module'))
-                    window['-PHYLO FRAME-'].update(visible=True)
-            except Exception as err:
-                error_popup(err)
-        
-        elif event == '-PHYLO DIR':
-            pass
-        
-        elif event == '-CLEAR PHYLO DIR-':
-            window['-PHYLO DIR-'].update('')
-
         elif event == '-ABOUT-':
             try:
                 about_window = create_about_window()
@@ -510,13 +461,6 @@ def run_startup_window(window, translator = None):
 
         elif event == '-LAUNCH-':
             try:
-                if consts.PHYLO_ENABLED:
-                    if len(values['-PHYLO DIR-']):
-                        if check_supp_datadir(values['-PHYLO DIR-']):
-                            print('checked')
-                            consts.edit_config('PHYLO_DIR', values['-PHYLO DIR-'])
-                        else:
-                            raise Exception(translator('No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters'))
                 window.close()
                 return False
             except Exception as err:
