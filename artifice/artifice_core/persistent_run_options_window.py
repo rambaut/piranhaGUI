@@ -17,8 +17,8 @@ def setup_panel():
 
     button_size=(120,36)
 
-    sample_types_list = ['stool', 'environmental']
-    orientations_list = ['horizontal', 'vertical']
+    sample_type_list = ['stool', 'environmental']
+    orientation_list = ['vertical','horizontal']
 
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
@@ -96,11 +96,11 @@ def setup_panel():
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
-                sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
+                sg.OptionMenu(orientation_list, default_value=set_option_in_list('VALUE_ORIENTATION',orientation_list,config),tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
             ],
             [
                 sg.Sizer(16,32),
-                sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+                sg.OptionMenu(sample_type_list, default_value=set_option_in_list('VALUE_SAMPLE_TYPE',sample_type_list,config),tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
             ],
             [sg.Sizer(0,8)],
             [
@@ -119,6 +119,15 @@ def setup_panel():
     panel = sg.Frame("", layout, border_width=0, relief="solid", pad=(0,0))
 
     return panel
+
+def set_option_in_list(option_key, option_list, config):
+    list_pos = 0
+    try:
+        list_pos = option_list.index(config[option_key])
+    except:
+        pass
+
+    return option_list[list_pos]
 
 def update_config_options(element_key_dict, values, config):
     for element_key in element_key_dict:

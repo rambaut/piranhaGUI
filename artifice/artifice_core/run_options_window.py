@@ -8,6 +8,7 @@ from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
 from artifice_core.manage_runs import save_run, save_changes, load_run
+from artifice_core.persistent_run_options_window import set_option_in_list
 
 def setup_panel():
     sg.theme("PANEL")
@@ -17,8 +18,8 @@ def setup_panel():
 
     button_size=(120,36)
 
-    sample_types_list = ['stool', 'environmental']
-    orientations_list = ['horizontal', 'vertical']
+    sample_type_list = ['stool', 'environmental']
+    orientation_list = ['vertical','horizontal']
 
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
@@ -68,11 +69,11 @@ def setup_panel():
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
-                sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
+                sg.OptionMenu(orientation_list, default_value=set_option_in_list('VALUE_ORIENTATION',orientation_list,config),tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
             ],
             [
                 sg.Sizer(16,32),
-                sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+                sg.OptionMenu(sample_type_list, default_value=set_option_in_list('VALUE_SAMPLE_TYPE',sample_type_list,config),tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
             ],
             [sg.Sizer(0,8)],
             [
