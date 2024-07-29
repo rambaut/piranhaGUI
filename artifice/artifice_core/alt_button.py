@@ -10,7 +10,7 @@ from artifice_core import consts
 # intialise_buttons function must be called
 class AltButton(sg.Button):
 
-    def __init__(self, button_text='', size=(None, None), s=(None,None), button_colors=(None, None), mouseover_colors=(None, None), **kwargs):
+    def __init__(self, button_text='', size=(None, None), s=(None,None), button_colors=(None, None), mouseover_colors=(None, None), disabled=False, **kwargs):
         theme = consts.get_theme(sg.theme())
     
         self.Font = kwargs['font'] if 'font' in kwargs and kwargs['font'] != None else consts.BUTTON_FONT if consts.BUTTON_FONT else ('Helvetica', '18') #consts ('Helvetica', '18')
@@ -36,10 +36,16 @@ class AltButton(sg.Button):
 
         self.RegImage = self.create_button_image(fill=self.ButtonColor[1])
         self.HighlightImage = self.create_button_image(fill=self.MouseOverColors[1])
+        self.GreyedOutImage = self.create_button_image(fill='#808080')
         self.MouseOverColors = (self.MouseOverColors[0], sg.theme_background_color())
+        
+        if disabled:
+            kwargs['image_data'] = self.GreyedOutImage
+            kwargs['button_color'] = '#000000'
+        else:
+            kwargs['image_data'] = self.RegImage
+            kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
 
-        kwargs['image_data'] = self.RegImage
-        kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
         kwargs['border_width'] = 0
 
         super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, **kwargs)
@@ -99,6 +105,20 @@ class AltButton(sg.Button):
         buffered = BytesIO()
         button_image.save(buffered, format="PNG")
         return base64.b64encode(buffered.getvalue())
+    
+    def update(self, text=None, button_color=(None, None), disabled=None, image_source=None, image_data=None, image_filename=None,
+               visible=None, image_subsample=None, image_zoom=None, disabled_button_color=(None, None), image_size=None):
+        
+        if self.Disabled == True and disabled == False:
+            self.update(image_data=self.RegImage)
+            self.set_text_color(self.AltColors[1])
+        elif self.Disabled != True and disabled == True:
+            self.update(image_data=self.GreyedOutImage)
+            self.set_text_color('#000000')
+        
+        super(AltButton, self).update(self, text=None, button_color=(None, None), disabled=None, image_source=None, image_data=None, image_filename=None,
+               visible=None, image_subsample=None, image_zoom=None, disabled_button_color=(None, None), image_size=None)
+              
 
     @staticmethod
     # initialise all AltButtons to highlight on mouseover on given window
