@@ -10,7 +10,7 @@ import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel
+from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel, load_default_run_options
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
 from artifice_core.persistent_run_options_window import create_persistent_run_options_window, run_persistent_run_options_window
@@ -315,9 +315,13 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                         window['-MINKNOW-'].update(value=new_minknow)
                         values['-MINKNOW-'] = new_minknow
                     #print(new_minknow)
-                        
-
+                
+                print(run_info)
+                run_info = load_default_run_options(run_info)
+                print(run_info)
+                
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
                     alt_popup_ok(translator('Warning: there are spaces in samples'))
                 window.close()

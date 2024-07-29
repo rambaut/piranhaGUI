@@ -552,6 +552,19 @@ def look_for_barcodes(minknow_dir):
             #if dir == 'demultiplexed':
             #    return os.path.join(minknow_dir,dir)
 
+def load_default_run_options(run_info):
+    config = consts.retrieve_config
+    option_dict = {'VALUE_POSITIVE':'-pc',
+                    'VALUE_NEGATIVE':'-nc',
+                    'VALUE_SAMPLE_TYPE':'-s',
+                    'VALUE_ORIENTATION':'--orientation'}
+    
+    for option in option_dict:
+        if option_dict[option] not in run_info:
+            run_info[option_dict[option]] = consts.get_config_value(option, config)
+    
+    return run_info
+
 
             
 def check_file_utf8(filepath):
