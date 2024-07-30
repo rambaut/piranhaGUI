@@ -143,7 +143,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Text(gui_update_text,text_color=FAIL_TEXT_COLOUR,
                         size=(60,1), font=consts.TITLE_FONT),
                 AltButton(button_text=translator('Open Github download page in browser'),key='-GUI DOWNLOADS-', 
-                        size=install_buttons_size),
+                        size=install_buttons_size, disabled=True),
             ]])
         ])
     layout.append([

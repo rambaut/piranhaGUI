@@ -41,14 +41,16 @@ class AltButton(sg.Button):
         
         if disabled:
             kwargs['image_data'] = self.GreyedOutImage
-            kwargs['button_color'] = '#000000'
+            kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
+            #self.set_text_color('#606060')
         else:
             kwargs['image_data'] = self.RegImage
             kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
 
         kwargs['border_width'] = 0
 
-        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, **kwargs)
+        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, disabled=disabled, **kwargs)
+
 
     # set text color of button whether it is a ttk (on Mac) or tk button
     def set_text_color(self, color):
@@ -68,13 +70,15 @@ class AltButton(sg.Button):
 
     # highlight button
     def on_enter(self, e):
-        self.update(image_data=self.HighlightImage)
-        self.set_text_color(self.AltColors[0])
+        if not self.Disabled:
+            self.update(image_data=self.HighlightImage)
+            self.set_text_color(self.AltColors[0])
 
     # return to normal color scheme
     def on_leave(self, e):
-        self.update(image_data=self.RegImage)
-        self.set_text_color(self.AltColors[1])
+        if not self.Disabled:
+            self.update(image_data=self.RegImage)
+            self.set_text_color(self.AltColors[1])
 
     # determines the size of the string for font size given
     def get_string_size(self):
@@ -106,18 +110,15 @@ class AltButton(sg.Button):
         button_image.save(buffered, format="PNG")
         return base64.b64encode(buffered.getvalue())
     
-    def update(self, text=None, button_color=(None, None), disabled=None, image_source=None, image_data=None, image_filename=None,
-               visible=None, image_subsample=None, image_zoom=None, disabled_button_color=(None, None), image_size=None):
-        
+    def update(self, disabled=None, **kwargs):
         if self.Disabled == True and disabled == False:
-            self.update(image_data=self.RegImage)
+            super(AltButton, self).update(image_data=self.RegImage, disabled=disabled, **kwargs)
             self.set_text_color(self.AltColors[1])
-        elif self.Disabled != True and disabled == True:
-            self.update(image_data=self.GreyedOutImage)
-            self.set_text_color('#000000')
-        
-        super(AltButton, self).update(self, text=None, button_color=(None, None), disabled=None, image_source=None, image_data=None, image_filename=None,
-               visible=None, image_subsample=None, image_zoom=None, disabled_button_color=(None, None), image_size=None)
+        elif self.Disabled == False and disabled == True:
+            super(AltButton, self).update(image_data=self.GreyedOutImage, disabled=disabled, **kwargs)
+            #self.set_text_color('#000000')
+        else: 
+            super(AltButton, self).update(disabled=None, **kwargs)
               
 
     @staticmethod
