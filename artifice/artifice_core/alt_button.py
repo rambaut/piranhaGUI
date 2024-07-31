@@ -39,6 +39,9 @@ class AltButton(sg.Button):
         self.GreyedOutImage = self.create_button_image(fill='#808080')
         self.MouseOverColors = (self.MouseOverColors[0], sg.theme_background_color())
         
+        if not 'disabled_button_color' in kwargs:
+            kwargs['disabled_button_color'] = ('#505050', sg.theme_background_color())
+
         if disabled:
             kwargs['image_data'] = self.GreyedOutImage
             kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
@@ -99,11 +102,12 @@ class AltButton(sg.Button):
 
     # create image to be used as button icon
     def create_button_image(self, fill='#ff0000'):
-        scl_fctr = 4 #amount to scale up by when drawing
+        scl_fctr = 8 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)
         #draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
-        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=32, fill=fill)
+        radius=10*consts.SCALING*scl_fctr
+        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=radius, fill=fill)
         button_image = button_image.resize(self.Size, resample=Image.BILINEAR) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()
@@ -116,7 +120,7 @@ class AltButton(sg.Button):
             self.set_text_color(self.AltColors[1])
         elif self.Disabled == False and disabled == True:
             super(AltButton, self).update(image_data=self.GreyedOutImage, disabled=disabled, **kwargs)
-            #self.set_text_color('#000000')
+            #self.set_text_color('#505050')
         else: 
             super(AltButton, self).update(disabled=None, **kwargs)
               
