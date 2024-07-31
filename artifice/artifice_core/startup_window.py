@@ -143,7 +143,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Text(gui_update_text,text_color=FAIL_TEXT_COLOUR,
                         size=(60,1), font=consts.TITLE_FONT),
                 AltButton(button_text=translator('Open Github download page in browser'),key='-GUI DOWNLOADS-', 
-                        size=install_buttons_size, disabled=True),
+                        size=install_buttons_size),
             ]])
         ])
     layout.append([
@@ -280,7 +280,7 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
             text_color = FAIL_TEXT_COLOUR
         else:
             image_status = translator(f'{name} software version {latest_version} installed')
-            pull_text = translator(f'Check for updates to {name} software')
+            pull_text = translator(f'Install update to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:
         image_status = translator(f'{name} software not installed')
