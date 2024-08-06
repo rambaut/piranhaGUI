@@ -293,7 +293,7 @@ def setup_header_footer(content, large=False, small=False):
     return layout
 
 # Creates a frame that embeds a content panel in a Application branded layout
-def setup_content(panel, title=None, small=False, button_text=None, button_key=None, 
+def setup_content(panel, title=None, small=False, button_text=None, button_key=None, button_disabled=False, 
                   top_left_button_text=None, top_left_button_key=None, 
                   top_right_button_text=None, top_right_button_key=None,
                   bottom_left_button_text=None, bottom_left_button_key=None):
@@ -356,7 +356,7 @@ def setup_content(panel, title=None, small=False, button_text=None, button_key=N
 
     if button_text != None:
         bottom_buttons.append(sg.Push())
-        bottom_buttons.append(AltButton(button_text=translator(button_text),key=button_key))
+        bottom_buttons.append(AltButton(button_text=translator(button_text),disabled=button_disabled,key=button_key))
 
     bottom_buttons.append(sg.Sizer(16,4))
 

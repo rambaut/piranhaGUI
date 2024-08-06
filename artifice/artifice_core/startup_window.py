@@ -200,16 +200,21 @@ def setup_panel(usesRAMPART, usesPiranha):
         sg.Text(image_info_text, font=(None, 12)),
         sg.Push()]
         )
+    
+    if docker_installed:
+        continue_disabled = False
+    else:
+        continue_disabled = True
 
-    return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8))
+    return sg.Frame("", layout, border_width=0, relief="solid", expand_x=True, pad=(0,8)), continue_disabled
 
 def create_startup_window(usesRAMPART = True, usesPiranha = True, window = None):
     update_log('creating startup window')
 
-    panel = setup_panel(usesRAMPART, usesPiranha)
+    panel, continue_disabled = setup_panel(usesRAMPART, usesPiranha)
 
     if usesPiranha:
-        content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-',
+        content = window_functions.setup_content(panel, title = consts.WINDOW_TITLE, button_text='Continue', button_key='-LAUNCH-', button_disabled=continue_disabled,
                                             top_left_button_text='About', top_left_button_key='-ABOUT-', 
                                             top_right_button_text='Options', top_right_button_key='-OPTIONS-')
     else:
