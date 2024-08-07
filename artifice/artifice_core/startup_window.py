@@ -202,7 +202,10 @@ def setup_panel(usesRAMPART, usesPiranha):
         )
     
     if docker_installed:
-        continue_disabled = False
+        if got_piranha_image or got_rampart_image:
+            continue_disabled = False
+        else:
+            continue_disabled = True
     else:
         continue_disabled = True
 
@@ -419,6 +422,7 @@ def run_startup_window(window, translator = None):
             try:
                 install_image('RAMPART', consts.RAMPART_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
+                window['-LAUNCH-'].update(disabled=False)
             except Exception as err:
                 error_popup(err)
 
@@ -426,6 +430,7 @@ def run_startup_window(window, translator = None):
             try:
                 install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
+                window['-LAUNCH-'].update(disabled=False)
             except Exception as err:
                 error_popup(err)
 

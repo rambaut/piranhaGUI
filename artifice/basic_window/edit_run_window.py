@@ -174,7 +174,7 @@ def create_edit_window(window = None):
     title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
 
     content = window_functions.setup_content(panel, title=title, 
-                                             button_text='Continue', button_key='-CONFIRM-',
+                                             button_text='Continue', button_key='-CONFIRM-', button_disabled=True,
                                              top_left_button_text='Persistent Run Options', top_left_button_key='-PERSISTENT RUN OPTIONS-',
                                              bottom_left_button_text='Set options for this run', bottom_left_button_key='-RUN OPTIONS-')
 
@@ -232,6 +232,11 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
 
     while True:
         event, values = window.read()
+        continue_disabled = False
+        for key in ['-SAMPLES-','-MINKNOW-','-OUTDIR-']:
+            if len(values[key]) == 0:
+                continue_disabled = True
+        window['-CONFIRM-'].update(disabled=continue_disabled)
 
         if event != None:
             log_event(f'{event} [main window]')
