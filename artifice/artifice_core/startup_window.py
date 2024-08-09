@@ -166,7 +166,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Text(rampart_image_status, key='-RAMPART IMAGE STATUS-',
                         size=(60,1), text_color=rampart_text_color,visible=show_rampart_text,font=consts.TITLE_FONT),
                 sg.Push(),
-                AltButton(button_text=rampart_pull_text,size=install_buttons_size,visible=show_rampart_button, 
+                AltButton(button_text=rampart_pull_text,size=install_buttons_size,disabled=(not show_rampart_button), 
                           key='-RAMPART INSTALL-'),
             ],[
                 sg.Sizer(32,0), 
@@ -181,7 +181,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 sg.Text(piranha_image_status,key='-PIRANHA IMAGE STATUS-',
                         size=(60,1), text_color=piranha_text_color,visible=is_piranhaGUI,font=consts.TITLE_FONT),
                 sg.Push(),
-                AltButton(button_text=piranha_pull_text,size=install_buttons_size,visible=show_piranha_button,key='-PIRANHA INSTALL-'), 
+                AltButton(button_text=piranha_pull_text,size=install_buttons_size,disabled=(not show_piranha_button),key='-PIRANHA INSTALL-'), 
             ],
             [
                 sg.Text(f'Please install the latest {consts.APPLICATION_NAME} version to use it',
