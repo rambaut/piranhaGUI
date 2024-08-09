@@ -285,6 +285,7 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
                 pull_text = translator(f'Install update to {name} software')
             else:
                 image_status = translator(f'Major update available for {name} software to version {latest_version}')
+                pull_text = translator(f'Install update to {name} software')
             text_color = FAIL_TEXT_COLOUR
         else:
             image_status = translator(f'{name} software version {latest_version} installed')
