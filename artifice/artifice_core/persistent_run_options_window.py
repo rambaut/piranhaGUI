@@ -59,13 +59,16 @@ def setup_panel():
             key = '-PHYLO FRAME-')],
         [
         sg.Column([ 
-            #[sg.Sizer(128,0)],
-            #[
-            #sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
-            #],
-            #[
-            #sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
-            #],
+            [sg.Sizer(128,0)],
+            [
+            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Output Folder:')),
+            ],
             [sg.Sizer(0,8)],
             [
             sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
@@ -83,16 +86,21 @@ def setup_panel():
         ],element_justification='right',pad=(0,0)),
         sg.Column([ 
             [sg.Sizer(256,0)],
-            #[
-            #    sg.Sizer(16,32),
-            #    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-            #          tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
-            #],
-            #[
-            #    sg.Sizer(16,32),
-            #    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-            #          tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
-            #],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+            ],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+            ],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                      key='-OUTDIR-',),
+            ],
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
