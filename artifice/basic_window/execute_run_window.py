@@ -122,9 +122,9 @@ def setup_panel(config):
             sg.Sizer(16,16),
             sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),
             sg.Push(),
-            AltButton(button_text=translator('Open Output'),key='-VIEW OUTPUT-'),
+            AltButton(button_text=translator('Open Output'),key='-VIEW OUTPUT-', disabled=True),
             sg.Sizer(8,8),
-            AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
+            AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-', disabled=True)
         ])
         layout.append([sg.Text(translator('Processing samples...'),justification='center',visible=False,key='-PROGRESS BAR TEXT-')])
         layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=False,key='-PIRANHA PROGRESS BAR-')])
@@ -206,7 +206,8 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
                     window['-START/STOP PIRANHA-'].update(text=translator('Start Analysis'))
                     window['-PIRANHA STATUS-'].update(translator('Analysis is not running'))
-                    window['-VIEW PIRANHA-'].update(visible=True)
+                    window['-VIEW PIRANHA-'].update(disabled=False)
+                    window['-VIEW OUTPUT-'].update(disabled=False)
                     try:
                         output_path = run_info['outputPath']
                         output_file = f'{output_path}/report.html'
