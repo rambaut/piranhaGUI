@@ -33,6 +33,21 @@ def setup_panel():
         phylo_button_text = 'Disable Piranha Phylogenetics module'
     else:
         phylo_button_text = 'Enable Piranha Phylogenetics module'
+    
+    if 'USERNAME' in config:
+        default_username = config['USERNAME']
+    else:
+        default_username = ''
+    
+    if 'INSTITUTE' in config:
+        default_institute = config['INSTITUTE']
+    else:
+        default_institute = ''
+    
+    if 'OUTDIR' in config:
+        default_outdir = config['OUTDIR']
+    else:
+        default_outdir = ''
 
     layout = [
         [
@@ -89,17 +104,17 @@ def setup_panel():
             [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+                      default_text=default_username,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
             ],
             [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+                      default_text=default_institute,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE-',),
             ],
             [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      key='-OUTDIR-',),
+                      default_text=default_outdir,key='-OUTDIR-',),
             ],
             [sg.Sizer(0,8)],
             [
@@ -137,10 +152,18 @@ def set_option_in_list(option_key, option_list, config):
 
     return option_list[list_pos]
 
-def update_config_options(element_key_dict, values, config):
+#edits the value in config and for this run
+def update_config_options(element_key_dict, values, config, run_info):
     for element_key in element_key_dict:
-        if values[element_key] != config[element_key_dict[element_key]]:
+        if element_key_dict[element_key] in config:
+            if values[element_key] != config[element_key_dict[element_key]]:
+                consts.edit_config(element_key_dict[element_key], values[element_key])
+                #run_info[element_key_dict[element_key]] = values[element_key]
+        else:
             consts.edit_config(element_key_dict[element_key], values[element_key])
+            #run_info[element_key_dict[element_key]] = values[element_key]
+    
+    return run_info
      
 
 def create_persistent_run_options_window(window = None):
@@ -172,7 +195,10 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
     element_key_dict = {'-POSITIVE CONTROL-':'VALUE_POSITIVE',
                     '-NEGATIVE CONTROL-':'VALUE_NEGATIVE',
                     '-SAMPLE TYPE-':'VALUE_SAMPLE_TYPE',
-                    '-ORIENTATION-':'VALUE_ORIENTATION'}
+                    '-ORIENTATION-':'VALUE_ORIENTATION',
+                    '-OUTDIR-':'OUTDIR',
+                    '-INSTITUTE-':'INSTITUTE',
+                    '-USER NAME-':'USERNAME',}
 
     
     window['-SAMPLE TYPE-'].update(size=(100,100))
@@ -216,7 +242,7 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
                         else:
                             raise Exception(translator('No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters'))
                         
-                update_config_options(element_key_dict, values, config)
+                run_info = update_config_options(element_key_dict, values, config, run_info)
                 window.close()
                 return run_info
             except Exception as err:
