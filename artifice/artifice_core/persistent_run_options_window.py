@@ -76,70 +76,72 @@ def setup_panel():
         sg.Column([ 
             [sg.Sizer(128,0)],
             [
-            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-'], pad=(0,12), expand_y=True),
             ],
             [
-            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-'], pad=(0,12), expand_y=True),
             ],
             [
-            sg.Sizer(16,32),sg.Text(translator('Output Folder:')),
-            ],
-            [sg.Sizer(0,8)],
-            [
-            sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
-            ],
-            [
-            sg.Sizer(16,32),sg.Text(translator('Protocol:'),tooltip=tooltips['-SAMPLE TYPE-'],),
+            sg.Sizer(16,32),sg.Text(translator('Output Folder:'), pad=(0,12), expand_y=True),
             ],
             [sg.Sizer(0,8)],
             [
-            sg.Sizer(16,32),sg.Text(translator('Positive Control:'),tooltip=tooltips['-POSITIVE CONTROL-']),
+            sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-'], pad=(0,12), expand_y=True),
             ],
             [
-            sg.Sizer(16,32),sg.Text(translator('Negative Control:'),tooltip=tooltips['-NEGATIVE CONTROL-']),
+            sg.Sizer(16,32),sg.Text(translator('Protocol:'),tooltip=tooltips['-SAMPLE TYPE-'], pad=(0,12), expand_y=True),
+            ],
+            [sg.Sizer(0,8)],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Positive Control:'),tooltip=tooltips['-POSITIVE CONTROL-'], pad=(0,12), expand_y=True),
+            ],
+            [
+            sg.Sizer(16,32),sg.Text(translator('Negative Control:'),tooltip=tooltips['-NEGATIVE CONTROL-'], pad=(0,12), expand_y=True),
             ],
         ],element_justification='right',pad=(0,0)),
         sg.Column([ 
             [sg.Sizer(256,0)],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(42,1), enable_events=True,expand_y=False, border_width=1,
-                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF', 
+                sg.In(size=(42,1), enable_events=True,expand_y=True, border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF', pad=(0,12),
                       default_text=default_username,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
+                sg.In(size=(42,1), enable_events=True,expand_y=True,border_width=1,
                       background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF', 
-                      default_text=default_institute,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE-',),
+                      default_text=default_institute,tooltip=tooltips['-INSTITUTE NAME-'],pad=(0,12), key='-INSTITUTE-',),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
-                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
-                      default_text=default_outdir,key='-OUTDIR-',),
-            ],
-            [sg.Sizer(0,8)],
-            [
-                sg.Sizer(16,32),
-                sg.OptionMenu(orientation_list, default_value=set_option_in_list('VALUE_ORIENTATION',orientation_list,config),tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
-            ],
-            [
-                sg.Sizer(16,32),
-                sg.OptionMenu(sample_type_list, default_value=set_option_in_list('VALUE_SAMPLE_TYPE',sample_type_list,config),tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
+                sg.In(size=(42,1), enable_events=True,expand_y=True, key='-OUTDIR-',font=consts.CONSOLE_FONT, 
+                    disabled_readonly_background_color='#393938', expand_x=True,
+                    disabled_readonly_text_color='#F5F1DF',pad=(0,12), readonly=True),
+                AltFolderBrowse(button_text=translator('Select'),),
+                sg.Sizer(consts.BUTTON_SIZE[0], 0),
             ],
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
-                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
-                      default_text=config['VALUE_POSITIVE'],tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+                sg.OptionMenu(orientation_list, default_value=set_option_in_list('VALUE_ORIENTATION',orientation_list,config),tooltip=tooltips['-ORIENTATION-'], pad=(0,12), expand_y=True,key='-ORIENTATION-'),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
+                sg.OptionMenu(sample_type_list, default_value=set_option_in_list('VALUE_SAMPLE_TYPE',sample_type_list,config),tooltip=tooltips['-SAMPLE TYPE-'], pad=(0,12), expand_y=True,key='-SAMPLE TYPE-'),
+            ],
+            [sg.Sizer(0,8)],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(42,1), enable_events=True,expand_y=True,border_width=1,
                       background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
-                      default_text=config['VALUE_NEGATIVE'],tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
+                      default_text=config['VALUE_POSITIVE'],tooltip=tooltips['-POSITIVE CONTROL-'], pad=(0,12), key='-POSITIVE CONTROL-',),
+            ],
+            [
+                sg.Sizer(16,32),
+                sg.In(size=(42,1), enable_events=True,expand_y=True,border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_NEGATIVE'],tooltip=tooltips['-NEGATIVE CONTROL-'], pad=(0,12), key='-NEGATIVE CONTROL-',),
             ]
         ],pad=(0,0))
     ]]
