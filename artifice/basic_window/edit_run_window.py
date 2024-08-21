@@ -208,6 +208,14 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                     '-INSTITUTE-':'--institute',
                     '-USER NAME-':'--username',
                     '-NOTES-':'--notes'}
+
+    element_config_dict = {'-POSITIVE CONTROL-':'VALUE_POSITIVE',
+                    '-NEGATIVE CONTROL-':'VALUE_NEGATIVE',
+                    '-SAMPLE TYPE-':'VALUE_SAMPLE_TYPE',
+                    '-ORIENTATION-':'VALUE_ORIENTATION',
+                    '-OUTDIR-':'OUTDIR',
+                    '-INSTITUTE-':'INSTITUTE',
+                    '-USER NAME-':'USERNAME',}
     
     # dictionary used to try to match options from excel to elements in window, case insensitive
     el_string_dict = {'-MINKNOW-':['basecalledPath','minknow run','-i','--readdir','readdir','read dir','MINKNOW'],
@@ -227,6 +235,11 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
             run_info = {'title': 'TEMP_RUN'}
             for elem in element_dict:
                 window[elem].update('')
+            
+            for element in ['-USER NAME-','-INSTITUTE-','-OUTDIR-']:
+                if element_config_dict[element] in config:
+                    window[element].update(value=config[element_config_dict[element]])
+                        
     except Exception as err:
         update_log(traceback.format_exc())
 
@@ -294,6 +307,9 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
             try:
                 run_options_window = create_persistent_run_options_window()
                 run_info = run_persistent_run_options_window(run_options_window, run_info)
+                for element in ['-USER NAME-','-INSTITUTE-','-OUTDIR-']:
+                    if element_dict[element] in run_info:
+                        window[element].update(value=run_info[element_dict[element]])
   
             except Exception as err:
                 error_popup(err)

@@ -103,17 +103,20 @@ def setup_panel():
             [sg.Sizer(256,0)],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                sg.In(size=(42,1), enable_events=True,expand_y=False, border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF', 
                       default_text=default_username,tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF', 
                       default_text=default_institute,tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE-',),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
                       default_text=default_outdir,key='-OUTDIR-',),
             ],
             [sg.Sizer(0,8)],
@@ -128,13 +131,15 @@ def setup_panel():
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      default_text=consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_POSITIVE'],tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      default_text=consts.VALUE_NEGATIVE,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
+                sg.In(size=(42,1), enable_events=True,expand_y=False,border_width=1,
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_NEGATIVE'],tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
             ]
         ],pad=(0,0))
     ]]
@@ -153,15 +158,17 @@ def set_option_in_list(option_key, option_list, config):
     return option_list[list_pos]
 
 #edits the value in config and for this run
-def update_config_options(element_key_dict, values, config, run_info):
-    for element_key in element_key_dict:
-        if element_key_dict[element_key] in config:
-            if values[element_key] != config[element_key_dict[element_key]]:
-                consts.edit_config(element_key_dict[element_key], values[element_key])
-                #run_info[element_key_dict[element_key]] = values[element_key]
-        else:
-            consts.edit_config(element_key_dict[element_key], values[element_key])
-            #run_info[element_key_dict[element_key]] = values[element_key]
+def update_config_options(element_config_dict, element_option_dict, values, config, run_info):
+    
+    for element_key in element_config_dict:
+        if len(values[element_key]) > 0: 
+            if element_config_dict[element_key] in config:
+                if values[element_key] != config[element_config_dict[element_key]]:
+                    consts.edit_config(element_config_dict[element_key], values[element_key])
+                    run_info[element_option_dict[element_key]] = values[element_key]
+            else:
+                consts.edit_config(element_config_dict[element_key], values[element_key])
+                run_info[element_option_dict[element_key]] = values[element_key]
     
     return run_info
      
@@ -192,13 +199,21 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
     config = consts.retrieve_config()
     selected_run_title = run_info['title']
 
-    element_key_dict = {'-POSITIVE CONTROL-':'VALUE_POSITIVE',
+    element_config_dict = {'-POSITIVE CONTROL-':'VALUE_POSITIVE',
                     '-NEGATIVE CONTROL-':'VALUE_NEGATIVE',
                     '-SAMPLE TYPE-':'VALUE_SAMPLE_TYPE',
                     '-ORIENTATION-':'VALUE_ORIENTATION',
                     '-OUTDIR-':'OUTDIR',
                     '-INSTITUTE-':'INSTITUTE',
                     '-USER NAME-':'USERNAME',}
+    
+    element_option_dict = {'-POSITIVE CONTROL-':'-pc',
+                    '-NEGATIVE CONTROL-':'-nc',
+                    '-SAMPLE TYPE-':'-s', 
+                    '-USER NAME-':'--username',
+                    '-OUTDIR-':'outputPath',
+                    '-INSTITUTE-':'--institute',
+                    '-ORIENTATION-':'--orientation'}
 
     
     window['-SAMPLE TYPE-'].update(size=(100,100))
@@ -242,7 +257,7 @@ def run_persistent_run_options_window(window, run_info, version = 'ARTIFICE'):
                         else:
                             raise Exception(translator('No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters'))
                         
-                run_info = update_config_options(element_key_dict, values, config, run_info)
+                run_info = update_config_options(element_config_dict, element_option_dict, values, config, run_info)
                 window.close()
                 return run_info
             except Exception as err:

@@ -79,12 +79,14 @@ def setup_panel():
             [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      default_text=consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_POSITIVE'],tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
             ],
             [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      default_text=consts.VALUE_NEGATIVE,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_NEGATIVE'],tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
             ]
         ],pad=(0,0))
     ]]
