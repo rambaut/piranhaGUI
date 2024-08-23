@@ -69,15 +69,15 @@ def setup_panel(usesRAMPART, usesPiranha):
     
     if usesRAMPART:
         got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
-            rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+            rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION, rampart_image_compatible = \
                 set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client, docker_installed=docker_installed)
 
     piranha_image_incompatible = True
     if usesPiranha:
         got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-            piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+            piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION, piranha_image_compatible  = \
                 set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,docker_installed=docker_installed)
-        piranha_image_incompatible =  not check_image_compatible(consts.PIRANHA_VERSION, consts.PIRANHA_IMAGE)
+        piranha_image_incompatible =  not piranha_image_compatible
 
         if not got_piranha_image and docker_installed:
             # attempt to install piranha image from file
@@ -109,11 +109,12 @@ def setup_panel(usesRAMPART, usesPiranha):
                 
                 
                 got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
-                piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION = \
+                piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION, piranha_image_compatible = \
                 set_image_status('PIRANHA',consts.PIRANHA_IMAGE,docker_client=docker_client,translator=translator)
+                piranha_image_incompatible =  not piranha_image_compatible
 
     got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
-    rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION = \
+    rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION, rampart_image_compatible = \
     set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=False,docker_client=docker_client,translator=translator, docker_installed=docker_installed)
     
     image_info_text = translator('An internet connection and a Docker install is required to install or update software')
@@ -276,6 +277,7 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
     update_available = False
     latest_version = None
     installed_version = None
+    image_compatible = True
 
     if got_image:
         if check_for_updates:
@@ -298,7 +300,7 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         pull_text = translator(f'Install {name} software')
         text_color = FAIL_TEXT_COLOUR
 
-    return got_image, docker_client, update_available, image_status, pull_text, text_color, installed_version
+    return got_image, docker_client, update_available, image_status, pull_text, text_color, installed_version, image_compatible
 
 def check_image_compatible(latest_version, image):
     try:
@@ -306,6 +308,7 @@ def check_image_compatible(latest_version, image):
             latest_major_version = '.'.join(str(latest_version).split('.')[0:2])
             compatible_major_version = '.'.join(str(consts.COMPATIBLE_VERSIONS[image]).split('.')[0:2])
             if latest_major_version != compatible_major_version:
+                print('te')
                 return False
     except:
         pass
