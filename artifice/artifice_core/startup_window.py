@@ -275,9 +275,11 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         got_image = False
     update_available = False
     latest_version = None
+    installed_version = None
+
     if got_image:
         if check_for_updates:
-            update_available, latest_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
+            update_available, latest_version, installed_version = artifice_core.start_rampart.check_for_image_updates(docker_client, image)
         if update_available:
             image_compatible = check_image_compatible(latest_version, image)
             if image_compatible:
@@ -296,7 +298,7 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         pull_text = translator(f'Install {name} software')
         text_color = FAIL_TEXT_COLOUR
 
-    return got_image, docker_client, update_available, image_status, pull_text, text_color, latest_version
+    return got_image, docker_client, update_available, image_status, pull_text, text_color, installed_version
 
 def check_image_compatible(latest_version, image):
     try:
@@ -423,6 +425,8 @@ def run_startup_window(window, translator = None):
             try:
                 install_image('RAMPART', consts.RAMPART_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
+                update_available, latest_version, consts.PIRANHA_VERSION = artifice_core.start_rampart.check_for_image_updates(client, 'RAMPART')
+
                 window['-LAUNCH-'].update(disabled=False)
             except Exception as err:
                 error_popup(err)
@@ -431,6 +435,8 @@ def run_startup_window(window, translator = None):
             try:
                 install_image('PIRANHA', consts.PIRANHA_IMAGE,window,client,translator=translator)
                 client = docker.from_env()
+                update_available, latest_version, consts.PIRANHA_VERSION = artifice_core.start_rampart.check_for_image_updates(client, 'PIRANHA')
+
                 window['-LAUNCH-'].update(disabled=False)
             except Exception as err:
                 error_popup(err)
