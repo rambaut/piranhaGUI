@@ -381,7 +381,7 @@ def install_image(name, image_repo, window, client, translator = None):
     pull_text = f'Check for updates to {name} software'
     pull_text = translator(pull_text)
     text_color = PASS_TEXT_COLOUR
-    window[f'-{name} INSTALL-'].update(text=pull_text, visible=False)
+    window[f'-{name} INSTALL-'].update(text=pull_text, disabled=True)
     window[f'-{name} IMAGE STATUS-'].update(image_status, text_color=text_color)
     install_popup.close()
 
