@@ -329,9 +329,11 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     dirpath = run_info['outputPath']
 
                 if 'outputIter' in run_info and run_info['outputIter'] > 0:
-                    dirpath = dirpath + '('+str(iter)+')'
+                    dirpath = dirpath + '('+str(run_info['outputIter'])+')'
                 
                 dirpath = str(dirpath) + '/'
+
+                print(dirpath)
 
                 if sys.platform.startswith("darwin"):
                     #webbrowser.open('file:///{output_path}/')
@@ -351,7 +353,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     dirpath = run_info['outputPath']
 
                 if 'outputIter' in run_info and run_info['outputIter'] > 0:
-                    dirpath = dirpath + '('+str(iter)+')'
+                    dirpath = dirpath + '('+str(run_info['outputIter'])+')'
                 """
                 if sys.platform.startswith("darwin"):
                     open_new_tab(f'file:///{output_path}/piranha_output/report.html')
