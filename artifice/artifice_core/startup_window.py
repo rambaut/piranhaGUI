@@ -67,12 +67,14 @@ def setup_panel(usesRAMPART, usesPiranha):
         docker_status = translator('Docker not installed/not running')
         docker_text_color = FAIL_TEXT_COLOUR
     
+    got_rampart_image = False
     if usesRAMPART:
         got_rampart_image, docker_client, rampart_update_available, rampart_image_status, \
             rampart_pull_text, rampart_text_color, consts.RAMPART_VERSION, rampart_image_compatible = \
                 set_image_status('RAMPART',consts.RAMPART_IMAGE,check_for_updates=True,docker_client=docker_client, docker_installed=docker_installed)
 
     piranha_image_incompatible = True
+    got_piranha_image = False
     if usesPiranha:
         got_piranha_image, docker_client, piranha_update_available, piranha_image_status, \
             piranha_pull_text, piranha_text_color, consts.PIRANHA_VERSION, piranha_image_compatible  = \
