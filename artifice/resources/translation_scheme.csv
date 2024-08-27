@@ -6,8 +6,8 @@ RAMPART software not installed,le logiciel RAMPART n'est pas installé
 Install RAMPART software,Installer le logiciel RAMPART
 PIRANHA software installed,le logiciel PIRANHA est installé
 Check for updates to PIRANHA software,Vérifier les mises à jour de le logiciel PIRANHA
-An internet connection and a Docker install is required to install or update software,Une connexion internet et un installation Docker est nécessaire pour installer ou mettre à jours les logiciels
-Docker is free software used to install and run the analysis pipelines.,Docker est un logiciel gratuit utilisé pour installer et courir les pipelines d'analyse
+An internet connection and a Docker install is required to install or update software,Une connexion internet et un installation Docker est nécessaire pour installer ou il faut mettre à jours les logiciels
+Docker is free software used to install and run the analysis pipelines.,Docker est un logiciel gratuit utilisé pour installer et lancer les pipelines d'analyse
 RAMPART is optional software used to monitor Nanopore sequencing in real-time.,RAMPART est un logiciel optionnel utilisé pour surveiller le séquençage Nanopore en temps réel
 Piranha is the primary analysis pipeline for the DDNS polio detection platform.,PIRANHA est le pipeline d'analyse principal pour le plate-forme de détection DDNS polio
 About,À propos
@@ -21,16 +21,16 @@ Install PIRANHA image,Installer image PIRANHA
 Update available for RAMPART image,Une mise à jour pour RAMPART est disponible
 Install update to RAMPART software,Mettez à jour le logiciel RAMPART
 Update available for PIRANHA image,Une mise à jour pour PIRANHA est disponible
-Install update to PIRANHA image,Mettez à jour la image PIRANHA
+Install update to PIRANHA image,Mettez à jour l'image PIRANHA
 Open Docker Site in Browser,Ouvrez le site Docker dans le navigateur
 Enable Phylogenetics module, Activez le module phylogénétique
 Disable Phylogenetics module, Désactivez le module phylogénétique
 Supplementary directory for phylogenetic module:, Le dossier supplémentaire pour le module phylogénétique:
 Launch ARTIFICE,Lancez ARTIFICE
-Continue,Continuez
+Continue,Continuer
 Close,Fermer
-Options,Paramétres
-No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters,
+Options,Paramètres
+No valid fasta file in supplementary directory for phylogenetic module. You may want to check for non utf-8 special characters, Aucun fichier fasta valide dans le dossier supplémentaire pour le module phylogénétique. Il peut être utile de vérifier la présence de caractères spéciaux non utf-8.
 ~OPTIONS WINDOW~,
 Select language for user-interface: ,Sélectionnez la langue pour l'interface utilisateur: 
 Use of RAMPART: ,Utilisation de RAMPART
@@ -38,47 +38,47 @@ Enabled,activé
 Cancel,annulé
 Threads to use for analysis:,Threads à utiliser pour analyse
 Reset config to default,Réinitialisez la configuration par défaut
-Enable/Disable RAMPART,Activez/Désactivez RAMPART
-Save,Enregistrez
+Enable/Disable RAMPART,Activer/Désactiver RAMPART
+Save,Enregistrer
 ~EDIT RUN WINDOW~,
 Sequencing Run:,Course séquençage:
-Select a CSV file containing the IDs and barcodes for each sample:,Sélectionnez un fichier CSV contenant les IDs et barcodes pour chaque énchantillons:
-Select,Sélectionnez
-Select the folder containing sequencing reads from MinKnow:,Sélectionnez le dossier contenant les lectures séquençage de MinKnow:
-Select a folder for the output of Piranha analysis:,Sélectionnez un dossier pour la sortie d'analyse Piranha
-Samples:,Énchantillons:
-Browse,Parcourez
-View,Voyez
+Select a CSV file containing the IDs and barcodes for each sample:,Sélectionner un fichier CSV contenant les IDs et barcodes pour chaque échantillons:
+Select,Sélectionner
+Select the folder containing sequencing reads from MinKnow:,Sélectionner le dossier contenant les lectures séquençage de MinKnow:
+Select a folder for the output of Piranha analysis:,Sélectionner un dossier pour la sortie d'analyse Piranha
+Samples:,Échantillons:
+Browse,Naviguer
+View,Voir
 MinKnow run:,MinKnow course:
-Output Folder:,Répetoire de sortie:
-Warning: there are spaces in samples,Avertissement: Il y a espaces dans les énchantillons
-Confirm,Confirmez
+Output Folder:,Répertoire de sortie:
+Warning: there are spaces in samples,Attention: Il y a des espaces dans les échantillons
+Confirm,Confirmer
 ~EXECUTE RUN WINDOW~,
 Run Options,Options de course
-Select Protocol,Sélectionnez Protocole
+Select Protocol,Sélectionner le Protocole
 Piranha Options,Options de Piranha
 Analysis Threads:,Threads d'analyse
 Open Output,Ouvrir la sortie
-Start RAMPART,Démarrez RAMPART
+Start RAMPART,Démarrer RAMPART
 RAMPART is not running,RAMPART n'est pas en cours d'exécution
-Start PIRANHA,Démarrez PIRANHA
+Start PIRANHA,Démarrer PIRANHA
 PIRANHA is not running,PIRANHA n'est pas en cours d'exécution
-Stop RAMPART,Arrêz RAMPART
+Stop RAMPART,Arrêter RAMPART
 RAMPART is running,RAMPART est en cours d'exécution
-Stop PIRANHA,Arrêz PIRANHA
+Stop PIRANHA,Arrêter PIRANHA
 PIRANHA is running,PIRANHA est en cours d'exécution
-Edit run,Éditez la course
-Display RAMPART,Affichez RAMPART
+Edit run,Modifier la course
+Display RAMPART,Afficher RAMPART
 Select Another Protocol,Sélectionnez un Autre Protocole
-Display PIRANHA,Affichez PIRANHA
+Display PIRANHA,Afficher PIRANHA
 Start Analysis,Démarrez Analyse
 Analysis is not running,L'analyse n'est pas en cours d'exécution
-Stop Analysis,Arrêz Analyse
+Stop Analysis,Arrêter Analyse
 Analysis is running,L'analyse est en cours
-Open Report,Ouvrez Rapport
+Open Report,Ouvrer le Rapport
 RAMPART is not installed,RAMPART n’est pas installé
 PIRANHA is not installed,PIRANHA n’est pas installé
-Analysis is not installed,Analyse n'est installé pas
+Analysis is not installed,Analyse n'est pas installé
 Analysis Options,Options D'analyse
 RAMPART OUTPUT,SORTIE RAMPART
 PIRANHA OUTPUT,SORTIE PIRANHA
@@ -91,44 +91,44 @@ Show logs,Affichez le journal
 OK,D’accord
 ERROR,ERREUR
 ~PARSE COLUMNS WINDOW~,
-Choose Samples column:,Choisissez la colonne énchantillons
+Choose Samples column:,Choisissez la colonne échantillons
 Choose Barcodes column:,Choisissez la colonne codes-barres
-barcodes and samples must be 2 separate columns,les codes-barres et les énchantillons doit être deux colonnes séparées
-specified barcodes column contains duplicates,colonne de codes-barres spéfiée contient des doublons
-specified samples column contains duplicates,colonne deénchantillons spéfiée contient des doublons
+barcodes and samples must be 2 separate columns,les codes-barres et les échantillons doit être deux colonnes séparées
+specified barcodes column contains duplicates,colonne de codes-barres spécifiés contient des duplicats
+specified samples column contains duplicates,colonne d'échantillons spécifiés contient des duplicats
 ~Select Protocol Window~,
-Directory:,L'Annuaire:
+Directory:,Répertoire:
 Description:,La Description:
 Add Protocol,Ajouter un Protocole
 Selected Protocol,Protocole Sélectionné
-Remove Protocol,Retirez cet Protocole
+Remove Protocol,Supprimer ce Protocole
 ~PIRANHA OPTIONS WINDOW~,
 Username to appear in report. Default: no user name,Nom d'utilisateur qui apparaît dans le rapport. Défaut: Pas de nom d'utilisateur
 Institute name to appear in report. Default: no institute name,Nom d'institut qui apparaît dans le rapport. Défaut: Pas de nom d'institut
 "Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.",Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`  
-"Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'énchantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
+"Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'échantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
 Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists,Écraser répetoire de sortie. Défaut: Ajouter un nombre qui s'incrémente
 Custom reference sequences file.,Séquences de référence personnalisées
-Sample name of positive control. Default: `positive`,Nom de l'énchantillons du contrôle positif. Défaut: `postive`
-Sample name of negative control. Default: `negative`,Nom de l'énchantillons du contrôle négatif . Défaut: `negative`
+Sample name of positive control. Default: `positive`,Nom de l'échantillons du contrôle positif. Défaut: `postive`
+Sample name of negative control. Default: `negative`,Nom de l'échantillons du contrôle négatif . Défaut: `negative`
 Specify analysis mode to run. Options: `vp1`. Default: `vp1`
 Medaka model to run analysis using. Default: r941_min_hac_variant_g507
 Minimum mapping quality. Default: 50,Qualité de mappage minimale. Défaut: 50
 Minimum read length. Default: 1000,Longeur de lecture minimale. Défaut: 1000
 Maximum read length. Default: 1300,Longeur de lecture maximale. Défaut: 1300
 Minimum read depth required for consensus generation. Default: 50,Profondeur de lecture minimale requise pour la génération d'un consensus. Défaut: 50
-Minimum percentage of sample required for consensus generation. Default: 10,Pourcentage minimale d'énchantillon requis pour la génération d'un consensus. Défaut: 10
+Minimum percentage of sample required for consensus generation. Default: 10,Pourcentage minimale d'échantillon requis pour la génération d'un consensus. Défaut: 10
 Length of primer sequences to trim off start and end of reads. Default: 30,Longeur des séquences d'amorces pour couper le début et la fin des lectures. Défaut: 30
 Output publish directory. Default: `analysis-2022-XX-YY`,Répertoire de publication de sortie. Défaut: `analysis-2022-XX-YY`
 Prefix of output directory & report name: Default: `analysis`,Préfixe du répertoire de sortie et nom du rapport. Défaut: `analysis`
-"Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.",Parsez tous les champes du fichier d'entrée barcodes.csv(codes-barres.csv) et incluez dans les en-tétes de sortie fasta. Sachez que les espaces dans les métadatonnées perturberont l'ID de l'enregistrement, évitez-les.
+"Parse all fields from input barcode.csv file and include in the output fasta headers. Be aware spaces in metadata will disrupt the record id, so avoid these.",Parsemer tous les champs du fichier d'entrée barcodes.csv(codes-barres.csv) et les inclut dans les en-tétes de sortie fasta. Sachez que les espaces dans les métadatonnées perturberont l'ID de l'enregistrement, évitez-les.
 Append datestamp to directory name when using <-o/--outdir>. Default: <-o/--outdir> without a datestamp,Ajoutez l'horodatage au nom du répertoire lors de l'utilisation de <-o/--outdir>. Défaut: <-o/--outdir> sans horodatage
-Print lots of stuff to screen,Affichez beucoup sur la console
-Publish all intermediate files for debugging,Publiez tous les fichiers intermédiaires pour le débogage
+Print lots of stuff to screen,Affichez plus d'information sur la console
+Publish all intermediate files for debugging,Publier tous les fichiers intermédiaires pour le débogage
 User Name:,Nom d'utilisateur
 Institute:,Institut
 Orientation:,Orientation
-Sample Type:,Type d'énchantillons
+Sample Type:,Type d'échantillons
 Overwrite Output,Écraser Sortie
 Output Intermediate Files,Sortez des fichiers intermédiaires
 Positive Control:,Contrôle Positif:
