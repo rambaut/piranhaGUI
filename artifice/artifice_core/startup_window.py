@@ -136,10 +136,10 @@ def setup_panel(usesRAMPART, usesPiranha):
     if SHOW_RAMPART == False:
         show_rampart_button = True
 
-    install_buttons_size = (396,32)
+    install_buttons_size = (596,32)
     layout = []
     if gui_update_available:
-        gui_update_text = f'{consts.APPLICATION_NAME} update available to {latest_gui_version}'
+        gui_update_text = f'{translator(f"{consts.APPLICATION_NAME} update available to")} {latest_gui_version}'
         layout.append([
             sg.Sizer(16,56),
             sg.Column([[
@@ -187,7 +187,7 @@ def setup_panel(usesRAMPART, usesPiranha):
                 AltButton(button_text=piranha_pull_text,size=install_buttons_size,disabled=(not show_piranha_button),key='-PIRANHA INSTALL-'), 
             ],
             [
-                sg.Text(f'Please install the latest {consts.APPLICATION_NAME} version to use it',
+                sg.Text(translator(f'Please install the latest {consts.APPLICATION_NAME} version to use it'),
                         size=(50,1), text_color=piranha_text_color,visible=piranha_image_incompatible and docker_installed,font=consts.TITLE_FONT), 
             ],[
                 sg.Sizer(32,0),
@@ -287,14 +287,14 @@ def set_image_status(name, image, check_for_updates = True, docker_client = None
         if update_available:
             image_compatible = check_image_compatible(latest_version, image)
             if image_compatible:
-                image_status = translator(f'Update available for {name} software to version {latest_version}')
+                image_status = f"{translator(f'Update available for {name} software to version')} {latest_version}"
                 pull_text = translator(f'Install update to {name} software')
             else:
-                image_status = translator(f'Major update available for {name} software to version {latest_version}')
+                image_status = f"{translator(f'Major update available for {name} software to version ')} {latest_version}"
                 pull_text = translator(f'Install update to {name} software')
             text_color = FAIL_TEXT_COLOUR
         else:
-            image_status = translator(f'{name} software version {latest_version} installed')
+            image_status = f"{translator(f'{name} software version')} {latest_version} {translator('installed')}"
             pull_text = translator(f'Install update to {name} software')
             text_color = PASS_TEXT_COLOUR
     else:

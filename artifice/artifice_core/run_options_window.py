@@ -25,8 +25,8 @@ def setup_panel():
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
         '-ORIENTATION-':translator(f'Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: {consts.VALUE_ORIENTATION}. Options: `horizontal` or `vertical`.'),
-        '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: `{consts.VALUE_SAMPLE_TYPE}`'),
-        '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: `{consts.VALUE_POSITIVE}`'),
+        '-SAMPLE TYPE-':f'{translator("Specify sample type. Options: `stool`, `environmental`. Default:")} `{consts.VALUE_SAMPLE_TYPE}`',
+        '-POSITIVE CONTROL-':f'{translator("Sample name of positive control. Default:")} `{consts.VALUE_POSITIVE}`',
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
     }
 
