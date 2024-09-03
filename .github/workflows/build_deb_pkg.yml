@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         # $CONDA is an environment variable pointing to the root of the miniconda directory
-        $CONDA/bin/conda env update --file environment.yml --name base
+        $CONDA/bin/conda env update --file artifice/environment.yml --name base
     - name: Lint with flake8
       run: |
         $CONDA/bin/conda install flake8
