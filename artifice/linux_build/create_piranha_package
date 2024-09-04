@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source build_config_piranha
+source create_deb_package

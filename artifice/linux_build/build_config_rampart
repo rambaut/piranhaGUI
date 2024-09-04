@@ -1,7 +1,7 @@
 #!/bin/bash
 
+source verion_number
 APPLICATION_NAME=rampartGUI
-VERSION_NUMBER='1.5.2'
 CONFIG_FILE='rampart.yml'
 ART_PKG_NAME=${APPLICATION_NAME}_${VERSION_NUMBER} #piranhagui_1.5.1
 
