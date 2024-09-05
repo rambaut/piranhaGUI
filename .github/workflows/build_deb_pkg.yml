@@ -74,7 +74,7 @@ jobs:
         git push origin HEAD:main
     - name: build package
       run: |
-        $CONDA/bin/conda source artifice/linux_build/create_deb_package
+        source artifice/linux_build/create_deb_package
     - name: release
       uses: actions/create-release@v1
       id: create_release
