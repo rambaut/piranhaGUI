@@ -46,9 +46,13 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         python artifice/update_version_number.py ${{ github.ref_name }} piranhaGUI
+    - name: push changes
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
         git add *
         git commit -m"incrementing version number
-        git push origin master
+        git push origin main
     - name: build package
       run: |
         $CONDA/bin/conda source artifice/linux_build/create_deb_package
