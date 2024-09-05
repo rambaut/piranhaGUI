@@ -4,6 +4,7 @@ Starting up..,Départ...
 Docker software installed,le logiciel Docker est installé
 RAMPART software not installed,le logiciel RAMPART n'est pas installé
 PIRANHA software installed,le logiciel PIRANHA est installé
+PIRANHA software not installed,le logiciel PIRANHA n'est pas installé
 Check for updates to PIRANHA software,Vérifier les mises à jour de le logiciel PIRANHA
 An internet connection and a Docker install is required to install or update software,Une connexion internet et un installation Docker est nécessaire pour installer ou il faut mettre à jours les logiciels
 Docker is free software used to install and run the analysis pipelines.,Docker est un logiciel gratuit utilisé pour installer et lancer les pipelines d'analyse
