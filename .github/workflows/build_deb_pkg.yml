@@ -51,7 +51,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         git add *
-        git commit -m"incrementing version number
+        git commit -m"incrementing version number"
         git push origin main
     - name: build package
       run: |
