@@ -46,15 +46,32 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         python artifice/update_version_number.py ${{ github.ref_name }} piranhaGUI
-    - name: push changes
+    - name: set git config
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+    - name: stage changed files
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
         git add *
+    - name: commit changes
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
         git commit -m"incrementing version number"
-        git push origin main
+    - name: set git config
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git fetch origin main
+    - name: push changes to main
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git push origin HEAD:main
     - name: build package
       run: |
         $CONDA/bin/conda source artifice/linux_build/create_deb_package
