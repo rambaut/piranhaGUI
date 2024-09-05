@@ -6,6 +6,7 @@ import os.path
 import traceback
 import pandas as pd
 import PySimpleGUI as sg
+import datetime
 from os import mkdir, listdir
 from shutil import rmtree, copytree
 
@@ -299,18 +300,31 @@ def csv_to_list(filepath, has_headers = True, trim = True):
 
 def excel_to_list(filepath, has_headers = True):
     samples_frame = pd.read_excel(filepath)
+    samples_frame.fillna('', inplace=True)
     first_row = list(samples_frame.columns)
     data_list = samples_frame.values.tolist()
     data_list.insert(0,first_row)
-    print(data_list)
+    #data_list.fillna()
 
     #check if matches template
+    #print(data_list)
     header_row = find_header_row(data_list)
     if header_row > 0:
         options = get_options_from_excel(data_list,header_row)
    
     samples_list, column_headers = get_headers(data_list, has_headers, header_row=header_row)
- 
+    #print(samples_list)
+    for i in range(len(samples_list)):
+        for j in range(len(samples_list[i])):
+            if type(samples_list[i][j]) != str:
+                #print(f'{type(samples_list[i][j])}: {samples_list[i][j]}')
+                if type(samples_list[i][j]) == datetime.datetime:
+                    samples_list[i][j] = str(samples_list[i][j].date())
+                else:
+                    samples_list[i][j] = str(samples_list[i][j])
+    
+    #print(samples_list)
+
     return samples_list, column_headers, options
 
 def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #for finding where headers start in excel
@@ -324,7 +338,7 @@ def find_header_row(data_list, headers = ['barcode', 'sample'], default = 0): #f
 def get_options_from_excel(data_list, header_row):
     options = {}
     for i in range(header_row):
-        if str(data_list[i][1]).startswith('Unnamed') or data_list[i][1] != data_list[i][1]: 
+        if str(data_list[i][1]).startswith('Unnamed') or data_list[i][1] != data_list[i][1] or data_list[i][1] == '': 
             options[data_list[i][0]] = data_list[i][2]
         else:
             options[data_list[i][0]] = data_list[i][1]
@@ -353,7 +367,7 @@ def get_headers(data_list, has_headers, header_row = 0):
         column_headers = []
         for i in range(1,len(data_list[0])+1):
             column_headers.append(str(i))
-        samples_list = data_list
+        samples_list = data_list[header_row:]
     return samples_list, column_headers
 
 # searches column headers for given string
@@ -421,6 +435,7 @@ def make_barcodes_list(run_info):
     samples_list, column_headers = samples_to_list(run_info['samples'], has_headers=False)
     barcodes_column, samples_column = set_default_columns(column_headers, run_info)
 
+
     if 'samples_column' in run_info:
         samples_column = run_info['samples_column']
 
@@ -478,8 +493,8 @@ def check_barcodes(run_info):
     if os.path.isfile(barcodes_file):
         new_barcodes = make_barcodes_list(run_info)
         old_barcodes = samples_to_list(barcodes_file, has_headers=False)[0]
-        new_barcodes.sort()
-        old_barcodes.sort()
+        #new_barcodes.sort()
+        #old_barcodes.sort()
 
         if old_barcodes != new_barcodes:
             sample_modified = True
@@ -537,6 +552,19 @@ def look_for_barcodes(minknow_dir):
             #if dir == 'demultiplexed':
             #    return os.path.join(minknow_dir,dir)
 
+def load_default_run_options(run_info):
+    config = consts.retrieve_config
+    option_dict = {'VALUE_POSITIVE':'-pc',
+                    'VALUE_NEGATIVE':'-nc',
+                    'VALUE_SAMPLE_TYPE':'-s',
+                    'VALUE_ORIENTATION':'--orientation'}
+    
+    for option in option_dict:
+        if option_dict[option] not in run_info:
+            run_info[option_dict[option]] = consts.get_config_value(option, config)
+    
+    return run_info
+
 
             
 def check_file_utf8(filepath):
@@ -556,11 +584,12 @@ def check_file_utf8(filepath):
 def check_supp_datadir(dirpath):
     supp_list = os.listdir(dirpath)
     supp_file_list = filter(os.path.isfile, [os.path.join(dirpath, file) for file in supp_list])
+    contains_fasta = False
 
     for file in supp_file_list:
         if file.endswith('.fasta') or file.endswith('.fa'):
             print(file)
             if check_file_utf8(file):
-                return True
+                contains_fasta = True
     
-    return False
+    return contains_fasta

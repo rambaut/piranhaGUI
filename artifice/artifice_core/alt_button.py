@@ -10,10 +10,10 @@ from artifice_core import consts
 # intialise_buttons function must be called
 class AltButton(sg.Button):
 
-    def __init__(self, button_text='', size=(None, None), s=(None,None), button_colors=(None, None), mouseover_colors=(None, None), **kwargs):
+    def __init__(self, button_text='', size=(None, None), s=(None,None), button_colors=(None, None), mouseover_colors=(None, None), disabled=False, **kwargs):
         theme = consts.get_theme(sg.theme())
     
-        self.Font = kwargs['font'] if 'font' in kwargs else consts.BUTTON_FONT if consts.BUTTON_FONT else consts ('Helvetica', '18')
+        self.Font = kwargs['font'] if 'font' in kwargs and kwargs['font'] != None else consts.BUTTON_FONT if consts.BUTTON_FONT else ('Helvetica', '18') #consts ('Helvetica', '18')
         self.ButtonText = button_text
         self.ButtonColor = sg.button_color_to_tuple(theme['BUTTON'])
         self.MouseOverColors = sg.button_color_to_tuple(theme['BUTTON_HOVER'])
@@ -26,7 +26,7 @@ class AltButton(sg.Button):
 
         self.AltColors = (self.ButtonColor[1],self.ButtonColor[0])
 
-        self.Size = size if size != (None, None) else s if s != (None, None) else consts.BUTTON_SIZE
+        self.Size = size if size != (None, None) else s if s != (None, None) else (None, None)#consts.BUTTON_SIZE
         scaling=consts.SCALING
         if self.Size == (None, None):
             self.Size = self.get_string_size()
@@ -36,13 +36,24 @@ class AltButton(sg.Button):
 
         self.RegImage = self.create_button_image(fill=self.ButtonColor[1])
         self.HighlightImage = self.create_button_image(fill=self.MouseOverColors[1])
+        self.GreyedOutImage = self.create_button_image(fill='#808080')
         self.MouseOverColors = (self.MouseOverColors[0], sg.theme_background_color())
+        
+        if not 'disabled_button_color' in kwargs:
+            kwargs['disabled_button_color'] = ('#505050', sg.theme_background_color())
 
-        kwargs['image_data'] = self.RegImage
-        kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
+        if disabled:
+            kwargs['image_data'] = self.GreyedOutImage
+            kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
+            #self.set_text_color('#606060')
+        else:
+            kwargs['image_data'] = self.RegImage
+            kwargs['button_color'] = (sg.theme_background_color(), sg.theme_background_color())
+
         kwargs['border_width'] = 0
 
-        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, **kwargs)
+        super().__init__(mouseover_colors=self.MouseOverColors, button_text=self.ButtonText, disabled=disabled, **kwargs)
+
 
     # set text color of button whether it is a ttk (on Mac) or tk button
     def set_text_color(self, color):
@@ -62,13 +73,15 @@ class AltButton(sg.Button):
 
     # highlight button
     def on_enter(self, e):
-        self.update(image_data=self.HighlightImage)
-        self.set_text_color(self.AltColors[0])
+        if not self.Disabled:
+            self.update(image_data=self.HighlightImage)
+            self.set_text_color(self.AltColors[0])
 
     # return to normal color scheme
     def on_leave(self, e):
-        self.update(image_data=self.RegImage)
-        self.set_text_color(self.AltColors[1])
+        if not self.Disabled:
+            self.update(image_data=self.RegImage)
+            self.set_text_color(self.AltColors[1])
 
     # determines the size of the string for font size given
     def get_string_size(self):
@@ -89,16 +102,28 @@ class AltButton(sg.Button):
 
     # create image to be used as button icon
     def create_button_image(self, fill='#ff0000'):
-        scl_fctr = 4 #amount to scale up by when drawing
+        scl_fctr = 8 #amount to scale up by when drawing
         button_image = Image.new("RGBA", (self.Size[0]*scl_fctr,self.Size[1]*scl_fctr), (255, 255, 255, 0))
         draw = ImageDraw.Draw(button_image)
         #draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=self.Size[1]*scl_fctr, fill=fill)
-        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=32, fill=fill)
+        radius=10*consts.SCALING*scl_fctr
+        draw.rounded_rectangle([(0,0),((self.Size[0])*scl_fctr,self.Size[1]*scl_fctr)], radius=radius, fill=fill)
         button_image = button_image.resize(self.Size, resample=Image.BILINEAR) # resize to actual size with antialiasing for smoother shape
 
         buffered = BytesIO()
         button_image.save(buffered, format="PNG")
         return base64.b64encode(buffered.getvalue())
+    
+    def update(self, disabled=None, **kwargs):
+        if self.Disabled == True and disabled == False:
+            super(AltButton, self).update(image_data=self.RegImage, disabled=disabled, **kwargs)
+            self.set_text_color(self.AltColors[1])
+        elif self.Disabled == False and disabled == True:
+            super(AltButton, self).update(image_data=self.GreyedOutImage, disabled=disabled, **kwargs)
+            #self.set_text_color('#505050')
+        else: 
+            super(AltButton, self).update(disabled=None, **kwargs)
+              
 
     @staticmethod
     # initialise all AltButtons to highlight on mouseover on given window

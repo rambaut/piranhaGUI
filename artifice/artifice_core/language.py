@@ -12,7 +12,7 @@ def get_translate_scheme(filepath = './resources/translation_scheme.csv'):
     return scheme_list
 
 # Takes text (in english) and returns version in given language if translation in scheme
-def translate_text(string: str, language: str, scheme_list = None, append_scheme = False, multi_line_fix = True, #<- splits translated string if there's multiple lines
+def translate_text(string: str, language: str, scheme_list = None, append_scheme = True, multi_line_fix = True, #<- splits translated string if there's multiple lines
                     vb = False):
     if scheme_list == None or append_scheme:
         scheme_list = get_translate_scheme()
@@ -36,6 +36,10 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
     string_in_scheme = False
     try:
         for row in scheme_list:
+            try:
+                this_row = row[0]
+            except:
+                break
             if string == row[0]:
                 string_in_scheme = True
                 try:

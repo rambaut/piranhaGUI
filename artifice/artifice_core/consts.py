@@ -149,7 +149,7 @@ def get_resource(filepath):
 
 #   NOTE THIS SHOULD BE UPDATED WITH EACH NEW MAJOR PACKAGE RELEASE (assuming it's compatible with the latest artifice version)
 COMPATIBLE_VERSIONS = {
-    'polionanopore/piranha':1.2
+    'polionanopore/piranha':1.3
     }
 
 APPLICATION_HEADER = 'Powered by ARTIFICE | ARTICnetwork: http://artic.network'
@@ -187,7 +187,7 @@ PIRANHA_URL = 'https://github.com/polio-nanopore/piranha/'
 
 RAMPART_VERSION = None
 PIRANHA_VERSION = None
-PIRANHA_GUI_VERSION = '1.5.4pre'
+PIRANHA_GUI_VERSION = '1.5.5'
 
 config = None
 #LOGFILE = None
@@ -204,7 +204,7 @@ WINDOW_TITLE = "RAMPART"
 ICON_FILENAME = "rampart-icon.png"
 APPLICATION_TITLE_LINE_1 = "Read Assignment, Mapping, and Phylogenetic Analysis in Real Time"
 APPLICATION_TITLE_LINE_2 = "built by James Hadfield, Nick Loman and Andrew Rambaut as part of the ARTIC Network proiect"             
-APPLICATION_SUBTITLE_LINE = None
+APPLICATION_SUBTITLE_LINE = '' #None
 PROJECT_LOGO = "artic_panel.png"
 PROJECT_FOOTER = ""
 ICON = ICON_FILENAME #window_functions.scale_image(ICON_FILENAME, SCALING, (64,64))
