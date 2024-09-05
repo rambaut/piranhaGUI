@@ -4,14 +4,15 @@
 name: Ubuntu/Debian build
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - '*'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  build_release:
 
     runs-on: ubuntu-latest
 
@@ -38,6 +39,25 @@ jobs:
     #- name: Test with pytest
     #  run: |
     #    pytest
+    - name: increment version number
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        $CONDA/bin/conda python update_version_number.py ${{ github.ref }} piranhaGUI
+        git add *
+        git commit -m"incrementing version number
+        git push origin master
+    - name: release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: true
+        release_name: piranhaGUI v${{ github.ref }}
+        tag_name: ${{ github.ref }}
+        body_path: ''
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
     - name: build package
       run: |
         $CONDA/bin/conda source linux_build/create_deb_package
