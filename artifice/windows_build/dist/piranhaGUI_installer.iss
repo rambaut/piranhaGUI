@@ -4,7 +4,7 @@
 
 [Setup]
 AppName=piranhaGUI
-AppVersion=1.5.5
+AppVersion=1.5.4
 WizardStyle=modern
 DefaultDirName={autopf}\piranhaGUI
 DefaultGroupName=piranhaGUI
