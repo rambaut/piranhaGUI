@@ -45,7 +45,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
-        python update_version_number.py ${{ github.ref }} piranhaGUI
+        python update_version_number.py ${{ github.ref_name }} piranhaGUI
         git add *
         git commit -m"incrementing version number
         git push origin master
@@ -58,7 +58,7 @@ jobs:
       with:
         draft: false
         prerelease: true
-        release_name: ${{ env.APPLICATION_NAME }} v${{ github.ref }}
+        release_name: ${{ env.APPLICATION_NAME }} v${{ github.ref_name }}
         tag_name: ${{ github.ref }}
         body_path: ''
       env:
@@ -69,8 +69,8 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: /data/artifice/artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref }}.deb
-        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref }}.deb
+        asset_path: /data/artifice/artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
         asset_content_type: application/vnd.debian.binary-package
   
     
