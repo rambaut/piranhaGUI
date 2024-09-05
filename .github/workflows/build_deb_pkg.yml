@@ -58,6 +58,8 @@ jobs:
       run: |
         git add *
     - name: commit changes
+      id: commit
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
@@ -70,6 +72,7 @@ jobs:
     - name: push changes to main
       env:
         GITHUB_TOKEN: ${{ github.token }}
+      if: steps.commit.outcome  == 'success'
       run: |
         git push origin HEAD:main
     - name: build package
