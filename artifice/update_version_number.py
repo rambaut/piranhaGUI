@@ -29,8 +29,8 @@ def update_mac_version_number(version_number, application_name):
 
 def update_windows_version(version_number, application_name):
     # Updating the InnoSetup .iss file
-    replace_line(f'{BASE_PATH}windows_build\dist\{application_name}_installer.iss','AppVersion=',f'AppVersion={version_number}')
-    replace_line(f'{BASE_PATH}windows_build\dist\{application_name}_installer.iss','OutputBaseFilename=',f'OutputBaseFilename={application_name}v{version_number}_installer_windows')
+    replace_line(f'{BASE_PATH}windows_build/dist/{application_name}_installer.iss','AppVersion=',f'AppVersion={version_number}')
+    replace_line(f'{BASE_PATH}windows_build/dist/{application_name}_installer.iss','OutputBaseFilename=',f'OutputBaseFilename={application_name}v{version_number}_installer_windows')
 
 # helper function to replace lines
 def replace_line(filepath, search_string, replace_strings, encoding=None):
