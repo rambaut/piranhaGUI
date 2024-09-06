@@ -27,7 +27,7 @@ jobs:
     - uses: conda-incubator/setup-miniconda@v2
       with:
           auto-update-conda: false
-          environment-file: environment.yml
+          environment-file: artifice/environment.yml
           activate-environment: artifice
           channels: conda-forge,defaults
           miniforge-version: latest
