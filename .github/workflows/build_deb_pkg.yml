@@ -76,8 +76,9 @@ jobs:
       run: |
         git push origin HEAD:main
     - name: build package
+      working-directory: ./artifice/linux_build/
       run: |
-        source artifice/linux_build/create_deb_package
+        source create_piranha_package
     - name: release
       uses: actions/create-release@v1
       id: create_release
