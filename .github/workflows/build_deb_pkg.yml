@@ -18,10 +18,12 @@ defaults:
     shell: bash -l {0}
 
 jobs:
-  build_release:
 
+  build_deb_release:
     runs-on: ubuntu-latest
-
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
+      
     steps:
     - uses: actions/checkout@v4
 #    - name: Set up Python 3.10
@@ -87,7 +89,7 @@ jobs:
       if: steps.commit.outcome  == 'success'
       run: |
         git push origin HEAD:main
-    - name: build package
+    - name: build deb package
       working-directory: ./artifice/linux_build/
       run: |
         source create_piranha_package
@@ -111,5 +113,24 @@ jobs:
         asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
         asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
         asset_content_type: application/vnd.debian.binary-package
-  
+        
+  build_win_release:
+    needs: [build_deb_release]
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+          auto-update-conda: false
+          environment-file: artifice/environment.yml
+          activate-environment: artifice
+          channels: conda-forge,defaults
+          miniforge-version: latest
+          auto-activate-base: false
+    - name: build package
+      working-directory: ./artifice/windows_build
+      run: |
+        build_windows.bat
     
