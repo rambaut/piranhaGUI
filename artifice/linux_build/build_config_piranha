@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source verion_number
+source version_number
 APPLICATION_NAME=piranhaGUI
 CONFIG_FILE='config.yml'
 ART_PKG_NAME=${APPLICATION_NAME}_${VERSION_NUMBER} #piranhagui_1.5.1
