@@ -20,17 +20,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+#    - name: Set up Python 3.10
+#      uses: actions/setup-python@v3
+#      with:
+#        python-version: "3.10"
+    - uses: conda-incubator/setup-miniconda@v2
       with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        echo ls
-        python -m pip install --upgrade pip
-        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        $CONDA/bin/conda env update --file artifice/environment.yml --name base
+          auto-update-conda: false
+          environment-file: environment.yml
+          activate-environment: artifice
+          channels: conda-forge,defaults
+          miniforge-version: latest
+#    - name: Install dependencies
+#      run: |
+#        echo ls
+#        python -m pip install --upgrade pip
+#        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#        # $CONDA is an environment variable pointing to the root of the miniconda directory
+#        $CONDA/bin/conda env update --file artifice/environment.yml --name base
     #- name: Lint with flake8
     #  run: |
     #    $CONDA/bin/conda install flake8
