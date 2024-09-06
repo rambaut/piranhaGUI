@@ -117,6 +117,8 @@ jobs:
   build_win_release:
     needs: [build_deb_release]
     runs-on: windows-latest
+    env:
+      RELEASE_URL: ${{ needs.build_deb_release.outputs.release_url }}
 
     steps:
     - uses: actions/checkout@v4
@@ -133,4 +135,17 @@ jobs:
       working-directory: ./artifice/windows_build
       run: |
         build_windows.bat
-    
+    - name: compile installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: ./artifice/windows_build/dist/piranhaGUI_installer.iss
+    - name: upload ubuntu/debian package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ env.RELEASE_URL }}
+        asset_path: artifice/windows_build/dist/installer/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}installer.exe
+        asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}installer.exe
+        asset_content_type: application/vnd.microsoft.portable-executable
+        
