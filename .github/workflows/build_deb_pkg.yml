@@ -145,7 +145,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ env.RELEASE_URL }}
-        asset_path: artifice/windows_build/dist/installer/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer.exe
+        asset_path: artifice/windows_build/dist/installer/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
         asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}installer.exe
         asset_content_type: application/vnd.microsoft.portable-executable
         
