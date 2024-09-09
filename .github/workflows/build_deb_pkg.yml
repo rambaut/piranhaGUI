@@ -134,7 +134,7 @@ jobs:
     - name: build package
       working-directory: ./artifice/windows_build/
       run: |
-        build_windows.bat
+        ./build_windows.bat
     - name: compile installer
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
