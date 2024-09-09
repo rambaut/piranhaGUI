@@ -132,7 +132,7 @@ jobs:
           miniforge-version: latest
           auto-activate-base: false
     - name: build package
-      working-directory: ./artifice/windows_build
+      working-directory: ./artifice/windows_build/
       run: |
         build_windows.bat
     - name: compile installer
