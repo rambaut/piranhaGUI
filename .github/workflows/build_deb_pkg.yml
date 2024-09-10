@@ -89,10 +89,10 @@ jobs:
       if: steps.commit.outcome  == 'success'
       run: |
         git push origin HEAD:main
-    - name: build deb package
-      working-directory: ./artifice/linux_build/
-      run: |
-        source create_piranha_package
+#    - name: build deb package
+#      working-directory: ./artifice/linux_build/
+#      run: |
+#        source create_piranha_package
     - name: release
       uses: actions/create-release@v1
       id: create_release
@@ -104,15 +104,15 @@ jobs:
         body_path: ''
       env:
         GITHUB_TOKEN: ${{ github.token }}
-    - name: upload ubuntu/debian package
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-        asset_content_type: application/vnd.debian.binary-package
+#    - name: upload ubuntu/debian package
+#      uses: actions/upload-release-asset@v1
+#      env:
+#        GITHUB_TOKEN: ${{ github.token }}
+#      with:
+#        upload_url: ${{ steps.create_release.outputs.upload_url }}
+#        asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+#        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+#        asset_content_type: application/vnd.debian.binary-package
         
 
         
@@ -134,11 +134,11 @@ jobs:
           miniforge-version: latest
           auto-activate-base: false
     - name: build package
-      working-directory: ./artifice/mac_build/pyinstaller/
+      working-directory: mac_build/pyinstaller/
       run: |
         pyinstaller piranhaGUI.spec
     - name: zip file
-      working-directory: ./artifice/mac_build/pyinstaller/dist/
+      working-directory: mac_build/pyinstaller/dist/
       run: |
         zip -r ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app
     - name: upload windows installer
@@ -151,37 +151,37 @@ jobs:
         asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip
         asset_content_type: application/zip
 
-  build_win_release:
-    needs: [build_deb_release]
-    runs-on: windows-latest
-    env:
-      RELEASE_URL: ${{ needs.build_deb_release.outputs.release_url }}
-
-    steps:
-    - uses: actions/checkout@v4
-    
-    - uses: conda-incubator/setup-miniconda@v3
-      with:
-          auto-update-conda: false
-          environment-file: artifice/environment.yml
-          activate-environment: artifice
-          channels: conda-forge,defaults
-          miniforge-version: latest
-          auto-activate-base: false
-    - name: build package
-      working-directory: ./artifice/windows_build/
-      run: |
-        ./build_windows.bat
-    - name: compile installer
-      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-      with:
-        path: ./artifice/windows_build/dist/piranhaGUI_installer.iss
-    - name: upload windows installer
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        upload_url: ${{ env.RELEASE_URL }}
-        asset_path: artifice/windows_build/dist/installer/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
-        asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
-        asset_content_type: application/vnd.microsoft.portable-executable
+#  build_win_release:
+#    needs: [build_deb_release]
+#    runs-on: windows-latest
+#    env:
+#      RELEASE_URL: ${{ needs.build_deb_release.outputs.release_url }}
+#
+#    steps:
+#    - uses: actions/checkout@v4
+#    
+#    - uses: conda-incubator/setup-miniconda@v3
+#      with:
+#          auto-update-conda: false
+#          environment-file: artifice/environment.yml
+#          activate-environment: artifice
+#          channels: conda-forge,defaults
+#          miniforge-version: latest
+#          auto-activate-base: false
+#    - name: build package
+#      working-directory: ./artifice/windows_build/
+#      run: |
+#        ./build_windows.bat
+#    - name: compile installer
+#      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+#      with:
+#        path: ./artifice/windows_build/dist/piranhaGUI_installer.iss
+#    - name: upload windows installer
+#      uses: actions/upload-release-asset@v1
+#      env:
+#        GITHUB_TOKEN: ${{ github.token }}
+#      with:
+#        upload_url: ${{ env.RELEASE_URL }}
+#        asset_path: artifice/windows_build/dist/installer/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
+#        asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
+#        asset_content_type: application/vnd.microsoft.portable-executable
