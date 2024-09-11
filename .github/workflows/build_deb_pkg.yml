@@ -57,7 +57,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
-        pip freeze > requirements.txt
+        pip freeze > artifice/requirements.txt
 
     - name: increment version number
       env:
@@ -113,11 +113,15 @@ jobs:
       with:
         python-version: "3.10"
 
+    - name: make sure up to date
+      run: |
+        git pull origin main
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        pip install -r requirements.txt
+        pip install -r artifice/requirements.txt
         
  #   - name: pull piranha docker image
  #     run: |
