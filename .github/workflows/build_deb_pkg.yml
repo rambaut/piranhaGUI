@@ -167,6 +167,11 @@ jobs:
       run: |
         pyinstaller piranhaGUI.spec
         
+    - name: fix package
+      working-directory: ./artifice/mac_build/pyinstaller_build/dist/
+      run: |
+        mv ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app/Contents/Resources/resources ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app/Contents/MacOS/resources
+    
     - name: compress macos app
       working-directory: ./artifice/mac_build/pyinstaller_build/dist/
       run: |
