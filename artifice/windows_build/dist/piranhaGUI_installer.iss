@@ -21,7 +21,7 @@ Name: desktopicon; Description: "Create a &desktop icon";
 Source: "piranhaGUI.exe"; DestDir: "{app}"
 ;Source: "runs\archived_runs.json"; DestDir: "{app}\runs"
 Source: "resources\*"; DestDir: "{app}\resources"
-;Source: "resources\piranha.tar"; DestDir: "{localappdata}\piranhaGUI"
+Source: "piranha_image_file\piranha.tar"; DestDir: "{localappdata}\piranhaGUI"
 Source: "builtin_protocols\*"; DestDir: "{app}\builtin_protocols"; Flags: ignoreversion recursesubdirs
 Source: "config.yml"; DestDir: "{app}"
 
