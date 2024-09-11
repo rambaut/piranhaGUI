@@ -95,26 +95,26 @@ jobs:
       run: |
         git push origin HEAD:main
         
-    - name: pull piranha docker image
-      run: |
-        docker pull polionanopore/piranha:latest
+ #   - name: pull piranha docker image
+ #     run: |
+ #       docker pull polionanopore/piranha:latest
         
-    - name: save piranha docker image to file
-      working-directory: ./artifice/resources/
-      run: |
-        docker save --output piranha.tar polionanopore/piranha:latest
+#    - name: save piranha docker image to file
+#      working-directory: ./artifice/resources/
+#      run: |
+#        docker save --output piranha.tar polionanopore/piranha:latest
         
-    - name: Temporarily save piranha docker image
-      uses: actions/upload-artifact@v4
-      with:
-        name: piranha.tar
-        path: artifice/resources/piranha.tar
-        retention-days: 1
+ #   - name: Temporarily save piranha docker image
+ #     uses: actions/upload-artifact@v4
+ #     with:
+ #       name: piranha.tar
+ #       path: artifice/resources/piranha.tar
+ #       retention-days: 1
         
-    - name: build deb package
-      working-directory: ./artifice/linux_build/
-      run: |
-        source create_piranha_package
+ #   - name: build deb package
+ #     working-directory: ./artifice/linux_build/
+ #     run: |
+ #       source create_piranha_package
         
     - name: release
       uses: actions/create-release@v1
@@ -128,19 +128,19 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         
-    - name: upload ubuntu/debian package
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-        asset_content_type: application/vnd.debian.binary-package
+  #  - name: upload ubuntu/debian package
+  #    uses: actions/upload-release-asset@v1
+  #    env:
+  #      GITHUB_TOKEN: ${{ github.token }}
+  #    with:
+  #      upload_url: ${{ steps.create_release.outputs.upload_url }}
+  #      asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+  #      asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+  #      asset_content_type: application/vnd.debian.binary-package
              
   build_darwin_release:
     needs: [build_deb_release]
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       RELEASE_URL: ${{ needs.build_deb_release.outputs.release_url }}
   
@@ -156,11 +156,11 @@ jobs:
           miniforge-version: latest
           auto-activate-base: false
 
-    - name: Retrieve saved piranha docker image
-      uses: actions/download-artifact@v4
-      with:
-        name: piranha.tar
-        path: artifice/resources/
+#    - name: Retrieve saved piranha docker image
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: piranha.tar
+#        path: artifice/resources/
           
     - name: build package
       working-directory: ./artifice/mac_build/pyinstaller_build/
@@ -183,6 +183,7 @@ jobs:
         asset_content_type: application/zip
 
   build_win_release:
+    if: false
     needs: [build_deb_release]
     runs-on: windows-latest
     env:
