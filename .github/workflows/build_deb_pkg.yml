@@ -170,7 +170,6 @@ jobs:
     - name: compress macos app
       working-directory: ./artifice/mac_build/pyinstaller_build/dist/
       run: |
-        #zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app
         ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_macos.zip
         
     - name: upload mac package
@@ -179,7 +178,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ env.RELEASE_URL }}
-        asset_path: ./artifice/mac_build/pyinstaller_build/dist/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip
+        asset_path: ./artifice/mac_build/pyinstaller_build/dist/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_macos.zip
         asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip
         asset_content_type: application/zip
 
