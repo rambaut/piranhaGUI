@@ -19,10 +19,8 @@ defaults:
 
 jobs:
 
-  build_deb_release:
+  prepare_build:
     runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.create_release.outputs.upload_url }}
       
     steps:
     - uses: actions/checkout@v4
@@ -55,6 +53,12 @@ jobs:
     #- name: Test with pytest
     #  run: |
     #    pytest
+    - name: create pip requirements file (for building deb package)
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        pip freeze > requirements.txt
+
     - name: increment version number
       env:
         GITHUB_TOKEN: ${{ github.token }}
@@ -94,6 +98,26 @@ jobs:
       if: steps.commit.outcome  == 'success'
       run: |
         git push origin HEAD:main
+
+  build_deb_release:
+    needs: [prepare_build]
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
+      
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -r requirements.txt
         
  #   - name: pull piranha docker image
  #     run: |
@@ -111,10 +135,10 @@ jobs:
  #       path: artifice/resources/piranha.tar
  #       retention-days: 1
         
- #   - name: build deb package
- #     working-directory: ./artifice/linux_build/
- #     run: |
- #       source create_piranha_package
+    - name: build deb package
+      working-directory: ./artifice/linux_build/
+      run: |
+        source create_piranha_package
         
     - name: release
       uses: actions/create-release@v1
@@ -128,15 +152,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         
-  #  - name: upload ubuntu/debian package
-  #    uses: actions/upload-release-asset@v1
-  #    env:
-  #      GITHUB_TOKEN: ${{ github.token }}
-  #    with:
-  #      upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #      asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-  #      asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-  #      asset_content_type: application/vnd.debian.binary-package
+    - name: upload ubuntu/debian package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_content_type: application/vnd.debian.binary-package
              
   build_darwin_release:
     needs: [build_deb_release]
