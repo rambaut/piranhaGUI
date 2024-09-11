@@ -167,10 +167,11 @@ jobs:
       run: |
         pyinstaller piranhaGUI.spec
         
-    - name: zip file
+    - name: compress macos app
       working-directory: ./artifice/mac_build/pyinstaller_build/dist/
       run: |
-        zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app
+        #zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.zip ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app
+        ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_macos.zip
         
     - name: upload mac package
       uses: actions/upload-release-asset@v1
