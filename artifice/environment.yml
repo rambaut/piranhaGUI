@@ -1,22 +1,22 @@
-name: artifice
+name: artifice_test
 channels:
   - conda-forge
   - defaults
 dependencies:
-  - bzip2=1.0.8=h1de35cc_0
-  - ca-certificates=2023.12.12=hecd8cb5_0
-  - libffi=3.4.4=hecd8cb5_0
-  - ncurses=6.4=hcec6c5f_0
-  - openssl=3.0.12=hca72f7f_0
-  - pip=21.2.4=py310hecd8cb5_0
-  - python=3.10.13=h5ee71fb_0
-  - readline=8.2=hca72f7f_0
-  - setuptools=68.2.2=py310hecd8cb5_0
-  - sqlite=3.41.2=h6c40b1e_0
-  - tk=8.6.12=h5d9f67b_0
-  - wheel=0.41.2=py310hecd8cb5_0
-  - xz=5.4.5=h6c40b1e_0
-  - zlib=1.2.13=h4dc903c_0
+  - bzip2=1.0.8
+  - ca-certificates=2023.12.12
+  - libffi=3.4.4
+  - ncurses=6.4
+  - openssl=3.0.12
+  - pip=21.2.4
+  - python=3.10.13
+  - readline=8.2
+  - setuptools=68.2.2
+  - sqlite=3.41.2
+  - tk=8.6.12
+  - wheel=0.41.2
+  - xz=5.4.5
+  - zlib=1.2.13
   - pip:
       - altgraph==0.17.4
       - certifi==2023.11.17
@@ -36,7 +36,7 @@ dependencies:
       - py2app==0.28.4
       - pyinstaller==5.0.1
       - pyinstaller-hooks-contrib==2024.0
-      - pysimplegui==4.60.3
+      - pysimplegui==4.60.5
       - python-calamine==0.1.7
       - python-dateutil==2.8.2
       - pytz==2023.3.post1
