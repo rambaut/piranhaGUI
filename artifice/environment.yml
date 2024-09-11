@@ -1,4 +1,4 @@
-name: artifice_test
+name: artifice
 channels:
   - conda-forge
   - defaults
