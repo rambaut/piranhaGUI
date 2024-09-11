@@ -128,9 +128,9 @@ jobs:
         docker pull polionanopore/piranha:latest
         
     - name: save piranha docker image to file
-      working-directory: ./artifice/piranha_image_file/
+      working-directory: ./artifice/
       run: |
-        docker save --output piranha.tar polionanopore/piranha:latest
+        docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
         
     - name: Temporarily save piranha docker image
       uses: actions/upload-artifact@v4
