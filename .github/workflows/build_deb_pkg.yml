@@ -130,6 +130,7 @@ jobs:
     - name: save piranha docker image to file
       working-directory: ./artifice/
       run: |
+        mkdir piranha_image_file
         docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
         
     - name: Temporarily save piranha docker image
@@ -188,22 +189,17 @@ jobs:
           miniforge-version: latest
           auto-activate-base: false
 
-#    - name: Retrieve saved piranha docker image
-#      uses: actions/download-artifact@v4
-#      with:
-#        name: piranha.tar
-#        path: artifice/resources/
+    - name: Retrieve saved piranha docker image
+      uses: actions/download-artifact@v4
+      with:
+        name: piranha.tar
+        path: artifice/resources/
           
     - name: build package
       working-directory: ./artifice/mac_build/pyinstaller_build/
       run: |
         pyinstaller piranhaGUI.spec
-        
-#    - name: fix package
-#      working-directory: ./artifice/mac_build/pyinstaller_build/dist/
-#      run: |
-#        mv ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app/Contents/Resources/resources ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app/Contents/MacOS/resources
-    
+           
     - name: compress macos app
       working-directory: ./artifice/mac_build/pyinstaller_build/dist/
       run: |
@@ -240,7 +236,12 @@ jobs:
           channels: conda-forge,defaults
           miniforge-version: latest
           auto-activate-base: false
-          
+
+    - name: make dir for piranha image file
+      working-directory: ./artifice
+      run: |
+        mkdir piranha_image_file
+
     - name: Retrieve saved piranha docker image
       uses: actions/download-artifact@v4
       with:
