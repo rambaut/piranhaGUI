@@ -21,8 +21,6 @@ jobs:
 
   prepare_build:
     runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.create_release.outputs.upload_url }}
       
     steps:
     - uses: actions/checkout@v4
@@ -154,15 +152,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         
-  #  - name: upload ubuntu/debian package
-  #    uses: actions/upload-release-asset@v1
-  #    env:
-  #      GITHUB_TOKEN: ${{ github.token }}
-  #    with:
-  #      upload_url: ${{ steps.create_release.outputs.upload_url }}
-  #      asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-  #      asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
-  #      asset_content_type: application/vnd.debian.binary-package
+    - name: upload ubuntu/debian package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_content_type: application/vnd.debian.binary-package
              
   build_darwin_release:
     needs: [build_deb_release]
