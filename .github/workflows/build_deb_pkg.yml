@@ -121,7 +121,7 @@ jobs:
     runs-on: ubuntu-latest
       
     env:
-      RELEASE_URL: ${{ needs.prepare-build.outputs.release_url }}
+      RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
 
     steps:
     - uses: actions/checkout@v4
@@ -168,10 +168,10 @@ jobs:
         asset_content_type: application/vnd.debian.binary-package
              
   build_darwin_release:
-    needs: [prepare-build]
+    needs: [prepare_build]
     runs-on: macos-12
     env:
-      RELEASE_URL: ${{ needs.prepare-build.outputs.release_url }}
+      RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
   
     steps:
     - uses: actions/checkout@v4
@@ -216,10 +216,10 @@ jobs:
         asset_content_type: application/zip
 
   build_win_release:
-    needs: [prepare-build]
+    needs: [prepare_build]
     runs-on: windows-latest
     env:
-      RELEASE_URL: ${{ needs.prepare-build.outputs.release_url }}
+      RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
 
     steps:
     - uses: actions/checkout@v4
