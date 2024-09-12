@@ -99,6 +99,24 @@ jobs:
       run: |
         git push origin HEAD:main
 
+    - name: pull piranha docker image
+      run: |
+        docker pull polionanopore/piranha:latest
+        
+    - name: save piranha docker image to file
+      working-directory: ./artifice/
+      run: |
+        mkdir piranha_image_file
+        docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
+        
+    - name: Temporarily save piranha docker image
+      uses: actions/upload-artifact@v4
+      with:
+        name: piranha.tar
+        path: artifice/piranha_image_file/piranha.tar
+        retention-days: 1
+
+
   build_deb_release:
     needs: [prepare_build]
     runs-on: ubuntu-latest
@@ -123,22 +141,16 @@ jobs:
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -r artifice/requirements.txt
         
-    - name: pull piranha docker image
-      run: |
-        docker pull polionanopore/piranha:latest
-        
-    - name: save piranha docker image to file
-      working-directory: ./artifice/
-      run: |
-        mkdir piranha_image_file
-        docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
-        
-    - name: Temporarily save piranha docker image
-      uses: actions/upload-artifact@v4
-      with:
-        name: piranha.tar
-        path: artifice/piranha_image_file/piranha.tar
-        retention-days: 1
+ #   - name: make dir for piranha image file
+ #     working-directory: ./artifice
+ #     run: |
+ #       mkdir piranha_image_file
+
+#    - name: Retrieve saved piranha docker image
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: piranha.tar
+#        path: artifice/piranha_image_file/
         
     - name: build deb package
       working-directory: ./artifice/linux_build/
@@ -189,11 +201,11 @@ jobs:
           miniforge-version: latest
           auto-activate-base: false
 
-    - name: Retrieve saved piranha docker image
-      uses: actions/download-artifact@v4
-      with:
-        name: piranha.tar
-        path: artifice/resources/
+#    - name: Retrieve saved piranha docker image
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: piranha.tar
+#        path: artifice/resources/
           
     - name: build package
       working-directory: ./artifice/mac_build/pyinstaller_build/
@@ -237,16 +249,16 @@ jobs:
           miniforge-version: latest
           auto-activate-base: false
 
-    - name: make dir for piranha image file
-      working-directory: ./artifice
-      run: |
-        mkdir piranha_image_file
+#    - name: make dir for piranha image file
+#      working-directory: ./artifice
+#      run: |
+#        mkdir piranha_image_file
 
-    - name: Retrieve saved piranha docker image
-      uses: actions/download-artifact@v4
-      with:
-        name: piranha.tar
-        path: artifice/piranha_image_file/
+#    - name: Retrieve saved piranha docker image
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: piranha.tar
+#        path: artifice/piranha_image_file/
         
     - name: build package
       working-directory: ./artifice/windows_build/
