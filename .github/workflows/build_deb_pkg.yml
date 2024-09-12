@@ -39,23 +39,7 @@ jobs:
           channels: conda-forge,defaults
           miniforge-version: latest
           auto-activate-base: false
-#    - name: Install dependencies
-#      run: |
-#        echo ls
-#        python -m pip install --upgrade pip
-#        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-#        # $CONDA is an environment variable pointing to the root of the miniconda directory
-#        $CONDA/bin/conda env update --file artifice/environment.yml --name base
-    #- name: Lint with flake8
-    #  run: |
-    #    $CONDA/bin/conda install flake8
-    #    # stop the build if there are Python syntax errors or undefined names
-    #    $CONDA/bin/flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    #    # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    #    $CONDA/bin/flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistic
-    #- name: Test with pytest
-    #  run: |
-    #    pytest
+
     - name: create pip requirements file (for building deb package)
       env:
         GITHUB_TOKEN: ${{ github.token }}
@@ -102,22 +86,22 @@ jobs:
       run: |
         git push origin HEAD:main
 
-    - name: pull piranha docker image
-      run: |
-        docker pull polionanopore/piranha:latest
+#    - name: pull piranha docker image
+#      run: |
+#        docker pull polionanopore/piranha:latest
         
-    - name: save piranha docker image to file
-      working-directory: ./artifice/
-      run: |
-        mkdir piranha_image_file
-        docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
+#    - name: save piranha docker image to file
+#      working-directory: ./artifice/
+#      run: |
+#        mkdir piranha_image_file
+#        docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
         
-    - name: Temporarily save piranha docker image
-      uses: actions/upload-artifact@v4
-      with:
-        name: piranha.tar
-        path: artifice/piranha_image_file/piranha.tar
-        retention-days: 1
+#    - name: Temporarily save piranha docker image
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: piranha.tar
+#        path: artifice/piranha_image_file/piranha.tar
+#        retention-days: 1
 
     - name: create release
       uses: actions/create-release@v1
@@ -156,7 +140,18 @@ jobs:
         python -m pip install --upgrade pip
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -r artifice/requirements.txt
-        
+
+#    - name: make dir for piranha image file
+#      working-directory: ./artifice
+#      run: |
+#        mkdir piranha_image_file
+
+#    - name: Retrieve saved piranha docker image
+#      uses: actions/download-artifact@v4
+#      with:
+#        name: piranha.tar
+#        path: artifice/piranha_image_file/    
+
     - name: build deb package
       working-directory: ./artifice/linux_build/
       run: |
