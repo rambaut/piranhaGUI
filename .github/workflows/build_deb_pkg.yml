@@ -21,6 +21,9 @@ jobs:
 
   prepare_build:
     runs-on: ubuntu-latest
+
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
       
     steps:
     - uses: actions/checkout@v4
@@ -116,13 +119,26 @@ jobs:
         path: artifice/piranha_image_file/piranha.tar
         retention-days: 1
 
+    - name: create release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: true
+        release_name: ${{ env.APPLICATION_NAME }} v${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }}
+        body_path: ''
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
 
   build_deb_release:
     needs: [prepare_build]
     runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.create_release.outputs.upload_url }}
       
+    env:
+      RELEASE_URL: ${{ needs.prepare-build.outputs.release_url }}
+
     steps:
     - uses: actions/checkout@v4
     
@@ -141,49 +157,26 @@ jobs:
         # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         pip install -r artifice/requirements.txt
         
- #   - name: make dir for piranha image file
- #     working-directory: ./artifice
- #     run: |
- #       mkdir piranha_image_file
-
-#    - name: Retrieve saved piranha docker image
-#      uses: actions/download-artifact@v4
-#      with:
-#        name: piranha.tar
-#        path: artifice/piranha_image_file/
-        
     - name: build deb package
       working-directory: ./artifice/linux_build/
       run: |
         source create_piranha_package
-        
-    - name: release
-      uses: actions/create-release@v1
-      id: create_release
-      with:
-        draft: false
-        prerelease: true
-        release_name: ${{ env.APPLICATION_NAME }} v${{ github.ref_name }}
-        tag_name: ${{ github.ref_name }}
-        body_path: ''
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
         
     - name: upload ubuntu/debian package
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ env.RELEASE_URL }}
         asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
         asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
         asset_content_type: application/vnd.debian.binary-package
              
   build_darwin_release:
-    needs: [build_deb_release]
-    runs-on: macos-13
+    needs: [prepare-build]
+    runs-on: macos-12
     env:
-      RELEASE_URL: ${{ needs.build_deb_release.outputs.release_url }}
+      RELEASE_URL: ${{ needs.prepare-build.outputs.release_url }}
   
     steps:
     - uses: actions/checkout@v4
@@ -228,10 +221,10 @@ jobs:
         asset_content_type: application/zip
 
   build_win_release:
-    needs: [build_deb_release]
+    needs: [prepare-build]
     runs-on: windows-latest
     env:
-      RELEASE_URL: ${{ needs.build_deb_release.outputs.release_url }}
+      RELEASE_URL: ${{ needs.prepare-build.outputs.release_url }}
 
     steps:
     - uses: actions/checkout@v4
@@ -248,6 +241,10 @@ jobs:
           channels: conda-forge,defaults
           miniforge-version: latest
           auto-activate-base: false
+
+    - name: fix pyinstaller version for windows
+      run: |
+        pip install pyinstaller==6.6.0  
 
 #    - name: make dir for piranha image file
 #      working-directory: ./artifice
