@@ -1,4 +1,4 @@
-name: artifice
+name: artifice_test
 channels:
   - conda-forge
   - defaults
@@ -6,11 +6,11 @@ dependencies:
   - bzip2=1.0.8
   - ca-certificates=2023.12.12
   - libffi=3.4.4
-  - ncurses=6.4
+  #- ncurses=6.4
   - openssl=3.0.12
   - pip=21.2.4
   - python=3.10.13
-  - readline=8.2
+  #- readline=8.2
   - setuptools=68.2.2
   - sqlite=3.41.2
   - tk=8.6.12
