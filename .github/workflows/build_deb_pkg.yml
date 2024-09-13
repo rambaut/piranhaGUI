@@ -237,7 +237,7 @@ jobs:
         pip install pyinstaller==6.6.0  
 
     - name: make dir for piranha image file
-      working-directory: ./artifice
+      working-directory: ./artifice/windows_build/dist/
       run: |
         mkdir piranha_image_file
 
@@ -245,7 +245,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: piranha.tar
-        path: artifice/piranha_image_file/
+        path: artifice/windows_build/dist/piranha_image_file/
         
     - name: build package
       working-directory: ./artifice/windows_build/
