@@ -1,5 +1,5 @@
 
-name: Ubuntu/Debian build
+name: Build packages and create release
 
 on:
   push:
