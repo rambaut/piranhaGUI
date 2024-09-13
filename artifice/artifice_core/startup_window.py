@@ -331,8 +331,9 @@ def check_for_gui_updates(owner='polio-nanopore',repo='piranhaGUI'):
         
         #latest_gui_version = releases[0]['tag_name']
         installed_gui_version = 'v' + consts.PIRANHA_GUI_VERSION
-        if installed_gui_version != latest_gui_version:
-            update_available = True
+        update_available = True
+        if installed_gui_version == latest_gui_version or consts.PIRANHA_GUI_VERSION == latest_gui_version:
+            update_available = False
     except:
         pass
     
