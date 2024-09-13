@@ -8,6 +8,7 @@ from artifice_core.alt_button import AltButton, AltFolderBrowse
 from artifice_core.update_log import log_event, update_log
 from artifice_core.window_functions import error_popup
 from artifice_core.manage_runs import save_run, save_changes, load_run
+from artifice_core.persistent_run_options_window import set_option_in_list
 
 def setup_panel():
     sg.theme("PANEL")
@@ -17,27 +18,27 @@ def setup_panel():
 
     button_size=(120,36)
 
-    sample_types_list = ['stool', 'environmental']
-    orientations_list = ['horizontal', 'vertical']
+    sample_type_list = ['stool', 'environmental']
+    orientation_list = ['vertical','horizontal']
 
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
-        '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.'),
-        '-SAMPLE TYPE-':translator(f'Specify sample type. Options: `stool`, `environmental`. Default: `{consts.VALUE_SAMPLE_TYPE}`'),
-        '-POSITIVE CONTROL-':translator(f'Sample name of positive control. Default: `{consts.VALUE_POSITIVE}`'),
+        '-ORIENTATION-':translator(f'Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: {consts.VALUE_ORIENTATION}. Options: `horizontal` or `vertical`.'),
+        '-SAMPLE TYPE-':f'{translator("Specify sample type. Options: `stool`, `environmental`. Default:")} `{consts.VALUE_SAMPLE_TYPE}`',
+        '-POSITIVE CONTROL-':f'{translator("Sample name of positive control. Default:")} `{consts.VALUE_POSITIVE}`',
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
     }
 
     layout = [[
         sg.Column([ 
             #[sg.Sizer(128,0)],
-            [
-            sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
-            ],
-            [
-            sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
-            ],
+            #[
+            #sg.Sizer(16,32),sg.Text(translator('User Name:'),tooltip=tooltips['-USER NAME-']),
+            #],
+            #[
+            #sg.Sizer(16,32),sg.Text(translator('Institute:'),tooltip=tooltips['-INSTITUTE NAME-']),
+            #],
             [sg.Sizer(0,8)],
             [
             sg.Sizer(16,32),sg.Text(translator('Orientation:'),tooltip=tooltips['-ORIENTATION-']),
@@ -55,35 +56,37 @@ def setup_panel():
         ],element_justification='right',pad=(0,0)),
         sg.Column([ 
             [sg.Sizer(256,0)],
+            #[
+            #    sg.Sizer(16,32),
+            #    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+            #          tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+            #],
+            #[
+            #    sg.Sizer(16,32),
+            #    sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
+            #          tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+            #],
+            [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      tooltip=tooltips['-USER NAME-'], key='-USER NAME-',),
+                sg.OptionMenu(orientation_list, default_value=set_option_in_list('VALUE_ORIENTATION',orientation_list,config),tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
             ],
             [
                 sg.Sizer(16,32),
-                sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      tooltip=tooltips['-INSTITUTE NAME-'], key='-INSTITUTE NAME-',),
+                sg.OptionMenu(sample_type_list, default_value=set_option_in_list('VALUE_SAMPLE_TYPE',sample_type_list,config),tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
             ],
             [sg.Sizer(0,8)],
             [
                 sg.Sizer(16,32),
-                sg.OptionMenu(orientations_list, default_value=orientations_list[0],tooltip=tooltips['-ORIENTATION-'],key='-ORIENTATION-'),
-            ],
-            [
-                sg.Sizer(16,32),
-                sg.OptionMenu(sample_types_list, default_value=sample_types_list[0],tooltip=tooltips['-SAMPLE TYPE-'],key='-SAMPLE TYPE-'),
-            ],
-            [sg.Sizer(0,8)],
-            [
-                sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      default_text=consts.VALUE_POSITIVE,tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_POSITIVE'],tooltip=tooltips['-POSITIVE CONTROL-'], key='-POSITIVE CONTROL-',),
             ],
             [
                 sg.Sizer(16,32),
                 sg.In(size=(25,1), enable_events=True,expand_y=False,border_width=1,
-                      default_text=consts.VALUE_NEGATIVE,tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
+                      background_color='#393938', font=consts.CONSOLE_FONT, text_color='#F5F1DF',
+                      default_text=config['VALUE_NEGATIVE'],tooltip=tooltips['-NEGATIVE CONTROL-'], key='-NEGATIVE CONTROL-',),
             ]
         ],pad=(0,0))
     ]]
@@ -121,8 +124,8 @@ def run_run_options_window(window, run_info, version = 'ARTIFICE'):
     element_dict = {'-POSITIVE CONTROL-':'-pc',
                     '-NEGATIVE CONTROL-':'-nc',
                     '-SAMPLE TYPE-':'-s', 
-                    '-USER NAME-':'--username',
-                    '-INSTITUTE NAME-':'--institute',
+                    #'-USER NAME-':'--username',
+                    #'-INSTITUTE NAME-':'--institute',
                     '-ORIENTATION-':'--orientation'}
     run_info = load_run(window, selected_run_title, element_dict, runs_dir = config['RUNS_DIR'], 
                         update_archive_button=False, clear_previous=False)

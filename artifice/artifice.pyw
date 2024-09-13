@@ -165,6 +165,7 @@ def setup_config():
     consts.VALUE_POSITIVE =  consts.get_config_value('VALUE_POSITIVE', config)
     consts.VALUE_NEGATIVE = consts.get_config_value('VALUE_NEGATIVE', config)
     consts.VALUE_SAMPLE_TYPE = consts.get_config_value('VALUE_SAMPLE_TYPE', config)
+    consts.VALUE_ORIENTATION = consts.get_config_value('VALUE_ORIENTATION', config)
     consts.VALUE_MIN_MAP_QUALITY = consts.get_config_value('VALUE_MIN_MAP_QUALITY', config)
     consts.VALUE_MIN_READ_LENGTH = consts.get_config_value('VALUE_MIN_READ_LENGTH', config)
     consts.VALUE_MAX_READ_LENGTH = consts.get_config_value('VALUE_MAX_READ_LENGTH', config)

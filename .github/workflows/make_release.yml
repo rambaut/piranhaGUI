@@ -1,0 +1,268 @@
+
+name: Ubuntu/Debian build
+
+on:
+  push:
+    tags:
+      - '*'
+env:
+  APPLICATION_NAME: piranhaGUI
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash -l {0}
+
+jobs:
+
+  prepare_build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
+      
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+          auto-update-conda: false
+          environment-file: artifice/environment.yml
+          activate-environment: artifice
+          channels: conda-forge,defaults
+          miniforge-version: latest
+          auto-activate-base: false
+
+    - name: create pip requirements file (for building deb package)
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        pip freeze > artifice/requirements.txt
+
+    - name: increment version number
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        python artifice/update_version_number.py ${{ github.ref_name }} piranhaGUI
+        
+    - name: set git config
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+    - name: stage changed files
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git add *
+        
+    - name: commit changes
+      id: commit
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git commit -m"incrementing version number"
+        
+    - name: set git config
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git fetch origin main
+        
+    - name: push changes to main
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      if: steps.commit.outcome  == 'success'
+      run: |
+        git push origin HEAD:main
+
+    - name: pull piranha docker image
+      run: |
+        docker pull polionanopore/piranha:latest
+        
+    - name: save piranha docker image to file
+      working-directory: ./artifice/
+      run: |
+        mkdir piranha_image_file
+        docker save --output piranha_image_file/piranha.tar polionanopore/piranha:latest
+        
+    - name: Temporarily save piranha docker image
+      uses: actions/upload-artifact@v4
+      with:
+        name: piranha.tar
+        path: artifice/piranha_image_file/piranha.tar
+        retention-days: 1
+
+    - name: create release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: true
+        release_name: ${{ env.APPLICATION_NAME }} v${{ github.ref_name }}
+        tag_name: ${{ github.ref_name }}
+        body_path: ''
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+
+  build_deb_release:
+    needs: [prepare_build]
+    runs-on: ubuntu-latest
+      
+    env:
+      RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+
+    - name: make sure up to date
+      run: |
+        git pull origin main
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install -r artifice/requirements.txt
+
+    - name: make dir for piranha image file
+      working-directory: ./artifice
+      run: |
+        mkdir piranha_image_file
+
+    - name: Retrieve saved piranha docker image
+      uses: actions/download-artifact@v4
+      with:
+        name: piranha.tar
+        path: artifice/piranha_image_file/    
+
+    - name: build deb package
+      working-directory: ./artifice/linux_build/
+      run: |
+        source create_piranha_package
+        
+    - name: upload ubuntu/debian package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ env.RELEASE_URL }}
+        asset_path: artifice/linux_build/pkg_file/${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_name: ${{ env.APPLICATION_NAME }}_${{ github.ref_name }}.deb
+        asset_content_type: application/vnd.debian.binary-package
+             
+  build_darwin_release:
+    needs: [prepare_build]
+    runs-on: macos-12
+    env:
+      RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
+  
+    steps:
+    - uses: actions/checkout@v4
+  
+    - name: make sure up to date
+      run: |
+        git pull origin main
+    
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+          auto-update-conda: false
+          environment-file: artifice/environment.yml
+          activate-environment: artifice
+          channels: conda-forge,defaults
+          miniforge-version: latest
+          auto-activate-base: false
+
+    - name: Retrieve saved piranha docker image
+      uses: actions/download-artifact@v4
+      with:
+        name: piranha.tar
+        path: artifice/resources/
+          
+    - name: build package
+      working-directory: ./artifice/mac_build/pyinstaller_build/
+      run: |
+        pyinstaller piranhaGUI.spec
+           
+    - name: compress macos app
+      working-directory: ./artifice/mac_build/pyinstaller_build/dist/
+      run: |
+        ditto -c -k --sequesterRsrc --keepParent --zlibCompressionLevel 9 ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}.app ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_macos.zip
+        
+    - name: upload mac package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ env.RELEASE_URL }}
+        asset_path: ./artifice/mac_build/pyinstaller_build/dist/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_macos.zip
+        asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_macos.zip
+        asset_content_type: application/zip
+
+  build_win_release:
+    needs: [prepare_build]
+    runs-on: windows-latest
+    env:
+      RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: make sure up to date
+      run: |
+        git pull origin main
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+          auto-update-conda: false
+          environment-file: artifice/environment.yml
+          activate-environment: artifice
+          channels: conda-forge,defaults
+          miniforge-version: latest
+          auto-activate-base: false
+
+    - name: fix pyinstaller version for windows
+      run: |
+        pip install pyinstaller==6.6.0  
+
+    - name: make dir for piranha image file
+      working-directory: ./artifice/windows_build/dist/
+      run: |
+        mkdir piranha_image_file
+
+    - name: Retrieve saved piranha docker image
+      uses: actions/download-artifact@v4
+      with:
+        name: piranha.tar
+        path: artifice/windows_build/dist/piranha_image_file/
+        
+    - name: build package
+      working-directory: ./artifice/windows_build/
+      run: |
+        ./build_windows.bat
+
+    - name: compile installer
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: ./artifice/windows_build/dist/piranhaGUI_installer.iss
+
+    - name: upload windows installer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ env.RELEASE_URL }}
+        asset_path: artifice/windows_build/dist/installer/${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
+        asset_name: ${{ env.APPLICATION_NAME }}v${{ github.ref_name }}_installer_windows.exe
+        asset_content_type: application/vnd.microsoft.portable-executable

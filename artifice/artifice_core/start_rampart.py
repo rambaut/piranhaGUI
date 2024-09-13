@@ -151,6 +151,8 @@ def check_for_image_updates(client, image_tag):
     if client == None:
         client = docker.from_env()
     update_log(f'checking for updates to: {image_tag}')
+    installed_version = None
+
     try:
         api_url =  f'https://hub.docker.com/v2/repositories/{image_tag}/tags'
 
@@ -175,8 +177,8 @@ def check_for_image_updates(client, image_tag):
         
         #print(latest_digest)
         trunc_latest_digest = latest_digest.split('sha256:')[-1]
-
         image = client.images.get(image_tag)
+
         new_version_available = False
         try:
             local_digest = image.attrs['RepoDigests'][0]
@@ -185,6 +187,19 @@ def check_for_image_updates(client, image_tag):
                 trunc_local_digest = local_digest.split('sha256:')[-1]
                 if trunc_local_digest != trunc_latest_digest:
                     new_version_available = True
+                
+                for tag in tags['results']:
+                    if not tag['name'] == 'latest': 
+                        digest = tag['digest']
+                        digest = digest.split('sha256:')[-1]
+
+                        if digest == trunc_local_digest:
+                            installed_version = tag['name']
+                            break
+
+                else:
+                    installed_version = latest_version
+
             else:
                 raise Exception
         except:
@@ -194,15 +209,15 @@ def check_for_image_updates(client, image_tag):
 
         if new_version_available:
             update_log(f'updated version of image, {image_tag}, found: {latest_version}')
-            return True, latest_version
+            return True, latest_version, installed_version
         else:
             update_log(f'confirmed image, {image_tag}, is up to date:  {latest_version}')
-            return False, latest_version
+            return False, latest_version, installed_version
     
     except:
         update_log('error looking for updates')
         update_log(traceback.format_exc())
-        return False, None
+        return False, None, installed_version
 
 
 # Checks if docker is installed

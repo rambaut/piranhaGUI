@@ -1,16 +1,51 @@
-name: artifice
+name: artifice_test
 channels:
+  - conda-forge
   - defaults
 dependencies:
-  - python=3.10
+  - bzip2=1.0.8
+  - ca-certificates=2023.12.12
+  - libffi=3.4.4
+  #- ncurses=6.4
+  - openssl=3.0.12
   - pip=21.2.4
+  - python=3.10.13
+  #- readline=8.2
+  - setuptools=68.2.2
+  - sqlite=3.41.2
+  - tk=8.6.12
+  - wheel=0.41.2
+  - xz=5.4.5
+  - zlib=1.2.13
   - pip:
-    - Pillow==9.0.1
-    - PySimpleGUI==4.60.3 #4.55.1
-    - docker==6.1.2
-    - requests==2.27.1
-    - pyyaml==6.0
-    - py2app==0.28.4 #0.26.1
-    - pyinstaller==5.0.1
-    - pandas[excel]==2.2.0
-    
+      - altgraph==0.17.4
+      - certifi==2023.11.17
+      - charset-normalizer==2.0.12
+      - defusedxml==0.7.1
+      - docker==6.1.2
+      - et-xmlfile==1.1.0
+      - idna==3.6
+      - macholib==1.16.3
+      - modulegraph==0.19.6
+      - numpy==1.26.3
+      - odfpy==1.4.1
+      - openpyxl==3.1.2
+      - packaging==23.2
+      - pandas==2.2.0
+      - pillow==9.0.1
+      - py2app==0.28.4
+      - pyinstaller==5.0.1
+      - pyinstaller-hooks-contrib==2024.0
+      - pysimplegui==4.60.5
+      - python-calamine==0.1.7
+      - python-dateutil==2.8.2
+      - pytz==2023.3.post1
+      - pyxlsb==1.0.10
+      - pyyaml==6.0
+      - requests==2.27.1
+      - six==1.16.0
+      - tzdata==2023.4
+      - urllib3==1.26.18
+      - websocket-client==1.7.0
+      - xlrd==2.0.1
+      - xlsxwriter==3.1.9

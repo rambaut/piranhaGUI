@@ -36,6 +36,10 @@ def translate_text(string: str, language: str, scheme_list = None, append_scheme
     string_in_scheme = False
     try:
         for row in scheme_list:
+            try:
+                this_row = row[0]
+            except:
+                break
             if string == row[0]:
                 string_in_scheme = True
                 try:

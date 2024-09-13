@@ -10,9 +10,10 @@ import artifice_core.run_options_window
 import artifice_core.window_functions as window_functions
 from artifice_core.window_functions import error_popup
 from artifice_core.update_log import log_event, update_log
-from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel
+from artifice_core.manage_runs import save_run, save_changes, load_run, rename_run, look_for_barcodes, set_options_from_excel, load_default_run_options
 from artifice_core.alt_button import AltButton, AltFolderBrowse, AltFileBrowse
 from artifice_core.alt_popup import alt_popup_ok
+from artifice_core.persistent_run_options_window import create_persistent_run_options_window, run_persistent_run_options_window
 
 
 def setup_panel(translator):
@@ -173,8 +174,9 @@ def create_edit_window(window = None):
     title = f'Piranha{" v" + consts.PIRANHA_VERSION if consts.PIRANHA_VERSION != None else ""}'
 
     content = window_functions.setup_content(panel, title=title, 
-                                             button_text='Continue', button_key='-CONFIRM-',
-                                             bottom_left_button_text='Run Options', bottom_left_button_key='-RUN OPTIONS-')
+                                             button_text='Continue', button_key='-CONFIRM-', button_disabled=True,
+                                             top_left_button_text='Persistent Run Options', top_left_button_key='-PERSISTENT RUN OPTIONS-',
+                                             bottom_left_button_text='Set options for this run', bottom_left_button_key='-RUN OPTIONS-')
 
     layout = window_functions.setup_header_footer(content)
 
@@ -206,6 +208,14 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                     '-INSTITUTE-':'--institute',
                     '-USER NAME-':'--username',
                     '-NOTES-':'--notes'}
+
+    element_config_dict = {'-POSITIVE CONTROL-':'VALUE_POSITIVE',
+                    '-NEGATIVE CONTROL-':'VALUE_NEGATIVE',
+                    '-SAMPLE TYPE-':'VALUE_SAMPLE_TYPE',
+                    '-ORIENTATION-':'VALUE_ORIENTATION',
+                    '-OUTDIR-':'OUTDIR',
+                    '-INSTITUTE-':'INSTITUTE',
+                    '-USER NAME-':'USERNAME',}
     
     # dictionary used to try to match options from excel to elements in window, case insensitive
     el_string_dict = {'-MINKNOW-':['basecalledPath','minknow run','-i','--readdir','readdir','read dir','MINKNOW'],
@@ -225,11 +235,21 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
             run_info = {'title': 'TEMP_RUN'}
             for elem in element_dict:
                 window[elem].update('')
+            
+            for element in ['-USER NAME-','-INSTITUTE-','-OUTDIR-']:
+                if element_config_dict[element] in config:
+                    window[element].update(value=config[element_config_dict[element]])
+                        
     except Exception as err:
         update_log(traceback.format_exc())
 
     while True:
         event, values = window.read()
+        continue_disabled = False
+        for key in ['-SAMPLES-','-MINKNOW-','-OUTDIR-']:
+            if len(values[key]) == 0:
+                continue_disabled = True
+        window['-CONFIRM-'].update(disabled=continue_disabled)
 
         if event != None:
             log_event(f'{event} [main window]')
@@ -282,6 +302,17 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
   
             except Exception as err:
                 error_popup(err)
+        
+        elif event == '-PERSISTENT RUN OPTIONS-':
+            try:
+                run_options_window = create_persistent_run_options_window()
+                run_info = run_persistent_run_options_window(run_options_window, run_info)
+                for element in ['-USER NAME-','-INSTITUTE-','-OUTDIR-']:
+                    if element_dict[element] in run_info:
+                        window[element].update(value=run_info[element_dict[element]])
+  
+            except Exception as err:
+                error_popup(err)
 
         elif event == '-CONFIRM-':
             try:
@@ -305,9 +336,13 @@ def run_edit_window(window, run_info, selected_run_title, reset_run = True):
                         window['-MINKNOW-'].update(value=new_minknow)
                         values['-MINKNOW-'] = new_minknow
                     #print(new_minknow)
-                        
-
+                
+                print(run_info)
+                run_info = load_default_run_options(run_info)
+                print(run_info)
+                
                 run_info = save_changes(values, run_info, window, element_dict=element_dict, update_list = False)
+
                 if artifice_core.parse_columns_window.check_spaces(run_info['samples'], 0):
                     alt_popup_ok(translator('Warning: there are spaces in samples'))
                 window.close()

@@ -11,6 +11,7 @@ import os.path
 import sys
 from webbrowser import open_new_tab
 import webbrowser
+from pathlib import Path
 
 from artifice_core.language import translator, setup_translator
 import artifice_core.start_rampart
@@ -122,10 +123,11 @@ def setup_panel(config):
             sg.Sizer(16,16),
             sg.Text(piranha_status,visible=is_piranhaGUI, key='-PIRANHA STATUS-'),
             sg.Push(),
-            AltButton(button_text=translator('Open Output'),key='-VIEW OUTPUT-'),
+            AltButton(button_text=translator('Open Output'),key='-VIEW OUTPUT-', disabled=True),
             sg.Sizer(8,8),
-            AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-')
+            AltButton(button_text=translator('Open Report'),key='-VIEW PIRANHA-', disabled=True)
         ])
+        layout.append([sg.Text(translator('Processing samples...'),justification='center',visible=False,key='-PROGRESS BAR TEXT-')])
         layout.append([sg.ProgressBar(0,size=(16,16),expand_x=True,visible=False,key='-PIRANHA PROGRESS BAR-')])
         layout.append([sg.Sizer(16,16)])
 
@@ -205,7 +207,8 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     artifice_core.start_rampart.stop_docker(client=docker_client, container=piranha_container)
                     window['-START/STOP PIRANHA-'].update(text=translator('Start Analysis'))
                     window['-PIRANHA STATUS-'].update(translator('Analysis is not running'))
-                    window['-VIEW PIRANHA-'].update(visible=True)
+                    window['-VIEW PIRANHA-'].update(disabled=False)
+                    window['-VIEW OUTPUT-'].update(disabled=False)
                     try:
                         output_path = run_info['outputPath']
                         output_file = f'{output_path}/report.html'
@@ -290,12 +293,13 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
 
                     run_info = set_report_language(run_info, config)
                         
-                    piranha_container = launch_piranha(run_info, docker_client)
+                    piranha_container, run_info = launch_piranha(run_info, docker_client)
                     piranha_running = True
                     window['-START/STOP PIRANHA-'].update(text=translator('Stop Analysis'))
                     window['-PIRANHA STATUS-'].update(translator('Analysis is running'))
 
                     window['-PIRANHA PROGRESS BAR-'].update(max=0,current_count=0, visible=True)
+                    window['-PROGRESS BAR TEXT-'].update(value=translator('Processing samples...'),visible=True)
 
                     piranha_log = piranha_container.logs(stream=True)
                     piranha_log_thread = threading.Thread(target=artifice_core.start_rampart.queue_log, args=(piranha_log, piranha_log_queue), daemon=True)
@@ -318,12 +322,24 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                 error_popup(err)
         elif event == '-VIEW OUTPUT-':
             try:
-                output_path = run_info['outputPath'] + '/'
+                #output_path = run_info['outputPath'] + '/'
+                if '--runname' in run_info and len(run_info['--runname']) > 0:
+                    dirpath = str(Path(run_info['outputPath']) / run_info['--runname'])
+                else:
+                    dirpath = run_info['outputPath']
+
+                if 'outputIter' in run_info and run_info['outputIter'] > 0:
+                    dirpath = dirpath + '('+str(run_info['outputIter'])+')'
+                
+                dirpath = str(dirpath) + '/'
+
+                print(dirpath)
+
                 if sys.platform.startswith("darwin"):
                     #webbrowser.open('file:///{output_path}/')
-                    subprocess.call(["open", output_path])
+                    subprocess.call(["open", dirpath])
                 else:
-                    path = os.path.realpath(output_path)
+                    path = os.path.realpath(dirpath)
                     os.startfile(path)
             except Exception as err:
                 error_popup(err)
@@ -331,7 +347,13 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
 
         elif event == '-VIEW PIRANHA-':
             try:
-                output_path = run_info['outputPath']
+                if '--runname' in run_info and len(run_info['--runname']) > 0:
+                    dirpath = str(Path(run_info['outputPath']) / run_info['--runname'])
+                else:
+                    dirpath = run_info['outputPath']
+
+                if 'outputIter' in run_info and run_info['outputIter'] > 0:
+                    dirpath = dirpath + '('+str(run_info['outputIter'])+')'
                 """
                 if sys.platform.startswith("darwin"):
                     open_new_tab(f'file:///{output_path}/piranha_output/report.html')
@@ -339,7 +361,7 @@ def run_main_window(window, run_info, rampart_running = False, piranha_running =
                     open_new_tab(f'{output_path}/piranha_output/report.html')
                 """
                 
-                open_new_tab(f'file:///{output_path}/piranha_output/report.html')
+                open_new_tab(f'file:///{dirpath}/piranha_output/report.html')
             except Exception as err:
                 error_popup(err)
 
