@@ -18,7 +18,7 @@ On startup you will see a window that will tell you the status of the software p
 
 <img src="./docs/startup_window.png">
 
-This is what the window is like if everything is ready to run. However the first time you run it you may see one or more of the lines in red:
+This is what the window is like if everything is ready to run. PiranhaGUI releases are packaged with the latest Piranha release which should install automatically when you first start the application, as long as Docker is in installed. However if Piranha or Docker is missing you may see one or more of the lines in red:
 
 <img src="./docs/startup_window_not_installed.png">
 
