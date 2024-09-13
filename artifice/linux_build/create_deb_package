@@ -12,11 +12,11 @@ chmod +x launch_script.sh
 cp launch_script.sh ./dist
 
 cp -r ./dist/. $ART_PKG_NAME/usr/local/ARTIFICE
-#cp -r ../piranha_image_file/. $ART_PKG_NAME/~/.local/share
+cp -r ../piranha_image_file/. $ART_PKG_NAME/~/.local/share
 mkdir -p $ART_PKG_NAME/DEBIAN
 cp ./linux_dist_files/$APPLICATION_NAME/control $ART_PKG_NAME/DEBIAN/
 mv -t ./pkg_file/ $ART_PKG_NAME 
 cd pkg_file
-#chmod -rw ./$ART_PKG_NAME/~/.local/share/piranha.tar
+chmod -rw ./$ART_PKG_NAME/~/.local/share/piranha.tar
 chmod +x ./$ART_PKG_NAME/usr/local/ARTIFICE/launch_script.sh
 dpkg-deb --build --root-owner-group $ART_PKG_NAME
