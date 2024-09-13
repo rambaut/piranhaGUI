@@ -33,10 +33,17 @@ Pressing the `continue` button will take you to the window to setup/edit your ru
 
 <img src="./docs/run_window.png">
 
-- There are three fields to fill here, you can browse your OS file system for each them or simply copy in a path if you have it to hand. 
+There are a number of fields to fill here, you can browse your OS file system for these three: 
 - The first is samples, this is should be a csv file with at least two columns, matching each to sample to the corresponding barcode on each row. The first row should contain labels for eah column. Once you have selected your samples file you may want to view them with the provided button. This will open a window where you can select the column specifying the barcode and sample id, based on the label at the top of each column. 
 - The second field to fill is the MinKnow run folder. This should be the folder containing the demultiplexed samples outputed by MinKnow. 
 - Lastly the output folder field specifies where PIRANHA will place its' report files.
+The remaining fields are optional in order to customise the report. If Run Name is left blank it will be set automatically according to the path of the MinKnow run folder
+
+There are two separate options windows accessible from this window. The first is the persistent options, shown below. These options persist between runs, and allow you to provide supplementary sequences for the analysis. This allows you to set your own default options
+
+<img src="./docs/persistent_options_window.png">
+
+With the buttion "Set options for this run" you can also set options for the analysis but these will not apply to future runs.
 
 ### Running Analysis
 Once the run has been setup pressing continue will take you to the window for actually running RAMPART and PIRANHA analysis, shown below:
