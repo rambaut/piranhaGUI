@@ -17,14 +17,14 @@ def setup_panel():
 
     button_size=(120,36)
 
-    sample_type_list = ['stool', 'environmental']
+    sample_type_list = ['stool', 'environmental','isolate']
     orientation_list = ['vertical','horizontal']
 
     tooltips = {
         '-USER NAME-':translator('Username to appear in report. Default: no user name'),
         '-INSTITUTE NAME-':translator('Institute name to appear in report. Default: no institute name'),
         '-ORIENTATION-':translator('Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `vertical`. Options: `horizontal` or `vertical`.'),
-        '-SAMPLE TYPE-':f'{translator("Specify sample type. Options: `stool`, `environmental`. Default:")} `{consts.VALUE_SAMPLE_TYPE}`',
+        '-SAMPLE TYPE-':f'{translator("Specify sample type. Options: `stool`, `environmental`, `isolate`. Default:")} `{consts.VALUE_SAMPLE_TYPE}`',
         '-POSITIVE CONTROL-':f'{translator("Sample name of positive control. Default:")} `{consts.VALUE_POSITIVE}`',
         '-NEGATIVE CONTROL-':translator('Sample name of negative control. Default: `negative`'),
     }

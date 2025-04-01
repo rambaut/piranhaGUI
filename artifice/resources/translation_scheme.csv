@@ -115,7 +115,7 @@ Username to appear in report. Default: no user name,Nom d'utilisateur qui appara
 Institute name to appear in report. Default: no institute name,Nom d'institut qui apparaît dans le rapport. Défaut: Pas de nom d'institut
 "Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `vertical`. Options: `horizontal` or `vertical`.",Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`
 "Orientation of barcodes in wells on a 96-well plate. If `well` is supplied as a column in the barcode.csv, this default orientation will be overwritten. Default: `horizontal`. Options: `horizontal` or `vertical`.",Orientation de codes-barres dans les puits sur une 96-puit plaque. Si `well` est une colonne dans le barcodes.csv(codes-barres.csv). Défaut: `horizontal`. Choix: `horizontal` ou ` vertical`  
-"Specify sample type. Options: `stool`, `environmental`. Default: `stool`","Preciser le type d'échantillons. Choix: `stool`, `environmental`. Défaut: `stool`"
+"Specify sample type. Options: `stool`, `environmental`, `isolate`. Default: `stool`","Preciser le type d'échantillons. Choix: `stool`, `environmental`, `isolate`. Défaut: `stool`"
 Overwrite output directory. Default: append an incrementing number if <-o/--outdir> already exists,Écraser répetoire de sortie. Défaut: Ajouter un nombre qui s'incrémente
 Custom reference sequences file.,Séquences de référence personnalisées
 Sample name of positive control. Default: `positive`,Nom de l'échantillons du contrôle positif. Défaut: `postive`
@@ -161,7 +161,7 @@ Advanced,Options Avancées
 ~PERSISTENT OPTIONS WINDOW~,
 Enable Piranha Phylogenetics module, Activez le module phylogénétique de Piranha
 Disable Piranha Phylogenetics module, Désactivez le module phylogénétique de Piranha
-"Specify sample type. Options: `stool`, `environmental`. Default:","Preciser le type d'échantillons. Choix: `stool`, `environmental`. Défaut: "
+"Specify sample type. Options: `stool`, `environmental`, `isolate`. Default:","Preciser le type d'échantillons. Choix: `stool`, `environmental`, `isolate`. Défaut: "
 Sample name of positive control. Default:,Nom de l'échantillons du contrôle positif. Défaut:
 Clear,Effacer
 Protocol:,Protocole:
