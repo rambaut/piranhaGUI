@@ -1,5 +1,5 @@
 Package: piranhaGUI
-Version: v1.6.1-prerelease
+Version: v1.6.2-prerelease
 Architecture: amd64
 Maintainer: Corey Ansley <c.ansley@ed.ac.uk>
 Description: Graphical interface for bioinformatics tools
