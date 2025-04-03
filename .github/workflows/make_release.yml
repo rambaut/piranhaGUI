@@ -164,7 +164,7 @@ jobs:
              
   build_darwin_release:
     needs: [prepare_build]
-    runs-on: macos-12
+    runs-on: macos-latest
     env:
       RELEASE_URL: ${{ needs.prepare_build.outputs.release_url }}
   
