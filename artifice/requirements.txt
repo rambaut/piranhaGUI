@@ -16,7 +16,7 @@ Pillow==9.0.1
 py2app==0.28.4
 pyinstaller==5.0.1
 pyinstaller-hooks-contrib==2024.0
-PySimpleGUI-4-foss
+PySimpleGUI-4-foss==4.60.4.1
 python-calamine==0.1.7
 python-dateutil==2.8.2
 pytz==2023.3.post1
