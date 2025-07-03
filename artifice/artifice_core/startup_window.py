@@ -136,7 +136,7 @@ def setup_panel(usesRAMPART, usesPiranha):
     if SHOW_RAMPART == False:
         show_rampart_button = True
 
-    install_buttons_size = (596,32)
+    install_buttons_size = (256,32)
     layout = []
     if gui_update_available:
         gui_update_text = f'{translator(f"{consts.APPLICATION_NAME} update available to")} {latest_gui_version}'
